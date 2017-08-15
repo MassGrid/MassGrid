@@ -1,0 +1,5 @@
+Building MLGBcoin
+
+See doc/build-*.md for instructions on building mlgbcoind,
+the intended-for-services, no-graphical-interface, reference
+implementation of MLGBcoin.

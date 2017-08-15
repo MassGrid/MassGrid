@@ -1,0 +1,27 @@
+# /etc/conf.d/mlgbcoind: config file for /etc/init.d/mlgbcoind
+
+# Config file location
+#MLGBCOIND_CONFIGFILE="/etc/mlgbcoin/mlgbcoin.conf"
+
+# What directory to write pidfile to?  (created and owned by $MLGBCOIND_USER)
+#MLGBCOIND_PIDDIR="/var/run/mlgbcoind"
+
+# What filename to give the pidfile
+#MLGBCOIND_PIDFILE="${MLGBCOIND_PIDDIR}/mlgbcoind.pid"
+
+# Where to write mlgbcoind data (be mindful that the blockchain is large)
+#MLGBCOIND_DATADIR="/var/lib/mlgbcoind"
+
+# User and group to own mlgbcoind process
+#MLGBCOIND_USER="mlgbcoin"
+#MLGBCOIND_GROUP="mlgbcoin"
+
+# Path to mlgbcoind executable
+#MLGBCOIND_BIN="/usr/bin/mlgbcoind"
+
+# Nice value to run mlgbcoind under
+#MLGBCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+MLGBCOIND_OPTS="-disablewallet"
+

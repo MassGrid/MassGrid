@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=MLGBcoin
+Comment=MLGBcoin P2P Cryptocurrency
+Comment[fr]=MLGBcoin, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=MLGBcoin, eşten eşe kriptografik sanal para birimi
+Exec=mlgbcoin-qt %u
+Terminal=false
+Type=Application
+Icon=mlgbcoin128
+MimeType=x-scheme-handler/mlgbcoin;
+Categories=Office;Finance;
