@@ -5,13 +5,45 @@
 
 #include "primitives/block.h"
 
+#include "crypto/hashpow.h"
 #include "hash.h"
 #include "tinyformat.h"
 #include "utilstrencodings.h"
 
+#include "streams.h"
+#include "util.h"
+ uint256 CBlockHeader::ComputePowHash(uint32_t nNonce)const
+ {
+     uint256 base=this->GetHash();
+     uint256 output,output2;
+     hashPow* hashp=hashPow::getinstance();
+    int id1=(((uint16_t *)&base)[0])%13;
+    int id2=(((uint16_t *)&base)[1])%13;
+    //LogPrintf("id1: %d\n",id1);
+    //LogPrintf("id2: %d\n",id2);
+   //LogPrintf("base1: %s\n",base.GetHex());
+    base+=nNonce;
+    //LogPrintf("base2: %s\n",base.GetHex());
+    hashp->compute(id1,(unsigned char *)&base,(unsigned char *)&output);
+    //LogPrintf("output1: %s\n",output.GetHex());
+    hashp->compute(id2,(unsigned char *)&output,(unsigned char *)&output2);
+    //LogPrintf("output2: %s\n",output2.GetHex());
+    CScrypt256 hasher;
+    uint256 powHash;
+    //unsigned char * s=(unsigned char*)&output2;
+   // LogPrintf("%d\n",sizeof(output));
+    CScrypt256(hasher).Write((unsigned char*)&output2, sizeof(output2)).Finalize((unsigned char*)&powHash);
+    //LogPrintf("powHash: %s\n",powHash.GetHex());
+    return powHash;
+}
 uint256 CBlockHeader::GetHash() const
 {
     return Hash(BEGIN(nVersion), END(nNonce));
+}
+uint256 CBlockHeader::GetpowHash() const
+{
+    LogPrintf("Getpowhash\n");
+    return ComputePowHash(nNonce);//Hash(BEGIN(nVersion), END(nNonce));
 }
 
 uint256 CBlock::BuildMerkleTree(bool* fMutated) const
