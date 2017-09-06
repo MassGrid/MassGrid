@@ -14,7 +14,7 @@
 #include "util.h"
  uint256 CBlockHeader::ComputePowHash(uint32_t nNonce)const
  {
-     uint256 base=this->GetHash();
+     uint256 base=this->GetpowHash();
      uint256 output,output2;
      hashPow* hashp=hashPow::getinstance();
     int id1=(((uint16_t *)&base)[0])%13;
@@ -38,12 +38,11 @@
 }
 uint256 CBlockHeader::GetHash() const
 {
-    return Hash(BEGIN(nVersion), END(nNonce));
+    return ComputePowHash(nNonce);//Hash(BEGIN(nVersion), END(nNonce));
 }
 uint256 CBlockHeader::GetpowHash() const
 {
-    LogPrintf("Getpowhash\n");
-    return ComputePowHash(nNonce);//Hash(BEGIN(nVersion), END(nNonce));
+    return Hash(BEGIN(nVersion), END(nNonce));
 }
 
 uint256 CBlock::BuildMerkleTree(bool* fMutated) const
