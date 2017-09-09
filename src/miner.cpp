@@ -377,10 +377,8 @@ bool static ScanHash(CBlockHeader *pblock, uint32_t& nNonce, uint256 *phash)
 {
 
     while (true) {
-        nNonce++;
 
-
-       pblock->nNonce=nNonce;
+       pblock->nNonce=++nNonce;
        *phash= pblock->ComputePowHash(nNonce);
         if (((uint16_t*)phash)[15] == 0)
             return true;

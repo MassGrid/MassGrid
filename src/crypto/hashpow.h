@@ -19,11 +19,10 @@
 #include "crypto/sph_echo.h"
 #include "crypto/sph_hamsi.h"
 #include "crypto/sph_fugue.h"
-
 class hashPow
 {
 protected:
-
+	const int count=13;
 	static hashPow* _p;
 	sph_blake512_context     ctx_blake;
 	sph_bmw512_context       ctx_bmw;
@@ -43,7 +42,7 @@ public:
 	static hashPow* getinstance();
 	void compute(int id, unsigned char * input, unsigned char * hash);
 	//void write(int id, unsigned char * input);
-	
+	int getcount(){return count;};
 	//void addFinalize(int id, int nNonce, unsigned char* hash);
 	
 }; 

@@ -159,11 +159,30 @@ public:
         // hashGenesisBlock = genesis.GetHash();
         // assert(hashGenesisBlock == uint256("0x0000000020bc2c5ec220e3f660c5a9b59ff2f21ca054bcbe8c207eaa0292cce2"));
 
-        genesis.nTime    = 1504682295;
+        genesis.nTime    = 1504898858;
         genesis.nBits    = 0x1e0ffff0;
-        genesis.nNonce   = 4794082;//-1163381203;
+        genesis.nNonce   = 54672;//-1163381203;
+
+        // genesis.nTime=GetTime();
+        // genesis.nNonce=0;
+        // while(true)
+        // {
+        //     genesis.nNonce++;
+
+        //     if(genesis.GetHash()<uint256("0x00000ffff412dfe38e544f6628adfc756cff9486679e51027a14ab65946751ab")&&genesis.GetHash()!=0)
+        //     {
+        //         printf("hash :%s \nnTime:%d\nnNonce:%d\n",genesis.GetHash().GetHex().c_str(),genesis.nTime,genesis.nNonce);
+        //     }
+        //     if ((genesis.nNonce& 0xffff) == 0)
+        //     {
+        //         printf("run%d",genesis.nNonce);
+        //         genesis.nTime=GetTime();
+        //         genesis.nNonce=0;
+        //     }
+        //    // printf("run%d",genesis.nNonce);
+        // }
         hashGenesisBlock = genesis.GetHash();
-        assert(hashGenesisBlock == uint256("0x000004f8e412dfe38e544f6628adfc756cff9486679e51027a14ab65946751ab"));
+        assert(hashGenesisBlock == uint256("0x00000939c3b048fb134180ca6b9ca7e1fd13ab5dfdbbaca826612a36d37333f5"));
         assert(genesis.hashMerkleRoot == uint256("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
 
         /*vSeeds.push_back(CDNSSeedData("mlgbcoin.sipa.be", "seed.mlgbcoin.sipa.be"));
@@ -231,10 +250,10 @@ public:
 
         // hashGenesisBlock = genesis.GetHash();
         // assert(hashGenesisBlock == uint256("0x0000000020bc2c5ec220e3f660c5a9b59ff2f21ca054bcbe8c207eaa0292cce2"));
-        genesis.nTime    = 1504682295;
-        genesis.nNonce   = 4794082;//-1163381203;
+        genesis.nTime    = 1504898858;
+        genesis.nNonce   = 54672;//-1163381203;
         hashGenesisBlock = genesis.GetHash();
-        assert(hashGenesisBlock == uint256("0x000004f8e412dfe38e544f6628adfc756cff9486679e51027a14ab65946751ab"));
+        assert(hashGenesisBlock == uint256("0x00000939c3b048fb134180ca6b9ca7e1fd13ab5dfdbbaca826612a36d37333f5"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
@@ -297,15 +316,15 @@ public:
         // nDefaultPort = 18444;
         // assert(hashGenesisBlock == uint256("0x614e2ffb27342a41cedb1762ba3d17783668fc7d1fd27501e5baa2eac3ba367a"));
 
-        genesis.nTime = 1504682295;
+        genesis.nTime = 1504898858;
         genesis.nBits = 0x1e0ffff0;
-        genesis.nNonce = 4794082;//-1163381203;
+        genesis.nNonce = 54672;//-1163381203;
 
 
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 18444;
-        assert(hashGenesisBlock == uint256("0x000004f8e412dfe38e544f6628adfc756cff9486679e51027a14ab65946751ab"));
-
+        assert(hashGenesisBlock == uint256("0x00000939c3b048fb134180ca6b9ca7e1fd13ab5dfdbbaca826612a36d37333f5"));
+        
         vFixedSeeds.clear(); //! Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();  //! Regtest mode doesn't have any DNS seeds.
 

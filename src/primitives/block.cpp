@@ -12,17 +12,26 @@
 
 #include "streams.h"
 #include "util.h"
- uint256 CBlockHeader::ComputePowHash(uint32_t nNonce)const
+ uint256 CBlockHeader::ComputePowHash(uint32_t Nonce)const
  {
-     uint256 base=this->GetpowHash();
-     uint256 output,output2;
+    uint256 base,output,output2;
+     CSHA256 sha256hasher;
+     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
+     ss << *this;
+     assert(ss.size() == 80);
+     sha256hasher.Write((unsigned char*)&ss[0], 76);
+     CSHA256(sha256hasher).Write((unsigned char*)&Nonce, 4).Finalize((unsigned char*)&base);
+     //if(Nonce==1)
+     //printf("base: %s\n",base.GetHex().c_str());
+
      hashPow* hashp=hashPow::getinstance();
-    int id1=(((uint16_t *)&base)[0])%13;
-    int id2=(((uint16_t *)&base)[1])%13;
-    //LogPrintf("id1: %d\n",id1);
-    //LogPrintf("id2: %d\n",id2);
+    int id1=(((uint16_t *)&base)[0])%hashp->getcount();
+    int id2=(((uint16_t *)&base)[1])%hashp->getcount();
+    //printf("Nonce: %d\n",Nonce);
+    //printf("id1: %d\n",id1);
+    //printf("id2: %d\n\n",id2);
    //LogPrintf("base1: %s\n",base.GetHex());
-    base+=nNonce;
+    //base+=Nonce;
     //LogPrintf("base2: %s\n",base.GetHex());
     hashp->compute(id1,(unsigned char *)&base,(unsigned char *)&output);
     //LogPrintf("output1: %s\n",output.GetHex());
@@ -33,7 +42,6 @@
     //unsigned char * s=(unsigned char*)&output2;
    // LogPrintf("%d\n",sizeof(output));
     CScrypt256(hasher).Write((unsigned char*)&output2, sizeof(output2)).Finalize((unsigned char*)&powHash);
-    //LogPrintf("powHash: %s\n",powHash.GetHex());
     return powHash;
 }
 uint256 CBlockHeader::GetHash() const
