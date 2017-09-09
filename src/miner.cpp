@@ -378,8 +378,8 @@ bool static ScanHash(CBlockHeader *pblock, uint32_t& nNonce, uint256 *phash)
 
     while (true) {
 
-       pblock->nNonce=++nNonce;
-       *phash= pblock->ComputePowHash(nNonce);
+       //pblock->nNonce=++nNonce;
+       *phash= pblock->ComputePowHash(++nNonce);
         if (((uint16_t*)phash)[15] == 0)
             return true;
 
@@ -521,7 +521,7 @@ void static MLGBcoinMiner(CWallet *pwallet)
                     if (hash <= hashTarget)
                     {
                         // Found a solution
-                        //pblock->nNonce = nNonce;
+                        pblock->nNonce = nNonce;
                         LogPrintf("hash: %s\npblock->gethash: %s\n",hash.GetHex(),pblock->GetHash().GetHex());
                         assert(hash == pblock->GetHash());
 
