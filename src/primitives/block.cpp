@@ -12,19 +12,20 @@
 
 #include "streams.h"
 #include "util.h"
+#include <boost/thread/mutex.hpp>
+boost::mutex _l;
  uint256 CBlockHeader::ComputePowHash(uint32_t Nonce)const
  {
+    boost::mutex::scoped_lock lock(_l);
     uint256 base,output,output2;
-     CSHA256 sha256hasher;
-     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
-     ss << *this;
-     assert(ss.size() == 80);
-     sha256hasher.Write((unsigned char*)&ss[0], 76);
-     CSHA256(sha256hasher).Write((unsigned char*)&Nonce, 4).Finalize((unsigned char*)&base);
-     //if(Nonce==1)
-     //printf("base: %s\n",base.GetHex().c_str());
+    CSHA256 sha256hasher;
+    CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
+    ss << *this;
+    assert(ss.size() == 80);
+    sha256hasher.Write((unsigned char*)&ss[0], 76);
+    CSHA256(sha256hasher).Write((unsigned char*)&Nonce, 4).Finalize((unsigned char*)&base);
 
-     hashPow* hashp=hashPow::getinstance();
+    hashPow* hashp=hashPow::getinstance();
     int id1=(((uint16_t *)&base)[0])%hashp->getcount();
     int id2=(((uint16_t *)&base)[1])%hashp->getcount();
     //printf("Nonce: %d\n",Nonce);

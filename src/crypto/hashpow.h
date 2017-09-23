@@ -40,7 +40,7 @@ protected:
 	hashPow();
 public:
 	static hashPow* getinstance();
-	void compute(int id, unsigned char * input, unsigned char * hash);
+	void compute(int id,const unsigned char * input, unsigned char * hash);
 	//void write(int id, unsigned char * input);
 	int getcount(){return count;};
 	//void addFinalize(int id, int nNonce, unsigned char* hash);
