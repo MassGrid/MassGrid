@@ -113,6 +113,31 @@ base_uint<BITS>& base_uint<BITS>::operator/=(const base_uint& b)
 }
 
 template <unsigned int BITS>
+base_uint<BITS>& base_uint<BITS>::operator%=(const base_uint& b)
+{
+    base_uint<BITS> div = b;     // make a copy, so we can shift.
+    base_uint<BITS> num = *this; // make a copy, so we can subtract.
+    *this = 0;                   // the quotient.
+    int num_bits = num.bits();
+    int div_bits = div.bits();
+    if (div_bits == 0)
+        throw uint_error("Division by zero");
+    if (div_bits > num_bits) // the result is certainly 0.
+        return *this;
+    int shift = num_bits - div_bits;
+    div <<= shift; // shift so that div and nun align.
+    while (shift >= 0) {
+        if (num >= div) {
+            num -= div;
+            pn[shift / 32] |= (1 << (shift & 31)); // set a bit of the result.
+        }
+        div >>= 1; // shift back.
+        shift--;
+    }
+    // num now contains the remainder of the division.
+    return num;
+}
+template <unsigned int BITS>
 int base_uint<BITS>::CompareTo(const base_uint<BITS>& b) const
 {
     for (int i = WIDTH - 1; i >= 0; i--) {

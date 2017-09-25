@@ -5,11 +5,51 @@
 
 #include "primitives/block.h"
 
+#include "crypto/hashpow.h"
 #include "hash.h"
 #include "tinyformat.h"
 #include "utilstrencodings.h"
 
+#include "streams.h"
+#include "util.h"
+#include <boost/thread/mutex.hpp>
+boost::mutex _l;
+ uint256 CBlockHeader::ComputePowHash(uint32_t Nonce)const
+ {
+    boost::mutex::scoped_lock lock(_l);
+    uint256 base,output,output2;
+    CSHA256 sha256hasher;
+    CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
+    ss << *this;
+    assert(ss.size() == 80);
+    sha256hasher.Write((unsigned char*)&ss[0], 76);
+    CSHA256(sha256hasher).Write((unsigned char*)&Nonce, 4).Finalize((unsigned char*)&base);
+
+    hashPow* hashp=hashPow::getinstance();
+    int id1=(((uint16_t *)&base)[0])%hashp->getcount();
+    int id2=(((uint16_t *)&base)[1])%hashp->getcount();
+    //printf("Nonce: %d\n",Nonce);
+    //printf("id1: %d\n",id1);
+    //printf("id2: %d\n\n",id2);
+   //LogPrintf("base1: %s\n",base.GetHex());
+    //base+=Nonce;
+    //LogPrintf("base2: %s\n",base.GetHex());
+    hashp->compute(id1,(unsigned char *)&base,(unsigned char *)&output);
+    //LogPrintf("output1: %s\n",output.GetHex());
+    hashp->compute(id2,(unsigned char *)&output,(unsigned char *)&output2);
+    //LogPrintf("output2: %s\n",output2.GetHex());
+    CScrypt256 hasher;
+    uint256 powHash;
+    //unsigned char * s=(unsigned char*)&output2;
+   // LogPrintf("%d\n",sizeof(output));
+    CScrypt256(hasher).Write((unsigned char*)&output2, sizeof(output2)).Finalize((unsigned char*)&powHash);
+    return powHash;
+}
 uint256 CBlockHeader::GetHash() const
+{
+    return ComputePowHash(nNonce);//Hash(BEGIN(nVersion), END(nNonce));
+}
+uint256 CBlockHeader::GetpowHash() const
 {
     return Hash(BEGIN(nVersion), END(nNonce));
 }
