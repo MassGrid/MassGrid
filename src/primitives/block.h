@@ -67,6 +67,8 @@ public:
 
     uint256 GetHash() const;
 
+    uint256 GetpowHash() const;
+    uint256 ComputePowHash(uint32_t Nonce)const;
     int64_t GetBlockTime() const
     {
         return (int64_t)nTime;
