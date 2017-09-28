@@ -484,29 +484,6 @@ void static MLGBcoinMiner(CWallet *pwallet)
             uint32_t nNonce = 0;
             uint32_t nOldNonce = 0;
 
-            // CBlock genesis;
-            // const char* pszTimestamp = "MLGB create first block in Shenzhen, on 27th July., 2017";
-            // CMutableTransaction txNew;
-            // txNew.vin.resize(1);
-            // txNew.vout.resize(1);
-            // txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-            // txNew.vout[0].nValue = 50 * COIN;
-            // txNew.vout[0].scriptPubKey = CScript() << ParseHex("0486661df18672bc959f622d09ad550f56154a4b3c812671ea601aff934324ed1cf8457b9015290d3c94fb6c140e92f3c1a59dddb07e49a12df41b2f2ea687b8e6") << OP_CHECKSIG;
-            // genesis.vtx.push_back(txNew);
-            // genesis.hashPrevBlock = 0;
-            // genesis.hashMerkleRoot = genesis.BuildMerkleTree();
-            // genesis.nVersion = 1;
-            // genesis.nTime    = 1504673891;
-            // genesis.nBits    = 0x1e0ffff0;
-            // genesis.nNonce   = 361626;//-1163381203;
-
-            // //uint256 hashGenesisBlock = genesis.GetHash();
-            // //assert(hashGenesisBlock == uint256("0x00000c13a88adf3caefae67cc559d0205e380c74de0b65286d6ab74cc5fbea45"));
-            // assert(genesis.hashMerkleRoot == uint256("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
-            // LogPrintf("genesis: %s\n",genesis.ToString());
-
-            // LogPrintf("tx: %s\n",genesis.vtx[0].ToString());
-            // pblock=&genesis;
             while (true) {
                 bool fFound = ScanHash(pblock, nNonce, &hash);
                 uint32_t nHashesDone = nNonce - nOldNonce;
