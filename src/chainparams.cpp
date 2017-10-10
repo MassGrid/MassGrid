@@ -121,13 +121,13 @@ public:
         vAlertPubKey = ParseHex("04a48a5a9ee0c9837b38e3cfe558883893cf5f6beb264b0055caaf7ddb552621ff8e3b06f551b7e298020e7f3949b1c14d91c7b9bcb4d63cb442c1a801011be49a");
         nDefaultPort = 9443;
         bnProofOfWorkLimit = ~uint256(0) >> 20;
-        nSubsidyHalvingInterval = 210000;
+        nSubsidyHalvingInterval = 420768;   //4 years
         nEnforceBlockUpgradeMajority = 750;
         nRejectBlockOutdatedMajority = 950;
         nToCheckBlockUpgradeMajority = 1000;
         nMinerThreads = 0;
-        nTargetTimespan = 60 * 60* 5; // two weeks
-        nTargetSpacing = 5 * 60;
+        nTargetTimespan = 60 * 5 * 288; // one day
+        nTargetSpacing = 5 * 60;    //5 minutes
         nMaxTipAge = 24 * 60 * 60;
 
         /**
@@ -159,9 +159,9 @@ public:
         // hashGenesisBlock = genesis.GetHash();
         // assert(hashGenesisBlock == uint256("0x0000000020bc2c5ec220e3f660c5a9b59ff2f21ca054bcbe8c207eaa0292cce2"));
 
-        genesis.nTime    = 1506050827;
+        genesis.nTime    = 1506526756;
         genesis.nBits    = 0x1e0ffff0;
-        genesis.nNonce   = 17367;//-1163381203;
+        genesis.nNonce   = 30959;//-1163381203;
 
         // genesis.nTime=GetTime();
         // genesis.nNonce=0;
@@ -182,7 +182,7 @@ public:
         //    // printf("run%d",genesis.nNonce);
         // }
         hashGenesisBlock = genesis.GetHash();
-        assert(hashGenesisBlock == uint256("0x000000000029a36746cc135f8ef8ae452a79b7f5d18a25e6f1fcd59cb39bf9a3bd08b"));
+        assert(hashGenesisBlock == uint256("0x00000f658c70f43e0a9fa4c7badfc0295b4e5ee5738106246e0d82c88ee109b5"));
         assert(genesis.hashMerkleRoot == uint256("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
 
         /*vSeeds.push_back(CDNSSeedData("mlgbcoin.sipa.be", "seed.mlgbcoin.sipa.be"));
