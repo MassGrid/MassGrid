@@ -185,16 +185,16 @@ public:
         assert(hashGenesisBlock == uint256("0x00000f658c70f43e0a9fa4c7badfc0295b4e5ee5738106246e0d82c88ee109b5"));
         assert(genesis.hashMerkleRoot == uint256("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
 
-        /*vSeeds.push_back(CDNSSeedData("mlgbcoin.sipa.be", "seed.mlgbcoin.sipa.be"));
-        vSeeds.push_back(CDNSSeedData("bluematt.me", "dnsseed.bluematt.me"));
-        vSeeds.push_back(CDNSSeedData("dashjr.org", "dnsseed.mlgbcoin.dashjr.org"));
-        vSeeds.push_back(CDNSSeedData("mlgbcoinstats.com", "seed.mlgbcoinstats.com"));
-        vSeeds.push_back(CDNSSeedData("xf2.org", "bitseed.xf2.org"));
-*/
 	vFixedSeeds.clear();
 	vSeeds.clear();
 
-
+        vSeeds.push_back(CDNSSeedData("seed1.mlgbco.in", "seed1.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed2.mlgbco.in", "seed2.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed3.mlgbco.in", "seed3.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed4.mlgbco.in", "seed4.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed5.mlgbco.in", "seed5.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed6.mlgbco.in", "seed6.mlgbco.in"));
+        
         base58Prefixes[PUBKEY_ADDRESS] = list_of(50);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(38);
         base58Prefixes[SECRET_KEY] =     list_of(25);
