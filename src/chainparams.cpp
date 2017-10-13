@@ -159,9 +159,9 @@ public:
         // hashGenesisBlock = genesis.GetHash();
         // assert(hashGenesisBlock == uint256("0x0000000020bc2c5ec220e3f660c5a9b59ff2f21ca054bcbe8c207eaa0292cce2"));
 
-        genesis.nTime    = 1506526756;
+        genesis.nTime    = 1507869622;
         genesis.nBits    = 0x1e0ffff0;
-        genesis.nNonce   = 30959;//-1163381203;
+        genesis.nNonce   = 20305;//-1163381203;
 
         // genesis.nTime=GetTime();
         // genesis.nNonce=0;
@@ -182,7 +182,7 @@ public:
         //    // printf("run%d",genesis.nNonce);
         // }
         hashGenesisBlock = genesis.GetHash();
-        assert(hashGenesisBlock == uint256("0x00000f658c70f43e0a9fa4c7badfc0295b4e5ee5738106246e0d82c88ee109b5"));
+        assert(hashGenesisBlock == uint256("0x0000019ca01971f67c19b953674ddfc1ceb646c73cd2fc5d6c0e18a47e1e712a"));
         assert(genesis.hashMerkleRoot == uint256("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
 
 	vFixedSeeds.clear();
