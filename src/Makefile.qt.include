@@ -3,77 +3,8 @@ EXTRA_LIBRARIES += qt/libmlgbcoinqt.a
 
 # mlgbcoin qt core #
 QT_TS = \
-  qt/locale/mlgbcoin_ach.ts \
-  qt/locale/mlgbcoin_af_ZA.ts \
-  qt/locale/mlgbcoin_ar.ts \
-  qt/locale/mlgbcoin_be_BY.ts \
-  qt/locale/mlgbcoin_bg.ts \
-  qt/locale/mlgbcoin_bs.ts \
-  qt/locale/mlgbcoin_ca_ES.ts \
-  qt/locale/mlgbcoin_ca.ts \
-  qt/locale/mlgbcoin_ca@valencia.ts \
-  qt/locale/mlgbcoin_cmn.ts \
-  qt/locale/mlgbcoin_cs.ts \
-  qt/locale/mlgbcoin_cy.ts \
-  qt/locale/mlgbcoin_da.ts \
-  qt/locale/mlgbcoin_de.ts \
-  qt/locale/mlgbcoin_el_GR.ts \
   qt/locale/mlgbcoin_en.ts \
-  qt/locale/mlgbcoin_eo.ts \
-  qt/locale/mlgbcoin_es_CL.ts \
-  qt/locale/mlgbcoin_es_DO.ts \
-  qt/locale/mlgbcoin_es_MX.ts \
-  qt/locale/mlgbcoin_es.ts \
-  qt/locale/mlgbcoin_es_UY.ts \
-  qt/locale/mlgbcoin_et.ts \
-  qt/locale/mlgbcoin_eu_ES.ts \
-  qt/locale/mlgbcoin_fa_IR.ts \
-  qt/locale/mlgbcoin_fa.ts \
-  qt/locale/mlgbcoin_fi.ts \
-  qt/locale/mlgbcoin_fr_CA.ts \
-  qt/locale/mlgbcoin_fr.ts \
-  qt/locale/mlgbcoin_gl.ts \
-  qt/locale/mlgbcoin_gu_IN.ts \
-  qt/locale/mlgbcoin_he.ts \
-  qt/locale/mlgbcoin_hi_IN.ts \
-  qt/locale/mlgbcoin_hr.ts \
-  qt/locale/mlgbcoin_hu.ts \
-  qt/locale/mlgbcoin_id_ID.ts \
-  qt/locale/mlgbcoin_it.ts \
-  qt/locale/mlgbcoin_ja.ts \
-  qt/locale/mlgbcoin_ka.ts \
-  qt/locale/mlgbcoin_kk_KZ.ts \
-  qt/locale/mlgbcoin_ko_KR.ts \
-  qt/locale/mlgbcoin_ky.ts \
-  qt/locale/mlgbcoin_la.ts \
-  qt/locale/mlgbcoin_lt.ts \
-  qt/locale/mlgbcoin_lv_LV.ts \
-  qt/locale/mlgbcoin_mn.ts \
-  qt/locale/mlgbcoin_ms_MY.ts \
-  qt/locale/mlgbcoin_nb.ts \
-  qt/locale/mlgbcoin_nl.ts \
-  qt/locale/mlgbcoin_pam.ts \
-  qt/locale/mlgbcoin_pl.ts \
-  qt/locale/mlgbcoin_pt_BR.ts \
-  qt/locale/mlgbcoin_pt_PT.ts \
-  qt/locale/mlgbcoin_ro_RO.ts \
-  qt/locale/mlgbcoin_ru.ts \
-  qt/locale/mlgbcoin_sah.ts \
-  qt/locale/mlgbcoin_sk.ts \
-  qt/locale/mlgbcoin_sl_SI.ts \
-  qt/locale/mlgbcoin_sq.ts \
-  qt/locale/mlgbcoin_sr.ts \
-  qt/locale/mlgbcoin_sv.ts \
-  qt/locale/mlgbcoin_th_TH.ts \
-  qt/locale/mlgbcoin_tr.ts \
-  qt/locale/mlgbcoin_uk.ts \
-  qt/locale/mlgbcoin_ur_PK.ts \
-  qt/locale/mlgbcoin_uz@Cyrl.ts \
-  qt/locale/mlgbcoin_vi.ts \
-  qt/locale/mlgbcoin_vi_VN.ts \
-  qt/locale/mlgbcoin_zh_CN.ts \
-  qt/locale/mlgbcoin_zh_HK.ts \
-  qt/locale/mlgbcoin_zh_TW.ts
+  qt/locale/mlgbcoin_zh_CN.ts 
 
 QT_FORMS_UI = \
   qt/forms/addressbookpage.ui \

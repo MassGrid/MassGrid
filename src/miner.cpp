@@ -373,24 +373,13 @@ int64_t nHPSTimerStart = 0;
 // nonce is 0xffff0000 or above, the block is rebuilt and nNonce starts over at
 // zero.
 //
-bool static ScanHash(const CBlockHeader *pblock, uint32_t& nNonce, uint256 *phash)
+bool static ScanHash(CBlockHeader *pblock, uint32_t& nNonce, uint256 *phash)
 {
-    // Write the first 76 bytes of the block header to a double-SHA256 state.
-    CHash256 hasher;
-    CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
-    ss << *pblock;
-    assert(ss.size() == 80);
-    hasher.Write((unsigned char*)&ss[0], 76);
 
     while (true) {
-        nNonce++;
 
-        // Write the last 4 bytes of the block header (the nonce) to a copy of
-        // the double-SHA256 state, and compute the result.
-        CHash256(hasher).Write((unsigned char*)&nNonce, 4).Finalize((unsigned char*)phash);
-
-        // Return the nonce if the hash has at least some zero bits,
-        // caller will check if it has enough to reach the target
+       //pblock->nNonce=++nNonce;
+       *phash= pblock->ComputePowHash(++nNonce);
         if (((uint16_t*)phash)[15] == 0)
             return true;
 
@@ -494,6 +483,7 @@ void static MLGBcoinMiner(CWallet *pwallet)
             uint256 hash;
             uint32_t nNonce = 0;
             uint32_t nOldNonce = 0;
+
             while (true) {
                 bool fFound = ScanHash(pblock, nNonce, &hash);
                 uint32_t nHashesDone = nNonce - nOldNonce;
@@ -502,10 +492,14 @@ void static MLGBcoinMiner(CWallet *pwallet)
                 // Check if something found
                 if (fFound)
                 {
+                   // pblock->nNonce = nNonce;
+                    //LogPrintf("hash: %s\npblock->gethash: %s\n",hash.GetHex(),pblock->GetpowHash().GetHex());
+                    //LogPrintf("hashTarget: %s\n",hashTarget.GetHex());
                     if (hash <= hashTarget)
                     {
                         // Found a solution
                         pblock->nNonce = nNonce;
+                        LogPrintf("hash: %s\npblock->gethash: %s\n",hash.GetHex(),pblock->GetHash().GetHex());
                         assert(hash == pblock->GetHash());
 
                         SetThreadPriority(THREAD_PRIORITY_NORMAL);
