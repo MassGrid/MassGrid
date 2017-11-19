@@ -222,6 +222,20 @@ crypto_libmlgbcoin_crypto_a_SOURCES = \
   crypto/shavite.c \
   crypto/simd.c \
   crypto/skein.c \
+  crypto/w_blake.c \
+  crypto/w_bmw.c \
+  crypto/w_cubehash.c \
+  crypto/w_echo.c \
+  crypto/w_fugue.c \
+  crypto/w_groestl.c \
+  crypto/w_hamsi.c \
+  crypto/w_aes_helper.c \
+  crypto/w_jh.c \
+  crypto/w_keccak.c \
+  crypto/w_luffa.c \
+  crypto/w_shavite.c \
+  crypto/w_simd.c \
+  crypto/w_skein.c \
   crypto/hashpow.cpp \
   crypto/sha512.cpp \
   crypto/hmac_sha256.cpp \
@@ -246,7 +260,23 @@ crypto_libmlgbcoin_crypto_a_SOURCES = \
   crypto/shavite.h \
   crypto/simd.h \
   crypto/skein.h \
+  crypto/w_blake.h \
+  crypto/w_bmw.h \
+  crypto/w_cubehash.h \
+  crypto/w_echo.h \
+  crypto/w_fugue.h \
+  crypto/w_groestl.h \
+  crypto/w_hamsi.h \
+  crypto/w_hamsi_helper.h \
+  crypto/w_jh.h \
+  crypto/w_keccak.h \
+  crypto/w_luffa.h \
+  crypto/w_shavite.h \
+  crypto/w_simd.h \
+  crypto/w_skein.h \
   crypto/hashpow.h \
+  crypto/jumphash.h \
+  crypto/wutil.h \
   crypto/sha512.h \
   crypto/hmac_sha256.h \
   crypto/rfc6979_hmac_sha256.h \
@@ -405,7 +435,21 @@ libmlgbcoinconsensus_la_SOURCES = \
   crypto/luffa.c \
   crypto/shavite.c \
   crypto/simd.c \
-  crypto/skein.c \
+  crypto/skein.c \  
+  crypto/w_blake.c \
+  crypto/w_bmw.c \
+  crypto/w_cubehash.c \
+  crypto/w_echo.c \
+  crypto/w_fugue.c \
+  crypto/w_groestl.c \
+  crypto/w_hamsi.c \
+  crypto/w_jh.c \
+  crypto/w_keccak.c \
+  crypto/w_luffa.c \
+  crypto/w_shavite.c \
+  crypto/w_simd.c \
+  crypto/w_skein.c \
+  crypto/w_aes_helper.c \
   crypto/hashpow.cpp \
   crypto/sha512.cpp \
   crypto/ripemd160.cpp \
