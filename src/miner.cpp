@@ -471,7 +471,7 @@ void static MLGBcoinMiner(CWallet *pwallet)
             }
             CBlock *pblock = &pblocktemplate->block;
             if(pindexPrev->nHeight<14999)
-                pblock->SetVersion(4);
+                pblock->SetVersion(5);
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
             LogPrintf("Running MLGBcoinMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
