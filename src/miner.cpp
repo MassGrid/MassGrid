@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "miner.h"
-
+#include <boost/random.hpp>
 #include "amount.h"
 #include "primitives/block.h"
 #include "primitives/transaction.h"
@@ -471,7 +471,7 @@ void static MLGBcoinMiner(CWallet *pwallet)
             }
             CBlock *pblock = &pblocktemplate->block;
             if(pindexPrev->nHeight<14999)
-                pblock->SetVersion(5);
+                pblock->nVersion=4;
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
             LogPrintf("Running MLGBcoinMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
@@ -500,6 +500,18 @@ void static MLGBcoinMiner(CWallet *pwallet)
                     if (hash <= hashTarget)
                     {
                         // Found a solution
+                        int hheight=pindexPrev->nHeight+1;
+                        if(hheight>=15000&&hheight<=18000)
+                        {
+                            double y=-10*hheight+180000;
+                            double y2max=-30*hheight+540000;
+                            boost::mt19937 gen(time(0));                                     
+                            boost::uniform_int<>dist(0,y2max);
+                            boost::variate_generator<boost::mt19937&,boost::uniform_int<> >die(gen,dist);
+                            double y2=die();
+                            LogPrintf("wait: %f random_max: %f y2:%f sum:%f\n",y,y2max,y2,y+y2);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(y+y2)); 
+                        }
                         pblock->nNonce = nNonce;
                         LogPrintf("hash: %s\npblock->gethash: %s\n",hash.GetHex(),pblock->GetHash().GetHex());
                         assert(hash == pblock->GetHash());
