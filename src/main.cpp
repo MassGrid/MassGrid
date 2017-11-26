@@ -2615,7 +2615,6 @@ bool AcceptBlockHeader(const CBlockHeader& block, CValidationState& state, CBloc
         pindex = miSelf->second;
         if (ppindex)
             *ppindex = pindex;
-        LogPrintf("nStatus %d,mask %d \n",pindex->nStatus,BLOCK_FAILED_MASK);
         if (pindex->nStatus & BLOCK_FAILED_MASK)
             return state.Invalid(error("%s : block is marked invalid", __func__), 0, "duplicate");
         return true;
