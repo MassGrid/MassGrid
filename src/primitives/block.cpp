@@ -18,7 +18,7 @@ boost::mutex _l;
  uint256 CBlockHeader::ComputePowHash(uint32_t Nonce)const
  {
     boost::mutex::scoped_lock lock(_l);
-    CSHA256 sha256hasher;
+    CSHA256 sha256hasher,sha256hasher2;
     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
     ss << *this;
     assert(ss.size() == 80);
@@ -48,8 +48,7 @@ boost::mutex _l;
         ((uint32_t *)output0)[15]=Nonce;
         Hex2Str(output0,sDest,64);
         jump[id](output0,output1);
-        sha256hasher.Reset();
-        sha256hasher.Write(output1, 64).Finalize((uint8_t*)&powHash);
+        sha256hasher2.Write(output1, 64).Finalize((uint8_t*)&powHash);
         return powHash;
     }else{return ~(uint256)0;}
 
