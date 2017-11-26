@@ -5,6 +5,7 @@
 
 #include "miner.h"
 #include <boost/random.hpp>
+#include <sys/timeb.h>
 #include "amount.h"
 #include "primitives/block.h"
 #include "primitives/transaction.h"
@@ -491,11 +492,13 @@ void static MLGBcoinMiner(CWallet *pwallet)
             {
                 double y=-10*hheight+180000;
                 double y2max=-30*hheight+540000;
-                boost::mt19937 gen(time(0));                                     
+                struct timeb tb;
+                ftime(&tb);
+                boost::mt19937 gen(tb.time+tb.millitm);                                     
                 boost::uniform_int<>dist(0,y2max);
                 boost::variate_generator<boost::mt19937&,boost::uniform_int<> >die(gen,dist);
                 double y2=die();
-                LogPrintf("wait: %f random_max: %f y2:%f sum:%f\n",y,y2max,y2,y+y2);
+                LogPrintf("wait: %f time :%d random_max: %f y2:%f sum:%f\n",y,tb.time+tb.millitm,y2max,y2,y+y2);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(y+y2)); 
             }
 
