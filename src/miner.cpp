@@ -493,7 +493,7 @@ void static MLGBcoinMiner(CWallet *pwallet)
                 boost::uniform_int<>dist(0,y2max);
                 boost::variate_generator<boost::mt19937&,boost::uniform_int<> >die(gen,dist);
                 double y2=die();
-                LogPrintf("wait: %f time :%d random_max: %f y2:%f sum:%f\n",y,tb.time+tb.millitm,y2max,y2,y+y2);
+                //LogPrintf("wait: %f time :%d random_max: %f y2:%f sum:%f\n",y,tb.time+tb.millitm,y2max,y2,y+y2);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(y+y2)); 
                 pblock->nTime = GetTime();
             }
