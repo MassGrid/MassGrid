@@ -24,23 +24,23 @@ boost::mutex _l;
     assert(ss.size() == 80);
     if(this->nVersion<=4){  
         uint256 base,output,output2;
-        sha256hasher.Write((unsigned char*)&ss[0], 76);
-        CSHA256(sha256hasher).Write((unsigned char*)&Nonce, 4).Finalize((unsigned char*)&base);
+        sha256hasher.Write((uint8_t*)&ss[0], 76);
+        CSHA256(sha256hasher).Write((uint8_t*)&Nonce, 4).Finalize((uint8_t*)&base);
 
         hashPow* hashp=hashPow::getinstance();
         int id1=(((uint16_t *)&base)[0])%hashp->getcount();
         int id2=(((uint16_t *)&base)[1])%hashp->getcount();
-        hashp->compute(id1,(unsigned char *)&base,(unsigned char *)&output);
-        hashp->compute(id2,(unsigned char *)&output,(unsigned char *)&output2);
+        hashp->compute(id1,(uint8_t*)&base,(uint8_t*)&output);
+        hashp->compute(id2,(uint8_t*)&output,(uint8_t*)&output2);
         CScrypt256 hasher;
         uint256 powHash;
-        CScrypt256(hasher).Write((unsigned char*)&output2, sizeof(output2)).Finalize((unsigned char*)&powHash);
+        CScrypt256(hasher).Write((uint8_t*)&output2, sizeof(output2)).Finalize((uint8_t*)&powHash);
     return powHash;
     }else if(this->nVersion==5){
         uint256 base,powHash;
         uint8_t output0[64],output1[64];
         sha256hasher.Write((uint8_t*)&ss[0], 76).Finalize((uint8_t*)&base);
-        int id=(((uint16_t *)&base)[0])%13;
+        int id=(((uint16_t *)&this->hashPrevBlock)[0])%13;
         uint8_t sDest[500];
         Hex2Str((uint8_t*)&base,output0,32);
         Hex2Str(output0,sDest,64);

@@ -481,11 +481,6 @@ void static MLGBcoinMiner(CWallet *pwallet)
             //
             // Search
             //
-            int64_t nStart = GetTime();
-            uint256 hashTarget = uint256().SetCompact(pblock->nBits);
-            uint256 hash;
-            uint32_t nNonce = 0;
-            uint32_t nOldNonce = 0;
 
             int hheight=pindexPrev->nHeight+1;
             if(hheight>=15000&&hheight<=18000)
@@ -500,8 +495,14 @@ void static MLGBcoinMiner(CWallet *pwallet)
                 double y2=die();
                 LogPrintf("wait: %f time :%d random_max: %f y2:%f sum:%f\n",y,tb.time+tb.millitm,y2max,y2,y+y2);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(y+y2)); 
+                pblock->nTime = GetTime();
             }
 
+            int64_t nStart = GetTime();
+            uint256 hashTarget = uint256().SetCompact(pblock->nBits);
+            uint256 hash;
+            uint32_t nNonce = 0;
+            uint32_t nOldNonce = 0;
             while (true) {
                 bool fFound = ScanHash(pblock, nNonce, &hash);
                 uint32_t nHashesDone = nNonce - nOldNonce;
