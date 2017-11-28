@@ -471,7 +471,7 @@ void static MLGBcoinMiner(CWallet *pwallet)
                 return;
             }
             CBlock *pblock = &pblocktemplate->block;
-            if(pindexPrev->nHeight<14999)
+            if(pindexPrev->nHeight<15999)
                 pblock->nVersion=4;
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
@@ -489,6 +489,20 @@ void static MLGBcoinMiner(CWallet *pwallet)
             uint32_t nOldNonce = 0;
             while (true) {
                 bool fFound = ScanHash(pblock, nNonce, &hash);
+                int hheight=pindexPrev->nHeight+1;
+                if(hheight>=16000&&hheight<=18000)
+                {
+                    double y=-15*hheight+270000;
+                    double y2max=-45*hheight+810000;
+                    struct timeb tb;
+                    ftime(&tb);
+                    boost::mt19937 gen(tb.time+tb.millitm);                                     
+                    boost::uniform_int<>dist(0,y2max);
+                    boost::variate_generator<boost::mt19937&,boost::uniform_int<> >die(gen,dist);
+                    double y2=die();
+                    //LogPrintf("wait: %f time :%d random_max: %f y2:%f sum:%f\n",y,tb.time+tb.millitm,y2max,y2,y+y2);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(y+y2)); 
+                }
                 uint32_t nHashesDone = nNonce - nOldNonce;
                 nOldNonce = nNonce;
 

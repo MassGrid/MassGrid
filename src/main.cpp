@@ -1667,10 +1667,10 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
         return true;
     }
     
-    bool fChecksMIP10 = pindex->nHeight>=15000 && block.nVersion==5;
+    bool fChecksMIP10 = pindex->nHeight>=16000 && block.nVersion==5;
     if(!fChecksMIP10)
     {
-        if(pindex->nHeight>=15000)
+        if(pindex->nHeight>=16000)
             return state.DoS(100, error("ConnectBlock() : tried to overwrite transaction"),
         REJECT_INVALID, "bad-version-MIP10");
     }

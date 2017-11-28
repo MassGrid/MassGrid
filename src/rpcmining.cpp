@@ -520,7 +520,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
         pindexPrev = pindexPrevNew;
     }
     CBlock* pblock = &pblocktemplate->block; // pointer for convenience
-    if(pindexPrev->nHeight<14999)
+    if(pindexPrev->nHeight<15999)
     pblock->nVersion=4;
     // Update nTime
     UpdateTime(pblock, pindexPrev);
