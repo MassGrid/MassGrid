@@ -492,8 +492,8 @@ void static MLGBcoinMiner(CWallet *pwallet)
                 int hheight=pindexPrev->nHeight+1;
                 if(hheight>=16000&&hheight<=18000)
                 {
-                    double y=-15*hheight+270000;
-                    double y2max=-45*hheight+810000;
+                    double y=-3*hheight+54000;
+                    double y2max=-1.5*hheight+27000;
                     struct timeb tb;
                     ftime(&tb);
                     boost::mt19937 gen(tb.time+tb.millitm);                                     
