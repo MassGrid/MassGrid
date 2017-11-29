@@ -5,15 +5,15 @@ import getpass
 
 # ===== BEGIN USER SETTINGS =====
 # if you do not set these you will be prompted for a password for every command
-rpcuser = ""
-rpcpass = ""
+rpcuser = "mlgbcoinrpc"
+rpcpass = "Bd9vfnbYZWSbYX8qGZkfcb1uqVBsb6NuSM3mdpBkfJWK"
 # ====== END USER SETTINGS ======
 
 
 if rpcpass == "":
-    access = ServiceProxy("http://127.0.0.1:9442")
+    access = ServiceProxy("http://127.0.0.1:17705")
 else:
-    access = ServiceProxy("http://"+rpcuser+":"+rpcpass+"@127.0.0.1:9442")
+    access = ServiceProxy("http://"+rpcuser+":"+rpcpass+"@127.0.0.1:17705")
 cmd = sys.argv[1].lower()
 
 if cmd == "backupwallet":

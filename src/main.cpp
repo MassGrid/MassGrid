@@ -1666,7 +1666,14 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
         view.SetBestBlock(pindex->GetBlockHash());
         return true;
     }
-
+    
+    bool fChecksMIP10 = pindex->nHeight>=16000 && block.nVersion==5;
+    if(!fChecksMIP10)
+    {
+        if(pindex->nHeight>=16000)
+            return state.DoS(100, error("ConnectBlock() : tried to overwrite transaction"),
+        REJECT_INVALID, "bad-version-MIP10");
+    }
     bool fScriptChecks = pindex->nHeight >= Checkpoints::GetTotalBlocksEstimate();
 
     // Do not allow blocks that contain transactions which 'overwrite' older transactions,

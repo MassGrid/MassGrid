@@ -6,6 +6,7 @@
 #include "primitives/block.h"
 
 #include "crypto/hashpow.h"
+#include "crypto/jumphash.h"
 #include "hash.h"
 #include "tinyformat.h"
 #include "utilstrencodings.h"
@@ -17,33 +18,37 @@ boost::mutex _l;
  uint256 CBlockHeader::ComputePowHash(uint32_t Nonce)const
  {
     boost::mutex::scoped_lock lock(_l);
-    uint256 base,output,output2;
-    CSHA256 sha256hasher;
+    CSHA256 sha256hasher,sha256hasher2;
     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
     ss << *this;
     assert(ss.size() == 80);
-    sha256hasher.Write((unsigned char*)&ss[0], 76);
-    CSHA256(sha256hasher).Write((unsigned char*)&Nonce, 4).Finalize((unsigned char*)&base);
+    if(this->nVersion<=4){  
+        uint256 base,output,output2;
+        sha256hasher.Write((uint8_t*)&ss[0], 76);
+        CSHA256(sha256hasher).Write((uint8_t*)&Nonce, 4).Finalize((uint8_t*)&base);
 
-    hashPow* hashp=hashPow::getinstance();
-    int id1=(((uint16_t *)&base)[0])%hashp->getcount();
-    int id2=(((uint16_t *)&base)[1])%hashp->getcount();
-    //printf("Nonce: %d\n",Nonce);
-    //printf("id1: %d\n",id1);
-    //printf("id2: %d\n\n",id2);
-   //LogPrintf("base1: %s\n",base.GetHex());
-    //base+=Nonce;
-    //LogPrintf("base2: %s\n",base.GetHex());
-    hashp->compute(id1,(unsigned char *)&base,(unsigned char *)&output);
-    //LogPrintf("output1: %s\n",output.GetHex());
-    hashp->compute(id2,(unsigned char *)&output,(unsigned char *)&output2);
-    //LogPrintf("output2: %s\n",output2.GetHex());
-    CScrypt256 hasher;
-    uint256 powHash;
-    //unsigned char * s=(unsigned char*)&output2;
-   // LogPrintf("%d\n",sizeof(output));
-    CScrypt256(hasher).Write((unsigned char*)&output2, sizeof(output2)).Finalize((unsigned char*)&powHash);
+        hashPow* hashp=hashPow::getinstance();
+        int id1=(((uint16_t *)&base)[0])%hashp->getcount();
+        int id2=(((uint16_t *)&base)[1])%hashp->getcount();
+        hashp->compute(id1,(uint8_t*)&base,(uint8_t*)&output);
+        hashp->compute(id2,(uint8_t*)&output,(uint8_t*)&output2);
+        CScrypt256 hasher;
+        uint256 powHash;
+        CScrypt256(hasher).Write((uint8_t*)&output2, sizeof(output2)).Finalize((uint8_t*)&powHash);
     return powHash;
+    }else if(this->nVersion==5){
+        uint256 base,powHash;
+        uint8_t output0[64],output1[64];
+        sha256hasher.Write((uint8_t*)&ss[0], 76).Finalize((uint8_t*)&base);
+        int id=(((uint16_t *)&this->hashPrevBlock)[0])%13;
+        Hex2Str((uint8_t*)&base,output0,32);
+        ((uint32_t *)output0)[14]^=((uint32_t *)output0)[15];
+        ((uint32_t *)output0)[15]=Nonce;
+        jump[id](output0,output1);
+        sha256hasher2.Write(output1, 64).Finalize((uint8_t*)&powHash);
+        return powHash;
+    }else{return ~(uint256)0;}
+
 }
 uint256 CBlockHeader::GetHash() const
 {
