@@ -1,0 +1,22 @@
+[Unit]
+Description=MassGrid's distributed currency daemon
+After=network.target
+
+[Service]
+User=massgrid
+Group=massgrid
+
+Type=forking
+PIDFile=/var/lib/massgridd/massgridd.pid
+ExecStart=/usr/bin/massgridd -daemon -pid=/var/lib/massgridd/massgridd.pid \
+-conf=/etc/massgrid/massgrid.conf -datadir=/var/lib/massgridd -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

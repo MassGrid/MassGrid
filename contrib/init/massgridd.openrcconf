@@ -1,0 +1,27 @@
+# /etc/conf.d/massgridd: config file for /etc/init.d/massgridd
+
+# Config file location
+#MASSGRIDD_CONFIGFILE="/etc/massgrid/massgrid.conf"
+
+# What directory to write pidfile to?  (created and owned by $MASSGRIDD_USER)
+#MASSGRIDD_PIDDIR="/var/run/massgridd"
+
+# What filename to give the pidfile
+#MASSGRIDD_PIDFILE="${MASSGRIDD_PIDDIR}/massgridd.pid"
+
+# Where to write massgridd data (be mindful that the blockchain is large)
+#MASSGRIDD_DATADIR="/var/lib/massgridd"
+
+# User and group to own massgridd process
+#MASSGRIDD_USER="massgrid"
+#MASSGRIDD_GROUP="massgrid"
+
+# Path to massgridd executable
+#MASSGRIDD_BIN="/usr/bin/massgridd"
+
+# Nice value to run massgridd under
+#MASSGRIDD_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+MASSGRIDD_OPTS="-disablewallet"
+

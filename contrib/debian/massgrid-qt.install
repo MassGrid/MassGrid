@@ -1,0 +1,6 @@
+usr/local/bin/massgrid-qt usr/bin
+share/pixmaps/massgrid32.xpm usr/share/pixmaps
+share/pixmaps/massgrid16.xpm usr/share/pixmaps
+share/pixmaps/massgrid128.png usr/share/pixmaps
+debian/massgrid-qt.desktop usr/share/applications
+debian/massgrid-qt.protocol usr/share/kde4/services/

@@ -1,0 +1,86 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/massgrid/.massgrid" ]; then
+	MASSGRIDD_DEFAULT_DATADIR="/var/lib/massgrid/.massgrid"
+else
+	MASSGRIDD_DEFAULT_DATADIR="/var/lib/massgridd"
+fi
+
+MASSGRIDD_CONFIGFILE=${MASSGRIDD_CONFIGFILE:-/etc/massgrid/massgrid.conf}
+MASSGRIDD_PIDDIR=${MASSGRIDD_PIDDIR:-/var/run/massgridd}
+MASSGRIDD_PIDFILE=${MASSGRIDD_PIDFILE:-${MASSGRIDD_PIDDIR}/massgridd.pid}
+MASSGRIDD_DATADIR=${MASSGRIDD_DATADIR:-${MASSGRIDD_DEFAULT_DATADIR}}
+MASSGRIDD_USER=${MASSGRIDD_USER:-massgrid}
+MASSGRIDD_GROUP=${MASSGRIDD_GROUP:-massgrid}
+MASSGRIDD_BIN=${MASSGRIDD_BIN:-/usr/bin/massgridd}
+
+name="MassGrid Core Daemon"
+description="MassGrid crypto-currency p2p network daemon"
+
+command="/usr/bin/massgridd"
+command_args="-pid=\"${MASSGRIDD_PIDFILE}\" \
+		-conf=\"${MASSGRIDD_CONFIGFILE}\" \
+		-datadir=\"${MASSGRIDD_DATADIR}\" \
+		-daemon \
+		${MASSGRIDD_OPTS}"
+
+required_files="${MASSGRIDD_CONFIGFILE}"
+start_stop_daemon_args="-u ${MASSGRIDD_USER} \
+			-N ${MASSGRIDD_NICE:-0} -w 2000"
+pidfile="${MASSGRIDD_PIDFILE}"
+retry=60
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${MASSGRIDD_USER}:${MASSGRIDD_GROUP}" \
+	"${MASSGRIDD_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${MASSGRIDD_USER}:${MASSGRIDD_GROUP}" \
+	"${MASSGRIDD_PIDDIR}"
+
+	checkpath -f \
+	-o ${MASSGRIDD_USER}:${MASSGRIDD_GROUP} \
+	-m 0660 \
+	${MASSGRIDD_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${MASSGRIDD_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run massgridd."
+		eerror "The setting must appear in ${MASSGRIDD_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"MassGrid Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}
