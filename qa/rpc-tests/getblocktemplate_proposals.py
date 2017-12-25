@@ -3,8 +3,8 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-from test_framework import MLGBcoinTestFramework
-from mlgbcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from test_framework import MassGridTestFramework
+from massgridrpc.authproxy import AuthServiceProxy, JSONRPCException
 from util import *
 
 from binascii import a2b_hex, b2a_hex
@@ -88,7 +88,7 @@ def assert_template(node, tmpl, txlist, expect):
     if rsp != expect:
         raise AssertionError('unexpected: %s' % (rsp,))
 
-class GetBlockTemplateProposalTest(MLGBcoinTestFramework):
+class GetBlockTemplateProposalTest(MassGridTestFramework):
     '''
     Test block proposals with getblocktemplate.
     '''

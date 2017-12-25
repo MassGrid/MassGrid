@@ -55,9 +55,9 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 sub.involvesWatchAddress = mine == ISMINE_WATCH_ONLY;
                 if (ExtractDestination(txout.scriptPubKey, address) && IsMine(*wallet, address))
                 {
-                    // Received by MLGBcoin Address
+                    // Received by MassGrid Address
                     sub.type = TransactionRecord::RecvWithAddress;
-                    sub.address = CMLGBcoinAddress(address).ToString();
+                    sub.address = CMassGridAddress(address).ToString();
                 }
                 else
                 {
@@ -127,9 +127,9 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 CTxDestination address;
                 if (ExtractDestination(txout.scriptPubKey, address))
                 {
-                    // Sent to MLGBcoin Address
+                    // Sent to MassGrid Address
                     sub.type = TransactionRecord::SendToAddress;
-                    sub.address = CMLGBcoinAddress(address).ToString();
+                    sub.address = CMassGridAddress(address).ToString();
                 }
                 else
                 {

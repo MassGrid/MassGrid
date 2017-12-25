@@ -5,10 +5,10 @@
 
 # Exercise the wallet keypool, and interaction with wallet encryption/locking
 
-# Add python-mlgbcoinrpc to module search path:
+# Add python-massgridrpc to module search path:
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "python-mlgbcoinrpc"))
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "python-massgridrpc"))
 
 import json
 import shutil
@@ -16,7 +16,7 @@ import subprocess
 import tempfile
 import traceback
 
-from mlgbcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from massgridrpc.authproxy import AuthServiceProxy, JSONRPCException
 from util import *
 
 
@@ -44,7 +44,7 @@ def check_array_result(object_array, to_match, expected):
 def run_test(nodes, tmpdir):
     # Encrypt wallet and wait to terminate
     nodes[0].encryptwallet('test')
-    mlgbcoind_processes[0].wait()
+    massgridd_processes[0].wait()
     # Restart node 0
     nodes[0] = start_node(0, tmpdir)
     # Keep creating keys
@@ -81,9 +81,9 @@ def main():
 
     parser = optparse.OptionParser(usage="%prog [options]")
     parser.add_option("--nocleanup", dest="nocleanup", default=False, action="store_true",
-                      help="Leave mlgbcoinds and test.* datadir on exit or error")
+                      help="Leave massgridds and test.* datadir on exit or error")
     parser.add_option("--srcdir", dest="srcdir", default="../../src",
-                      help="Source directory containing mlgbcoind/mlgbcoin-cli (default: %default%)")
+                      help="Source directory containing massgridd/massgrid-cli (default: %default%)")
     parser.add_option("--tmpdir", dest="tmpdir", default=tempfile.mkdtemp(prefix="test"),
                       help="Root directory for datadirs")
     (options, args) = parser.parse_args()
@@ -118,7 +118,7 @@ def main():
     if not options.nocleanup:
         print("Cleaning up")
         stop_nodes(nodes)
-        wait_mlgbcoinds()
+        wait_massgridds()
         shutil.rmtree(options.tmpdir)
 
     if success:

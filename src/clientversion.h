@@ -2,18 +2,18 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_CLIENTVERSION_H
-#define MLGBCOIN_CLIENTVERSION_H
+#ifndef MASSGRID_CLIENTVERSION_H
+#define MASSGRID_CLIENTVERSION_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/mlgbcoin-config.h"
+#include "config/massgrid-config.h"
 #else
 
 /**
  * client versioning and copyright year
  */
 
-//! These need to be macros, as clientversion.cpp's and mlgbcoin*-res.rc's voodoo requires it
+//! These need to be macros, as clientversion.cpp's and massgrid*-res.rc's voodoo requires it
 #define CLIENT_VERSION_MAJOR 0
 #define CLIENT_VERSION_MINOR 10
 #define CLIENT_VERSION_REVISION 4
@@ -38,10 +38,10 @@
 #define DO_STRINGIZE(X) #X
 
 //! Copyright string used in Windows .rc files
-#define COPYRIGHT_STR "2009-" STRINGIZE(COPYRIGHT_YEAR) " The MLGBcoin Core Developers"
+#define COPYRIGHT_STR "2009-" STRINGIZE(COPYRIGHT_YEAR) " The MassGrid Core Developers"
 
 /**
- * mlgbcoind-res.rc includes this file, but it cannot cope with real c++ code.
+ * massgridd-res.rc includes this file, but it cannot cope with real c++ code.
  * WINDRES_PREPROC is defined to indicate that its pre-processor is running.
  * Anything other than a define should be guarded below.
  */
@@ -67,4 +67,4 @@ std::string FormatSubVersion(const std::string& name, int nClientVersion, const 
 
 #endif // WINDRES_PREPROC
 
-#endif // MLGBCOIN_CLIENTVERSION_H
+#endif // MASSGRID_CLIENTVERSION_H

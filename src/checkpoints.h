@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_CHECKPOINTS_H
-#define MLGBCOIN_CHECKPOINTS_H
+#ifndef MASSGRID_CHECKPOINTS_H
+#define MASSGRID_CHECKPOINTS_H
 
 #include "uint256.h"
 
@@ -41,4 +41,4 @@ extern bool fEnabled;
 
 } //namespace Checkpoints
 
-#endif // MLGBCOIN_CHECKPOINTS_H
+#endif // MASSGRID_CHECKPOINTS_H

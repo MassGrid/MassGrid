@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_CRYPTER_H
-#define MLGBCOIN_CRYPTER_H
+#ifndef MASSGRID_CRYPTER_H
+#define MASSGRID_CRYPTER_H
 
 #include "allocators.h"
 #include "keystore.h"
@@ -196,4 +196,4 @@ public:
     boost::signals2::signal<void (CCryptoKeyStore* wallet)> NotifyStatusChanged;
 };
 
-#endif // MLGBCOIN_CRYPTER_H
+#endif // MASSGRID_CRYPTER_H

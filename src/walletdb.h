@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_WALLETDB_H
-#define MLGBCOIN_WALLETDB_H
+#ifndef MASSGRID_WALLETDB_H
+#define MASSGRID_WALLETDB_H
 
 #include "amount.h"
 #include "db.h"
@@ -139,4 +139,4 @@ private:
 
 bool BackupWallet(const CWallet& wallet, const std::string& strDest);
 
-#endif // MLGBCOIN_WALLETDB_H
+#endif // MASSGRID_WALLETDB_H

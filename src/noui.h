@@ -2,9 +2,9 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_NOUI_H
-#define MLGBCOIN_NOUI_H
+#ifndef MASSGRID_NOUI_H
+#define MASSGRID_NOUI_H
 
 extern void noui_connect();
 
-#endif // MLGBCOIN_NOUI_H
+#endif // MASSGRID_NOUI_H

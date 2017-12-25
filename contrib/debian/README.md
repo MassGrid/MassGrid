@@ -1,21 +1,21 @@
 
 Debian
 ====================
-This directory contains files used to package mlgbcoind/mlgbcoin-qt
-for Debian-based Linux systems. If you compile mlgbcoind/mlgbcoin-qt yourself, there are some useful files here.
+This directory contains files used to package massgridd/massgrid-qt
+for Debian-based Linux systems. If you compile massgridd/massgrid-qt yourself, there are some useful files here.
 
-## mlgbcoin: URI support ##
+## massgrid: URI support ##
 
 
-mlgbcoin-qt.desktop  (Gnome / Open Desktop)
+massgrid-qt.desktop  (Gnome / Open Desktop)
 To install:
 
-	sudo desktop-file-install mlgbcoin-qt.desktop
+	sudo desktop-file-install massgrid-qt.desktop
 	sudo update-desktop-database
 
 If you build yourself, you will either need to modify the paths in
-the .desktop file or copy or symlink your mlgbcoin-qt binary to `/usr/bin`
-and the `../../share/pixmaps/mlgbcoin128.png` to `/usr/share/pixmaps`
+the .desktop file or copy or symlink your massgrid-qt binary to `/usr/bin`
+and the `../../share/pixmaps/massgrid128.png` to `/usr/share/pixmaps`
 
-mlgbcoin-qt.protocol (KDE)
+massgrid-qt.protocol (KDE)
 

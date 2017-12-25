@@ -1,7 +1,7 @@
 Description
 ------------
 
-This directory contains data-driven tests for various aspects of MLGBcoin.
+This directory contains data-driven tests for various aspects of MassGrid.
 
 License
 --------

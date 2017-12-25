@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_CLIENTMODEL_H
-#define MLGBCOIN_QT_CLIENTMODEL_H
+#ifndef MASSGRID_QT_CLIENTMODEL_H
+#define MASSGRID_QT_CLIENTMODEL_H
 
 #include <QObject>
 
@@ -33,7 +33,7 @@ enum NumConnections {
     CONNECTIONS_ALL  = (CONNECTIONS_IN | CONNECTIONS_OUT),
 };
 
-/** Model for MLGBcoin network client. */
+/** Model for MassGrid network client. */
 class ClientModel : public QObject
 {
     Q_OBJECT
@@ -102,4 +102,4 @@ public slots:
     void updateAlert(const QString &hash, int status);
 };
 
-#endif // MLGBCOIN_QT_CLIENTMODEL_H
+#endif // MASSGRID_QT_CLIENTMODEL_H

@@ -203,13 +203,13 @@ int CBase58Data::CompareTo(const CBase58Data& b58) const
 
 namespace
 {
-class CMLGBcoinAddressVisitor : public boost::static_visitor<bool>
+class CMassGridAddressVisitor : public boost::static_visitor<bool>
 {
 private:
-    CMLGBcoinAddress* addr;
+    CMassGridAddress* addr;
 
 public:
-    CMLGBcoinAddressVisitor(CMLGBcoinAddress* addrIn) : addr(addrIn) {}
+    CMassGridAddressVisitor(CMassGridAddress* addrIn) : addr(addrIn) {}
 
     bool operator()(const CKeyID& id) const { return addr->Set(id); }
     bool operator()(const CScriptID& id) const { return addr->Set(id); }
@@ -218,29 +218,29 @@ public:
 
 } // anon namespace
 
-bool CMLGBcoinAddress::Set(const CKeyID& id)
+bool CMassGridAddress::Set(const CKeyID& id)
 {
     SetData(Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS), &id, 20);
     return true;
 }
 
-bool CMLGBcoinAddress::Set(const CScriptID& id)
+bool CMassGridAddress::Set(const CScriptID& id)
 {
     SetData(Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS), &id, 20);
     return true;
 }
 
-bool CMLGBcoinAddress::Set(const CTxDestination& dest)
+bool CMassGridAddress::Set(const CTxDestination& dest)
 {
-    return boost::apply_visitor(CMLGBcoinAddressVisitor(this), dest);
+    return boost::apply_visitor(CMassGridAddressVisitor(this), dest);
 }
 
-bool CMLGBcoinAddress::IsValid() const
+bool CMassGridAddress::IsValid() const
 {
     return IsValid(Params());
 }
 
-bool CMLGBcoinAddress::IsValid(const CChainParams& params) const
+bool CMassGridAddress::IsValid(const CChainParams& params) const
 {
     bool fCorrectSize = vchData.size() == 20;
     bool fKnownVersion = vchVersion == params.Base58Prefix(CChainParams::PUBKEY_ADDRESS) ||
@@ -248,7 +248,7 @@ bool CMLGBcoinAddress::IsValid(const CChainParams& params) const
     return fCorrectSize && fKnownVersion;
 }
 
-CTxDestination CMLGBcoinAddress::Get() const
+CTxDestination CMassGridAddress::Get() const
 {
     if (!IsValid())
         return CNoDestination();
@@ -262,7 +262,7 @@ CTxDestination CMLGBcoinAddress::Get() const
         return CNoDestination();
 }
 
-bool CMLGBcoinAddress::GetKeyID(CKeyID& keyID) const
+bool CMassGridAddress::GetKeyID(CKeyID& keyID) const
 {
     if (!IsValid() || vchVersion != Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS))
         return false;
@@ -272,12 +272,12 @@ bool CMLGBcoinAddress::GetKeyID(CKeyID& keyID) const
     return true;
 }
 
-bool CMLGBcoinAddress::IsScript() const
+bool CMassGridAddress::IsScript() const
 {
     return IsValid() && vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS);
 }
 
-void CMLGBcoinSecret::SetKey(const CKey& vchSecret)
+void CMassGridSecret::SetKey(const CKey& vchSecret)
 {
     assert(vchSecret.IsValid());
     SetData(Params().Base58Prefix(CChainParams::SECRET_KEY), vchSecret.begin(), vchSecret.size());
@@ -285,7 +285,7 @@ void CMLGBcoinSecret::SetKey(const CKey& vchSecret)
         vchData.push_back(1);
 }
 
-CKey CMLGBcoinSecret::GetKey()
+CKey CMassGridSecret::GetKey()
 {
     CKey ret;
     assert(vchData.size() >= 32);
@@ -293,19 +293,19 @@ CKey CMLGBcoinSecret::GetKey()
     return ret;
 }
 
-bool CMLGBcoinSecret::IsValid() const
+bool CMassGridSecret::IsValid() const
 {
     bool fExpectedFormat = vchData.size() == 32 || (vchData.size() == 33 && vchData[32] == 1);
     bool fCorrectVersion = vchVersion == Params().Base58Prefix(CChainParams::SECRET_KEY);
     return fExpectedFormat && fCorrectVersion;
 }
 
-bool CMLGBcoinSecret::SetString(const char* pszSecret)
+bool CMassGridSecret::SetString(const char* pszSecret)
 {
     return CBase58Data::SetString(pszSecret) && IsValid();
 }
 
-bool CMLGBcoinSecret::SetString(const std::string& strSecret)
+bool CMassGridSecret::SetString(const std::string& strSecret)
 {
     return SetString(strSecret.c_str());
 }

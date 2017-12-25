@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_CRYPTO_SHA256_H
-#define MLGBCOIN_CRYPTO_SHA256_H
+#ifndef MASSGRID_CRYPTO_SHA256_H
+#define MASSGRID_CRYPTO_SHA256_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -25,4 +25,4 @@ public:
     CSHA256& Reset();
 };
 
-#endif // MLGBCOIN_CRYPTO_SHA256_H
+#endif // MASSGRID_CRYPTO_SHA256_H

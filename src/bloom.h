@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_BLOOM_H
-#define MLGBCOIN_BLOOM_H
+#ifndef MASSGRID_BLOOM_H
+#define MASSGRID_BLOOM_H
 
 #include "serialize.h"
 
@@ -97,4 +97,4 @@ public:
     void UpdateEmptyFull();
 };
 
-#endif // MLGBCOIN_BLOOM_H
+#endif // MASSGRID_BLOOM_H

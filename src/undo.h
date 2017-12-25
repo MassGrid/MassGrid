@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_UNDO_H
-#define MLGBCOIN_UNDO_H
+#ifndef MASSGRID_UNDO_H
+#define MASSGRID_UNDO_H
 
 #include "compressor.h" 
 #include "primitives/transaction.h"
@@ -68,4 +68,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_UNDO_H
+#endif // MASSGRID_UNDO_H

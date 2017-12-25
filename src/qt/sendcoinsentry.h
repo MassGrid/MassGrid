@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_SENDCOINSENTRY_H
-#define MLGBCOIN_QT_SENDCOINSENTRY_H
+#ifndef MASSGRID_QT_SENDCOINSENTRY_H
+#define MASSGRID_QT_SENDCOINSENTRY_H
 
 #include "walletmodel.h"
 
@@ -16,7 +16,7 @@ namespace Ui {
 }
 
 /**
- * A single entry in the dialog for sending mlgbcoins.
+ * A single entry in the dialog for sending massgrids.
  * Stacked widget, with different UIs for payment requests
  * with a strong payee identity.
  */
@@ -67,4 +67,4 @@ private:
     bool updateLabel(const QString &address);
 };
 
-#endif // MLGBCOIN_QT_SENDCOINSENTRY_H
+#endif // MASSGRID_QT_SENDCOINSENTRY_H

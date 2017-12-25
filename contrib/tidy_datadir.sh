@@ -4,7 +4,7 @@ if [ -d "$1" ]; then
   cd "$1"
 else
   echo "Usage: $0 <datadir>" >&2
-  echo "Removes obsolete MLGBcoin database files" >&2
+  echo "Removes obsolete MassGrid database files" >&2
   exit 1
 fi
 
@@ -16,22 +16,22 @@ if [ -f wallet.dat -a -f peers.dat -a -f chainstate/CURRENT -a -f blocks/index/C
 
 case $LEVEL in
   0)
-    echo "Error: no MLGBcoin datadir detected."
+    echo "Error: no MassGrid datadir detected."
     exit 1
     ;;
   1)
-    echo "Detected old MLGBcoin datadir (before 0.7)."
+    echo "Detected old MassGrid datadir (before 0.7)."
     echo "Nothing to do."
     exit 0
     ;;
   2)
-    echo "Detected MLGBcoin 0.7 datadir."
+    echo "Detected MassGrid 0.7 datadir."
     ;;
   3)
-    echo "Detected MLGBcoin pre-0.8 datadir."
+    echo "Detected MassGrid pre-0.8 datadir."
     ;;
   4)
-    echo "Detected MLGBcoin 0.8 datadir."
+    echo "Detected MassGrid 0.8 datadir."
     ;;
 esac
 

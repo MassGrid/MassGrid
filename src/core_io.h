@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_CORE_IO_H
-#define MLGBCOIN_CORE_IO_H
+#ifndef MASSGRID_CORE_IO_H
+#define MASSGRID_CORE_IO_H
 
 #include <string>
 #include <vector>
@@ -29,4 +29,4 @@ extern void ScriptPubKeyToUniv(const CScript& scriptPubKey,
                         UniValue& out, bool fIncludeHex);
 extern void TxToUniv(const CTransaction& tx, const uint256& hashBlock, UniValue& entry);
 
-#endif // MLGBCOIN_CORE_IO_H
+#endif // MASSGRID_CORE_IO_H

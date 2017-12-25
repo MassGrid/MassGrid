@@ -5,8 +5,8 @@
 
 # Exercise the listtransactions API
 
-from test_framework import MLGBcoinTestFramework
-from mlgbcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from test_framework import MassGridTestFramework
+from massgridrpc.authproxy import AuthServiceProxy, JSONRPCException
 from util import *
 
 
@@ -31,7 +31,7 @@ def check_array_result(object_array, to_match, expected):
     if num_matched == 0:
         raise AssertionError("No objects matched %s"%(str(to_match)))
 
-class ListTransactionsTest(MLGBcoinTestFramework):
+class ListTransactionsTest(MassGridTestFramework):
 
     def run_test(self):
         # Simple send, 0 to 1:

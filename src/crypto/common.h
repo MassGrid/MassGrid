@@ -2,11 +2,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_CRYPTO_COMMON_H
-#define MLGBCOIN_CRYPTO_COMMON_H
+#ifndef MASSGRID_CRYPTO_COMMON_H
+#define MASSGRID_CRYPTO_COMMON_H
 
 #if defined(HAVE_CONFIG_H)
-#include "mlgbcoin-config.h"
+#include "massgrid-config.h"
 #endif
 
 #include <stdint.h>
@@ -117,4 +117,4 @@ void static inline WriteBE64(unsigned char* ptr, uint64_t x)
 #endif
 }
 
-#endif // MLGBCOIN_CRYPTO_COMMON_H
+#endif // MASSGRID_CRYPTO_COMMON_H

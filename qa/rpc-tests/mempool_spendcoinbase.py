@@ -13,14 +13,14 @@
 # but less mature coinbase spends are NOT.
 #
 
-from test_framework import MLGBcoinTestFramework
-from mlgbcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from test_framework import MassGridTestFramework
+from massgridrpc.authproxy import AuthServiceProxy, JSONRPCException
 from util import *
 import os
 import shutil
 
 # Create one-input, one-output, no-fee transaction:
-class MempoolSpendCoinbaseTest(MLGBcoinTestFramework):
+class MempoolSpendCoinbaseTest(MassGridTestFramework):
 
     def setup_network(self):
         # Just need one node for this test

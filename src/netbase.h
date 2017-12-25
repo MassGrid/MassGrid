@@ -2,11 +2,11 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_NETBASE_H
-#define MLGBCOIN_NETBASE_H
+#ifndef MASSGRID_NETBASE_H
+#define MASSGRID_NETBASE_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/mlgbcoin-config.h"
+#include "config/massgrid-config.h"
 #endif
 
 #include "compat.h"
@@ -193,4 +193,4 @@ bool CloseSocket(SOCKET& hSocket);
 /** Disable or enable blocking-mode for a socket */
 bool SetSocketNonBlocking(SOCKET& hSocket, bool fNonBlocking);
 
-#endif // MLGBCOIN_NETBASE_H
+#endif // MASSGRID_NETBASE_H

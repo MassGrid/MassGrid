@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_AMOUNT_H
-#define MLGBCOIN_AMOUNT_H
+#ifndef MASSGRID_AMOUNT_H
+#define MASSGRID_AMOUNT_H
 
 #include "serialize.h"
 
@@ -51,4 +51,4 @@ public:
     }
 };
 
-#endif //  MLGBCOIN_AMOUNT_H
+#endif //  MASSGRID_AMOUNT_H

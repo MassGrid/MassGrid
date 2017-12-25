@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_LIMITEDMAP_H
-#define MLGBCOIN_LIMITEDMAP_H
+#ifndef MASSGRID_LIMITEDMAP_H
+#define MASSGRID_LIMITEDMAP_H
 
 #include <assert.h>
 #include <map>
@@ -91,4 +91,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_LIMITEDMAP_H
+#endif // MASSGRID_LIMITEDMAP_H

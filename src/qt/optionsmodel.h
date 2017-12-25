@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_OPTIONSMODEL_H
-#define MLGBCOIN_QT_OPTIONSMODEL_H
+#ifndef MASSGRID_QT_OPTIONSMODEL_H
+#define MASSGRID_QT_OPTIONSMODEL_H
 
 #include "amount.h"
 
@@ -13,7 +13,7 @@ QT_BEGIN_NAMESPACE
 class QNetworkProxy;
 QT_END_NAMESPACE
 
-/** Interface from Qt to configuration data structure for MLGBcoin client.
+/** Interface from Qt to configuration data structure for MassGrid client.
    To Qt, the options are presented as a list with the different options
    laid out vertically.
    This can be changed to a tree once the settings become sufficiently
@@ -34,7 +34,7 @@ public:
         ProxyUse,               // bool
         ProxyIP,                // QString
         ProxyPort,              // int
-        DisplayUnit,            // MLGBcoinUnits::Unit
+        DisplayUnit,            // MassGridUnits::Unit
         ThirdPartyTxUrls,       // QString
         Language,               // QString
         CoinControlFeatures,    // bool
@@ -86,4 +86,4 @@ signals:
     void coinControlFeaturesChanged(bool);
 };
 
-#endif // MLGBCOIN_QT_OPTIONSMODEL_H
+#endif // MASSGRID_QT_OPTIONSMODEL_H

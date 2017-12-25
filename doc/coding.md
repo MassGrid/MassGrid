@@ -133,6 +133,6 @@ Threads
 
 - ThreadRPCServer : Remote procedure call handler, listens on port 9442 for connections and services them.
 
-- MLGBcoinMiner : Generates mlgbcoins (if wallet is enabled).
+- MassGridMiner : Generates massgrids (if wallet is enabled).
 
 - Shutdown : Does an orderly shutdown of everything.

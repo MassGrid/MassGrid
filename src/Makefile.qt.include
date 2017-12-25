@@ -1,10 +1,10 @@
-bin_PROGRAMS += qt/mlgbcoin-qt
-EXTRA_LIBRARIES += qt/libmlgbcoinqt.a
+bin_PROGRAMS += qt/massgrid-qt
+EXTRA_LIBRARIES += qt/libmassgridqt.a
 
-# mlgbcoin qt core #
+# massgrid qt core #
 QT_TS = \
-  qt/locale/mlgbcoin_en.ts \
-  qt/locale/mlgbcoin_zh_CN.ts 
+  qt/locale/massgrid_en.ts \
+  qt/locale/massgrid_zh_CN.ts 
 
 QT_FORMS_UI = \
   qt/forms/addressbookpage.ui \
@@ -28,10 +28,10 @@ QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
   qt/moc_addresstablemodel.cpp \
   qt/moc_askpassphrasedialog.cpp \
-  qt/moc_mlgbcoinaddressvalidator.cpp \
-  qt/moc_mlgbcoinamountfield.cpp \
-  qt/moc_mlgbcoingui.cpp \
-  qt/moc_mlgbcoinunits.cpp \
+  qt/moc_massgridaddressvalidator.cpp \
+  qt/moc_massgridamountfield.cpp \
+  qt/moc_massgridgui.cpp \
+  qt/moc_massgridunits.cpp \
   qt/moc_clientmodel.cpp \
   qt/moc_coincontroldialog.cpp \
   qt/moc_coincontroltreewidget.cpp \
@@ -69,34 +69,34 @@ QT_MOC_CPP = \
   qt/moc_walletmodel.cpp \
   qt/moc_walletview.cpp
 
-MLGBCOIN_MM = \
+MASSGRID_MM = \
   qt/macdockiconhandler.mm \
   qt/macnotificationhandler.mm
 
 QT_MOC = \
-  qt/mlgbcoin.moc \
-  qt/mlgbcoinamountfield.moc \
+  qt/massgrid.moc \
+  qt/massgridamountfield.moc \
   qt/intro.moc \
   qt/overviewpage.moc \
   qt/rpcconsole.moc
 
-QT_QRC_CPP = qt/qrc_mlgbcoin.cpp
-QT_QRC = qt/mlgbcoin.qrc
-QT_QRC_LOCALE_CPP = qt/qrc_mlgbcoin_locale.cpp
-QT_QRC_LOCALE = qt/mlgbcoin_locale.qrc
+QT_QRC_CPP = qt/qrc_massgrid.cpp
+QT_QRC = qt/massgrid.qrc
+QT_QRC_LOCALE_CPP = qt/qrc_massgrid_locale.cpp
+QT_QRC_LOCALE = qt/massgrid_locale.qrc
 
 PROTOBUF_CC = qt/paymentrequest.pb.cc
 PROTOBUF_H = qt/paymentrequest.pb.h
 PROTOBUF_PROTO = qt/paymentrequest.proto
 
-MLGBCOIN_QT_H = \
+MASSGRID_QT_H = \
   qt/addressbookpage.h \
   qt/addresstablemodel.h \
   qt/askpassphrasedialog.h \
-  qt/mlgbcoinaddressvalidator.h \
-  qt/mlgbcoinamountfield.h \
-  qt/mlgbcoingui.h \
-  qt/mlgbcoinunits.h \
+  qt/massgridaddressvalidator.h \
+  qt/massgridamountfield.h \
+  qt/massgridgui.h \
+  qt/massgridunits.h \
   qt/clientmodel.h \
   qt/coincontroldialog.h \
   qt/coincontroltreewidget.h \
@@ -143,10 +143,10 @@ MLGBCOIN_QT_H = \
 RES_ICONS = \
   qt/res/icons/add.png \
   qt/res/icons/address-book.png \
-  qt/res/icons/mlgbcoin.ico \
-  qt/res/icons/mlgbcoin.png \
-  qt/res/icons/mlgbcoin_testnet.ico \
-  qt/res/icons/mlgbcoin_testnet.png \
+  qt/res/icons/massgrid.ico \
+  qt/res/icons/massgrid.png \
+  qt/res/icons/massgrid_testnet.ico \
+  qt/res/icons/massgrid_testnet.png \
   qt/res/icons/clock1.png \
   qt/res/icons/clock2.png \
   qt/res/icons/clock3.png \
@@ -185,15 +185,15 @@ RES_ICONS = \
   qt/res/icons/tx_input.png \
   qt/res/icons/tx_output.png \
   qt/res/icons/tx_mined.png \
-  qt/res/icons/unit_MLGB.png \
-  qt/res/icons/unit_mMLGB.png \
-  qt/res/icons/unit_uMLGB.png
+  qt/res/icons/unit_MGC.png \
+  qt/res/icons/unit_mMGC.png \
+  qt/res/icons/unit_uMGC.png
 
-MLGBCOIN_QT_CPP = \
-  qt/mlgbcoinaddressvalidator.cpp \
-  qt/mlgbcoinamountfield.cpp \
-  qt/mlgbcoingui.cpp \
-  qt/mlgbcoinunits.cpp \
+MASSGRID_QT_CPP = \
+  qt/massgridaddressvalidator.cpp \
+  qt/massgridamountfield.cpp \
+  qt/massgridgui.cpp \
+  qt/massgridunits.cpp \
   qt/clientmodel.cpp \
   qt/csvmodelwriter.cpp \
   qt/guiutil.cpp \
@@ -212,7 +212,7 @@ MLGBCOIN_QT_CPP = \
   qt/winshutdownmonitor.cpp
 
 if ENABLE_WALLET
-MLGBCOIN_QT_CPP += \
+MASSGRID_QT_CPP += \
   qt/addressbookpage.cpp \
   qt/addresstablemodel.cpp \
   qt/askpassphrasedialog.cpp \
@@ -248,18 +248,18 @@ RES_IMAGES = \
 
 RES_MOVIES = $(wildcard qt/res/movies/spinner-*.png)
 
-MLGBCOIN_RC = qt/res/mlgbcoin-qt-res.rc
+MASSGRID_RC = qt/res/massgrid-qt-res.rc
 
-MLGBCOIN_QT_INCLUDES = -I$(builddir)/qt -I$(srcdir)/qt -I$(srcdir)/qt/forms \
+MASSGRID_QT_INCLUDES = -I$(builddir)/qt -I$(srcdir)/qt -I$(srcdir)/qt/forms \
   -I$(builddir)/qt/forms
 
-qt_libmlgbcoinqt_a_CPPFLAGS = $(MLGBCOIN_INCLUDES) $(MLGBCOIN_QT_INCLUDES) \
+qt_libmassgridqt_a_CPPFLAGS = $(MASSGRID_INCLUDES) $(MASSGRID_QT_INCLUDES) \
   $(QT_INCLUDES) $(QT_DBUS_INCLUDES) $(PROTOBUF_CFLAGS) $(QR_CFLAGS)
 
-qt_libmlgbcoinqt_a_SOURCES = $(MLGBCOIN_QT_CPP) $(MLGBCOIN_QT_H) $(QT_FORMS_UI) \
+qt_libmassgridqt_a_SOURCES = $(MASSGRID_QT_CPP) $(MASSGRID_QT_H) $(QT_FORMS_UI) \
   $(QT_QRC) $(QT_QRC_LOCALE) $(QT_TS) $(PROTOBUF_PROTO) $(RES_ICONS) $(RES_IMAGES) $(RES_MOVIES)
 
-nodist_qt_libmlgbcoinqt_a_SOURCES = $(QT_MOC_CPP) $(QT_MOC) $(PROTOBUF_CC) \
+nodist_qt_libmassgridqt_a_SOURCES = $(QT_MOC_CPP) $(QT_MOC) $(PROTOBUF_CC) \
   $(PROTOBUF_H) $(QT_QRC_CPP) $(QT_QRC_LOCALE_CPP)
 
 # forms/foo.h -> forms/ui_foo.h
@@ -268,65 +268,65 @@ QT_FORMS_H=$(join $(dir $(QT_FORMS_UI)),$(addprefix ui_, $(notdir $(QT_FORMS_UI:
 # Most files will depend on the forms and moc files as includes. Generate them
 # before anything else.
 $(QT_MOC): $(QT_FORMS_H)
-$(qt_libmlgbcoinqt_a_OBJECTS) $(qt_mlgbcoin_qt_OBJECTS) : | $(QT_MOC)
+$(qt_libmassgridqt_a_OBJECTS) $(qt_massgrid_qt_OBJECTS) : | $(QT_MOC)
 
 #Generating these with a half-written protobuf header leads to wacky results.
 #This makes sure it's done.
 $(QT_MOC): $(PROTOBUF_H)
 $(QT_MOC_CPP): $(PROTOBUF_H)
 
-# mlgbcoin-qt binary #
-qt_mlgbcoin_qt_CPPFLAGS = $(MLGBCOIN_INCLUDES) $(MLGBCOIN_QT_INCLUDES) \
+# massgrid-qt binary #
+qt_massgrid_qt_CPPFLAGS = $(MASSGRID_INCLUDES) $(MASSGRID_QT_INCLUDES) \
   $(QT_INCLUDES) $(PROTOBUF_CFLAGS) $(QR_CFLAGS)
 
-qt_mlgbcoin_qt_SOURCES = qt/mlgbcoin.cpp
+qt_massgrid_qt_SOURCES = qt/massgrid.cpp
 if TARGET_DARWIN
-  qt_mlgbcoin_qt_SOURCES += $(MLGBCOIN_MM)
+  qt_massgrid_qt_SOURCES += $(MASSGRID_MM)
 endif
 if TARGET_WINDOWS
-  qt_mlgbcoin_qt_SOURCES += $(MLGBCOIN_RC)
+  qt_massgrid_qt_SOURCES += $(MASSGRID_RC)
 endif
-qt_mlgbcoin_qt_LDADD = qt/libmlgbcoinqt.a $(LIBMLGBCOIN_SERVER)
+qt_massgrid_qt_LDADD = qt/libmassgridqt.a $(LIBMASSGRID_SERVER)
 if ENABLE_WALLET
-qt_mlgbcoin_qt_LDADD += $(LIBMLGBCOIN_WALLET)
+qt_massgrid_qt_LDADD += $(LIBMASSGRID_WALLET)
 endif
-qt_mlgbcoin_qt_LDADD += $(LIBMLGBCOIN_CLI) $(LIBMLGBCOIN_COMMON) $(LIBMLGBCOIN_UTIL) $(LIBMLGBCOIN_CRYPTO) $(LIBMLGBCOIN_UNIVALUE) $(LIBLEVELDB) $(LIBMEMENV) \
+qt_massgrid_qt_LDADD += $(LIBMASSGRID_CLI) $(LIBMASSGRID_COMMON) $(LIBMASSGRID_UTIL) $(LIBMASSGRID_CRYPTO) $(LIBMASSGRID_UNIVALUE) $(LIBLEVELDB) $(LIBMEMENV) \
   $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1)
-qt_mlgbcoin_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
-qt_mlgbcoin_qt_LIBTOOLFLAGS = --tag CXX
+qt_massgrid_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+qt_massgrid_qt_LIBTOOLFLAGS = --tag CXX
 
 #locale/foo.ts -> locale/foo.qm
 QT_QM=$(QT_TS:.ts=.qm)
 
 .SECONDARY: $(QT_QM)
 
-qt/mlgbcoinstrings.cpp: $(libmlgbcoin_server_a_SOURCES) $(libmlgbcoin_wallet_a_SOURCES)
+qt/massgridstrings.cpp: $(libmassgrid_server_a_SOURCES) $(libmassgrid_wallet_a_SOURCES)
 	@test -n $(XGETTEXT) || echo "xgettext is required for updating translations"
 	$(AM_V_GEN) cd $(srcdir); XGETTEXT=$(XGETTEXT) ../share/qt/extract_strings_qt.py $^
 
-translate: qt/mlgbcoinstrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(MLGBCOIN_QT_CPP) $(MLGBCOIN_QT_H) $(MLGBCOIN_MM)
+translate: qt/massgridstrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(MASSGRID_QT_CPP) $(MASSGRID_QT_H) $(MASSGRID_MM)
 	@test -n $(LUPDATE) || echo "lupdate is required for updating translations"
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LUPDATE) $^ -locations relative -no-obsolete -ts qt/locale/mlgbcoin_en.ts
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LUPDATE) $^ -locations relative -no-obsolete -ts qt/locale/massgrid_en.ts
 
 $(QT_QRC_LOCALE_CPP): $(QT_QRC_LOCALE) $(QT_QM)
 	@test -f $(RCC)
 	@test -f $(@D)/$(<F) || cp -f $< $(@D)
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name mlgbcoin_locale $(@D)/$(<F) | \
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name massgrid_locale $(@D)/$(<F) | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 
 $(QT_QRC_CPP): $(QT_QRC) $(QT_FORMS_H) $(RES_ICONS) $(RES_IMAGES) $(RES_MOVIES) $(PROTOBUF_H)
 	@test -f $(RCC)
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name mlgbcoin $< | \
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name massgrid $< | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 
-CLEAN_QT = $(nodist_qt_libmlgbcoinqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno
+CLEAN_QT = $(nodist_qt_libmassgridqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno
 
 CLEANFILES += $(CLEAN_QT)
 
-mlgbcoin_qt_clean: FORCE
-	rm -f $(CLEAN_QT) $(qt_libmlgbcoinqt_a_OBJECTS) $(qt_mlgbcoin_qt_OBJECTS) qt/mlgbcoin-qt$(EXEEXT) $(LIBMLGBCOINQT)
+massgrid_qt_clean: FORCE
+	rm -f $(CLEAN_QT) $(qt_libmassgridqt_a_OBJECTS) $(qt_massgrid_qt_OBJECTS) qt/massgrid-qt$(EXEEXT) $(LIBMASSGRIDQT)
 
-mlgbcoin_qt : qt/mlgbcoin-qt$(EXEEXT)
+massgrid_qt : qt/massgrid-qt$(EXEEXT)
 
 ui_%.h: %.ui
 	@test -f $(UIC)

@@ -1,13 +1,13 @@
 # Notes
 The sources in this directory are unit test cases.  Boost includes a
-unit testing framework, and since mlgbcoin already uses boost, it makes
+unit testing framework, and since massgrid already uses boost, it makes
 sense to simply use this framework rather than require developers to
 configure some other framework (we want as few impediments to creating
 unit tests as possible).
 
-The build system is setup to compile an executable called "test_mlgbcoin"
+The build system is setup to compile an executable called "test_massgrid"
 that runs all of the unit tests.  The main source file is called
-test_mlgbcoin.cpp, which simply includes other files that contain the
+test_massgrid.cpp, which simply includes other files that contain the
 actual unit tests (outside of a couple required preprocessor
 directives).  The pattern is to create one test file for each class or
 source file for which you want to create unit tests.  The file naming

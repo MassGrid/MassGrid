@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_PUBKEY_H
-#define MLGBCOIN_PUBKEY_H
+#ifndef MASSGRID_PUBKEY_H
+#define MASSGRID_PUBKEY_H
 
 #include "hash.h"
 #include "serialize.h"
@@ -203,4 +203,4 @@ struct CExtPubKey {
     bool Derive(CExtPubKey& out, unsigned int nChild) const;
 };
 
-#endif // MLGBCOIN_PUBKEY_H
+#endif // MASSGRID_PUBKEY_H

@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_LEVELDBWRAPPER_H
-#define MLGBCOIN_LEVELDBWRAPPER_H
+#ifndef MASSGRID_LEVELDBWRAPPER_H
+#define MASSGRID_LEVELDBWRAPPER_H
 
 #include "clientversion.h"
 #include "serialize.h"
@@ -170,4 +170,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_LEVELDBWRAPPER_H
+#endif // MASSGRID_LEVELDBWRAPPER_H

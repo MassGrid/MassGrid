@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_ALERT_H
-#define MLGBCOIN_ALERT_H
+#ifndef MASSGRID_ALERT_H
+#define MASSGRID_ALERT_H
 
 #include "serialize.h"
 #include "sync.h"
@@ -110,4 +110,4 @@ public:
     static CAlert getAlertByHash(const uint256 &hash);
 };
 
-#endif // MLGBCOIN_ALERT_H
+#endif // MASSGRID_ALERT_H

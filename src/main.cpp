@@ -31,7 +31,7 @@ using namespace boost;
 using namespace std;
 
 #if defined(NDEBUG)
-# error "MLGBcoin cannot be compiled without assertions."
+# error "MassGrid cannot be compiled without assertions."
 #endif
 
 /**
@@ -73,7 +73,7 @@ static void CheckBlockIndex();
 /** Constant stuff for coinbase transactions we create: */
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "MLGBcoin Signed Message:\n";
+const string strMessageMagic = "MassGrid Signed Message:\n";
 
 // Internal stuff
 namespace {
@@ -1639,7 +1639,7 @@ bool FindUndoPos(CValidationState &state, int nFile, CDiskBlockPos &pos, unsigne
 static CCheckQueue<CScriptCheck> scriptcheckqueue(128);
 
 void ThreadScriptCheck() {
-    RenameThread("mlgbcoin-scriptch");
+    RenameThread("massgrid-scriptch");
     scriptcheckqueue.Thread();
 }
 

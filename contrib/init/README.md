@@ -1,9 +1,9 @@
 Sample configuration files for:
 
-SystemD: mlgbcoind.service
-Upstart: mlgbcoind.conf
-OpenRC:  mlgbcoind.openrc
-         mlgbcoind.openrcconf
+SystemD: massgridd.service
+Upstart: massgridd.conf
+OpenRC:  massgridd.openrc
+         massgridd.openrcconf
 
 have been made available to assist packagers in creating node packages here.
 

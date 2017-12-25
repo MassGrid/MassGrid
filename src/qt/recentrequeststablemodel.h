@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_RECENTREQUESTSTABLEMODEL_H
-#define MLGBCOIN_QT_RECENTREQUESTSTABLEMODEL_H
+#ifndef MASSGRID_QT_RECENTREQUESTSTABLEMODEL_H
+#define MASSGRID_QT_RECENTREQUESTSTABLEMODEL_H
 
 #include "walletmodel.h"
 
@@ -53,7 +53,7 @@ private:
     Qt::SortOrder order;
 };
 
-/** Model for list of recently generated payment requests / mlgbcoin: URIs.
+/** Model for list of recently generated payment requests / massgrid: URIs.
  * Part of wallet model.
  */
 class RecentRequestsTableModel: public QAbstractTableModel
@@ -105,4 +105,4 @@ private:
     QString getAmountTitle();
 };
 
-#endif // MLGBCOIN_QT_RECENTREQUESTSTABLEMODEL_H
+#endif // MASSGRID_QT_RECENTREQUESTSTABLEMODEL_H

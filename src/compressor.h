@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_COMPRESSOR_H
-#define MLGBCOIN_COMPRESSOR_H
+#ifndef MASSGRID_COMPRESSOR_H
+#define MASSGRID_COMPRESSOR_H
 
 #include "primitives/transaction.h"
 #include "script/script.h"
@@ -120,4 +120,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_COMPRESSOR_H
+#endif // MASSGRID_COMPRESSOR_H

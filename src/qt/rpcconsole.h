@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_RPCCONSOLE_H
-#define MLGBCOIN_QT_RPCCONSOLE_H
+#ifndef MASSGRID_QT_RPCCONSOLE_H
+#define MASSGRID_QT_RPCCONSOLE_H
 
 #include "guiutil.h"
 #include "peertablemodel.h"
@@ -22,7 +22,7 @@ QT_BEGIN_NAMESPACE
 class QItemSelection;
 QT_END_NAMESPACE
 
-/** Local MLGBcoin RPC console. */
+/** Local MassGrid RPC console. */
 class RPCConsole: public QDialog
 {
     Q_OBJECT
@@ -100,4 +100,4 @@ private:
     NodeId cachedNodeid;
 };
 
-#endif // MLGBCOIN_QT_RPCCONSOLE_H
+#endif // MASSGRID_QT_RPCCONSOLE_H

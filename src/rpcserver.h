@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_RPCSERVER_H
-#define MLGBCOIN_RPCSERVER_H
+#ifndef MASSGRID_RPCSERVER_H
+#define MASSGRID_RPCSERVER_H
 
 #include "amount.h"
 #include "rpcprotocol.h"
@@ -93,7 +93,7 @@ public:
 };
 
 /**
- * MLGBcoin RPC command dispatcher.
+ * MassGrid RPC command dispatcher.
  */
 class CRPCTable
 {
@@ -231,4 +231,4 @@ extern bool HTTPReq_REST(AcceptedConnection *conn,
                   std::map<std::string, std::string>& mapHeaders,
                   bool fRun);
 
-#endif // MLGBCOIN_RPCSERVER_H
+#endif // MASSGRID_RPCSERVER_H

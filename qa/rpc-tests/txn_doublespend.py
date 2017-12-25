@@ -7,14 +7,14 @@
 # Test proper accounting with malleable transactions
 #
 
-from test_framework import MLGBcoinTestFramework
-from mlgbcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from test_framework import MassGridTestFramework
+from massgridrpc.authproxy import AuthServiceProxy, JSONRPCException
 from decimal import Decimal
 from util import *
 import os
 import shutil
 
-class TxnMallTest(MLGBcoinTestFramework):
+class TxnMallTest(MassGridTestFramework):
 
     def add_options(self, parser):
         parser.add_option("--mineblock", dest="mine_block", default=False, action="store_true",
@@ -25,7 +25,7 @@ class TxnMallTest(MLGBcoinTestFramework):
         return super(TxnMallTest, self).setup_network(True)
 
     def run_test(self):
-        # All nodes should start with 1,250 MLGB:
+        # All nodes should start with 1,250 MGC:
         starting_balance = 1250
         for i in range(4):
             assert_equal(self.nodes[i].getbalance(), starting_balance)
@@ -39,7 +39,7 @@ class TxnMallTest(MLGBcoinTestFramework):
         # Coins are sent to node1_address
         node1_address = self.nodes[1].getnewaddress("from0")
 
-        # First: use raw transaction API to send 1210 MLGB to node1_address,
+        # First: use raw transaction API to send 1210 MGC to node1_address,
         # but don't broadcast:
         (total_in, inputs) = gather_inputs(self.nodes[0], 1210)
         change_address = self.nodes[0].getnewaddress("foo")
@@ -64,7 +64,7 @@ class TxnMallTest(MLGBcoinTestFramework):
         tx1 = self.nodes[0].gettransaction(txid1)
         tx2 = self.nodes[0].gettransaction(txid2)
 
-        # Node0's balance should be starting balance, plus 50MLGB for another
+        # Node0's balance should be starting balance, plus 50MGC for another
         # matured block, minus 1210, minus 20, and minus transaction fees:
         expected = starting_balance
         if self.options.mine_block: expected += 50
@@ -103,7 +103,7 @@ class TxnMallTest(MLGBcoinTestFramework):
         assert_equal(tx1["confirmations"], -1)
         assert_equal(tx2["confirmations"], -1)
 
-        # Node0's total balance should be starting balance, plus 100MLGB for 
+        # Node0's total balance should be starting balance, plus 100MGC for 
         # two more matured blocks, minus 1210 for the double-spend:
         expected = starting_balance + 100 - 1210
         assert_equal(self.nodes[0].getbalance(), expected)

@@ -17,19 +17,19 @@ $(LIBLEVELDB) $(LIBMEMENV):
           OPT="$(CXXFLAGS) $(CPPFLAGS)"
 endif
 
-MLGBCOIN_CONFIG_INCLUDES=-I$(builddir)/config
-MLGBCOIN_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
+MASSGRID_CONFIG_INCLUDES=-I$(builddir)/config
+MASSGRID_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
 
-MLGBCOIN_INCLUDES += -I$(srcdir)/secp256k1/include
+MASSGRID_INCLUDES += -I$(srcdir)/secp256k1/include
 
-LIBMLGBCOIN_SERVER=libmlgbcoin_server.a
-LIBMLGBCOIN_WALLET=libmlgbcoin_wallet.a
-LIBMLGBCOIN_COMMON=libmlgbcoin_common.a
-LIBMLGBCOIN_CLI=libmlgbcoin_cli.a
-LIBMLGBCOIN_UTIL=libmlgbcoin_util.a
-LIBMLGBCOIN_CRYPTO=crypto/libmlgbcoin_crypto.a
-LIBMLGBCOIN_UNIVALUE=univalue/libmlgbcoin_univalue.a
-LIBMLGBCOINQT=qt/libmlgbcoinqt.a
+LIBMASSGRID_SERVER=libmassgrid_server.a
+LIBMASSGRID_WALLET=libmassgrid_wallet.a
+LIBMASSGRID_COMMON=libmassgrid_common.a
+LIBMASSGRID_CLI=libmassgrid_cli.a
+LIBMASSGRID_UTIL=libmassgrid_util.a
+LIBMASSGRID_CRYPTO=crypto/libmassgrid_crypto.a
+LIBMASSGRID_UNIVALUE=univalue/libmassgrid_univalue.a
+LIBMASSGRIDQT=qt/libmassgridqt.a
 LIBSECP256K1=secp256k1/libsecp256k1.la
 
 $(LIBSECP256K1): $(wildcard secp256k1/src/*) $(wildcard secp256k1/include/*)
@@ -38,38 +38,38 @@ $(LIBSECP256K1): $(wildcard secp256k1/src/*) $(wildcard secp256k1/include/*)
 # Make is not made aware of per-object dependencies to avoid limiting building parallelization
 # But to build the less dependent modules first, we manually select their order here:
 EXTRA_LIBRARIES = \
-  crypto/libmlgbcoin_crypto.a \
-  libmlgbcoin_util.a \
-  libmlgbcoin_common.a \
-  univalue/libmlgbcoin_univalue.a \
-  libmlgbcoin_server.a \
-  libmlgbcoin_cli.a
+  crypto/libmassgrid_crypto.a \
+  libmassgrid_util.a \
+  libmassgrid_common.a \
+  univalue/libmassgrid_univalue.a \
+  libmassgrid_server.a \
+  libmassgrid_cli.a
 if ENABLE_WALLET
-MLGBCOIN_INCLUDES += $(BDB_CPPFLAGS)
-EXTRA_LIBRARIES += libmlgbcoin_wallet.a
+MASSGRID_INCLUDES += $(BDB_CPPFLAGS)
+EXTRA_LIBRARIES += libmassgrid_wallet.a
 endif
 
-if BUILD_MLGBCOIN_LIBS
-lib_LTLIBRARIES = libmlgbcoinconsensus.la
-LIBMLGBCOIN_CONSENSUS=libmlgbcoinconsensus.la
+if BUILD_MASSGRID_LIBS
+lib_LTLIBRARIES = libmassgridconsensus.la
+LIBMASSGRID_CONSENSUS=libmassgridconsensus.la
 else
-LIBMLGBCOIN_CONSENSUS=
+LIBMASSGRID_CONSENSUS=
 endif
 
 bin_PROGRAMS =
 TESTS =
 
-if BUILD_MLGBCOIND
-  bin_PROGRAMS += mlgbcoind
+if BUILD_MASSGRIDD
+  bin_PROGRAMS += massgridd
 endif
 
-if BUILD_MLGBCOIN_UTILS
-  bin_PROGRAMS += mlgbcoin-cli mlgbcoin-tx
+if BUILD_MASSGRID_UTILS
+  bin_PROGRAMS += massgrid-cli massgrid-tx
 endif
 
 .PHONY: FORCE
-# mlgbcoin core #
-MLGBCOIN_CORE_H = \
+# massgrid core #
+MASSGRID_CORE_H = \
   addrman.h \
   alert.h \
   allocators.h \
@@ -156,11 +156,11 @@ obj/build.h: FORCE
 	@$(MKDIR_P) $(builddir)/obj
 	@$(top_srcdir)/share/genbuild.sh $(abs_top_builddir)/src/obj/build.h \
 	  $(abs_top_srcdir)
-libmlgbcoin_util_a-clientversion.$(OBJEXT): obj/build.h
+libmassgrid_util_a-clientversion.$(OBJEXT): obj/build.h
 
-# server: shared between mlgbcoind and mlgbcoin-qt
-libmlgbcoin_server_a_CPPFLAGS = $(MLGBCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS)
-libmlgbcoin_server_a_SOURCES = \
+# server: shared between massgridd and massgrid-qt
+libmassgrid_server_a_CPPFLAGS = $(MASSGRID_INCLUDES) $(MINIUPNPC_CPPFLAGS)
+libmassgrid_server_a_SOURCES = \
   addrman.cpp \
   alert.cpp \
   bloom.cpp \
@@ -186,12 +186,12 @@ libmlgbcoin_server_a_SOURCES = \
   txdb.cpp \
   txmempool.cpp \
   $(JSON_H) \
-  $(MLGBCOIN_CORE_H)
+  $(MASSGRID_CORE_H)
 
-# wallet: shared between mlgbcoind and mlgbcoin-qt, but only linked
+# wallet: shared between massgridd and massgrid-qt, but only linked
 # when wallet enabled
-libmlgbcoin_wallet_a_CPPFLAGS = $(MLGBCOIN_INCLUDES)
-libmlgbcoin_wallet_a_SOURCES = \
+libmassgrid_wallet_a_CPPFLAGS = $(MASSGRID_INCLUDES)
+libmassgrid_wallet_a_SOURCES = \
   db.cpp \
   crypter.cpp \
   rpcdump.cpp \
@@ -199,11 +199,11 @@ libmlgbcoin_wallet_a_SOURCES = \
   wallet.cpp \
   wallet_ismine.cpp \
   walletdb.cpp \
-  $(MLGBCOIN_CORE_H)
+  $(MASSGRID_CORE_H)
 
 # crypto primitives library
-crypto_libmlgbcoin_crypto_a_CPPFLAGS = $(MLGBCOIN_CONFIG_INCLUDES)
-crypto_libmlgbcoin_crypto_a_SOURCES = \
+crypto_libmassgrid_crypto_a_CPPFLAGS = $(MASSGRID_CONFIG_INCLUDES)
+crypto_libmassgrid_crypto_a_SOURCES = \
   crypto/sha1.cpp \
   crypto/sha256.cpp \
   crypto/keccak256.cpp \
@@ -285,16 +285,16 @@ crypto_libmlgbcoin_crypto_a_SOURCES = \
   crypto/ripemd160.h
 
 # univalue JSON library
-univalue_libmlgbcoin_univalue_a_SOURCES = \
+univalue_libmassgrid_univalue_a_SOURCES = \
   univalue/univalue.cpp \
   univalue/univalue_read.cpp \
   univalue/univalue_write.cpp \
   univalue/univalue_escapes.h \
   univalue/univalue.h
 
-# common: shared between mlgbcoind, and mlgbcoin-qt and non-server tools
-libmlgbcoin_common_a_CPPFLAGS = $(MLGBCOIN_INCLUDES)
-libmlgbcoin_common_a_SOURCES = \
+# common: shared between massgridd, and massgrid-qt and non-server tools
+libmassgrid_common_a_CPPFLAGS = $(MASSGRID_INCLUDES)
+libmassgrid_common_a_SOURCES = \
   allocators.cpp \
   amount.cpp \
   base58.cpp \
@@ -318,13 +318,13 @@ libmlgbcoin_common_a_SOURCES = \
   script/sign.cpp \
   script/standard.cpp \
   script/script_error.cpp \
-  $(MLGBCOIN_CORE_H)
+  $(MASSGRID_CORE_H)
 
 # util: shared between all executables.
 # This library *must* be included to make sure that the glibc
 # backward-compatibility objects and their sanity checks are linked.
-libmlgbcoin_util_a_CPPFLAGS = $(MLGBCOIN_INCLUDES)
-libmlgbcoin_util_a_SOURCES = \
+libmassgrid_util_a_CPPFLAGS = $(MASSGRID_INCLUDES)
+libmassgrid_util_a_SOURCES = \
   compat/strnlen.cpp \
   compat/glibc_sanity.cpp \
   compat/glibcxx_sanity.cpp \
@@ -338,84 +338,84 @@ libmlgbcoin_util_a_SOURCES = \
   utilstrencodings.cpp \
   utilmoneystr.cpp \
   utiltime.cpp \
-  $(MLGBCOIN_CORE_H)
+  $(MASSGRID_CORE_H)
 
 if GLIBC_BACK_COMPAT
-libmlgbcoin_util_a_SOURCES += compat/glibc_compat.cpp
-libmlgbcoin_util_a_SOURCES += compat/glibcxx_compat.cpp
+libmassgrid_util_a_SOURCES += compat/glibc_compat.cpp
+libmassgrid_util_a_SOURCES += compat/glibcxx_compat.cpp
 endif
 
-# cli: shared between mlgbcoin-cli and mlgbcoin-qt
-libmlgbcoin_cli_a_CPPFLAGS = $(MLGBCOIN_INCLUDES)
-libmlgbcoin_cli_a_SOURCES = \
+# cli: shared between massgrid-cli and massgrid-qt
+libmassgrid_cli_a_CPPFLAGS = $(MASSGRID_INCLUDES)
+libmassgrid_cli_a_SOURCES = \
   rpcclient.cpp \
-  $(MLGBCOIN_CORE_H)
+  $(MASSGRID_CORE_H)
 
-nodist_libmlgbcoin_util_a_SOURCES = $(srcdir)/obj/build.h
+nodist_libmassgrid_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# mlgbcoind binary #
-mlgbcoind_LDADD = \
-  $(LIBMLGBCOIN_SERVER) \
-  $(LIBMLGBCOIN_COMMON) \
-  $(LIBMLGBCOIN_UNIVALUE) \
-  $(LIBMLGBCOIN_UTIL) \
-  $(LIBMLGBCOIN_CRYPTO) \
+# massgridd binary #
+massgridd_LDADD = \
+  $(LIBMASSGRID_SERVER) \
+  $(LIBMASSGRID_COMMON) \
+  $(LIBMASSGRID_UNIVALUE) \
+  $(LIBMASSGRID_UTIL) \
+  $(LIBMASSGRID_CRYPTO) \
   $(LIBLEVELDB) \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 
 if ENABLE_WALLET
-mlgbcoind_LDADD += libmlgbcoin_wallet.a
+massgridd_LDADD += libmassgrid_wallet.a
 endif
-mlgbcoind_SOURCES = mlgbcoind.cpp
+massgridd_SOURCES = massgridd.cpp
 #
 
 if TARGET_WINDOWS
-mlgbcoind_SOURCES += mlgbcoind-res.rc
+massgridd_SOURCES += massgridd-res.rc
 endif
 
-mlgbcoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS)
-mlgbcoind_CPPFLAGS = $(MLGBCOIN_INCLUDES)
-mlgbcoind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+massgridd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS)
+massgridd_CPPFLAGS = $(MASSGRID_INCLUDES)
+massgridd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
-# mlgbcoin-cli binary #
-mlgbcoin_cli_LDADD = \
-  $(LIBMLGBCOIN_CLI) \
-  $(LIBMLGBCOIN_UTIL) \
+# massgrid-cli binary #
+massgrid_cli_LDADD = \
+  $(LIBMASSGRID_CLI) \
+  $(LIBMASSGRID_UTIL) \
   $(BOOST_LIBS) \
   $(SSL_LIBS) \
   $(CRYPTO_LIBS)
 
-mlgbcoin_cli_SOURCES = \
-  mlgbcoin-cli.cpp
+massgrid_cli_SOURCES = \
+  massgrid-cli.cpp
 
-mlgbcoin_cli_CPPFLAGS = $(MLGBCOIN_INCLUDES)
+massgrid_cli_CPPFLAGS = $(MASSGRID_INCLUDES)
 #
 
-# mlgbcoin-tx binary #
-mlgbcoin_tx_LDADD = \
-  $(LIBMLGBCOIN_UNIVALUE) \
-  $(LIBMLGBCOIN_COMMON) \
-  $(LIBMLGBCOIN_UTIL) \
-  $(LIBMLGBCOIN_CRYPTO) \
+# massgrid-tx binary #
+massgrid_tx_LDADD = \
+  $(LIBMASSGRID_UNIVALUE) \
+  $(LIBMASSGRID_COMMON) \
+  $(LIBMASSGRID_UTIL) \
+  $(LIBMASSGRID_CRYPTO) \
   $(LIBSECP256K1) \
   $(BOOST_LIBS) \
   $(CRYPTO_LIBS)
 
-mlgbcoin_tx_SOURCES = mlgbcoin-tx.cpp
-mlgbcoin_tx_CPPFLAGS = $(MLGBCOIN_INCLUDES)
+massgrid_tx_SOURCES = massgrid-tx.cpp
+massgrid_tx_CPPFLAGS = $(MASSGRID_INCLUDES)
 #
-mlgbcoin_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+massgrid_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-mlgbcoin_cli_SOURCES += mlgbcoin-cli-res.rc
+massgrid_cli_SOURCES += massgrid-cli-res.rc
 endif
-mlgbcoin_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+massgrid_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
-if BUILD_MLGBCOIN_LIBS
-include_HEADERS = script/mlgbcoinconsensus.h
-libmlgbcoinconsensus_la_SOURCES = \
+if BUILD_MASSGRID_LIBS
+include_HEADERS = script/massgridconsensus.h
+libmassgridconsensus_la_SOURCES = \
   primitives/transaction.cpp \
   crypto/hmac_sha512.cpp \
   crypto/sha1.cpp \
@@ -459,20 +459,20 @@ libmlgbcoinconsensus_la_SOURCES = \
   pubkey.cpp \
   script/script.cpp \
   script/interpreter.cpp \
-  script/mlgbcoinconsensus.cpp \
+  script/massgridconsensus.cpp \
   uint256.cpp \
   utilstrencodings.cpp
 
 if GLIBC_BACK_COMPAT
-  libmlgbcoinconsensus_la_SOURCES += compat/glibc_compat.cpp
-  libmlgbcoinconsensus_la_SOURCES += compat/glibcxx_compat.cpp
+  libmassgridconsensus_la_SOURCES += compat/glibc_compat.cpp
+  libmassgridconsensus_la_SOURCES += compat/glibcxx_compat.cpp
 endif
 
-libmlgbcoinconsensus_la_LDFLAGS = -no-undefined $(RELDFLAGS)
-libmlgbcoinconsensus_la_LIBADD = $(CRYPTO_LIBS)
-libmlgbcoinconsensus_la_CPPFLAGS = $(CRYPTO_CFLAGS) -I$(builddir)/obj -DBUILD_MLGBCOIN_INTERNAL
+libmassgridconsensus_la_LDFLAGS = -no-undefined $(RELDFLAGS)
+libmassgridconsensus_la_LIBADD = $(CRYPTO_LIBS)
+libmassgridconsensus_la_CPPFLAGS = $(CRYPTO_CFLAGS) -I$(builddir)/obj -DBUILD_MASSGRID_INTERNAL
 if USE_LIBSECP256K1
-libmlgbcoinconsensus_la_LIBADD += secp256k1/libsecp256k1.la
+libmassgridconsensus_la_LIBADD += secp256k1/libsecp256k1.la
 endif
 endif
 

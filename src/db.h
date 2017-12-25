@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_DB_H
-#define MLGBCOIN_DB_H
+#ifndef MASSGRID_DB_H
+#define MASSGRID_DB_H
 
 #include "clientversion.h"
 #include "serialize.h"
@@ -309,4 +309,4 @@ public:
     bool static Rewrite(const std::string& strFile, const char* pszSkip = NULL);
 };
 
-#endif // MLGBCOIN_DB_H
+#endif // MASSGRID_DB_H

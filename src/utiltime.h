@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_UTILTIME_H
-#define MLGBCOIN_UTILTIME_H
+#ifndef MASSGRID_UTILTIME_H
+#define MASSGRID_UTILTIME_H
 
 #include <stdint.h>
 #include <string>
@@ -17,4 +17,4 @@ void MilliSleep(int64_t n);
 
 std::string DateTimeStrFormat(const char* pszFormat, int64_t nTime);
 
-#endif // MLGBCOIN_UTILTIME_H
+#endif // MASSGRID_UTILTIME_H

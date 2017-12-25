@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_INIT_H
-#define MLGBCOIN_INIT_H
+#ifndef MASSGRID_INIT_H
+#define MASSGRID_INIT_H
 
 #include <string>
 
@@ -24,8 +24,8 @@ bool AppInit2(boost::thread_group& threadGroup);
 
 /** The help message mode determines what help message to show */
 enum HelpMessageMode {
-    HMM_MLGBCOIND,
-    HMM_MLGBCOIN_QT
+    HMM_MASSGRIDD,
+    HMM_MASSGRID_QT
 };
 
 /** Help for options shared between UI and daemon (for -help) */
@@ -33,4 +33,4 @@ std::string HelpMessage(HelpMessageMode mode);
 /** Returns licensing information (for -version) */
 std::string LicenseInfo();
 
-#endif // MLGBCOIN_INIT_H
+#endif // MASSGRID_INIT_H

@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_RPCCLIENT_H
-#define MLGBCOIN_RPCCLIENT_H
+#ifndef MASSGRID_RPCCLIENT_H
+#define MASSGRID_RPCCLIENT_H
 
 #include "json/json_spirit_reader_template.h"
 #include "json/json_spirit_utils.h"
@@ -12,4 +12,4 @@
 
 json_spirit::Array RPCConvertValues(const std::string& strMethod, const std::vector<std::string>& strParams);
 
-#endif // MLGBCOIN_RPCCLIENT_H
+#endif // MASSGRID_RPCCLIENT_H

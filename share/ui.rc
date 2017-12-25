@@ -1,4 +1,4 @@
-mlgbcoin               ICON    "pixmaps/mlgbcoin.ico"
+massgrid               ICON    "pixmaps/massgrid.ico"
 
 #include "wx/msw/wx.rc"
 

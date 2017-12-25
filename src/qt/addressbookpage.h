@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_ADDRESSBOOKPAGE_H
-#define MLGBCOIN_QT_ADDRESSBOOKPAGE_H
+#ifndef MASSGRID_QT_ADDRESSBOOKPAGE_H
+#define MASSGRID_QT_ADDRESSBOOKPAGE_H
 
 #include <QDialog>
 
@@ -84,4 +84,4 @@ signals:
     void sendCoins(QString addr);
 };
 
-#endif // MLGBCOIN_QT_ADDRESSBOOKPAGE_H
+#endif // MASSGRID_QT_ADDRESSBOOKPAGE_H

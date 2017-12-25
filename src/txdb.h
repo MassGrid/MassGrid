@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_TXDB_H
-#define MLGBCOIN_TXDB_H
+#ifndef MASSGRID_TXDB_H
+#define MASSGRID_TXDB_H
 
 #include "leveldbwrapper.h"
 #include "main.h"
@@ -62,4 +62,4 @@ public:
     bool LoadBlockIndexGuts();
 };
 
-#endif // MLGBCOIN_TXDB_H
+#endif // MASSGRID_TXDB_H

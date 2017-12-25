@@ -11,7 +11,7 @@
   </array>
 
   <key>CFBundleIconFile</key>
-  <string>mlgbcoin.icns</string>
+  <string>massgrid.icns</string>
 
   <key>CFBundlePackageType</key>
   <string>APPL</string>
@@ -29,10 +29,10 @@
   <string>????</string>
 
   <key>CFBundleExecutable</key>
-  <string>MLGBcoin-Qt</string>
+  <string>MassGrid-Qt</string>
 
   <key>CFBundleIdentifier</key>
-  <string>org.mlgbcoinfoundation.MLGBcoin-Qt</string>
+  <string>org.massgridfoundation.MassGrid-Qt</string>
 
   <key>CFBundleURLTypes</key>
   <array>
@@ -40,10 +40,10 @@
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>CFBundleURLName</key>
-      <string>org.mlgbcoin.MLGBcoinPayment</string>
+      <string>org.massgrid.MassGridPayment</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>mlgbcoin</string>
+        <string>massgrid</string>
       </array>
     </dict>
   </array>
@@ -52,9 +52,9 @@
   <array>
     <dict>
       <key>UTTypeIdentifier</key>
-      <string>org.mlgbcoin.paymentrequest</string>
+      <string>org.massgrid.paymentrequest</string>
       <key>UTTypeDescription</key>
-      <string>MLGBcoin payment request</string>
+      <string>MassGrid payment request</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>
@@ -62,10 +62,10 @@
       <key>UTTypeTagSpecification</key>
       <dict>
         <key>public.mime-type</key>
-        <string>application/x-mlgbcoin-payment-request</string>
+        <string>application/x-massgrid-payment-request</string>
         <key>public.filename-extension</key>
         <array>
-          <string>mlgbcoinpaymentrequest</string>
+          <string>massgridpaymentrequest</string>
         </array>
       </dict>
     </dict>
@@ -78,7 +78,7 @@
       <string>Editor</string>
       <key>LSItemContentTypes</key>
       <array>
-        <string>org.mlgbcoin.paymentrequest</string>
+        <string>org.massgrid.paymentrequest</string>
       </array>
       <key>LSHandlerRank</key>
       <string>Owner</string>

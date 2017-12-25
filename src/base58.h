@@ -11,8 +11,8 @@
  * - E-mail usually won't line-break if there's no punctuation to break at.
  * - Double-clicking selects the whole number as one word if it's all alphanumeric.
  */
-#ifndef MLGBCOIN_BASE58_H
-#define MLGBCOIN_BASE58_H
+#ifndef MASSGRID_BASE58_H
+#define MASSGRID_BASE58_H
 
 #include "chainparams.h"
 #include "key.h"
@@ -94,13 +94,13 @@ public:
     bool operator> (const CBase58Data& b58) const { return CompareTo(b58) >  0; }
 };
 
-/** base58-encoded MLGBcoin addresses.
+/** base58-encoded MassGrid addresses.
  * Public-key-hash-addresses have version 0 (or 111 testnet).
  * The data vector contains RIPEMD160(SHA256(pubkey)), where pubkey is the serialized public key.
  * Script-hash-addresses have version 5 (or 196 testnet).
  * The data vector contains RIPEMD160(SHA256(cscript)), where cscript is the serialized redemption script.
  */
-class CMLGBcoinAddress : public CBase58Data {
+class CMassGridAddress : public CBase58Data {
 public:
     bool Set(const CKeyID &id);
     bool Set(const CScriptID &id);
@@ -108,10 +108,10 @@ public:
     bool IsValid() const;
     bool IsValid(const CChainParams &params) const;
 
-    CMLGBcoinAddress() {}
-    CMLGBcoinAddress(const CTxDestination &dest) { Set(dest); }
-    CMLGBcoinAddress(const std::string& strAddress) { SetString(strAddress); }
-    CMLGBcoinAddress(const char* pszAddress) { SetString(pszAddress); }
+    CMassGridAddress() {}
+    CMassGridAddress(const CTxDestination &dest) { Set(dest); }
+    CMassGridAddress(const std::string& strAddress) { SetString(strAddress); }
+    CMassGridAddress(const char* pszAddress) { SetString(pszAddress); }
 
     CTxDestination Get() const;
     bool GetKeyID(CKeyID &keyID) const;
@@ -121,7 +121,7 @@ public:
 /**
  * A base58-encoded secret key
  */
-class CMLGBcoinSecret : public CBase58Data
+class CMassGridSecret : public CBase58Data
 {
 public:
     void SetKey(const CKey& vchSecret);
@@ -130,11 +130,11 @@ public:
     bool SetString(const char* pszSecret);
     bool SetString(const std::string& strSecret);
 
-    CMLGBcoinSecret(const CKey& vchSecret) { SetKey(vchSecret); }
-    CMLGBcoinSecret() {}
+    CMassGridSecret(const CKey& vchSecret) { SetKey(vchSecret); }
+    CMassGridSecret() {}
 };
 
-template<typename K, int Size, CChainParams::Base58Type Type> class CMLGBcoinExtKeyBase : public CBase58Data
+template<typename K, int Size, CChainParams::Base58Type Type> class CMassGridExtKeyBase : public CBase58Data
 {
 public:
     void SetKey(const K &key) {
@@ -149,14 +149,14 @@ public:
         return ret;
     }
 
-    CMLGBcoinExtKeyBase(const K &key) {
+    CMassGridExtKeyBase(const K &key) {
         SetKey(key);
     }
 
-    CMLGBcoinExtKeyBase() {}
+    CMassGridExtKeyBase() {}
 };
 
-typedef CMLGBcoinExtKeyBase<CExtKey, 74, CChainParams::EXT_SECRET_KEY> CMLGBcoinExtKey;
-typedef CMLGBcoinExtKeyBase<CExtPubKey, 74, CChainParams::EXT_PUBLIC_KEY> CMLGBcoinExtPubKey;
+typedef CMassGridExtKeyBase<CExtKey, 74, CChainParams::EXT_SECRET_KEY> CMassGridExtKey;
+typedef CMassGridExtKeyBase<CExtPubKey, 74, CChainParams::EXT_PUBLIC_KEY> CMassGridExtPubKey;
 
-#endif // MLGBCOIN_BASE58_H
+#endif // MASSGRID_BASE58_H

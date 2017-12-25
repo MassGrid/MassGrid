@@ -6,13 +6,13 @@ and tests weren't explicitly disabled.
 
 After configuring, they can be run with 'make check'.
 
-To run the mlgbcoind tests manually, launch src/test/test_mlgbcoin .
+To run the massgridd tests manually, launch src/test/test_massgrid .
 
-To add more mlgbcoind tests, add `BOOST_AUTO_TEST_CASE` functions to the existing
+To add more massgridd tests, add `BOOST_AUTO_TEST_CASE` functions to the existing
 .cpp files in the test/ directory or add new .cpp files that
 implement new BOOST_AUTO_TEST_SUITE sections.
 
-To run the mlgbcoin-qt tests manually, launch src/qt/test/mlgbcoin-qt_test
+To run the massgrid-qt tests manually, launch src/qt/test/massgrid-qt_test
 
-To add more mlgbcoin-qt tests, add them to the `src/qt/test/` directory and
+To add more massgrid-qt tests, add them to the `src/qt/test/` directory and
 the `src/qt/test/test_main.cpp` file.

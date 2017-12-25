@@ -52,7 +52,7 @@ Value getinfo(const Array& params, bool fHelp)
             "  \"version\": xxxxx,           (numeric) the server version\n"
             "  \"protocolversion\": xxxxx,   (numeric) the protocol version\n"
             "  \"walletversion\": xxxxx,     (numeric) the wallet version\n"
-            "  \"balance\": xxxxxxx,         (numeric) the total mlgbcoin balance of the wallet\n"
+            "  \"balance\": xxxxxxx,         (numeric) the total massgrid balance of the wallet\n"
             "  \"blocks\": xxxxxx,           (numeric) the current number of blocks processed in the server\n"
             "  \"timeoffset\": xxxxx,        (numeric) the time offset\n"
             "  \"connections\": xxxxx,       (numeric) the number of connections\n"
@@ -62,8 +62,8 @@ Value getinfo(const Array& params, bool fHelp)
             "  \"keypoololdest\": xxxxxx,    (numeric) the timestamp (seconds since GMT epoch) of the oldest pre-generated key in the key pool\n"
             "  \"keypoolsize\": xxxx,        (numeric) how many new keys are pre-generated\n"
             "  \"unlocked_until\": ttt,      (numeric) the timestamp in seconds since epoch (midnight Jan 1 1970 GMT) that the wallet is unlocked for transfers, or 0 if the wallet is locked\n"
-            "  \"paytxfee\": x.xxxx,         (numeric) the transaction fee set in MLGB/kb\n"
-            "  \"relayfee\": x.xxxx,         (numeric) minimum relay fee for non-free transactions in MLGB/kb\n"
+            "  \"paytxfee\": x.xxxx,         (numeric) the transaction fee set in MGC/kb\n"
+            "  \"relayfee\": x.xxxx,         (numeric) minimum relay fee for non-free transactions in MGC/kb\n"
             "  \"errors\": \"...\"           (string) any error messages\n"
             "}\n"
             "\nExamples:\n"
@@ -140,7 +140,7 @@ public:
             obj.push_back(Pair("hex", HexStr(subscript.begin(), subscript.end())));
             Array a;
             BOOST_FOREACH(const CTxDestination& addr, addresses)
-                a.push_back(CMLGBcoinAddress(addr).ToString());
+                a.push_back(CMassGridAddress(addr).ToString());
             obj.push_back(Pair("addresses", a));
             if (whichType == TX_MULTISIG)
                 obj.push_back(Pair("sigsrequired", nRequired));
@@ -154,14 +154,14 @@ Value validateaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "validateaddress \"mlgbcoinaddress\"\n"
-            "\nReturn information about the given mlgbcoin address.\n"
+            "validateaddress \"massgridaddress\"\n"
+            "\nReturn information about the given massgrid address.\n"
             "\nArguments:\n"
-            "1. \"mlgbcoinaddress\"     (string, required) The mlgbcoin address to validate\n"
+            "1. \"massgridaddress\"     (string, required) The massgrid address to validate\n"
             "\nResult:\n"
             "{\n"
             "  \"isvalid\" : true|false,         (boolean) If the address is valid or not. If not, this is the only property returned.\n"
-            "  \"address\" : \"mlgbcoinaddress\", (string) The mlgbcoin address validated\n"
+            "  \"address\" : \"massgridaddress\", (string) The massgrid address validated\n"
             "  \"ismine\" : true|false,          (boolean) If the address is yours or not\n"
             "  \"isscript\" : true|false,        (boolean) If the key is a script\n"
             "  \"pubkey\" : \"publickeyhex\",    (string) The hex value of the raw public key\n"
@@ -173,7 +173,7 @@ Value validateaddress(const Array& params, bool fHelp)
             + HelpExampleRpc("validateaddress", "\"1PSSGeFHDnKNxiEyFrD1wcEaHr9hrQDDWc\"")
         );
 
-    CMLGBcoinAddress address(params[0].get_str());
+    CMassGridAddress address(params[0].get_str());
     bool isValid = address.IsValid();
 
     Object ret;
@@ -221,8 +221,8 @@ CScript _createmultisig_redeemScript(const Array& params)
     {
         const std::string& ks = keys[i].get_str();
 #ifdef ENABLE_WALLET
-        // Case 1: MLGBcoin address and we have full public key:
-        CMLGBcoinAddress address(ks);
+        // Case 1: MassGrid address and we have full public key:
+        CMassGridAddress address(ks);
         if (pwalletMain && address.IsValid())
         {
             CKeyID keyID;
@@ -272,9 +272,9 @@ Value createmultisig(const Array& params, bool fHelp)
 
             "\nArguments:\n"
             "1. nrequired      (numeric, required) The number of required signatures out of the n keys or addresses.\n"
-            "2. \"keys\"       (string, required) A json array of keys which are mlgbcoin addresses or hex-encoded public keys\n"
+            "2. \"keys\"       (string, required) A json array of keys which are massgrid addresses or hex-encoded public keys\n"
             "     [\n"
-            "       \"key\"    (string) mlgbcoin address or hex-encoded public key\n"
+            "       \"key\"    (string) massgrid address or hex-encoded public key\n"
             "       ,...\n"
             "     ]\n"
 
@@ -296,7 +296,7 @@ Value createmultisig(const Array& params, bool fHelp)
     // Construct using pay-to-script-hash:
     CScript inner = _createmultisig_redeemScript(params);
     CScriptID innerID(inner);
-    CMLGBcoinAddress address(innerID);
+    CMassGridAddress address(innerID);
 
     Object result;
     result.push_back(Pair("address", address.ToString()));
@@ -309,10 +309,10 @@ Value verifymessage(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 3)
         throw runtime_error(
-            "verifymessage \"mlgbcoinaddress\" \"signature\" \"message\"\n"
+            "verifymessage \"massgridaddress\" \"signature\" \"message\"\n"
             "\nVerify a signed message\n"
             "\nArguments:\n"
-            "1. \"mlgbcoinaddress\"  (string, required) The mlgbcoin address to use for the signature.\n"
+            "1. \"massgridaddress\"  (string, required) The massgrid address to use for the signature.\n"
             "2. \"signature\"       (string, required) The signature provided by the signer in base 64 encoding (see signmessage).\n"
             "3. \"message\"         (string, required) The message that was signed.\n"
             "\nResult:\n"
@@ -332,7 +332,7 @@ Value verifymessage(const Array& params, bool fHelp)
     string strSign     = params[1].get_str();
     string strMessage  = params[2].get_str();
 
-    CMLGBcoinAddress addr(strAddress);
+    CMassGridAddress addr(strAddress);
     if (!addr.IsValid())
         throw JSONRPCError(RPC_TYPE_ERROR, "Invalid address");
 

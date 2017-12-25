@@ -2,11 +2,11 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_NOTIFICATOR_H
-#define MLGBCOIN_QT_NOTIFICATOR_H
+#ifndef MASSGRID_QT_NOTIFICATOR_H
+#define MASSGRID_QT_NOTIFICATOR_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/mlgbcoin-config.h"
+#include "config/massgrid-config.h"
 #endif
 
 #include <QIcon>
@@ -77,4 +77,4 @@ private:
 #endif
 };
 
-#endif // MLGBCOIN_QT_NOTIFICATOR_H
+#endif // MASSGRID_QT_NOTIFICATOR_H

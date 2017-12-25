@@ -7,13 +7,13 @@
 # on chains of different lengths, and join the network together again.
 # This gives us two tips, verify that it works.
 
-from test_framework import MLGBcoinTestFramework
+from test_framework import MassGridTestFramework
 from util import assert_equal
 
-class GetChainTipsTest (MLGBcoinTestFramework):
+class GetChainTipsTest (MassGridTestFramework):
 
     def run_test (self):
-        MLGBcoinTestFramework.run_test (self)
+        MassGridTestFramework.run_test (self)
 
         tips = self.nodes[0].getchaintips ()
         assert_equal (len (tips), 1)

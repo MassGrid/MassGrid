@@ -7,12 +7,12 @@
 # Test the CHECKLOCKTIMEVERIFY (BIP65) soft-fork logic
 #
 
-from test_framework.test_framework import MLGBcoinTestFramework
+from test_framework.test_framework import MassGridTestFramework
 from test_framework.util import *
 import os
 import shutil
 
-class BIP65Test(MLGBcoinTestFramework):
+class BIP65Test(MassGridTestFramework):
 
     def setup_network(self):
         self.nodes = []

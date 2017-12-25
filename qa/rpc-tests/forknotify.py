@@ -7,13 +7,13 @@
 # Test -alertnotify 
 #
 
-from test_framework import MLGBcoinTestFramework
-from mlgbcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from test_framework import MassGridTestFramework
+from massgridrpc.authproxy import AuthServiceProxy, JSONRPCException
 from util import *
 import os
 import shutil
 
-class ForkNotifyTest(MLGBcoinTestFramework):
+class ForkNotifyTest(MassGridTestFramework):
 
     alert_filename = None  # Set by setup_network
 

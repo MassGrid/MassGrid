@@ -1,13 +1,13 @@
-MLGBcoin version 0.5.2 is now available for download at:
-http://sourceforge.net/projects/mlgbcoin/files/MLGBcoin/mlgbcoin-0.5.2/
+MassGrid version 0.5.2 is now available for download at:
+http://sourceforge.net/projects/massgrid/files/MassGrid/massgrid-0.5.2/
 
 This is a bugfix-only release based on 0.5.1.
 
 Please report bugs using the issue tracker at github:
-https://github.com/mlgbcoin/mlgbcoin/issues
+https://github.com/massgrid/massgrid/issues
 
 Stable source code is hosted at Gitorious:
-http://gitorious.org/mlgbcoin/mlgbcoind-stable/archive-tarball/v0.5.2#.tar.gz
+http://gitorious.org/massgrid/massgridd-stable/archive-tarball/v0.5.2#.tar.gz
 
 BUG FIXES
 
@@ -15,8 +15,8 @@ Check all transactions in blocks after the last checkpoint (0.5.0 and 0.5.1 skip
 Cease locking memory used by non-sensitive information (this caused a huge performance hit on some platforms, especially noticable during initial blockchain download; this was
 not a security vulnerability).
 Fixed some address-handling deadlocks (client freezes).
-No longer accept inbound connections over the internet when MLGBcoin is being used with Tor (identity leak).
+No longer accept inbound connections over the internet when MassGrid is being used with Tor (identity leak).
 Re-enable SSL support for the JSON-RPC interface (it was unintentionally disabled for the 0.5.0 and 0.5.1 release Linux binaries).
-Use the correct base transaction fee of 0.0005 MLGB for accepting transactions into mined blocks (since 0.4.0, it was incorrectly accepting 0.0001 MLGB which was only meant to be relayed).
+Use the correct base transaction fee of 0.0005 MGC for accepting transactions into mined blocks (since 0.4.0, it was incorrectly accepting 0.0001 MGC which was only meant to be relayed).
 Don't show "IP" for transactions which are not necessarily IP transactions.
 Add new DNS seeds (maintained by Pieter Wuille and Luke Dashjr).

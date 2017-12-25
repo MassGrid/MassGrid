@@ -6,8 +6,8 @@
 /**
  * Utilities for converting data from/to strings.
  */
-#ifndef MLGBCOIN_UTILSTRENCODINGS_H
-#define MLGBCOIN_UTILSTRENCODINGS_H
+#ifndef MASSGRID_UTILSTRENCODINGS_H
+#define MASSGRID_UTILSTRENCODINGS_H
 
 #include <stdint.h>
 #include <string>
@@ -95,4 +95,4 @@ bool TimingResistantEqual(const T& a, const T& b)
     return accumulator == 0;
 }
 
-#endif // MLGBCOIN_UTILSTRENCODINGS_H
+#endif // MASSGRID_UTILSTRENCODINGS_H

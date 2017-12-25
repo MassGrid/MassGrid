@@ -1,22 +1,22 @@
 Please checkout the git integration branch from:
 
-https://github.com/mlgbcoin/mlgbcoin
+https://github.com/massgrid/massgrid
 
 ... and help test.  The new features that need testing are:
 
-* -nolisten : https://github.com/mlgbcoin/mlgbcoin/pull/11
+* -nolisten : https://github.com/massgrid/massgrid/pull/11
 * -rescan : scan block chain for missing wallet transactions
-* -printtoconsole : https://github.com/mlgbcoin/mlgbcoin/pull/37
-* RPC gettransaction details : https://github.com/mlgbcoin/mlgbcoin/pull/24
-* listtransactions new features : https://github.com/mlgbcoin/mlgbcoin/pull/10
+* -printtoconsole : https://github.com/massgrid/massgrid/pull/37
+* RPC gettransaction details : https://github.com/massgrid/massgrid/pull/24
+* listtransactions new features : https://github.com/massgrid/massgrid/pull/10
 
 Bug fixes that also need testing:
 
-* -maxconnections= : https://github.com/mlgbcoin/mlgbcoin/pull/42
-* RPC listaccounts minconf : https://github.com/mlgbcoin/mlgbcoin/pull/27
-* RPC move, add time to output : https://github.com/mlgbcoin/mlgbcoin/pull/21
+* -maxconnections= : https://github.com/massgrid/massgrid/pull/42
+* RPC listaccounts minconf : https://github.com/massgrid/massgrid/pull/27
+* RPC move, add time to output : https://github.com/massgrid/massgrid/pull/21
 * ...and several improvements to --help output.
 
 This needs more testing on Windows!  Please drop me a quick private message, email, or IRC message if you are able to do some testing.  If you find bugs, please open an issue at:
 
-https://github.com/mlgbcoin/mlgbcoin/issues
+https://github.com/massgrid/massgrid/issues

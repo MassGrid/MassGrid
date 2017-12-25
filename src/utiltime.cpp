@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/mlgbcoin-config.h"
+#include "config/massgrid-config.h"
 #endif
 
 #include "utiltime.h"

@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_TEST_BIGNUM_H
-#define MLGBCOIN_TEST_BIGNUM_H
+#ifndef MASSGRID_TEST_BIGNUM_H
+#define MASSGRID_TEST_BIGNUM_H
 
 #include <algorithm>
 #include <limits>
@@ -177,4 +177,4 @@ inline bool operator>=(const CBigNum& a, const CBigNum& b) { return (BN_cmp(&a, 
 inline bool operator<(const CBigNum& a, const CBigNum& b)  { return (BN_cmp(&a, &b) < 0); }
 inline bool operator>(const CBigNum& a, const CBigNum& b)  { return (BN_cmp(&a, &b) > 0); }
 
-#endif // MLGBCOIN_TEST_BIGNUM_H
+#endif // MASSGRID_TEST_BIGNUM_H

@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_UI_INTERFACE_H
-#define MLGBCOIN_UI_INTERFACE_H
+#ifndef MASSGRID_UI_INTERFACE_H
+#define MASSGRID_UI_INTERFACE_H
 
 #include <stdint.h>
 #include <string>
@@ -112,4 +112,4 @@ inline std::string _(const char* psz)
     return rv ? (*rv) : psz;
 }
 
-#endif // MLGBCOIN_UI_INTERFACE_H
+#endif // MASSGRID_UI_INTERFACE_H

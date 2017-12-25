@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_THREADSAFETY_H
-#define MLGBCOIN_THREADSAFETY_H
+#ifndef MASSGRID_THREADSAFETY_H
+#define MASSGRID_THREADSAFETY_H
 
 #ifdef __clang__
 // TL;DR Add GUARDED_BY(mutex) to member variables. The others are
@@ -52,4 +52,4 @@
 #define NO_THREAD_SAFETY_ANALYSIS
 #endif // __GNUC__
 
-#endif // MLGBCOIN_THREADSAFETY_H
+#endif // MASSGRID_THREADSAFETY_H

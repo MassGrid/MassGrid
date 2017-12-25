@@ -1,6 +1,0 @@
-usr/local/bin/mlgbcoin-qt usr/bin
-share/pixmaps/mlgbcoin32.xpm usr/share/pixmaps
-share/pixmaps/mlgbcoin16.xpm usr/share/pixmaps
-share/pixmaps/mlgbcoin128.png usr/share/pixmaps
-debian/mlgbcoin-qt.desktop usr/share/applications
-debian/mlgbcoin-qt.protocol usr/share/kde4/services/

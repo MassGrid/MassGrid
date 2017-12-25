@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_TXMEMPOOL_H
-#define MLGBCOIN_TXMEMPOOL_H
+#ifndef MASSGRID_TXMEMPOOL_H
+#define MASSGRID_TXMEMPOOL_H
 
 #include <list>
 
@@ -173,4 +173,4 @@ public:
     bool HaveCoins(const uint256 &txid) const;
 };
 
-#endif // MLGBCOIN_TXMEMPOOL_H
+#endif // MASSGRID_TXMEMPOOL_H

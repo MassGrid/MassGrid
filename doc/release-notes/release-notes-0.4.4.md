@@ -1,15 +1,15 @@
-MLGBcoin version 0.4.4 is now available for download at:
-http://luke.dashjr.org/programs/mlgbcoin/files/mlgbcoind-0.4.4/
+MassGrid version 0.4.4 is now available for download at:
+http://luke.dashjr.org/programs/massgrid/files/massgridd-0.4.4/
 
 This is a bugfix-only release based on 0.4.0.
 
-Please note that the wxMLGBcoin GUI client is no longer maintained nor supported. If someone would like to step up to maintain this, they should contact Luke-Jr.
+Please note that the wxMassGrid GUI client is no longer maintained nor supported. If someone would like to step up to maintain this, they should contact Luke-Jr.
 
 Please report bugs for the daemon only using the issue tracker at github:
-https://github.com/mlgbcoin/mlgbcoin/issues
+https://github.com/massgrid/massgrid/issues
 
 Stable source code is hosted at Gitorious:
-http://gitorious.org/mlgbcoin/mlgbcoind-stable/archive-tarball/v0.4.4#.tar.gz
+http://gitorious.org/massgrid/massgridd-stable/archive-tarball/v0.4.4#.tar.gz
 
 BUG FIXES
 
@@ -24,7 +24,7 @@ Several shutdown issues have been fixed.
 Check that keys stored in the wallet are valid at startup, and if not,
 report corruption.
 Various build fixes.
-If no password is specified to mlgbcoind, recommend a secure password.
+If no password is specified to massgridd, recommend a secure password.
 Update hard-coded fallback seed nodes, choosing recent ones with long uptime and versions at least 0.4.0.
 Add checkpoint at block 168,000.
 

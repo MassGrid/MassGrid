@@ -1,6 +1,6 @@
 ### TestGen ###
 
-Utilities to generate test vectors for the data-driven MLGBcoin tests.
+Utilities to generate test vectors for the data-driven MassGrid tests.
 
 Usage: 
 

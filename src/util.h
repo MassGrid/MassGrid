@@ -7,11 +7,11 @@
  * Server/client environment: argument handling, config file parsing,
  * logging, thread wrappers
  */
-#ifndef MLGBCOIN_UTIL_H
-#define MLGBCOIN_UTIL_H
+#ifndef MASSGRID_UTIL_H
+#define MASSGRID_UTIL_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/mlgbcoin-config.h"
+#include "config/massgrid-config.h"
 #endif
 
 #include "compat.h"
@@ -175,7 +175,7 @@ void RenameThread(const char* name);
  */
 template <typename Callable> void LoopForever(const char* name,  Callable func, int64_t msecs)
 {
-    std::string s = strprintf("mlgbcoin-%s", name);
+    std::string s = strprintf("massgrid-%s", name);
     RenameThread(s.c_str());
     LogPrintf("%s thread start\n", name);
     try
@@ -206,7 +206,7 @@ template <typename Callable> void LoopForever(const char* name,  Callable func, 
  */
 template <typename Callable> void TraceThread(const char* name,  Callable func)
 {
-    std::string s = strprintf("mlgbcoin-%s", name);
+    std::string s = strprintf("massgrid-%s", name);
     RenameThread(s.c_str());
     try
     {
@@ -229,4 +229,4 @@ template <typename Callable> void TraceThread(const char* name,  Callable func)
     }
 }
 
-#endif // MLGBCOIN_UTIL_H
+#endif // MASSGRID_UTIL_H

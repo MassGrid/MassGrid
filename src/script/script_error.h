@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_SCRIPT_SCRIPT_ERROR_H
-#define MLGBCOIN_SCRIPT_SCRIPT_ERROR_H
+#ifndef MASSGRID_SCRIPT_SCRIPT_ERROR_H
+#define MASSGRID_SCRIPT_SCRIPT_ERROR_H
 
 typedef enum ScriptError_t
 {
@@ -58,4 +58,4 @@ typedef enum ScriptError_t
 
 const char* ScriptErrorString(const ScriptError error);
 
-#endif // MLGBCOIN_SCRIPT_SCRIPT_ERROR_H
+#endif // MASSGRID_SCRIPT_SCRIPT_ERROR_H

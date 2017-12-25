@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_MRUSET_H
-#define MLGBCOIN_MRUSET_H
+#ifndef MASSGRID_MRUSET_H
+#define MASSGRID_MRUSET_H
 
 #include <deque>
 #include <set>
@@ -66,4 +66,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_MRUSET_H
+#endif // MASSGRID_MRUSET_H

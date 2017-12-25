@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_ADDRMAN_H
-#define MLGBCOIN_ADDRMAN_H
+#ifndef MASSGRID_ADDRMAN_H
+#define MASSGRID_ADDRMAN_H
 
 #include "netbase.h"
 #include "protocol.h"
@@ -570,4 +570,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_ADDRMAN_H
+#endif // MASSGRID_ADDRMAN_H

@@ -1,23 +1,23 @@
-MLGBcoin version 0.7.1 is now available from:
-  http://sourceforge.net/projects/mlgbcoin/files/MLGBcoin/mlgbcoin-0.7.1/
+MassGrid version 0.7.1 is now available from:
+  http://sourceforge.net/projects/massgrid/files/MassGrid/massgrid-0.7.1/
 
 This is a bug-fix minor release.
 
 Please report bugs using the issue tracker at github:
-  https://github.com/mlgbcoin/mlgbcoin/issues
+  https://github.com/massgrid/massgrid/issues
 
 Project source code is hosted at github; you can get
 source-only tarballs/zipballs directly from there:
-  https://github.com/mlgbcoin/mlgbcoin/tarball/v0.7.1  # .tar.gz
-  https://github.com/mlgbcoin/mlgbcoin/zipball/v0.7.1  # .zip
+  https://github.com/massgrid/massgrid/tarball/v0.7.1  # .tar.gz
+  https://github.com/massgrid/massgrid/zipball/v0.7.1  # .zip
 
 Ubuntu Linux users can use the "Personal Package Archive" (PPA)
 maintained by Matt Corallo to automatically keep 
 up-to-date.  Just type:
-  sudo apt-add-repository ppa:mlgbcoin/mlgbcoin
+  sudo apt-add-repository ppa:massgrid/massgrid
   sudo apt-get update
-in your terminal, then install the mlgbcoin-qt package:
-  sudo apt-get install mlgbcoin-qt
+in your terminal, then install the massgrid-qt package:
+  sudo apt-get install massgrid-qt
 
 KNOWN ISSUES
 ------------
@@ -30,7 +30,7 @@ How to Upgrade
 If you are running an older version, shut it down. Wait
 until it has completely shut down (which might take a few minutes for older
 versions), then run the installer (on Windows) or just copy over
-/Applications/MLGBcoin-Qt (on Mac) or mlgbcoind/mlgbcoin-qt (on Linux).
+/Applications/MassGrid-Qt (on Mac) or massgridd/massgrid-qt (on Linux).
 
 If you were running on Linux with a version that might have been compiled
 with a different version of Berkeley DB (for example, if you were using an
@@ -75,7 +75,7 @@ Dependency changes
 Bug fixes
 ---------
 
-* Clicking on a mlgbcoin: URI on Windows should now launch MLGBcoin-Qt properly.
+* Clicking on a massgrid: URI on Windows should now launch MassGrid-Qt properly.
 
 * When running -testnet, use RPC port 19442 by default.
 

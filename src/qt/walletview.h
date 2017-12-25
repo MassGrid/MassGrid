@@ -2,14 +2,14 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_WALLETVIEW_H
-#define MLGBCOIN_QT_WALLETVIEW_H
+#ifndef MASSGRID_QT_WALLETVIEW_H
+#define MASSGRID_QT_WALLETVIEW_H
 
 #include "amount.h"
 
 #include <QStackedWidget>
 
-class MLGBcoinGUI;
+class MassGridGUI;
 class ClientModel;
 class OverviewPage;
 class ReceiveCoinsDialog;
@@ -37,13 +37,13 @@ public:
     explicit WalletView(QWidget *parent);
     ~WalletView();
 
-    void setMLGBcoinGUI(MLGBcoinGUI *gui);
+    void setMassGridGUI(MassGridGUI *gui);
     /** Set the client model.
         The client model represents the part of the core that communicates with the P2P network, and is wallet-agnostic.
     */
     void setClientModel(ClientModel *clientModel);
     /** Set the wallet model.
-        The wallet model represents a mlgbcoin wallet, and offers access to the list of transactions, address book and sending
+        The wallet model represents a massgrid wallet, and offers access to the list of transactions, address book and sending
         functionality.
     */
     void setWalletModel(WalletModel *walletModel);
@@ -116,4 +116,4 @@ signals:
     void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address);
 };
 
-#endif // MLGBCOIN_QT_WALLETVIEW_H
+#endif // MASSGRID_QT_WALLETVIEW_H

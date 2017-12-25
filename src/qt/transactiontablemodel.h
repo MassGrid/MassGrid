@@ -2,10 +2,10 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_TRANSACTIONTABLEMODEL_H
-#define MLGBCOIN_QT_TRANSACTIONTABLEMODEL_H
+#ifndef MASSGRID_QT_TRANSACTIONTABLEMODEL_H
+#define MASSGRID_QT_TRANSACTIONTABLEMODEL_H
 
-#include "mlgbcoinunits.h"
+#include "massgridunits.h"
 
 #include <QAbstractTableModel>
 #include <QStringList>
@@ -90,7 +90,7 @@ private:
     QString formatTxDate(const TransactionRecord *wtx) const;
     QString formatTxType(const TransactionRecord *wtx) const;
     QString formatTxToAddress(const TransactionRecord *wtx, bool tooltip) const;
-    QString formatTxAmount(const TransactionRecord *wtx, bool showUnconfirmed=true, MLGBcoinUnits::SeparatorStyle separators=MLGBcoinUnits::separatorStandard) const;
+    QString formatTxAmount(const TransactionRecord *wtx, bool showUnconfirmed=true, MassGridUnits::SeparatorStyle separators=MassGridUnits::separatorStandard) const;
     QString formatTooltip(const TransactionRecord *rec) const;
     QVariant txStatusDecoration(const TransactionRecord *wtx) const;
     QVariant txWatchonlyDecoration(const TransactionRecord *wtx) const;
@@ -109,4 +109,4 @@ public slots:
     friend class TransactionTablePriv;
 };
 
-#endif // MLGBCOIN_QT_TRANSACTIONTABLEMODEL_H
+#endif // MASSGRID_QT_TRANSACTIONTABLEMODEL_H

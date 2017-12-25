@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_UNIVALUE_UNIVALUE_H
-#define MLGBCOIN_UNIVALUE_UNIVALUE_H
+#ifndef MASSGRID_UNIVALUE_UNIVALUE_H
+#define MASSGRID_UNIVALUE_UNIVALUE_H
 
 #include <stdint.h>
 #include <string>
@@ -152,4 +152,4 @@ extern enum jtokentype getJsonToken(std::string& tokenVal,
                                     unsigned int& consumed, const char *raw);
 extern const char *uvTypeName(UniValue::VType t);
 
-#endif // MLGBCOIN_UNIVALUE_UNIVALUE_H
+#endif // MASSGRID_UNIVALUE_UNIVALUE_H

@@ -7,11 +7,11 @@
 # Test fee estimation code
 #
 
-from test_framework import MLGBcoinTestFramework
-from mlgbcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from test_framework import MassGridTestFramework
+from massgridrpc.authproxy import AuthServiceProxy, JSONRPCException
 from util import *
 
-class EstimateFeeTest(MLGBcoinTestFramework):
+class EstimateFeeTest(MassGridTestFramework):
 
     def setup_network(self):
         self.nodes = []

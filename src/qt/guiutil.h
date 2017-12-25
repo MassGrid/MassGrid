@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_GUIUTIL_H
-#define MLGBCOIN_QT_GUIUTIL_H
+#ifndef MASSGRID_QT_GUIUTIL_H
+#define MASSGRID_QT_GUIUTIL_H
 
 #include "amount.h"
 
@@ -29,7 +29,7 @@ class QUrl;
 class QWidget;
 QT_END_NAMESPACE
 
-/** Utility functions used by the MLGBcoin Qt UI.
+/** Utility functions used by the MassGrid Qt UI.
  */
 namespace GUIUtil
 {
@@ -37,17 +37,17 @@ namespace GUIUtil
     QString dateTimeStr(const QDateTime &datetime);
     QString dateTimeStr(qint64 nTime);
 
-    // Render MLGBcoin addresses in monospace font
-    QFont mlgbcoinAddressFont();
+    // Render MassGrid addresses in monospace font
+    QFont massgridAddressFont();
 
     // Set up widgets for address and amounts
     void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent);
     void setupAmountWidget(QLineEdit *widget, QWidget *parent);
 
-    // Parse "mlgbcoin:" URI into recipient object, return true on successful parsing
-    bool parseMLGBcoinURI(const QUrl &uri, SendCoinsRecipient *out);
-    bool parseMLGBcoinURI(QString uri, SendCoinsRecipient *out);
-    QString formatMLGBcoinURI(const SendCoinsRecipient &info);
+    // Parse "massgrid:" URI into recipient object, return true on successful parsing
+    bool parseMassGridURI(const QUrl &uri, SendCoinsRecipient *out);
+    bool parseMassGridURI(QString uri, SendCoinsRecipient *out);
+    QString formatMassGridURI(const SendCoinsRecipient &info);
 
     // Returns true if given address+amount meets "dust" definition
     bool isDust(const QString& address, const CAmount& amount);
@@ -205,4 +205,4 @@ namespace GUIUtil
     
 } // namespace GUIUtil
 
-#endif // MLGBCOIN_QT_GUIUTIL_H
+#endif // MASSGRID_QT_GUIUTIL_H

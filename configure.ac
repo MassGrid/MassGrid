@@ -6,17 +6,17 @@ define(_CLIENT_VERSION_REVISION, 0)
 define(_CLIENT_VERSION_BUILD, 0)
 define(_CLIENT_VERSION_IS_RELEASE, true)
 define(_COPYRIGHT_YEAR, 2015)
-AC_INIT([MLGBcoin Core],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION],[info@mlgbcoin.org],[mlgbcoin])
+AC_INIT([MassGrid Core],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION],[info@massgrid.org],[massgrid])
 AC_CONFIG_SRCDIR([src/main.cpp])
-AC_CONFIG_HEADERS([src/config/mlgbcoin-config.h])
+AC_CONFIG_HEADERS([src/config/massgrid-config.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux/m4])
 
 AC_CANONICAL_HOST
 
-AH_TOP([#ifndef MLGBCOIN_CONFIG_H])
-AH_TOP([#define MLGBCOIN_CONFIG_H])
-AH_BOTTOM([#endif //MLGBCOIN_CONFIG_H])
+AH_TOP([#ifndef MASSGRID_CONFIG_H])
+AH_TOP([#define MASSGRID_CONFIG_H])
+AH_BOTTOM([#endif //MASSGRID_CONFIG_H])
 
 dnl faketime breaks configure and is only needed for make. Disable it here.
 unset FAKETIME
@@ -173,21 +173,21 @@ CPPFLAGS="$CPPFLAGS -DBOOST_SPIRIT_THREADSAFE -DHAVE_BUILD_INFO -D__STDC_FORMAT_
 
 AC_ARG_WITH([utils],
   [AS_HELP_STRING([--with-utils],
-  [build mlgbcoin-cli mlgbcoin-tx (default=yes)])],
-  [build_mlgbcoin_utils=$withval],
-  [build_mlgbcoin_utils=yes])
+  [build massgrid-cli massgrid-tx (default=yes)])],
+  [build_massgrid_utils=$withval],
+  [build_massgrid_utils=yes])
 
 AC_ARG_WITH([libs],
   [AS_HELP_STRING([--with-libs],
   [build libraries (default=yes)])],
-  [build_mlgbcoin_libs=$withval],
-  [build_mlgbcoin_libs=yes])
+  [build_massgrid_libs=$withval],
+  [build_massgrid_libs=yes])
 
 AC_ARG_WITH([daemon],
   [AS_HELP_STRING([--with-daemon],
-  [build mlgbcoind daemon (default=yes)])],
-  [build_mlgbcoind=$withval],
-  [build_mlgbcoind=yes])
+  [build massgridd daemon (default=yes)])],
+  [build_massgridd=$withval],
+  [build_massgridd=yes])
 
 AC_LANG_PUSH([C++])
 
@@ -363,7 +363,7 @@ AC_C_BIGENDIAN([AC_MSG_ERROR("Big Endian not supported")])
 dnl Check for pthread compile/link requirements
 AX_PTHREAD
 
-# The following macro will add the necessary defines to mlgbcoin-config.h, but
+# The following macro will add the necessary defines to massgrid-config.h, but
 # they also need to be passed down to any subprojects. Pull the results out of
 # the cache and add them to CPPFLAGS.
 AC_SYS_LARGEFILE
@@ -506,7 +506,7 @@ AC_SUBST(LIBMEMENV)
 
 if test x$enable_wallet != xno; then
     dnl Check for libdb_cxx only if wallet enabled
-    MLGBCOIN_FIND_BDB48
+    MASSGRID_FIND_BDB48
 fi
 
 dnl Check for libminiupnpc (optional)
@@ -518,12 +518,12 @@ if test x$use_upnp != xno; then
   )
 fi
 
-MLGBCOIN_QT_INIT
+MASSGRID_QT_INIT
 
-dnl sets $mlgbcoin_enable_qt, $mlgbcoin_enable_qt_test, $mlgbcoin_enable_qt_dbus
-MLGBCOIN_QT_CONFIGURE([$use_pkgconfig], [qt4])
+dnl sets $massgrid_enable_qt, $massgrid_enable_qt_test, $massgrid_enable_qt_dbus
+MASSGRID_QT_CONFIGURE([$use_pkgconfig], [qt4])
 
-if test x$build_mlgbcoin_utils$build_mlgbcoind$mlgbcoin_enable_qt$use_tests = xnononono; then
+if test x$build_massgrid_utils$build_massgridd$massgrid_enable_qt$use_tests = xnononono; then
     use_boost=no
 else
     use_boost=yes
@@ -681,9 +681,9 @@ if test x$use_pkgconfig = xyes; then
     [
       PKG_CHECK_MODULES([SSL], [libssl],, [AC_MSG_ERROR(openssl  not found.)])
       PKG_CHECK_MODULES([CRYPTO], [libcrypto],,[AC_MSG_ERROR(libcrypto  not found.)])
-      MLGBCOIN_QT_CHECK([PKG_CHECK_MODULES([PROTOBUF], [protobuf], [have_protobuf=yes], [MLGBCOIN_QT_FAIL(libprotobuf not found)])])
+      MASSGRID_QT_CHECK([PKG_CHECK_MODULES([PROTOBUF], [protobuf], [have_protobuf=yes], [MASSGRID_QT_FAIL(libprotobuf not found)])])
       if test x$use_qr != xno; then
-        MLGBCOIN_QT_CHECK([PKG_CHECK_MODULES([QR], [libqrencode], [have_qrencode=yes], [have_qrencode=no])])
+        MASSGRID_QT_CHECK([PKG_CHECK_MODULES([QR], [libqrencode], [have_qrencode=yes], [have_qrencode=no])])
       fi
     ]
   )
@@ -694,10 +694,10 @@ else
   AC_CHECK_HEADER([openssl/ssl.h],, AC_MSG_ERROR(libssl headers missing),)
   AC_CHECK_LIB([ssl],         [main],SSL_LIBS=-lssl, AC_MSG_ERROR(libssl missing))
 
-  MLGBCOIN_QT_CHECK(AC_CHECK_LIB([protobuf] ,[main],[PROTOBUF_LIBS=-lprotobuf], MLGBCOIN_QT_FAIL(libprotobuf not found)))
+  MASSGRID_QT_CHECK(AC_CHECK_LIB([protobuf] ,[main],[PROTOBUF_LIBS=-lprotobuf], MASSGRID_QT_FAIL(libprotobuf not found)))
   if test x$use_qr != xno; then
-    MLGBCOIN_QT_CHECK([AC_CHECK_LIB([qrencode], [main],[QR_LIBS=-lqrencode], [have_qrencode=no])])
-    MLGBCOIN_QT_CHECK([AC_CHECK_HEADER([qrencode.h],, have_qrencode=no)])
+    MASSGRID_QT_CHECK([AC_CHECK_LIB([qrencode], [main],[QR_LIBS=-lqrencode], [have_qrencode=no])])
+    MASSGRID_QT_CHECK([AC_CHECK_HEADER([qrencode.h],, have_qrencode=no)])
   fi
 fi
 
@@ -732,22 +732,22 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 CFLAGS="$CFLAGS_TEMP"
 LIBS="$LIBS_TEMP"
 
-MLGBCOIN_QT_PATH_PROGS([PROTOC], [protoc],$protoc_bin_path)
+MASSGRID_QT_PATH_PROGS([PROTOC], [protoc],$protoc_bin_path)
 
-AC_MSG_CHECKING([whether to build mlgbcoind])
-AM_CONDITIONAL([BUILD_MLGBCOIND], [test x$build_mlgbcoind = xyes])
-AC_MSG_RESULT($build_mlgbcoind)
+AC_MSG_CHECKING([whether to build massgridd])
+AM_CONDITIONAL([BUILD_MASSGRIDD], [test x$build_massgridd = xyes])
+AC_MSG_RESULT($build_massgridd)
 
-AC_MSG_CHECKING([whether to build utils (mlgbcoin-cli mlgbcoin-tx)])
-AM_CONDITIONAL([BUILD_MLGBCOIN_UTILS], [test x$build_mlgbcoin_utils = xyes])
-AC_MSG_RESULT($build_mlgbcoin_utils)
+AC_MSG_CHECKING([whether to build utils (massgrid-cli massgrid-tx)])
+AM_CONDITIONAL([BUILD_MASSGRID_UTILS], [test x$build_massgrid_utils = xyes])
+AC_MSG_RESULT($build_massgrid_utils)
 
 AC_MSG_CHECKING([whether to build libraries])
-AM_CONDITIONAL([BUILD_MLGBCOIN_LIBS], [test x$build_mlgbcoin_libs = xyes])
-if test x$build_mlgbcoin_libs = xyes; then
+AM_CONDITIONAL([BUILD_MASSGRID_LIBS], [test x$build_massgrid_libs = xyes])
+if test x$build_massgrid_libs = xyes; then
   AC_DEFINE(HAVE_CONSENSUS_LIB, 1, [Define this symbol if the consensus lib has been built])
 fi
-AC_MSG_RESULT($build_mlgbcoin_libs)
+AC_MSG_RESULT($build_massgrid_libs)
 
 AC_LANG_POP
 
@@ -808,14 +808,14 @@ else
 fi
 
 dnl these are only used when qt is enabled
-if test x$mlgbcoin_enable_qt != xno; then
+if test x$massgrid_enable_qt != xno; then
   BUILD_QT=qt
   dnl enable dbus support
   AC_MSG_CHECKING([whether to build GUI with support for D-Bus])
-  if test x$mlgbcoin_enable_qt_dbus != xno; then
+  if test x$massgrid_enable_qt_dbus != xno; then
     AC_DEFINE([USE_DBUS],[1],[Define if dbus support should be compiled in])
   fi
-  AC_MSG_RESULT($mlgbcoin_enable_qt_dbus)
+  AC_MSG_RESULT($massgrid_enable_qt_dbus)
 
   dnl enable qr support
   AC_MSG_CHECKING([whether to build GUI with support for QR codes])
@@ -838,8 +838,8 @@ if test x$mlgbcoin_enable_qt != xno; then
     AC_MSG_WARN("xgettext is required to update qt translations")
   fi
 
-  AC_MSG_CHECKING([whether to build test_mlgbcoin-qt])
-  if test x$use_tests$mlgbcoin_enable_qt_test = xyesyes; then
+  AC_MSG_CHECKING([whether to build test_massgrid-qt])
+  if test x$use_tests$massgrid_enable_qt_test = xyesyes; then
     AC_MSG_RESULT([yes])
     BUILD_TEST_QT="test"
   else
@@ -847,7 +847,7 @@ if test x$mlgbcoin_enable_qt != xno; then
   fi
 fi
 
-AC_MSG_CHECKING([whether to build test_mlgbcoin])
+AC_MSG_CHECKING([whether to build test_massgrid])
 if test x$use_tests = xyes; then
   AC_MSG_RESULT([yes])
   BUILD_TEST="test"
@@ -862,7 +862,7 @@ else
   AC_MSG_RESULT([no])
 fi
 
-if test x$build_mlgbcoin_utils$build_mlgbcoin_libs$build_mlgbcoind$mlgbcoin_enable_qt$use_tests = xnonononono; then
+if test x$build_massgrid_utils$build_massgrid_libs$build_massgridd$massgrid_enable_qt$use_tests = xnonononono; then
   AC_MSG_ERROR([No targets! Please specify at least one of: --with-utils --with-libs --with-daemon --with-gui or --enable-tests])
 fi
 
@@ -871,8 +871,8 @@ AM_CONDITIONAL([BUILD_DARWIN], [test x$BUILD_OS = xdarwin])
 AM_CONDITIONAL([TARGET_WINDOWS], [test x$TARGET_OS = xwindows])
 AM_CONDITIONAL([ENABLE_WALLET],[test x$enable_wallet = xyes])
 AM_CONDITIONAL([ENABLE_TESTS],[test x$use_tests = xyes])
-AM_CONDITIONAL([ENABLE_QT],[test x$mlgbcoin_enable_qt = xyes])
-AM_CONDITIONAL([ENABLE_QT_TESTS],[test x$use_tests$mlgbcoin_enable_qt_test = xyesyes])
+AM_CONDITIONAL([ENABLE_QT],[test x$massgrid_enable_qt = xyes])
+AM_CONDITIONAL([ENABLE_QT_TESTS],[test x$use_tests$massgrid_enable_qt_test = xyesyes])
 AM_CONDITIONAL([USE_QRCODE], [test x$use_qr = xyes])
 AM_CONDITIONAL([USE_LCOV],[test x$use_lcov = xyes])
 AM_CONDITIONAL([USE_COMPARISON_TOOL],[test x$use_comparison_tool != xno])
@@ -906,7 +906,7 @@ AC_SUBST(BUILD_TEST_QT)
 AC_SUBST(MINIUPNPC_CPPFLAGS)
 AC_SUBST(MINIUPNPC_LIBS)
 AC_CONFIG_FILES([Makefile src/Makefile share/setup.nsi share/qt/Info.plist src/test/buildenv.py])
-AC_CONFIG_FILES([qa/pull-tester/run-mlgbcoind-for-test.sh],[chmod +x qa/pull-tester/run-mlgbcoind-for-test.sh])
+AC_CONFIG_FILES([qa/pull-tester/run-massgridd-for-test.sh],[chmod +x qa/pull-tester/run-massgridd-for-test.sh])
 AC_CONFIG_FILES([qa/pull-tester/tests-config.sh],[chmod +x qa/pull-tester/tests-config.sh])
 
 dnl boost's m4 checks do something really nasty: they export these vars. As a

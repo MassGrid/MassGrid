@@ -188,12 +188,12 @@ public:
 	vFixedSeeds.clear();
 	vSeeds.clear();
 
-        vSeeds.push_back(CDNSSeedData("seed1.mlgbco.in", "seed1.mlgbco.in"));
-        vSeeds.push_back(CDNSSeedData("seed2.mlgbco.in", "seed2.mlgbco.in"));
-        vSeeds.push_back(CDNSSeedData("seed3.mlgbco.in", "seed3.mlgbco.in"));
-        vSeeds.push_back(CDNSSeedData("seed4.mlgbco.in", "seed4.mlgbco.in"));
-        vSeeds.push_back(CDNSSeedData("seed5.mlgbco.in", "seed5.mlgbco.in"));
-        vSeeds.push_back(CDNSSeedData("seed6.mlgbco.in", "seed6.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed1.mgcco.in", "seed1.mgcco.in"));
+        vSeeds.push_back(CDNSSeedData("seed2.mgcco.in", "seed2.mgcco.in"));
+        vSeeds.push_back(CDNSSeedData("seed3.mgcco.in", "seed3.mgcco.in"));
+        vSeeds.push_back(CDNSSeedData("seed4.mgcco.in", "seed4.mgcco.in"));
+        vSeeds.push_back(CDNSSeedData("seed5.mgcco.in", "seed5.mgcco.in"));
+        vSeeds.push_back(CDNSSeedData("seed6.mgcco.in", "seed6.mgcco.in"));
         
         base58Prefixes[PUBKEY_ADDRESS] = list_of(50);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(38);
@@ -258,9 +258,9 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         /*vSeeds.push_back(CDNSSeedData("alexykot.me", "testnet-seed.alexykot.me"));
-        vSeeds.push_back(CDNSSeedData("mlgbcoin.petertodd.org", "testnet-seed.mlgbcoin.petertodd.org"));
+        vSeeds.push_back(CDNSSeedData("massgrid.petertodd.org", "testnet-seed.massgrid.petertodd.org"));
         vSeeds.push_back(CDNSSeedData("bluematt.me", "testnet-seed.bluematt.me"));
-        vSeeds.push_back(CDNSSeedData("mlgbcoin.schildbach.de", "testnet-seed.mlgbcoin.schildbach.de"));
+        vSeeds.push_back(CDNSSeedData("massgrid.schildbach.de", "testnet-seed.massgrid.schildbach.de"));
 	*/
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(111);

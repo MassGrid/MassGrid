@@ -7,7 +7,7 @@
 # Test REST interface
 #
 
-from test_framework import MLGBcoinTestFramework
+from test_framework import MassGridTestFramework
 from util import *
 import json
 
@@ -30,7 +30,7 @@ def http_get_call(host, port, path, response_object = 0):
     return conn.getresponse().read()
 
 
-class RESTTest (MLGBcoinTestFramework):
+class RESTTest (MassGridTestFramework):
     FORMAT_SEPARATOR = "."
     
     def run_test(self):

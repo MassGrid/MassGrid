@@ -1,6 +1,6 @@
 // Automatically generated file. Do not modify.
-#ifndef MLGBCOIN_UNIVALUE_UNIVALUE_ESCAPES_H
-#define MLGBCOIN_UNIVALUE_UNIVALUE_ESCAPES_H
+#ifndef MASSGRID_UNIVALUE_UNIVALUE_ESCAPES_H
+#define MASSGRID_UNIVALUE_UNIVALUE_ESCAPES_H
 static const char *escapes[256] = {
 	NULL,
 	NULL,
@@ -259,4 +259,4 @@ static const char *escapes[256] = {
 	NULL,
 	NULL,
 };
-#endif // MLGBCOIN_UNIVALUE_UNIVALUE_ESCAPES_H
+#endif // MASSGRID_UNIVALUE_UNIVALUE_ESCAPES_H

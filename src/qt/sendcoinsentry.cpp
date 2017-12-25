@@ -30,10 +30,10 @@ SendCoinsEntry::SendCoinsEntry(QWidget *parent) :
     ui->addAsLabel->setPlaceholderText(tr("Enter a label for this address to add it to your address book"));
 #endif
 
-    // normal mlgbcoin address field
+    // normal massgrid address field
     GUIUtil::setupAddressWidget(ui->payTo, this);
-    // just a label for displaying mlgbcoin address(es)
-    ui->payTo_is->setFont(GUIUtil::mlgbcoinAddressFont());
+    // just a label for displaying massgrid address(es)
+    ui->payTo_is->setFont(GUIUtil::massgridAddressFont());
 
     // Connect signals
     connect(ui->payAmount, SIGNAL(valueChanged()), this, SIGNAL(payAmountChanged()));
@@ -99,7 +99,7 @@ void SendCoinsEntry::clear()
     ui->memoTextLabel_s->clear();
     ui->payAmount_s->clear();
 
-    // update the display unit, to not use the default ("MLGB")
+    // update the display unit, to not use the default ("MGC")
     updateDisplayUnit();
 }
 

@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_SERIALIZE_H
-#define MLGBCOIN_SERIALIZE_H
+#ifndef MASSGRID_SERIALIZE_H
+#define MASSGRID_SERIALIZE_H
 
 #include <algorithm>
 #include <assert.h>
@@ -808,4 +808,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_SERIALIZE_H
+#endif // MASSGRID_SERIALIZE_H

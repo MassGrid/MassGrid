@@ -1,9 +1,9 @@
 Regression tests of RPC interface
 =================================
 
-### [python-mlgbcoinrpc](https://github.com/jgarzik/python-mlgbcoinrpc)
-Git subtree of [https://github.com/jgarzik/python-mlgbcoinrpc](https://github.com/jgarzik/python-mlgbcoinrpc).
-Changes to python-mlgbcoinrpc should be made upstream, and then
+### [python-massgridrpc](https://github.com/jgarzik/python-massgridrpc)
+Git subtree of [https://github.com/jgarzik/python-massgridrpc](https://github.com/jgarzik/python-massgridrpc).
+Changes to python-massgridrpc should be made upstream, and then
 pulled here using git subtree.
 
 ### [test_framework.py](test_framework.py)
@@ -28,7 +28,7 @@ Notes
 A 200-block -regtest blockchain and wallets for four nodes
 is created the first time a regression test is run and
 is stored in the cache/ directory. Each node has 25 mature
-blocks (25*50=1250 MLGB) in their wallet.
+blocks (25*50=1250 MGC) in their wallet.
 
 After the first run, the cache/ blockchain and wallets are
 copied into a temporary directory and used as the initial
@@ -39,5 +39,5 @@ to recover with:
 
 ```bash
 rm -rf cache
-killall mlgbcoind
+killall massgridd
 ```

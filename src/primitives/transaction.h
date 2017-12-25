@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_PRIMITIVES_TRANSACTION_H
-#define MLGBCOIN_PRIMITIVES_TRANSACTION_H
+#ifndef MASSGRID_PRIMITIVES_TRANSACTION_H
+#define MASSGRID_PRIMITIVES_TRANSACTION_H
 
 #include "amount.h"
 #include "script/script.h"
@@ -273,4 +273,4 @@ struct CMutableTransaction
     uint256 GetHash() const;
 };
 
-#endif // MLGBCOIN_PRIMITIVES_TRANSACTION_H
+#endif // MASSGRID_PRIMITIVES_TRANSACTION_H

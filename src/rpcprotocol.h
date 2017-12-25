@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_RPCPROTOCOL_H
-#define MLGBCOIN_RPCPROTOCOL_H
+#ifndef MASSGRID_RPCPROTOCOL_H
+#define MASSGRID_RPCPROTOCOL_H
 
 #include <list>
 #include <map>
@@ -31,7 +31,7 @@ enum HTTPStatusCode
     HTTP_SERVICE_UNAVAILABLE   = 503,
 };
 
-//! MLGBcoin RPC error codes
+//! MassGrid RPC error codes
 enum RPCErrorCode
 {
     //! Standard JSON-RPC 2.0 errors
@@ -61,7 +61,7 @@ enum RPCErrorCode
     RPC_TRANSACTION_ALREADY_IN_CHAIN= RPC_VERIFY_ALREADY_IN_CHAIN,
 
     //! P2P client errors
-    RPC_CLIENT_NOT_CONNECTED        = -9,  //! MLGBcoin is not connected
+    RPC_CLIENT_NOT_CONNECTED        = -9,  //! MassGrid is not connected
     RPC_CLIENT_IN_INITIAL_DOWNLOAD  = -10, //! Still downloading initial blocks
     RPC_CLIENT_NODE_ALREADY_ADDED   = -23, //! Node is already added
     RPC_CLIENT_NODE_NOT_ADDED       = -24, //! Node has not been added before
@@ -166,4 +166,4 @@ json_spirit::Object JSONRPCReplyObj(const json_spirit::Value& result, const json
 std::string JSONRPCReply(const json_spirit::Value& result, const json_spirit::Value& error, const json_spirit::Value& id);
 json_spirit::Object JSONRPCError(int code, const std::string& message);
 
-#endif // MLGBCOIN_RPCPROTOCOL_H
+#endif // MASSGRID_RPCPROTOCOL_H

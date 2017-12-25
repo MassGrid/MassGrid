@@ -1,5 +1,5 @@
 Version 0.3.14 is now available
-http://sourceforge.net/projects/mlgbcoin/files/MLGBcoin/mlgbcoin-0.3.14/
+http://sourceforge.net/projects/massgrid/files/MassGrid/massgrid-0.3.14/
 
 Changes:
 * Key pool feature for safer wallet backup

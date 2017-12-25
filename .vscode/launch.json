@@ -6,7 +6,7 @@
             "name": "C++ Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/src/qt/mlgbcoin-qt",
+            "program": "${workspaceRoot}/src/qt/massgrid-qt",
             "args": ["-server"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
@@ -27,7 +27,7 @@
             "name": "C++ Attach",
             "type": "cppdbg",
             "request": "attach",
-            "program": "${workspaceRoot}/src/qt/mlgbcoin-qt",
+            "program": "${workspaceRoot}/src/qt/massgrid-qt",
             "processId": "${command.pickProcess}",
             "linux": {
                 "MIMode": "gdb"

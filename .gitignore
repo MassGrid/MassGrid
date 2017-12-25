@@ -1,12 +1,12 @@
 *.tar.gz
 
 *.exe
-src/mlgbcoin
-src/mlgbcoind
-src/mlgbcoin-cli
-src/mlgbcoin-tx
-src/test/test_mlgbcoin
-src/qt/test/test_mlgbcoin-qt
+src/massgrid
+src/massgridd
+src/massgrid-cli
+src/massgrid-tx
+src/test/test_massgrid
+src/qt/test/test_massgrid-qt
 
 # autoreconf
 Makefile.in
@@ -29,8 +29,8 @@ config.log
 config.status
 configure
 libtool
-src/config/mlgbcoin-config.h
-src/config/mlgbcoin-config.h.in
+src/config/massgrid-config.h
+src/config/massgrid-config.h.in
 src/config/stamp-h1
 share/setup.nsi
 share/qt/Info.plist
@@ -55,7 +55,7 @@ src/qt/test/moc*.cpp
 *.o
 *.o-*
 *.patch
-.mlgbcoin
+.massgrid
 *.a
 *.pb.cc
 *.pb.h
@@ -74,12 +74,12 @@ src/qt/test/moc*.cpp
 # Compilation and Qt preprocessor part
 *.qm
 Makefile
-mlgbcoin-qt
-MLGBcoin-Qt.app
+massgrid-qt
+MassGrid-Qt.app
 
 # Unit-tests
 Makefile.test
-mlgbcoin-qt_test
+massgrid-qt_test
 src/test/buildenv.py
 
 # Resources cpp
@@ -95,7 +95,7 @@ build
 #lcov
 *.gcno
 /*.info
-test_mlgbcoin.coverage/
+test_massgrid.coverage/
 total.coverage/
 coverage_percent.txt
 
@@ -103,7 +103,7 @@ coverage_percent.txt
 linux-coverage-build
 linux-build
 win32-build
-qa/pull-tester/run-mlgbcoind-for-test.sh
+qa/pull-tester/run-massgridd-for-test.sh
 qa/pull-tester/tests-config.sh
 qa/pull-tester/cache/*
 qa/pull-tester/test.*/*

@@ -4,7 +4,7 @@
 
 #include "walletframe.h"
 
-#include "mlgbcoingui.h"
+#include "massgridgui.h"
 #include "walletview.h"
 
 #include <cstdio>
@@ -12,7 +12,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-WalletFrame::WalletFrame(MLGBcoinGUI *_gui) :
+WalletFrame::WalletFrame(MassGridGUI *_gui) :
     QFrame(_gui),
     gui(_gui)
 {
@@ -43,7 +43,7 @@ bool WalletFrame::addWallet(const QString& name, WalletModel *walletModel)
         return false;
 
     WalletView *walletView = new WalletView(this);
-    walletView->setMLGBcoinGUI(gui);
+    walletView->setMassGridGUI(gui);
     walletView->setClientModel(clientModel);
     walletView->setWalletModel(walletModel);
     walletView->showOutOfSyncWarning(bOutOfSync);

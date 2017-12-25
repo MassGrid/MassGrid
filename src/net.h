@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_NET_H
-#define MLGBCOIN_NET_H
+#ifndef MASSGRID_NET_H
+#define MASSGRID_NET_H
 
 #include "bloom.h"
 #include "compat.h"
@@ -623,4 +623,4 @@ public:
     bool Read(CAddrMan& addr);
 };
 
-#endif // MLGBCOIN_NET_H
+#endif // MASSGRID_NET_H

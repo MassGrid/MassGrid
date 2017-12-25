@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_PRIMITIVES_BLOCK_H
-#define MLGBCOIN_PRIMITIVES_BLOCK_H
+#ifndef MASSGRID_PRIMITIVES_BLOCK_H
+#define MASSGRID_PRIMITIVES_BLOCK_H
 
 #include "primitives/transaction.h"
 #include "serialize.h"
@@ -174,4 +174,4 @@ struct CBlockLocator
     }
 };
 
-#endif // MLGBCOIN_PRIMITIVES_BLOCK_H
+#endif // MASSGRID_PRIMITIVES_BLOCK_H

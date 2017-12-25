@@ -3,12 +3,12 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/mlgbcoin-config.h"
+#include "config/massgrid-config.h"
 #endif
 
 #include "optionsmodel.h"
 
-#include "mlgbcoinunits.h"
+#include "massgridunits.h"
 #include "guiutil.h"
 
 #include "amount.h"
@@ -58,7 +58,7 @@ void OptionsModel::Init()
 
     // Display
     if (!settings.contains("nDisplayUnit"))
-        settings.setValue("nDisplayUnit", MLGBcoinUnits::MLGB);
+        settings.setValue("nDisplayUnit", MassGridUnits::MGC);
     nDisplayUnit = settings.value("nDisplayUnit").toInt();
 
     if (!settings.contains("strThirdPartyTxUrls"))

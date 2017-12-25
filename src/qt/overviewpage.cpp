@@ -5,7 +5,7 @@
 #include "overviewpage.h"
 #include "ui_overviewpage.h"
 
-#include "mlgbcoinunits.h"
+#include "massgridunits.h"
 #include "clientmodel.h"
 #include "guiconstants.h"
 #include "guiutil.h"
@@ -24,7 +24,7 @@ class TxViewDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
 public:
-    TxViewDelegate(): QAbstractItemDelegate(), unit(MLGBcoinUnits::MLGB)
+    TxViewDelegate(): QAbstractItemDelegate(), unit(MassGridUnits::MGC)
     {
 
     }
@@ -80,7 +80,7 @@ public:
             foreground = option.palette.color(QPalette::Text);
         }
         painter->setPen(foreground);
-        QString amountText = MLGBcoinUnits::formatWithUnit(unit, amount, true, MLGBcoinUnits::separatorAlways);
+        QString amountText = MassGridUnits::formatWithUnit(unit, amount, true, MassGridUnits::separatorAlways);
         if(!confirmed)
         {
             amountText = QString("[") + amountText + QString("]");
@@ -155,14 +155,14 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     currentWatchOnlyBalance = watchOnlyBalance;
     currentWatchUnconfBalance = watchUnconfBalance;
     currentWatchImmatureBalance = watchImmatureBalance;
-    ui->labelBalance->setText(MLGBcoinUnits::formatWithUnit(unit, balance, false, MLGBcoinUnits::separatorAlways));
-    ui->labelUnconfirmed->setText(MLGBcoinUnits::formatWithUnit(unit, unconfirmedBalance, false, MLGBcoinUnits::separatorAlways));
-    ui->labelImmature->setText(MLGBcoinUnits::formatWithUnit(unit, immatureBalance, false, MLGBcoinUnits::separatorAlways));
-    ui->labelTotal->setText(MLGBcoinUnits::formatWithUnit(unit, balance + unconfirmedBalance + immatureBalance, false, MLGBcoinUnits::separatorAlways));
-    ui->labelWatchAvailable->setText(MLGBcoinUnits::formatWithUnit(unit, watchOnlyBalance, false, MLGBcoinUnits::separatorAlways));
-    ui->labelWatchPending->setText(MLGBcoinUnits::formatWithUnit(unit, watchUnconfBalance, false, MLGBcoinUnits::separatorAlways));
-    ui->labelWatchImmature->setText(MLGBcoinUnits::formatWithUnit(unit, watchImmatureBalance, false, MLGBcoinUnits::separatorAlways));
-    ui->labelWatchTotal->setText(MLGBcoinUnits::formatWithUnit(unit, watchOnlyBalance + watchUnconfBalance + watchImmatureBalance, false, MLGBcoinUnits::separatorAlways));
+    ui->labelBalance->setText(MassGridUnits::formatWithUnit(unit, balance, false, MassGridUnits::separatorAlways));
+    ui->labelUnconfirmed->setText(MassGridUnits::formatWithUnit(unit, unconfirmedBalance, false, MassGridUnits::separatorAlways));
+    ui->labelImmature->setText(MassGridUnits::formatWithUnit(unit, immatureBalance, false, MassGridUnits::separatorAlways));
+    ui->labelTotal->setText(MassGridUnits::formatWithUnit(unit, balance + unconfirmedBalance + immatureBalance, false, MassGridUnits::separatorAlways));
+    ui->labelWatchAvailable->setText(MassGridUnits::formatWithUnit(unit, watchOnlyBalance, false, MassGridUnits::separatorAlways));
+    ui->labelWatchPending->setText(MassGridUnits::formatWithUnit(unit, watchUnconfBalance, false, MassGridUnits::separatorAlways));
+    ui->labelWatchImmature->setText(MassGridUnits::formatWithUnit(unit, watchImmatureBalance, false, MassGridUnits::separatorAlways));
+    ui->labelWatchTotal->setText(MassGridUnits::formatWithUnit(unit, watchOnlyBalance + watchUnconfBalance + watchImmatureBalance, false, MassGridUnits::separatorAlways));
 
     // only show immature (newly mined) balance if it's non-zero, so as not to complicate things
     // for the non-mining users
@@ -228,7 +228,7 @@ void OverviewPage::setWalletModel(WalletModel *model)
         connect(model, SIGNAL(notifyWatchonlyChanged(bool)), this, SLOT(updateWatchOnlyLabels(bool)));
     }
 
-    // update the display unit, to not use the default ("MLGB")
+    // update the display unit, to not use the default ("MGC")
     updateDisplayUnit();
 }
 

@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_WALLET_H
-#define MLGBCOIN_WALLET_H
+#ifndef MASSGRID_WALLET_H
+#define MASSGRID_WALLET_H
 
 #include "amount.h"
 #include "primitives/block.h"
@@ -1078,4 +1078,4 @@ private:
     std::vector<char> _ssExtra;
 };
 
-#endif // MLGBCOIN_WALLET_H
+#endif // MASSGRID_WALLET_H

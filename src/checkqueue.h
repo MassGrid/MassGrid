@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_CHECKQUEUE_H
-#define MLGBCOIN_CHECKQUEUE_H
+#ifndef MASSGRID_CHECKQUEUE_H
+#define MASSGRID_CHECKQUEUE_H
 
 #include <algorithm>
 #include <vector>
@@ -212,4 +212,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_CHECKQUEUE_H
+#endif // MASSGRID_CHECKQUEUE_H

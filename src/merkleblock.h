@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_MERKLEBLOCK_H
-#define MLGBCOIN_MERKLEBLOCK_H
+#ifndef MASSGRID_MERKLEBLOCK_H
+#define MASSGRID_MERKLEBLOCK_H
 
 #include "serialize.h"
 #include "uint256.h"
@@ -148,4 +148,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_MERKLEBLOCK_H
+#endif // MASSGRID_MERKLEBLOCK_H

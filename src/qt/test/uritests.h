@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_TEST_URITESTS_H
-#define MLGBCOIN_QT_TEST_URITESTS_H
+#ifndef MASSGRID_QT_TEST_URITESTS_H
+#define MASSGRID_QT_TEST_URITESTS_H
 
 #include <QObject>
 #include <QTest>
@@ -16,4 +16,4 @@ private slots:
     void uriTests();
 };
 
-#endif // MLGBCOIN_QT_TEST_URITESTS_H
+#endif // MASSGRID_QT_TEST_URITESTS_H

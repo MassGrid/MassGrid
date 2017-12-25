@@ -2,13 +2,13 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_WALLETFRAME_H
-#define MLGBCOIN_QT_WALLETFRAME_H
+#ifndef MASSGRID_QT_WALLETFRAME_H
+#define MASSGRID_QT_WALLETFRAME_H
 
 #include <QFrame>
 #include <QMap>
 
-class MLGBcoinGUI;
+class MassGridGUI;
 class ClientModel;
 class SendCoinsRecipient;
 class WalletModel;
@@ -23,7 +23,7 @@ class WalletFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit WalletFrame(MLGBcoinGUI *_gui = 0);
+    explicit WalletFrame(MassGridGUI *_gui = 0);
     ~WalletFrame();
 
     void setClientModel(ClientModel *clientModel);
@@ -39,7 +39,7 @@ public:
 
 private:
     QStackedWidget *walletStack;
-    MLGBcoinGUI *gui;
+    MassGridGUI *gui;
     ClientModel *clientModel;
     QMap<QString, WalletView*> mapWalletViews;
 
@@ -77,4 +77,4 @@ public slots:
     void usedReceivingAddresses();
 };
 
-#endif // MLGBCOIN_QT_WALLETFRAME_H
+#endif // MASSGRID_QT_WALLETFRAME_H

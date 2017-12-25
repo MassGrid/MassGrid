@@ -1,4 +1,4 @@
-The following is a list of assets used in the mlgbcoin source and their proper attribution.
+The following is a list of assets used in the massgrid source and their proper attribution.
 
 [Wladimir van der Laan](https://github.com/laanwj)
 -----------------------
@@ -47,7 +47,7 @@ md2k7
 * Designer: md2k7
 * License: You are free to do with these icons as you wish, including selling, copying, modifying etc.
 * License: MIT
-* Site: [https://mlgbcointalk.org/index.php?topic=15276.0](https://mlgbcointalk.org/index.php?topic=15276.0)
+* Site: [https://massgridtalk.org/index.php?topic=15276.0](https://massgridtalk.org/index.php?topic=15276.0)
 
 ### Assets Used
 	src/qt/res/icons/transaction*.png
@@ -93,11 +93,11 @@ Jonas Schnelli
 -----------------------
 
 ### Info
-* Designer: Jonas Schnelli (based on the original mlgbcoin logo from Bitboy)
+* Designer: Jonas Schnelli (based on the original massgrid logo from Bitboy)
 * License: MIT
 
 ### Assets Used
-	src/qt/res/icons/mlgbcoin.icns, src/qt/res/src/mlgbcoin.svg,
-	src/qt/res/src/mlgbcoin.ico, src/qt/res/src/mlgbcoin.png,
-	src/qt/res/src/mlgbcoin_testnet.png, docs/mlgbcoin_logo_doxygen.png,
+	src/qt/res/icons/massgrid.icns, src/qt/res/src/massgrid.svg,
+	src/qt/res/src/massgrid.ico, src/qt/res/src/massgrid.png,
+	src/qt/res/src/massgrid_testnet.png, docs/massgrid_logo_doxygen.png,
 	src/qt/res/images/splash.png, src/qt/res/images/splash_testnet.png

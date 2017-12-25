@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_TRANSACTIONDESC_H
-#define MLGBCOIN_QT_TRANSACTIONDESC_H
+#ifndef MASSGRID_QT_TRANSACTIONDESC_H
+#define MASSGRID_QT_TRANSACTIONDESC_H
 
 #include <QObject>
 #include <QString>
@@ -28,4 +28,4 @@ private:
     static QString FormatTxStatus(const CWalletTx& wtx);
 };
 
-#endif // MLGBCOIN_QT_TRANSACTIONDESC_H
+#endif // MASSGRID_QT_TRANSACTIONDESC_H

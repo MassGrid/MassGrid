@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_PEERTABLEMODEL_H
-#define MLGBCOIN_QT_PEERTABLEMODEL_H
+#ifndef MASSGRID_QT_PEERTABLEMODEL_H
+#define MASSGRID_QT_PEERTABLEMODEL_H
 
 #include "main.h"
 #include "net.h"
@@ -78,4 +78,4 @@ private:
     QTimer *timer;
 };
 
-#endif // MLGBCOIN_QT_PEERTABLEMODEL_H
+#endif // MASSGRID_QT_PEERTABLEMODEL_H

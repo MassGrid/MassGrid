@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_RFC6979_HMAC_SHA256_H
-#define MLGBCOIN_RFC6979_HMAC_SHA256_H
+#ifndef MASSGRID_RFC6979_HMAC_SHA256_H
+#define MASSGRID_RFC6979_HMAC_SHA256_H
 
 #include "crypto/hmac_sha256.h"
 
@@ -33,4 +33,4 @@ public:
     ~RFC6979_HMAC_SHA256();
 };
 
-#endif // MLGBCOIN_RFC6979_HMAC_SHA256_H
+#endif // MASSGRID_RFC6979_HMAC_SHA256_H

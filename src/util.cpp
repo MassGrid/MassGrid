@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/mlgbcoin-config.h"
+#include "config/massgrid-config.h"
 #endif
 
 #include "util.h"
@@ -360,7 +360,7 @@ static std::string FormatException(std::exception* pex, const char* pszThread)
     char pszModule[MAX_PATH] = "";
     GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "mlgbcoin";
+    const char* pszModule = "massgrid";
 #endif
     if (pex)
         return strprintf(
@@ -381,13 +381,13 @@ void PrintExceptionContinue(std::exception* pex, const char* pszThread)
 boost::filesystem::path GetDefaultDataDir()
 {
     namespace fs = boost::filesystem;
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\MLGBcoin
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\MLGBcoin
-    // Mac: ~/Library/Application Support/MLGBcoin
-    // Unix: ~/.mlgbcoin
+    // Windows < Vista: C:\Documents and Settings\Username\Application Data\MassGrid
+    // Windows >= Vista: C:\Users\Username\AppData\Roaming\MassGrid
+    // Mac: ~/Library/Application Support/MassGrid
+    // Unix: ~/.massgrid
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "MLGBcoin";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "MassGrid";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -399,10 +399,10 @@ boost::filesystem::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     TryCreateDirectory(pathRet);
-    return pathRet / "MLGBcoin";
+    return pathRet / "MassGrid";
 #else
     // Unix
-    return pathRet / ".mlgbcoin";
+    return pathRet / ".massgrid";
 #endif
 #endif
 }
@@ -449,7 +449,7 @@ void ClearDatadirCache()
 
 boost::filesystem::path GetConfigFile()
 {
-    boost::filesystem::path pathConfigFile(GetArg("-conf", "mlgbcoin.conf"));
+    boost::filesystem::path pathConfigFile(GetArg("-conf", "massgrid.conf"));
     if (!pathConfigFile.is_complete())
         pathConfigFile = GetDataDir(false) / pathConfigFile;
 
@@ -461,14 +461,14 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 {
     boost::filesystem::ifstream streamConfig(GetConfigFile());
     if (!streamConfig.good())
-        return; // No mlgbcoin.conf file is OK
+        return; // No massgrid.conf file is OK
 
     set<string> setOptions;
     setOptions.insert("*");
 
     for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
     {
-        // Don't overwrite existing settings so command line settings override mlgbcoin.conf
+        // Don't overwrite existing settings so command line settings override massgrid.conf
         string strKey = string("-") + it->string_key;
         if (mapSettingsRet.count(strKey) == 0)
         {
@@ -485,7 +485,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 #ifndef WIN32
 boost::filesystem::path GetPidFile()
 {
-    boost::filesystem::path pathPidFile(GetArg("-pid", "mlgbcoind.pid"));
+    boost::filesystem::path pathPidFile(GetArg("-pid", "massgridd.pid"));
     if (!pathPidFile.is_complete()) pathPidFile = GetDataDir() / pathPidFile;
     return pathPidFile;
 }

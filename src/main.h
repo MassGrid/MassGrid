@@ -3,11 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_MAIN_H
-#define MLGBCOIN_MAIN_H
+#ifndef MASSGRID_MAIN_H
+#define MASSGRID_MAIN_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/mlgbcoin-config.h"
+#include "config/massgrid-config.h"
 #endif
 
 #include "amount.h"
@@ -565,4 +565,4 @@ protected:
     friend void ::UnregisterAllValidationInterfaces();
 };
 
-#endif // MLGBCOIN_MAIN_H
+#endif // MASSGRID_MAIN_H

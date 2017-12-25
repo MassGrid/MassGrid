@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_ECCRYPTOVERIFY_H
-#define MLGBCOIN_ECCRYPTOVERIFY_H
+#ifndef MASSGRID_ECCRYPTOVERIFY_H
+#define MASSGRID_ECCRYPTOVERIFY_H
 
 #include <vector>
 #include <cstdlib>
@@ -18,4 +18,4 @@ bool CheckSignatureElement(const unsigned char *vch, int len, bool half);
 
 } // eccrypto namespace
 
-#endif // MLGBCOIN_ECCRYPTOVERIFY_H
+#endif // MASSGRID_ECCRYPTOVERIFY_H

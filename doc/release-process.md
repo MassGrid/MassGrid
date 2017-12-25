@@ -2,7 +2,7 @@ Release Process
 ====================
 
 * update translations (ping wumpus, Diapolo or tcatm on IRC)
-* see https://github.com/mlgbcoin/mlgbcoin/blob/master/doc/translation_process.md#syncing-with-transifex
+* see https://github.com/massgrid/massgrid/blob/master/doc/translation_process.md#syncing-with-transifex
 
 * * *
 
@@ -29,11 +29,11 @@ Release Process
 
 ###perform Gitian builds
 
- From a directory containing the mlgbcoin source, gitian-builder and gitian.sigs
+ From a directory containing the massgrid source, gitian-builder and gitian.sigs
   
     export SIGNER=(your Gitian key, ie bluematt, sipa, etc)
 	export VERSION=(new version, e.g. 0.8.0)
-	pushd ./mlgbcoin
+	pushd ./massgrid
 	git checkout v${VERSION}
 	popd
 	pushd ./gitian-builder
@@ -54,29 +54,29 @@ Release Process
 
   By default, Gitian will fetch source files as needed. For offline builds, they can be fetched ahead of time:
 
-	make -C ../mlgbcoin/depends download SOURCES_PATH=`pwd`/cache/common
+	make -C ../massgrid/depends download SOURCES_PATH=`pwd`/cache/common
 
   Only missing files will be fetched, so this is safe to re-run for each build.
 
-###Build MLGBcoin Core for Linux, Windows, and OS X:
+###Build MassGrid Core for Linux, Windows, and OS X:
 
-	./bin/gbuild --commit mlgbcoin=v${VERSION} ../mlgbcoin/contrib/gitian-descriptors/gitian-linux.yml
-	./bin/gsign --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs/ ../mlgbcoin/contrib/gitian-descriptors/gitian-linux.yml
-	mv build/out/mlgbcoin-*.tar.gz build/out/src/mlgbcoin-*.tar.gz ../
-	./bin/gbuild --commit mlgbcoin=v${VERSION} ../mlgbcoin/contrib/gitian-descriptors/gitian-win.yml
-	./bin/gsign --signer $SIGNER --release ${VERSION}-win --destination ../gitian.sigs/ ../mlgbcoin/contrib/gitian-descriptors/gitian-win.yml
-	mv build/out/mlgbcoin-*.zip build/out/mlgbcoin-*.exe ../
-	./bin/gbuild --commit mlgbcoin=v${VERSION} ../mlgbcoin/contrib/gitian-descriptors/gitian-osx.yml
-	./bin/gsign --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs/ ../mlgbcoin/contrib/gitian-descriptors/gitian-osx.yml
-	mv build/out/mlgbcoin-*-unsigned.tar.gz inputs/mlgbcoin-osx-unsigned.tar.gz
-	mv build/out/mlgbcoin-*.tar.gz build/out/mlgbcoin-*.dmg ../
+	./bin/gbuild --commit massgrid=v${VERSION} ../massgrid/contrib/gitian-descriptors/gitian-linux.yml
+	./bin/gsign --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs/ ../massgrid/contrib/gitian-descriptors/gitian-linux.yml
+	mv build/out/massgrid-*.tar.gz build/out/src/massgrid-*.tar.gz ../
+	./bin/gbuild --commit massgrid=v${VERSION} ../massgrid/contrib/gitian-descriptors/gitian-win.yml
+	./bin/gsign --signer $SIGNER --release ${VERSION}-win --destination ../gitian.sigs/ ../massgrid/contrib/gitian-descriptors/gitian-win.yml
+	mv build/out/massgrid-*.zip build/out/massgrid-*.exe ../
+	./bin/gbuild --commit massgrid=v${VERSION} ../massgrid/contrib/gitian-descriptors/gitian-osx.yml
+	./bin/gsign --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs/ ../massgrid/contrib/gitian-descriptors/gitian-osx.yml
+	mv build/out/massgrid-*-unsigned.tar.gz inputs/massgrid-osx-unsigned.tar.gz
+	mv build/out/massgrid-*.tar.gz build/out/massgrid-*.dmg ../
 	popd
   Build output expected:
 
-  1. source tarball (mlgbcoin-${VERSION}.tar.gz)
-  2. linux 32-bit and 64-bit binaries dist tarballs (mlgbcoin-${VERSION}-linux[32|64].tar.gz)
-  3. windows 32-bit and 64-bit installers and dist zips (mlgbcoin-${VERSION}-win[32|64]-setup.exe, mlgbcoin-${VERSION}-win[32|64].zip)
-  4. OS X unsigned installer (mlgbcoin-${VERSION}-osx-unsigned.dmg)
+  1. source tarball (massgrid-${VERSION}.tar.gz)
+  2. linux 32-bit and 64-bit binaries dist tarballs (massgrid-${VERSION}-linux[32|64].tar.gz)
+  3. windows 32-bit and 64-bit installers and dist zips (massgrid-${VERSION}-win[32|64]-setup.exe, massgrid-${VERSION}-win[32|64].zip)
+  4. OS X unsigned installer (massgrid-${VERSION}-osx-unsigned.dmg)
   5. Gitian signatures (in gitian.sigs/${VERSION}-<linux|win|osx-unsigned>/(your Gitian key)/
 
 ###Next steps:
@@ -100,9 +100,9 @@ Commit your signature to gitian.sigs:
 	pushd ./gitian-builder
 	# Fetch the signature as instructed by Gavin
 	cp signature.tar.gz inputs/
-	./bin/gbuild -i ../mlgbcoin/contrib/gitian-descriptors/gitian-osx-signer.yml
-	./bin/gsign --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs/ ../mlgbcoin/contrib/gitian-descriptors/gitian-osx-signer.yml
-	mv build/out/mlgbcoin-osx-signed.dmg ../mlgbcoin-${VERSION}-osx.dmg
+	./bin/gbuild -i ../massgrid/contrib/gitian-descriptors/gitian-osx-signer.yml
+	./bin/gsign --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs/ ../massgrid/contrib/gitian-descriptors/gitian-osx-signer.yml
+	mv build/out/massgrid-osx-signed.dmg ../massgrid-${VERSION}-osx.dmg
 	popd
 
 Commit your signature for the signed OS X binary:
@@ -131,35 +131,35 @@ rm SHA256SUMS
 ```
 (the digest algorithm is forced to sha256 to avoid confusion of the `Hash:` header that GPG adds with the SHA256 used for the files)
 
-- Upload zips and installers, as well as `SHA256SUMS.asc` from last step, to the mlgbcoin.org server
-  into `/var/www/bin/mlgbcoin-core-${VERSION}`
+- Upload zips and installers, as well as `SHA256SUMS.asc` from last step, to the massgrid.org server
+  into `/var/www/bin/massgrid-core-${VERSION}`
 
-- Update mlgbcoin.org version
+- Update massgrid.org version
 
-  - First, check to see if the MLGBcoin.org maintainers have prepared a
-    release: https://github.com/mlgbcoin/mlgbcoin.org/labels/Releases
+  - First, check to see if the MassGrid.org maintainers have prepared a
+    release: https://github.com/massgrid/massgrid.org/labels/Releases
 
       - If they have, it will have previously failed their Travis CI
         checks because the final release files weren't uploaded.
         Trigger a Travis CI rebuild---if it passes, merge.
 
-  - If they have not prepared a release, follow the MLGBcoin.org release
-    instructions: https://github.com/mlgbcoin/mlgbcoin.org#release-notes
+  - If they have not prepared a release, follow the MassGrid.org release
+    instructions: https://github.com/massgrid/massgrid.org#release-notes
 
   - After the pull request is merged, the website will automatically show the newest version within 15 minutes, as well
     as update the OS download links. Ping @saivann/@harding (saivann/harding on Freenode) in case anything goes wrong
 
 - Announce the release:
 
-  - Release sticky on mlgbcointalk: https://mlgbcointalk.org/index.php?board=1.0
+  - Release sticky on massgridtalk: https://massgridtalk.org/index.php?board=1.0
 
-  - MLGBcoin-development mailing list
+  - MassGrid-development mailing list
 
-  - Update title of #mlgbcoin on Freenode IRC
+  - Update title of #massgrid on Freenode IRC
 
-  - Optionally reddit /r/MLGBcoin, ... but this will usually sort out itself
+  - Optionally reddit /r/MassGrid, ... but this will usually sort out itself
 
-- Notify BlueMatt so that he can start building [https://launchpad.net/~mlgbcoin/+archive/ubuntu/mlgbcoin](the PPAs)
+- Notify BlueMatt so that he can start building [https://launchpad.net/~massgrid/+archive/ubuntu/massgrid](the PPAs)
 
 - Add release notes for the new version to the directory `doc/release-notes` in git master
 

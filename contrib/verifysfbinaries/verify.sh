@@ -1,6 +1,6 @@
 #!/bin/bash
 
-###   This script attempts to download the signature file SHA256SUMS.asc from mlgbcoin.org
+###   This script attempts to download the signature file SHA256SUMS.asc from massgrid.org
 ###   It first checks if the signature passes, and then downloads the files specified in
 ###   the file, and checks if the hashes of these files match those that are specified
 ###   in the signature file.
@@ -14,16 +14,16 @@ function clean_up {
    done
 }
 
-WORKINGDIR="/tmp/mlgbcoin"
+WORKINGDIR="/tmp/massgrid"
 TMPFILE="hashes.tmp"
 
 #this URL is used if a version number is not specified as an argument to the script
-SIGNATUREFILE="https://mlgbcoin.org/bin/0.9.2.1/SHA256SUMS.asc"
+SIGNATUREFILE="https://massgrid.org/bin/0.9.2.1/SHA256SUMS.asc"
 
 SIGNATUREFILENAME="SHA256SUMS.asc"
 RCSUBDIR="test/"
-BASEDIR="https://mlgbcoin.org/bin/"
-VERSIONPREFIX="mlgbcoin-"
+BASEDIR="https://massgrid.org/bin/"
+VERSIONPREFIX="massgrid-"
 RCVERSIONSTRING="rc"
 
 if [ ! -d "$WORKINGDIR" ]; then
@@ -34,7 +34,7 @@ cd "$WORKINGDIR"
 
 #test if a version number has been passed as an argument
 if [ -n "$1" ]; then
-   #let's also check if the version number includes the prefix 'mlgbcoin-',
+   #let's also check if the version number includes the prefix 'massgrid-',
    #  and add this prefix if it doesn't
    if [[ $1 == "$VERSIONPREFIX"* ]]; then
       VERSION="$1"
@@ -62,7 +62,7 @@ WGETOUT=$(wget -N "$BASEDIR$SIGNATUREFILENAME" 2>&1)
 #and then see if wget completed successfully
 if [ $? -ne 0 ]; then
    echo "Error: couldn't fetch signature file. Have you specified the version number in the following format?"
-   echo "[mlgbcoin-]<version>-[rc[0-9]] (example: mlgbcoin-0.9.2-rc1)"
+   echo "[massgrid-]<version>-[rc[0-9]] (example: massgrid-0.9.2-rc1)"
    echo "wget output:"
    echo "$WGETOUT"|sed 's/^/\t/g'
    exit 2

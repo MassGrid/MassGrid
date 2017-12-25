@@ -4,8 +4,8 @@
 
 #include "guiutil.h"
 
-#include "mlgbcoinaddressvalidator.h"
-#include "mlgbcoinunits.h"
+#include "massgridaddressvalidator.h"
+#include "massgridunits.h"
 #include "qvalidatedlineedit.h"
 #include "walletmodel.h"
 
@@ -87,7 +87,7 @@ QString dateTimeStr(qint64 nTime)
     return dateTimeStr(QDateTime::fromTime_t((qint32)nTime));
 }
 
-QFont mlgbcoinAddressFont()
+QFont massgridAddressFont()
 {
     QFont font("Monospace");
 #if QT_VERSION >= 0x040800
@@ -102,14 +102,14 @@ void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)
 {
     parent->setFocusProxy(widget);
 
-    widget->setFont(mlgbcoinAddressFont());
+    widget->setFont(massgridAddressFont());
 #if QT_VERSION >= 0x040700
     // We don't want translators to use own addresses in translations
     // and this is the only place, where this address is supplied.
-    widget->setPlaceholderText(QObject::tr("Enter a MLGBcoin address (e.g. %1)").arg("1NS17iag9jJgTHD1VXjvLCEnZuQ3rJDE9L"));
+    widget->setPlaceholderText(QObject::tr("Enter a MassGrid address (e.g. %1)").arg("1NS17iag9jJgTHD1VXjvLCEnZuQ3rJDE9L"));
 #endif
-    widget->setValidator(new MLGBcoinAddressEntryValidator(parent));
-    widget->setCheckValidator(new MLGBcoinAddressCheckValidator(parent));
+    widget->setValidator(new MassGridAddressEntryValidator(parent));
+    widget->setCheckValidator(new MassGridAddressCheckValidator(parent));
 }
 
 void setupAmountWidget(QLineEdit *widget, QWidget *parent)
@@ -121,10 +121,10 @@ void setupAmountWidget(QLineEdit *widget, QWidget *parent)
     widget->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 }
 
-bool parseMLGBcoinURI(const QUrl &uri, SendCoinsRecipient *out)
+bool parseMassGridURI(const QUrl &uri, SendCoinsRecipient *out)
 {
-    // return if URI is not valid or is no mlgbcoin: URI
-    if(!uri.isValid() || uri.scheme() != QString("mlgbcoin"))
+    // return if URI is not valid or is no massgrid: URI
+    if(!uri.isValid() || uri.scheme() != QString("massgrid"))
         return false;
 
     SendCoinsRecipient rv;
@@ -164,7 +164,7 @@ bool parseMLGBcoinURI(const QUrl &uri, SendCoinsRecipient *out)
         {
             if(!i->second.isEmpty())
             {
-                if(!MLGBcoinUnits::parse(MLGBcoinUnits::MLGB, i->second, &rv.amount))
+                if(!MassGridUnits::parse(MassGridUnits::MGC, i->second, &rv.amount))
                 {
                     return false;
                 }
@@ -182,28 +182,28 @@ bool parseMLGBcoinURI(const QUrl &uri, SendCoinsRecipient *out)
     return true;
 }
 
-bool parseMLGBcoinURI(QString uri, SendCoinsRecipient *out)
+bool parseMassGridURI(QString uri, SendCoinsRecipient *out)
 {
-    // Convert mlgbcoin:// to mlgbcoin:
+    // Convert massgrid:// to massgrid:
     //
-    //    Cannot handle this later, because mlgbcoin:// will cause Qt to see the part after // as host,
+    //    Cannot handle this later, because massgrid:// will cause Qt to see the part after // as host,
     //    which will lower-case it (and thus invalidate the address).
-    if(uri.startsWith("mlgbcoin://", Qt::CaseInsensitive))
+    if(uri.startsWith("massgrid://", Qt::CaseInsensitive))
     {
-        uri.replace(0, 10, "mlgbcoin:");
+        uri.replace(0, 10, "massgrid:");
     }
     QUrl uriInstance(uri);
-    return parseMLGBcoinURI(uriInstance, out);
+    return parseMassGridURI(uriInstance, out);
 }
 
-QString formatMLGBcoinURI(const SendCoinsRecipient &info)
+QString formatMassGridURI(const SendCoinsRecipient &info)
 {
-    QString ret = QString("mlgbcoin:%1").arg(info.address);
+    QString ret = QString("massgrid:%1").arg(info.address);
     int paramCount = 0;
 
     if (info.amount)
     {
-        ret += QString("?amount=%1").arg(MLGBcoinUnits::format(MLGBcoinUnits::MLGB, info.amount, false, MLGBcoinUnits::separatorNever));
+        ret += QString("?amount=%1").arg(MassGridUnits::format(MassGridUnits::MGC, info.amount, false, MassGridUnits::separatorNever));
         paramCount++;
     }
 
@@ -226,7 +226,7 @@ QString formatMLGBcoinURI(const SendCoinsRecipient &info)
 
 bool isDust(const QString& address, const CAmount& amount)
 {
-    CTxDestination dest = CMLGBcoinAddress(address.toStdString()).Get();
+    CTxDestination dest = CMassGridAddress(address.toStdString()).Get();
     CScript script = GetScriptForDestination(dest);
     CTxOut txOut(amount, script);
     return txOut.IsDust(::minRelayTxFee);
@@ -567,12 +567,12 @@ TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* t
 #ifdef WIN32
 boost::filesystem::path static StartupShortcutPath()
 {
-    return GetSpecialFolderPath(CSIDL_STARTUP) / "MLGBcoin.lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / "MassGrid.lnk";
 }
 
 bool GetStartOnSystemStartup()
 {
-    // check for MLGBcoin.lnk
+    // check for MassGrid.lnk
     return boost::filesystem::exists(StartupShortcutPath());
 }
 
@@ -649,7 +649,7 @@ boost::filesystem::path static GetAutostartDir()
 
 boost::filesystem::path static GetAutostartFilePath()
 {
-    return GetAutostartDir() / "mlgbcoin.desktop";
+    return GetAutostartDir() / "massgrid.desktop";
 }
 
 bool GetStartOnSystemStartup()
@@ -687,10 +687,10 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         boost::filesystem::ofstream optionFile(GetAutostartFilePath(), std::ios_base::out|std::ios_base::trunc);
         if (!optionFile.good())
             return false;
-        // Write a mlgbcoin.desktop file to the autostart directory:
+        // Write a massgrid.desktop file to the autostart directory:
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
-        optionFile << "Name=MLGBcoin\n";
+        optionFile << "Name=MassGrid\n";
         optionFile << "Exec=" << pszExePath << " -min\n";
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
@@ -709,7 +709,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl);
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl)
 {
-    // loop through the list of startup items and try to find the mlgbcoin app
+    // loop through the list of startup items and try to find the massgrid app
     CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, NULL);
     for(int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
         LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
@@ -730,21 +730,21 @@ LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef
 
 bool GetStartOnSystemStartup()
 {
-    CFURLRef mlgbcoinAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+    CFURLRef massgridAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
     LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, mlgbcoinAppUrl);
+    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, massgridAppUrl);
     return !!foundItem; // return boolified object
 }
 
 bool SetStartOnSystemStartup(bool fAutoStart)
 {
-    CFURLRef mlgbcoinAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+    CFURLRef massgridAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
     LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, mlgbcoinAppUrl);
+    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, massgridAppUrl);
 
     if(fAutoStart && !foundItem) {
-        // add mlgbcoin app to startup item list
-        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, NULL, NULL, mlgbcoinAppUrl, NULL, NULL);
+        // add massgrid app to startup item list
+        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, NULL, NULL, massgridAppUrl, NULL, NULL);
     }
     else if(!fAutoStart && foundItem) {
         // remove item

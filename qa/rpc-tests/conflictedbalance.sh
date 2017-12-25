@@ -18,14 +18,14 @@
 if [ $# -lt 1 ]; then
         echo "Usage: $0 path_to_binaries"
         echo "e.g. $0 ../../src"
-        echo "Env vars MLGBCOIND and MLGBCOINCLI may be used to specify the exact binaries used"
+        echo "Env vars MASSGRIDD and MASSGRIDCLI may be used to specify the exact binaries used"
         exit 1
 fi
 
 set -f
 
-MLGBCOIND=${MLGBCOIND:-${1}/mlgbcoind}
-CLI=${MLGBCOINCLI:-${1}/mlgbcoin-cli}
+MASSGRIDD=${MASSGRIDD:-${1}/massgridd}
+CLI=${MASSGRIDCLI:-${1}/massgrid-cli}
 
 DIR="${BASH_SOURCE%/*}"
 SENDANDWAIT="${DIR}/send.sh"
@@ -40,13 +40,13 @@ D=$(mktemp -d test.XXXXX)
 D1=${D}/node1
 CreateDataDir $D1 port=11000 rpcport=11001
 B1ARGS="-datadir=$D1 -debug=mempool"
-$MLGBCOIND $B1ARGS &
+$MASSGRIDD $B1ARGS &
 B1PID=$!
 
 D2=${D}/node2
 CreateDataDir $D2 port=11010 rpcport=11011
 B2ARGS="-datadir=$D2 -debug=mempool"
-$MLGBCOIND $B2ARGS &
+$MASSGRIDD $B2ARGS &
 B2PID=$!
 
 # Wait until all four nodes are at the same block number
@@ -97,7 +97,7 @@ CheckBalance "$B2ARGS" 0
 # restart B2 with no connection
 $CLI $B2ARGS stop > /dev/null 2>&1
 wait $B2PID
-$MLGBCOIND $B2ARGS &
+$MASSGRIDD $B2ARGS &
 B2PID=$!
 
 B1ADDRESS=$( $CLI $B1ARGS getnewaddress )

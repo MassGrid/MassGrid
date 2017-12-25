@@ -1,11 +1,11 @@
-MLGBcoin-Qt version 0.8.3 is now available from:
-  http://sourceforge.net/projects/mlgbcoin/files/MLGBcoin/mlgbcoin-0.8.3/
+MassGrid-Qt version 0.8.3 is now available from:
+  http://sourceforge.net/projects/massgrid/files/MassGrid/massgrid-0.8.3/
 
 This is a maintenance release to fix a denial-of-service attack that
 can cause nodes to crash.
 
 Please report bugs using the issue tracker at github:
-  https://github.com/mlgbcoin/mlgbcoin/issues
+  https://github.com/massgrid/massgrid/issues
 
 0.8.3 Release notes
 

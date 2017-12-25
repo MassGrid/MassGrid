@@ -8,14 +8,14 @@
 if [ $# -lt 1 ]; then
         echo "Usage: $0 path_to_binaries"
         echo "e.g. $0 ../../src"
-        echo "Env vars MLGBCOIND and MLGBCOINCLI may be used to specify the exact binaries used"
+        echo "Env vars MASSGRIDD and MASSGRIDCLI may be used to specify the exact binaries used"
         exit 1
 fi
 
 set -f
 
-MLGBCOIND=${MLGBCOIND:-${1}/mlgbcoind}
-CLI=${MLGBCOINCLI:-${1}/mlgbcoin-cli}
+MASSGRIDD=${MASSGRIDD:-${1}/massgridd}
+CLI=${MASSGRIDCLI:-${1}/massgrid-cli}
 
 DIR="${BASH_SOURCE%/*}"
 SENDANDWAIT="${DIR}/send.sh"
@@ -27,13 +27,13 @@ D=$(mktemp -d test.XXXXX)
 D1=${D}/node1
 CreateDataDir "$D1" port=11000 rpcport=11001
 B1ARGS="-datadir=$D1"
-$MLGBCOIND $B1ARGS &
+$MASSGRIDD $B1ARGS &
 B1PID=$!
 
 D2=${D}/node2
 CreateDataDir "$D2" port=11010 rpcport=11011
 B2ARGS="-datadir=$D2"
-$MLGBCOIND $B2ARGS &
+$MASSGRIDD $B2ARGS &
 B2PID=$!
 
 function CleanUp {
@@ -109,9 +109,9 @@ $CLI $B1ARGS stop > /dev/null 2>&1
 wait $B1PID
 
 # restart nodes with -zapwallettxes
-$MLGBCOIND -zapwallettxes=1 $B1ARGS &
+$MASSGRIDD -zapwallettxes=1 $B1ARGS &
 B1PID=$!
-$MLGBCOIND -zapwallettxes=2 $B2ARGS &
+$MASSGRIDD -zapwallettxes=2 $B2ARGS &
 B2PID=$!
 
 # check if confirmed transactions are there

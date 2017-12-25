@@ -1,25 +1,25 @@
 Translations
 ============
 
-The MLGBcoin Core GUI can be easily translated into other languages. Here's how we
+The MassGrid Core GUI can be easily translated into other languages. Here's how we
 handle those translations.
 
 Files and Folders
 -----------------
 
-### mlgbcoin-qt.pro
+### massgrid-qt.pro
 
 This file takes care of generating `.qm` files from `.ts` files. It is mostly
 automated.
 
-### src/qt/mlgbcoin.qrc
+### src/qt/massgrid.qrc
 
 This file must be updated whenever a new translation is added. Please note that
 files must end with `.qm`, not `.ts`.
 
 ```xml
 <qresource prefix="/translations">
-    <file alias="en">locale/mlgbcoin_en.qm</file>
+    <file alias="en">locale/massgrid_en.qm</file>
     ...
 </qresource>
 ```
@@ -28,17 +28,17 @@ files must end with `.qm`, not `.ts`.
 
 This directory contains all translations. Filenames must adhere to this format:
 
-    mlgbcoin_xx_YY.ts or mlgbcoin_xx.ts
+    massgrid_xx_YY.ts or massgrid_xx.ts
 
-#### mlgbcoin_en.ts (Source file)
+#### massgrid_en.ts (Source file)
 
-`src/qt/locale/mlgbcoin_en.ts` is treated in a special way. It is used as the
+`src/qt/locale/massgrid_en.ts` is treated in a special way. It is used as the
 source for all other translations. Whenever a string in the code is changed
 this file must be updated to reflect those changes. A  custom script is used
 to extract strings from the non-Qt parts. This script makes use of `gettext`,
 so make sure that utility is installed (ie, `apt-get install gettext` on 
 Ubuntu/Debian). Once this has been updated, lupdate (included in the Qt SDK)
-is used to update mlgbcoin_en.ts. This process has been automated, from src/qt,
+is used to update massgrid_en.ts. This process has been automated, from src/qt,
 simply run:
     make translate
     
@@ -46,7 +46,7 @@ simply run:
 
 When new plurals are added to the source file, it's important to do the following steps:
 
-1. Open mlgbcoin_en.ts in Qt Linguist (also included in the Qt SDK)
+1. Open massgrid_en.ts in Qt Linguist (also included in the Qt SDK)
 2. Search for `%n`, which will take you to the parts in the translation that use plurals
 3. Look for empty `English Translation (Singular)` and `English Translation (Plural)` fields
 4. Add the appropriate strings for the singular and plural form of the base string
@@ -62,7 +62,7 @@ in Transifex and can be translated.
 
 To create the pull-request you have to do:
 
-    git add src/qt/mlgbcoinstrings.cpp src/qt/locale/mlgbcoin_en.ts
+    git add src/qt/massgridstrings.cpp src/qt/locale/massgrid_en.ts
     git commit
 
 Syncing with Transifex
@@ -70,7 +70,7 @@ Syncing with Transifex
 
 We are using https://transifex.com as a frontend for translating the client.
 
-https://www.transifex.com/projects/p/mlgbcoin/resource/tx/
+https://www.transifex.com/projects/p/massgrid/resource/tx/
 
 The "Transifex client" (see: http://support.transifex.com/customer/portal/topics/440187-transifex-client/articles)
 is used to fetch new translations from Transifex. The configuration for this client (`.tx/config`)
@@ -82,8 +82,8 @@ postprocessing steps before committing the translations.
 ### Fetching new translations
 
 1. `python contrib/devtools/update-translations.py`
-2. update `src/qt/mlgbcoin.qrc` manually or via
-   `ls src/qt/locale/*ts|xargs -n1 basename|sed 's/\(mlgbcoin_\(.*\)\).ts/<file alias="\2">locale\/\1.qm<\/file>/'`
+2. update `src/qt/massgrid.qrc` manually or via
+   `ls src/qt/locale/*ts|xargs -n1 basename|sed 's/\(massgrid_\(.*\)\).ts/<file alias="\2">locale\/\1.qm<\/file>/'`
 3. update `src/qt/Makefile.am` manually or via
-   `ls src/qt/locale/*ts|xargs -n1 basename|sed 's/\(mlgbcoin_\(.*\)\).ts/  locale\/\1.ts \\/'`
+   `ls src/qt/locale/*ts|xargs -n1 basename|sed 's/\(massgrid_\(.*\)\).ts/  locale\/\1.ts \\/'`
 4. `git add` new translations from `src/qt/locale/`

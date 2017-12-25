@@ -1,26 +1,26 @@
-MLGBcoin Core integration/staging tree
+MassGrid Core integration/staging tree
 =====================================
 
-[![Build Status](https://travis-ci.org/mlgbcoin/mlgbcoin.svg?branch=master)](https://travis-ci.org/mlgbcoin/mlgbcoin)
+[![Build Status](https://travis-ci.org/massgrid/massgrid.svg?branch=master)](https://travis-ci.org/massgrid/massgrid)
 
-https://www.mlgbcoin.org
+https://www.massgrid.org
 
-What is MLGBcoin?
+What is MassGrid?
 ----------------
 
-MLGBcoin is an experimental new digital currency that enables instant payments to
-anyone, anywhere in the world. MLGBcoin uses peer-to-peer technology to operate
+MassGrid is an experimental new digital currency that enables instant payments to
+anyone, anywhere in the world. MassGrid uses peer-to-peer technology to operate
 with no central authority: managing transactions and issuing money are carried
-out collectively by the network. MLGBcoin Core is the name of open source
+out collectively by the network. MassGrid Core is the name of open source
 software which enables the use of this currency.
 
 For more information, as well as an immediately useable, binary version of
-the MLGBcoin Core software, see https://www.mlgbcoin.org/en/download.
+the MassGrid Core software, see https://www.massgrid.org/en/download.
 
 License
 -------
 
-MLGBcoin Core is released under the terms of the MIT license. See [COPYING](COPYING) for more
+MassGrid Core is released under the terms of the MIT license. See [COPYING](COPYING) for more
 information or see http://opensource.org/licenses/MIT.
 
 Development process
@@ -29,12 +29,12 @@ Development process
 Developers work in their own trees, then submit pull requests when they think
 their feature or bug fix is ready.
 
-If it is a simple/trivial/non-controversial change, then one of the MLGBcoin
+If it is a simple/trivial/non-controversial change, then one of the MassGrid
 development team members simply pulls it.
 
 If it is a *more complicated or potentially controversial* change, then the patch
 submitter will be asked to start a discussion (if they haven't already) on the
-[mailing list](https://lists.linuxfoundation.org/mailman/listinfo/mlgbcoin-dev)
+[mailing list](https://lists.linuxfoundation.org/mailman/listinfo/massgrid-dev)
 
 The patch will be accepted if there is broad consensus that it is a good thing.
 Developers should expect to rework and resubmit patches if the code doesn't
@@ -42,8 +42,8 @@ match the project's coding conventions (see [doc/coding.md](doc/coding.md)) or a
 controversial.
 
 The `master` branch is regularly built and tested, but is not guaranteed to be
-completely stable. [Tags](https://github.com/mlgbcoin/mlgbcoin/tags) are created
-regularly to indicate new official, stable release versions of MLGBcoin.
+completely stable. [Tags](https://github.com/massgrid/massgrid/tags) are created
+regularly to indicate new official, stable release versions of MassGrid.
 
 Testing
 -------
@@ -61,20 +61,20 @@ submit new unit tests for old code. Unit tests can be compiled and run (assuming
 Every pull request is built for both Windows and Linux on a dedicated server,
 and unit and sanity tests are automatically run. The binaries produced may be
 used for manual QA testing — a link to them will appear in a comment on the
-pull request posted by [MLGBcoinPullTester](https://github.com/MLGBcoinPullTester). See https://github.com/TheBlueMatt/test-scripts
+pull request posted by [MassGridPullTester](https://github.com/MassGridPullTester). See https://github.com/TheBlueMatt/test-scripts
 for the build/test scripts.
 
 ### Manual Quality Assurance (QA) Testing
 
 Large changes should have a test plan, and should be tested by somebody other
 than the developer who wrote the code.
-See https://github.com/mlgbcoin/QA/ for how to create a test plan.
+See https://github.com/massgrid/QA/ for how to create a test plan.
 
 Translations
 ------------
 
 Changes to translations as well as new translations can be submitted to
-[MLGBcoin Core's Transifex page](https://www.transifex.com/projects/p/mlgbcoin/).
+[MassGrid Core's Transifex page](https://www.transifex.com/projects/p/massgrid/).
 
 Translations are periodically pulled from Transifex and merged into the git repository. See the
 [translation process](doc/translation_process.md) for details on how this works.
@@ -82,7 +82,7 @@ Translations are periodically pulled from Transifex and merged into the git repo
 **Important**: We do not accept translation changes as GitHub pull requests because the next
 pull from Transifex would automatically overwrite them again.
 
-Translators should also subscribe to the [mailing list](https://groups.google.com/forum/#!forum/mlgbcoin-translators).
+Translators should also subscribe to the [mailing list](https://groups.google.com/forum/#!forum/massgrid-translators).
 
 Development tips and tricks
 ---------------------------
@@ -105,7 +105,7 @@ to see it.
 
 **testnet and regtest modes**
 
-Run with the -testnet option to run with "play mlgbcoins" on the test network, if you
+Run with the -testnet option to run with "play massgrids" on the test network, if you
 are testing multi-machine code that needs to operate across the internet.
 
 If you are testing something that can run on one machine, run with the -regtest option.
@@ -114,7 +114,7 @@ that run in -regtest mode.
 
 **DEBUG_LOCKORDER**
 
-MLGBcoin Core is a multithreaded application, and deadlocks or other multithreading bugs
+MassGrid Core is a multithreaded application, and deadlocks or other multithreading bugs
 can be very difficult to track down. Compiling with -DDEBUG_LOCKORDER (configure
 CXXFLAGS="-DDEBUG_LOCKORDER -g") inserts run-time checks to keep track of which locks
 are held, and adds warnings to the debug.log file if inconsistencies are detected.

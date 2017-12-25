@@ -2,15 +2,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_CHAINPARAMSBASE_H
-#define MLGBCOIN_CHAINPARAMSBASE_H
+#ifndef MASSGRID_CHAINPARAMSBASE_H
+#define MASSGRID_CHAINPARAMSBASE_H
 
 #include <string>
 #include <vector>
 
 /**
- * CBaseChainParams defines the base parameters (shared between mlgbcoin-cli and mlgbcoind)
- * of a given instance of the MLGBcoin system.
+ * CBaseChainParams defines the base parameters (shared between massgrid-cli and massgridd)
+ * of a given instance of the MassGrid system.
  */
 class CBaseChainParams
 {
@@ -62,4 +62,4 @@ bool SelectBaseParamsFromCommandLine();
  */
 bool AreBaseParamsConfigured();
 
-#endif // MLGBCOIN_CHAINPARAMSBASE_H
+#endif // MASSGRID_CHAINPARAMSBASE_H

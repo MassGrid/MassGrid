@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_RANDOM_H
-#define MLGBCOIN_RANDOM_H
+#ifndef MASSGRID_RANDOM_H
+#define MASSGRID_RANDOM_H
 
 #include "uint256.h"
 
@@ -46,4 +46,4 @@ static inline uint32_t insecure_rand(void)
     return (insecure_rand_Rw << 16) + insecure_rand_Rz;
 }
 
-#endif // MLGBCOIN_RANDOM_H
+#endif // MASSGRID_RANDOM_H

@@ -5,10 +5,10 @@
 # Helpful routines for regression testing
 #
 
-# Add python-mlgbcoinrpc to module search path:
+# Add python-massgridrpc to module search path:
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "python-mlgbcoinrpc"))
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "python-massgridrpc"))
 
 from decimal import Decimal, ROUND_DOWN
 import json
@@ -18,7 +18,7 @@ import subprocess
 import time
 import re
 
-from mlgbcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from massgridrpc.authproxy import AuthServiceProxy, JSONRPCException
 from util import *
 
 def p2p_port(n):
@@ -27,7 +27,7 @@ def rpc_port(n):
     return 12000 + n + os.getpid()%999
 
 def check_json_precision():
-    """Make sure json library being used does not lose precision converting MLGB values"""
+    """Make sure json library being used does not lose precision converting MGC values"""
     n = Decimal("20000000.00000003")
     satoshis = int(json.loads(json.dumps(float(n)))*1.0e8)
     if satoshis != 2000000000000003:
@@ -58,13 +58,13 @@ def sync_mempools(rpc_connections):
             break
         time.sleep(1)
 
-mlgbcoind_processes = {}
+massgridd_processes = {}
 
 def initialize_datadir(dirname, n):
     datadir = os.path.join(dirname, "node"+str(n))
     if not os.path.isdir(datadir):
         os.makedirs(datadir)
-    with open(os.path.join(datadir, "mlgbcoin.conf"), 'w') as f:
+    with open(os.path.join(datadir, "massgrid.conf"), 'w') as f:
         f.write("regtest=1\n");
         f.write("rpcuser=rt\n");
         f.write("rpcpassword=rt\n");
@@ -76,19 +76,19 @@ def initialize_chain(test_dir):
     """
     Create (or copy from cache) a 200-block-long chain and
     4 wallets.
-    mlgbcoind and mlgbcoin-cli must be in search path.
+    massgridd and massgrid-cli must be in search path.
     """
 
     if not os.path.isdir(os.path.join("cache", "node0")):
         devnull = open("/dev/null", "w+")
-        # Create cache directories, run mlgbcoinds:
+        # Create cache directories, run massgridds:
         for i in range(4):
             datadir=initialize_datadir("cache", i)
-            args = [ os.getenv("MLGBCOIND", "mlgbcoind"), "-keypool=1", "-datadir="+datadir, "-discover=0" ]
+            args = [ os.getenv("MASSGRIDD", "massgridd"), "-keypool=1", "-datadir="+datadir, "-discover=0" ]
             if i > 0:
                 args.append("-connect=127.0.0.1:"+str(p2p_port(0)))
-            mlgbcoind_processes[i] = subprocess.Popen(args)
-            subprocess.check_call([ os.getenv("MLGBCOINCLI", "mlgbcoin-cli"), "-datadir="+datadir,
+            massgridd_processes[i] = subprocess.Popen(args)
+            subprocess.check_call([ os.getenv("MASSGRIDCLI", "massgrid-cli"), "-datadir="+datadir,
                                     "-rpcwait", "getblockcount"], stdout=devnull)
         devnull.close()
         rpcs = []
@@ -116,7 +116,7 @@ def initialize_chain(test_dir):
 
         # Shut them down, and clean up cache directories:
         stop_nodes(rpcs)
-        wait_mlgbcoinds()
+        wait_massgridds()
         for i in range(4):
             os.remove(log_filename("cache", i, "debug.log"))
             os.remove(log_filename("cache", i, "db.log"))
@@ -127,7 +127,7 @@ def initialize_chain(test_dir):
         from_dir = os.path.join("cache", "node"+str(i))
         to_dir = os.path.join(test_dir,  "node"+str(i))
         shutil.copytree(from_dir, to_dir)
-        initialize_datadir(test_dir, i) # Overwrite port/rpcport in mlgbcoin.conf
+        initialize_datadir(test_dir, i) # Overwrite port/rpcport in massgrid.conf
 
 def initialize_chain_clean(test_dir, num_nodes):
     """
@@ -160,14 +160,14 @@ def _rpchost_to_args(rpchost):
 
 def start_node(i, dirname, extra_args=None, rpchost=None):
     """
-    Start a mlgbcoind and return RPC connection to it
+    Start a massgridd and return RPC connection to it
     """
     datadir = os.path.join(dirname, "node"+str(i))
-    args = [ os.getenv("MLGBCOIND", "mlgbcoind"), "-datadir="+datadir, "-keypool=1", "-discover=0", "-rest" ]
+    args = [ os.getenv("MASSGRIDD", "massgridd"), "-datadir="+datadir, "-keypool=1", "-discover=0", "-rest" ]
     if extra_args is not None: args.extend(extra_args)
-    mlgbcoind_processes[i] = subprocess.Popen(args)
+    massgridd_processes[i] = subprocess.Popen(args)
     devnull = open("/dev/null", "w+")
-    subprocess.check_call([ os.getenv("MLGBCOINCLI", "mlgbcoin-cli"), "-datadir="+datadir] +
+    subprocess.check_call([ os.getenv("MASSGRIDCLI", "massgrid-cli"), "-datadir="+datadir] +
                           _rpchost_to_args(rpchost)  +
                           ["-rpcwait", "getblockcount"], stdout=devnull)
     devnull.close()
@@ -178,7 +178,7 @@ def start_node(i, dirname, extra_args=None, rpchost=None):
 
 def start_nodes(num_nodes, dirname, extra_args=None, rpchost=None):
     """
-    Start multiple mlgbcoinds, return RPC connections to them
+    Start multiple massgridds, return RPC connections to them
     """
     if extra_args is None: extra_args = [ None for i in range(num_nodes) ]
     return [ start_node(i, dirname, extra_args[i], rpchost) for i in range(num_nodes) ]
@@ -188,8 +188,8 @@ def log_filename(dirname, n_node, logname):
 
 def stop_node(node, i):
     node.stop()
-    mlgbcoind_processes[i].wait()
-    del mlgbcoind_processes[i]
+    massgridd_processes[i].wait()
+    del massgridd_processes[i]
 
 def stop_nodes(nodes):
     for node in nodes:
@@ -200,11 +200,11 @@ def set_node_times(nodes, t):
     for node in nodes:
         node.setmocktime(t)
 
-def wait_mlgbcoinds():
-    # Wait for all mlgbcoinds to cleanly exit
-    for mlgbcoind in mlgbcoind_processes.values():
-        mlgbcoind.wait()
-    mlgbcoind_processes.clear()
+def wait_massgridds():
+    # Wait for all massgridds to cleanly exit
+    for massgridd in massgridd_processes.values():
+        massgridd.wait()
+    massgridd_processes.clear()
 
 def connect_nodes(from_connection, node_num):
     ip_port = "127.0.0.1:"+str(p2p_port(node_num))

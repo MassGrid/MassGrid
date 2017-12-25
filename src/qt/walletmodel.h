@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_WALLETMODEL_H
-#define MLGBCOIN_QT_WALLETMODEL_H
+#ifndef MASSGRID_QT_WALLETMODEL_H
+#define MASSGRID_QT_WALLETMODEL_H
 
 #include "paymentrequestplus.h"
 #include "walletmodeltransaction.h"
@@ -92,7 +92,7 @@ public:
     }
 };
 
-/** Interface to MLGBcoin wallet from Qt view code. */
+/** Interface to MassGrid wallet from Qt view code. */
 class WalletModel : public QObject
 {
     Q_OBJECT
@@ -262,4 +262,4 @@ public slots:
     void pollBalanceChanged();
 };
 
-#endif // MLGBCOIN_QT_WALLETMODEL_H
+#endif // MASSGRID_QT_WALLETMODEL_H

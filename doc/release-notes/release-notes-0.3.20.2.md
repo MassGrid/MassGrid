@@ -3,13 +3,13 @@ worse as people upgraded, so I cherry-picked the bug fix and created a minor rel
 
 The Amazon Machine Images I used to do the builds are available:
 
-  ami-38a05251   MLGBcoin-v0.3.20.2 Mingw    (Windows; Administrator password 'mlgbcoin development')
-  ami-30a05259   MLGBcoin_0.3.20.2 Linux32
-  ami-8abc4ee3   MLGBcoin_0.3.20.2 Linux64
+  ami-38a05251   MassGrid-v0.3.20.2 Mingw    (Windows; Administrator password 'massgrid development')
+  ami-30a05259   MassGrid_0.3.20.2 Linux32
+  ami-8abc4ee3   MassGrid_0.3.20.2 Linux64
 
 (mac build will be done soon)
 
-If you have already downloaded version 0.3.20.1, please either add this to your mlgbcoin.conf file:
+If you have already downloaded version 0.3.20.1, please either add this to your massgrid.conf file:
 
   maxsendbuffer=10000
   maxreceivebuffer=10000

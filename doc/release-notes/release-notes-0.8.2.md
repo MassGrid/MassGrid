@@ -1,11 +1,11 @@
-MLGBcoin-Qt version 0.8.2 is now available from:
-  http://sourceforge.net/projects/mlgbcoin/files/MLGBcoin/mlgbcoin-0.8.2/
+MassGrid-Qt version 0.8.2 is now available from:
+  http://sourceforge.net/projects/massgrid/files/MassGrid/massgrid-0.8.2/
 
 This is a maintenance release that fixes many bugs and includes
 a few small new features.
 
 Please report bugs using the issue tracker at github:
-  https://github.com/mlgbcoin/mlgbcoin/issues
+  https://github.com/massgrid/massgrid/issues
 
 
 How to Upgrade
@@ -13,7 +13,7 @@ How to Upgrade
 If you are running an older version, shut it down. Wait
 until it has completely shut down (which might take a few minutes for older
 versions), then run the installer (on Windows) or just copy over
-/Applications/MLGBcoin-Qt (on Mac) or mlgbcoind/mlgbcoin-qt (on Linux).
+/Applications/MassGrid-Qt (on Mac) or massgridd/massgrid-qt (on Linux).
 
 If you are upgrading from version 0.7.2 or earlier, the first time you
 run 0.8.2 your blockchain files will be re-indexed, which will take
@@ -24,12 +24,12 @@ your machine.
 
 Fee Policy changes
 
-The default fee for low-priority transactions is lowered from 0.0005 MLGB 
+The default fee for low-priority transactions is lowered from 0.0005 MGC 
 (for each 1,000 bytes in the transaction; an average transaction is
-about 500 bytes) to 0.0001 MLGB.
+about 500 bytes) to 0.0001 MGC.
 
 Payments (transaction outputs) of 0.543 times the minimum relay fee
-(0.00005430 MLGB) are now considered 'non-standard', because storing them
+(0.00005430 MGC) are now considered 'non-standard', because storing them
 costs the network more than they are worth and spending them will usually
 cost their owner more in transaction fees than they are worth.
 
@@ -43,7 +43,7 @@ with code that automatically calculates and suggests appropriate fees in the
 0.9 release and note that if you set a fee policy significantly different from
 the rest of the network your transactions may never confirm.
 
-MLGBcoin-Qt changes
+MassGrid-Qt changes
 
 * New icon and splash screen
 * Improve reporting of synchronization process
@@ -58,7 +58,7 @@ MLGBcoin-Qt changes
   to current translations
 
 MacOSX:
-* OSX support for click-to-pay (mlgbcoin:) links
+* OSX support for click-to-pay (massgrid:) links
 * Fix GUI disappearing problem on MacOSX (issue #1522)
 
 Linux/Unix:
@@ -97,8 +97,8 @@ Wallet compatibility/rescuing
 
 Known Bugs
 
-* Entering the 'getblocktemplate' or 'getwork' RPC commands into the MLGBcoin-Qt debug
-console will cause MLGBcoin-Qt to crash. Run MLGBcoin-Qt with the -server command-line
+* Entering the 'getblocktemplate' or 'getwork' RPC commands into the MassGrid-Qt debug
+console will cause MassGrid-Qt to crash. Run MassGrid-Qt with the -server command-line
 option to workaround.
 
 Thanks to everybody who contributed to the 0.8.2 release!

@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_COINCONTROL_H
-#define MLGBCOIN_COINCONTROL_H
+#ifndef MASSGRID_COINCONTROL_H
+#define MASSGRID_COINCONTROL_H
 
 #include "primitives/transaction.h"
 
@@ -59,4 +59,4 @@ private:
     std::set<COutPoint> setSelected;
 };
 
-#endif // MLGBCOIN_COINCONTROL_H
+#endif // MASSGRID_COINCONTROL_H

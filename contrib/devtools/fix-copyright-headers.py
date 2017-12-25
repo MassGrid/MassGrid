@@ -22,7 +22,7 @@ import time
 
 year = time.gmtime()[0]
 last_year = year - 1
-command = "perl -pi -e 's/%s The MLGBcoin/%s The MLGBcoin/' %s"
+command = "perl -pi -e 's/%s The MassGrid/%s The MassGrid/' %s"
 listFilesCommand = "find . | grep %s"
 
 extensions = [".cpp",".h"]

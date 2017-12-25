@@ -8,14 +8,14 @@
 # that spend (directly or indirectly) coinbase transactions.
 #
 
-from test_framework import MLGBcoinTestFramework
-from mlgbcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from test_framework import MassGridTestFramework
+from massgridrpc.authproxy import AuthServiceProxy, JSONRPCException
 from util import *
 import os
 import shutil
 
 # Create one-input, one-output, no-fee transaction:
-class MempoolCoinbaseTest(MLGBcoinTestFramework):
+class MempoolCoinbaseTest(MassGridTestFramework):
 
     alert_filename = None  # Set by setup_network
 

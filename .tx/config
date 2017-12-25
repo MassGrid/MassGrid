@@ -1,7 +1,7 @@
 [main]
 host = https://www.transifex.com
 
-[mlgbcoin.qt-translation-010x]
-file_filter = src/qt/locale/mlgbcoin_<lang>.ts
-source_file = src/qt/locale/mlgbcoin_en.ts
+[massgrid.qt-translation-010x]
+file_filter = src/qt/locale/massgrid_<lang>.ts
+source_file = src/qt/locale/massgrid_en.ts
 source_lang = en

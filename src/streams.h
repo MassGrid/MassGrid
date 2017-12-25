@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_STREAMS_H
-#define MLGBCOIN_STREAMS_H
+#ifndef MASSGRID_STREAMS_H
+#define MASSGRID_STREAMS_H
 
 #include "allocators.h"
 #include "serialize.h"
@@ -568,4 +568,4 @@ public:
     }
 };
 
-#endif // MLGBCOIN_STREAMS_H
+#endif // MASSGRID_STREAMS_H

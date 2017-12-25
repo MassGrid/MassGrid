@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_GUICONSTANTS_H
-#define MLGBCOIN_QT_GUICONSTANTS_H
+#ifndef MASSGRID_QT_GUICONSTANTS_H
+#define MASSGRID_QT_GUICONSTANTS_H
 
 /* Milliseconds between model updates */
 static const int MODEL_UPDATE_DELAY = 250;
@@ -11,7 +11,7 @@ static const int MODEL_UPDATE_DELAY = 250;
 /* AskPassphraseDialog -- Maximum passphrase length */
 static const int MAX_PASSPHRASE_SIZE = 1024;
 
-/* MLGBcoinGUI -- Size of icons in status bar */
+/* MassGridGUI -- Size of icons in status bar */
 static const int STATUSBAR_ICONSIZE = 16;
 
 /* Invalid field background style */
@@ -44,9 +44,9 @@ static const int MAX_URI_LENGTH = 255;
 /* Number of frames in spinner animation */
 #define SPINNER_FRAMES 35
 
-#define QAPP_ORG_NAME "MLGBcoin"
-#define QAPP_ORG_DOMAIN "mlgbcoin.org"
-#define QAPP_APP_NAME_DEFAULT "MLGBcoin-Qt"
-#define QAPP_APP_NAME_TESTNET "MLGBcoin-Qt-testnet"
+#define QAPP_ORG_NAME "MassGrid"
+#define QAPP_ORG_DOMAIN "massgrid.org"
+#define QAPP_APP_NAME_DEFAULT "MassGrid-Qt"
+#define QAPP_APP_NAME_TESTNET "MassGrid-Qt-testnet"
 
-#endif // MLGBCOIN_QT_GUICONSTANTS_H
+#endif // MASSGRID_QT_GUICONSTANTS_H

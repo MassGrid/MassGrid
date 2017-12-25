@@ -13,7 +13,7 @@
 - (NSString *)__bundleIdentifier
 {
     if (self == [NSBundle mainBundle]) {
-        return @"org.mlgbcoinfoundation.MLGBcoin-Qt";
+        return @"org.massgridfoundation.MassGrid-Qt";
     } else {
         return [self __bundleIdentifier];
     }

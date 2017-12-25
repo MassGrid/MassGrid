@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_SPLASHSCREEN_H
-#define MLGBCOIN_QT_SPLASHSCREEN_H
+#ifndef MASSGRID_QT_SPLASHSCREEN_H
+#define MASSGRID_QT_SPLASHSCREEN_H
 
 #include <QSplashScreen>
 
@@ -11,7 +11,7 @@ class NetworkStyle;
 
 /** Class for the splashscreen with information of the running client.
  *
- * @note this is intentionally not a QSplashScreen. MLGBcoin Core initialization
+ * @note this is intentionally not a QSplashScreen. MassGrid Core initialization
  * can take a long time, and in that case a progress window that cannot be
  * moved around and minimized has turned out to be frustrating to the user.
  */
@@ -46,4 +46,4 @@ private:
     int curAlignment;
 };
 
-#endif // MLGBCOIN_QT_SPLASHSCREEN_H
+#endif // MASSGRID_QT_SPLASHSCREEN_H

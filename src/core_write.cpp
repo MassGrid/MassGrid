@@ -82,7 +82,7 @@ void ScriptPubKeyToUniv(const CScript& scriptPubKey,
 
     UniValue a(UniValue::VARR);
     BOOST_FOREACH(const CTxDestination& addr, addresses)
-        a.push_back(CMLGBcoinAddress(addr).ToString());
+        a.push_back(CMassGridAddress(addr).ToString());
     out.pushKV("addresses", a);
 }
 

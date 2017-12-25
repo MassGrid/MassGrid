@@ -6,7 +6,7 @@
 
 #include "addressbookpage.h"
 #include "askpassphrasedialog.h"
-#include "mlgbcoingui.h"
+#include "massgridgui.h"
 #include "clientmodel.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
@@ -78,7 +78,7 @@ WalletView::~WalletView()
 {
 }
 
-void WalletView::setMLGBcoinGUI(MLGBcoinGUI *gui)
+void WalletView::setMassGridGUI(MassGridGUI *gui)
 {
     if (gui)
     {

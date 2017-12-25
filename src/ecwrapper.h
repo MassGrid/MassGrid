@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_ECWRAPPER_H
-#define MLGBCOIN_ECWRAPPER_H
+#ifndef MASSGRID_ECWRAPPER_H
+#define MASSGRID_ECWRAPPER_H
 
 #include <cstddef>
 #include <vector>
@@ -37,4 +37,4 @@ public:
     static bool SanityCheck();
 };
 
-#endif // MLGBCOIN_ECWRAPPER_H
+#endif // MASSGRID_ECWRAPPER_H

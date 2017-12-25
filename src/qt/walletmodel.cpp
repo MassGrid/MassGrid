@@ -184,7 +184,7 @@ void WalletModel::updateWatchOnlyFlag(bool fHaveWatchonly)
 
 bool WalletModel::validateAddress(const QString &address)
 {
-    CMLGBcoinAddress addressParsed(address.toStdString());
+    CMassGridAddress addressParsed(address.toStdString());
     return addressParsed.IsValid();
 }
 
@@ -225,7 +225,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
             total += subtotal;
         }
         else
-        {   // User-entered mlgbcoin address / amount:
+        {   // User-entered massgrid address / amount:
             if(!validateAddress(rcp.address))
             {
                 return InvalidAddress;
@@ -237,7 +237,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
             setAddress.insert(rcp.address);
             ++nAddresses;
 
-            CScript scriptPubKey = GetScriptForDestination(CMLGBcoinAddress(rcp.address.toStdString()).Get());
+            CScript scriptPubKey = GetScriptForDestination(CMassGridAddress(rcp.address.toStdString()).Get());
             vecSend.push_back(std::pair<CScript, CAmount>(scriptPubKey, rcp.amount));
 
             total += rcp.amount;
@@ -278,7 +278,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
             return TransactionCreationFailed;
         }
 
-        // reject insane fee > 0.1 mlgbcoin
+        // reject insane fee > 0.1 massgrid
         if (nFeeRequired > 10000000)
             return InsaneFee;
     }
@@ -304,7 +304,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
                 rcp.paymentRequest.SerializeToString(&value);
                 newTx->vOrderForm.push_back(make_pair(key, value));
             }
-            else if (!rcp.message.isEmpty()) // Message from normal mlgbcoin:URI (mlgbcoin:123...?message=example)
+            else if (!rcp.message.isEmpty()) // Message from normal massgrid:URI (massgrid:123...?message=example)
                 newTx->vOrderForm.push_back(make_pair("Message", rcp.message.toStdString()));
         }
 
@@ -326,7 +326,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
         if (!rcp.paymentRequest.IsInitialized())
         {
             std::string strAddress = rcp.address.toStdString();
-            CTxDestination dest = CMLGBcoinAddress(strAddress).Get();
+            CTxDestination dest = CMassGridAddress(strAddress).Get();
             std::string strLabel = rcp.label.toStdString();
             {
                 LOCK(wallet->cs_wallet);
@@ -442,7 +442,7 @@ static void NotifyAddressBookChanged(WalletModel *walletmodel, CWallet *wallet,
         const CTxDestination &address, const std::string &label, bool isMine,
         const std::string &purpose, ChangeType status)
 {
-    QString strAddress = QString::fromStdString(CMLGBcoinAddress(address).ToString());
+    QString strAddress = QString::fromStdString(CMassGridAddress(address).ToString());
     QString strLabel = QString::fromStdString(label);
     QString strPurpose = QString::fromStdString(purpose);
 
@@ -593,7 +593,7 @@ void WalletModel::listCoins(std::map<QString, std::vector<COutput> >& mapCoins) 
         CTxDestination address;
         if(!out.fSpendable || !ExtractDestination(cout.tx->vout[cout.i].scriptPubKey, address))
             continue;
-        mapCoins[QString::fromStdString(CMLGBcoinAddress(address).ToString())].push_back(out);
+        mapCoins[QString::fromStdString(CMassGridAddress(address).ToString())].push_back(out);
     }
 }
 
@@ -632,7 +632,7 @@ void WalletModel::loadReceiveRequests(std::vector<std::string>& vReceiveRequests
 
 bool WalletModel::saveReceiveRequest(const std::string &sAddress, const int64_t nId, const std::string &sRequest)
 {
-    CTxDestination dest = CMLGBcoinAddress(sAddress).Get();
+    CTxDestination dest = CMassGridAddress(sAddress).Get();
 
     std::stringstream ss;
     ss << nId;

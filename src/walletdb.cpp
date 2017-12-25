@@ -355,13 +355,13 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         {
             string strAddress;
             ssKey >> strAddress;
-            ssValue >> pwallet->mapAddressBook[CMLGBcoinAddress(strAddress).Get()].name;
+            ssValue >> pwallet->mapAddressBook[CMassGridAddress(strAddress).Get()].name;
         }
         else if (strType == "purpose")
         {
             string strAddress;
             ssKey >> strAddress;
-            ssValue >> pwallet->mapAddressBook[CMLGBcoinAddress(strAddress).Get()].purpose;
+            ssValue >> pwallet->mapAddressBook[CMassGridAddress(strAddress).Get()].purpose;
         }
         else if (strType == "tx")
         {
@@ -584,7 +584,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
             ssKey >> strAddress;
             ssKey >> strKey;
             ssValue >> strValue;
-            if (!pwallet->LoadDestData(CMLGBcoinAddress(strAddress).Get(), strKey, strValue))
+            if (!pwallet->LoadDestData(CMassGridAddress(strAddress).Get(), strKey, strValue))
             {
                 strErr = "Error reading wallet database: LoadDestData failed";
                 return false;
@@ -790,7 +790,7 @@ DBErrors CWalletDB::ZapWalletTx(CWallet* pwallet, vector<CWalletTx>& vWtx)
 void ThreadFlushWalletDB(const string& strFile)
 {
     // Make this thread recognisable as the wallet flushing thread
-    RenameThread("mlgbcoin-wallet");
+    RenameThread("massgrid-wallet");
 
     static bool fOneThread;
     if (fOneThread)

@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MLGBCOIN_QT_ADDRESSTABLEMODEL_H
-#define MLGBCOIN_QT_ADDRESSTABLEMODEL_H
+#ifndef MASSGRID_QT_ADDRESSTABLEMODEL_H
+#define MASSGRID_QT_ADDRESSTABLEMODEL_H
 
 #include <QAbstractTableModel>
 #include <QStringList>
@@ -26,7 +26,7 @@ public:
 
     enum ColumnIndex {
         Label = 0,   /**< User specified label */
-        Address = 1  /**< MLGBcoin address */
+        Address = 1  /**< MassGrid address */
     };
 
     enum RoleIndex {
@@ -92,4 +92,4 @@ public slots:
     friend class AddressTablePriv;
 };
 
-#endif // MLGBCOIN_QT_ADDRESSTABLEMODEL_H
+#endif // MASSGRID_QT_ADDRESSTABLEMODEL_H

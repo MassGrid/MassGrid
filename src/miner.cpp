@@ -27,7 +27,7 @@ using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-// MLGBcoinMiner
+// MassGridMiner
 //
 
 //
@@ -411,7 +411,7 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     {
         LOCK(cs_main);
         if (pblock->hashPrevBlock != chainActive.Tip()->GetBlockHash())
-            return error("MLGBcoinMiner : generated block is stale");
+            return error("MassGridMiner : generated block is stale");
     }
 
     // Remove key from key pool
@@ -426,16 +426,16 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     // Process this block the same as if we had received it from another node
     CValidationState state;
     if (!ProcessNewBlock(state, NULL, pblock))
-        return error("MLGBcoinMiner : ProcessNewBlock, block not accepted");
+        return error("MassGridMiner : ProcessNewBlock, block not accepted");
 
     return true;
 }
 
-void static MLGBcoinMiner(CWallet *pwallet)
+void static MassGridMiner(CWallet *pwallet)
 {
-    LogPrintf("MLGBcoinMiner started\n");
+    LogPrintf("MassGridMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
-    RenameThread("mlgbcoin-miner");
+    RenameThread("massgrid-miner");
 
     // Each thread has its own key and counter
     CReserveKey reservekey(pwallet);
@@ -467,7 +467,7 @@ void static MLGBcoinMiner(CWallet *pwallet)
             auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlockWithKey(reservekey));
             if (!pblocktemplate.get())
             {
-                LogPrintf("Error in MLGBcoinMiner: Keypool ran out, please call keypoolrefill before restarting the mining thread\n");
+                LogPrintf("Error in MassGridMiner: Keypool ran out, please call keypoolrefill before restarting the mining thread\n");
                 return;
             }
             CBlock *pblock = &pblocktemplate->block;
@@ -475,7 +475,7 @@ void static MLGBcoinMiner(CWallet *pwallet)
                 pblock->nVersion=4;
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
-            LogPrintf("Running MLGBcoinMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
+            LogPrintf("Running MassGridMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
                 ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
             //
@@ -521,7 +521,7 @@ void static MLGBcoinMiner(CWallet *pwallet)
                         assert(hash == pblock->GetHash());
 
                         SetThreadPriority(THREAD_PRIORITY_NORMAL);
-                        LogPrintf("MLGBcoinMiner:\n");
+                        LogPrintf("MassGridMiner:\n");
                         LogPrintf("proof-of-work found  \n  hash: %s  \ntarget: %s\n", hash.GetHex(), hashTarget.GetHex());
                         ProcessBlockFound(pblock, *pwallet, reservekey);
                         SetThreadPriority(THREAD_PRIORITY_LOWEST);
@@ -587,17 +587,17 @@ void static MLGBcoinMiner(CWallet *pwallet)
     }
     catch (boost::thread_interrupted)
     {
-        LogPrintf("MLGBcoinMiner terminated\n");
+        LogPrintf("MassGridMiner terminated\n");
         throw;
     }
     catch (const std::runtime_error &e)
     {
-        LogPrintf("MLGBcoinMiner runtime error: %s\n", e.what());
+        LogPrintf("MassGridMiner runtime error: %s\n", e.what());
         return;
     }
 }
 
-void GenerateMLGBcoins(bool fGenerate, CWallet* pwallet, int nThreads)
+void GenerateMassGrids(bool fGenerate, CWallet* pwallet, int nThreads)
 {
     static boost::thread_group* minerThreads = NULL;
 
@@ -621,7 +621,7 @@ void GenerateMLGBcoins(bool fGenerate, CWallet* pwallet, int nThreads)
 
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)
-        minerThreads->create_thread(boost::bind(&MLGBcoinMiner, pwallet));
+        minerThreads->create_thread(boost::bind(&MassGridMiner, pwallet));
 }
 
 #endif // ENABLE_WALLET

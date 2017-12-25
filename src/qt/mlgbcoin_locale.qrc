@@ -1,6 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-    <qresource prefix="/translations">
-        <file alias="en">locale/mlgbcoin_en.qm</file>
-        <file alias="zh_CN">locale/mlgbcoin_zh_CN.qm</file>
-    </qresource>
-</RCC>
