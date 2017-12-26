@@ -185,9 +185,9 @@ RES_ICONS = \
   qt/res/icons/tx_input.png \
   qt/res/icons/tx_output.png \
   qt/res/icons/tx_mined.png \
-  qt/res/icons/unit_MGC.png \
-  qt/res/icons/unit_mMGC.png \
-  qt/res/icons/unit_uMGC.png
+  qt/res/icons/unit_MGD.png \
+  qt/res/icons/unit_mMGD.png \
+  qt/res/icons/unit_uMGD.png
 
 MASSGRID_QT_CPP = \
   qt/massgridaddressvalidator.cpp \

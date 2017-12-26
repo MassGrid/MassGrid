@@ -164,7 +164,7 @@ bool parseMassGridURI(const QUrl &uri, SendCoinsRecipient *out)
         {
             if(!i->second.isEmpty())
             {
-                if(!MassGridUnits::parse(MassGridUnits::MGC, i->second, &rv.amount))
+                if(!MassGridUnits::parse(MassGridUnits::MGD, i->second, &rv.amount))
                 {
                     return false;
                 }
@@ -203,7 +203,7 @@ QString formatMassGridURI(const SendCoinsRecipient &info)
 
     if (info.amount)
     {
-        ret += QString("?amount=%1").arg(MassGridUnits::format(MassGridUnits::MGC, info.amount, false, MassGridUnits::separatorNever));
+        ret += QString("?amount=%1").arg(MassGridUnits::format(MassGridUnits::MGD, info.amount, false, MassGridUnits::separatorNever));
         paramCount++;
     }
 

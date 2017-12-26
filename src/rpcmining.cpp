@@ -266,7 +266,7 @@ Value getmininginfo(const Array& params, bool fHelp)
 }
 
 
-// NOTE: Unlike wallet RPC (which use MGC values), mining RPCs follow GBT (BIP 22) in using satoshi amounts
+// NOTE: Unlike wallet RPC (which use MGD values), mining RPCs follow GBT (BIP 22) in using satoshi amounts
 Value prioritisetransaction(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 3)

@@ -17,9 +17,9 @@ MassGridUnits::MassGridUnits(QObject *parent):
 QList<MassGridUnits::Unit> MassGridUnits::availableUnits()
 {
     QList<MassGridUnits::Unit> unitlist;
-    unitlist.append(MGC);
-    unitlist.append(mMGC);
-    unitlist.append(uMGC);
+    unitlist.append(MGD);
+    unitlist.append(mMGD);
+    unitlist.append(uMGD);
     return unitlist;
 }
 
@@ -27,9 +27,9 @@ bool MassGridUnits::valid(int unit)
 {
     switch(unit)
     {
-    case MGC:
-    case mMGC:
-    case uMGC:
+    case MGD:
+    case mMGD:
+    case uMGD:
         return true;
     default:
         return false;
@@ -40,9 +40,9 @@ QString MassGridUnits::id(int unit)
 {
     switch(unit)
     {
-    case MGC: return QString("MGC");
-    case mMGC: return QString("mMGC");
-    case uMGC: return QString("uMGC");
+    case MGD: return QString("MGD");
+    case mMGD: return QString("mMGD");
+    case uMGD: return QString("uMGD");
     default: return QString("???");
     }
 }
@@ -51,9 +51,9 @@ QString MassGridUnits::name(int unit)
 {
     switch(unit)
     {
-    case MGC: return QString("MGC");
-    case mMGC: return QString("mMGC");
-    case uMGC: return QString::fromUtf8("μMGC");
+    case MGD: return QString("MGD");
+    case mMGD: return QString("mMGD");
+    case uMGD: return QString::fromUtf8("μMGD");
     default: return QString("???");
     }
 }
@@ -62,9 +62,9 @@ QString MassGridUnits::description(int unit)
 {
     switch(unit)
     {
-    case MGC: return QString("MassGrids");
-    case mMGC: return QString("Milli-MassGrids (1 / 1" THIN_SP_UTF8 "000)");
-    case uMGC: return QString("Micro-MassGrids (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+    case MGD: return QString("MassGrids");
+    case mMGD: return QString("Milli-MassGrids (1 / 1" THIN_SP_UTF8 "000)");
+    case uMGD: return QString("Micro-MassGrids (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
     default: return QString("???");
     }
 }
@@ -73,9 +73,9 @@ qint64 MassGridUnits::factor(int unit)
 {
     switch(unit)
     {
-    case MGC:  return 100000000;
-    case mMGC: return 100000;
-    case uMGC: return 100;
+    case MGD:  return 100000000;
+    case mMGD: return 100000;
+    case uMGD: return 100;
     default:   return 100000000;
     }
 }
@@ -84,9 +84,9 @@ int MassGridUnits::decimals(int unit)
 {
     switch(unit)
     {
-    case MGC: return 8;
-    case mMGC: return 5;
-    case uMGC: return 2;
+    case MGD: return 8;
+    case mMGD: return 5;
+    case uMGD: return 2;
     default: return 0;
     }
 }
@@ -125,7 +125,7 @@ QString MassGridUnits::format(int unit, const CAmount& nIn, bool fPlus, Separato
 // TODO: Review all remaining calls to MassGridUnits::formatWithUnit to
 // TODO: determine whether the output is used in a plain text context
 // TODO: or an HTML context (and replace with
-// TODO: MGCoinUnits::formatHtmlWithUnit in the latter case). Hopefully
+// TODO: MGDoinUnits::formatHtmlWithUnit in the latter case). Hopefully
 // TODO: there aren't instances where the result could be used in
 // TODO: either context.
 

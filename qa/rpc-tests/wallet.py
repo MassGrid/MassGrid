@@ -8,8 +8,8 @@
 # Does the following:
 #   a) creates 3 nodes, with an empty chain (no blocks).
 #   b) node0 mines a block
-#   c) node1 mines 101 blocks, so now nodes 0 and 1 have 50MGC, node2 has none. 
-#   d) node0 sends 21 MGC to node2, in two transactions (11 MGC, then 10 MGC).
+#   c) node1 mines 101 blocks, so now nodes 0 and 1 have 50MGD, node2 has none. 
+#   d) node0 sends 21 MGD to node2, in two transactions (11 MGD, then 10 MGD).
 #   e) node0 mines a block, collects the fee on the second transaction
 #   f) node1 mines 100 blocks, to mature node0's just-mined block
 #   g) check that node0 has 100-21, node2 has 21
@@ -49,7 +49,7 @@ class WalletTest (MassGridTestFramework):
         assert_equal(self.nodes[1].getbalance(), 50)
         assert_equal(self.nodes[2].getbalance(), 0)
 
-        # Send 21 MGC from 0 to 2 using sendtoaddress call.
+        # Send 21 MGD from 0 to 2 using sendtoaddress call.
         # Second transaction will be child of first, and will require a fee
         self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 11)
         self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 10)
@@ -62,7 +62,7 @@ class WalletTest (MassGridTestFramework):
         self.nodes[1].setgenerate(True, 100)
         self.sync_all()
 
-        # node0 should end up with 100 MGC in block rewards plus fees, but
+        # node0 should end up with 100 MGD in block rewards plus fees, but
         # minus the 21 plus fees sent to node2
         assert_equal(self.nodes[0].getbalance(), 100-21)
         assert_equal(self.nodes[2].getbalance(), 21)

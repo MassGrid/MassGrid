@@ -1,5 +1,5 @@
 from distutils.core import setup
-setup(name='MGCspendfrom',
+setup(name='MGDspendfrom',
       version='1.0',
       description='Command-line utility for massgrid "coin control"',
       author='Gavin Andresen',

@@ -3920,12 +3920,12 @@ Address: %4
     </message>
     <message>
         <location line="+9"/>
-        <source>Fees (in MGC/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
+        <source>Fees (in MGD/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>Fees (in MGC/Kb) smaller than this are considered zero fee for transaction creation (default: %s)</source>
+        <source>Fees (in MGD/Kb) smaller than this are considered zero fee for transaction creation (default: %s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4050,7 +4050,7 @@ for example: alertnotify=echo %%s | mail -s &quot;MassGrid Alert&quot; admin@foo
     </message>
     <message>
         <location line="+2"/>
-        <source>Fee (in MGC/kB) to add to transactions you send (default: %s)</source>
+        <source>Fee (in MGD/kB) to add to transactions you send (default: %s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

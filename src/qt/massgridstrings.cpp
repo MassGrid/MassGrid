@@ -62,10 +62,10 @@ QT_TRANSLATE_NOOP("massgrid-core", ""
 "Execute command when the best block changes (%s in cmd is replaced by block "
 "hash)"),
 QT_TRANSLATE_NOOP("massgrid-core", ""
-"Fees (in MGC/Kb) smaller than this are considered zero fee for relaying "
+"Fees (in MGD/Kb) smaller than this are considered zero fee for relaying "
 "(default: %s)"),
 QT_TRANSLATE_NOOP("massgrid-core", ""
-"Fees (in MGC/Kb) smaller than this are considered zero fee for transaction "
+"Fees (in MGD/Kb) smaller than this are considered zero fee for transaction "
 "creation (default: %s)"),
 QT_TRANSLATE_NOOP("massgrid-core", ""
 "Flush database activity from memory pool to disk log every <n> megabytes "
@@ -206,7 +206,7 @@ QT_TRANSLATE_NOOP("massgrid-core", "Error: A fatal internal error occurred, see 
 QT_TRANSLATE_NOOP("massgrid-core", "Error: Disk space is low!"),
 QT_TRANSLATE_NOOP("massgrid-core", "Error: Unsupported argument -tor found, use -onion."),
 QT_TRANSLATE_NOOP("massgrid-core", "Failed to listen on any port. Use -listen=0 if you want this."),
-QT_TRANSLATE_NOOP("massgrid-core", "Fee (in MGC/kB) to add to transactions you send (default: %s)"),
+QT_TRANSLATE_NOOP("massgrid-core", "Fee (in MGD/kB) to add to transactions you send (default: %s)"),
 QT_TRANSLATE_NOOP("massgrid-core", "Force safe mode (default: %u)"),
 QT_TRANSLATE_NOOP("massgrid-core", "Generate coins (default: %u)"),
 QT_TRANSLATE_NOOP("massgrid-core", "How many blocks to check at startup (default: %u, 0 = all)"),
