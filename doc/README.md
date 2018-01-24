@@ -1,4 +1,4 @@
-MassGrid Core 0.10.4
+MassGrid Core 1.1.0
 =====================
 
 Setup
