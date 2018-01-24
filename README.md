@@ -18,7 +18,7 @@ https://www.massgrid.com
 * PoW Median Target Spacing: 300 Seconds
 * PoW Difficulty Retarget: 288 Blocks
 * Full Confirmation: 6 Blocks
-* Total Coins: 168,000,000 MassGrid
+* Total Coins: 168,000,000 MGD
 * Block Size: 1 Mega-bytes (MB)
 
 
@@ -79,8 +79,6 @@ Optional dependencies:
  qt          | GUI              | GUI toolkit (only needed when GUI enabled)
  protobuf    | Payments in GUI  | Data interchange format used for payment protocol (only needed when GUI enabled)
  libqrencode | QR codes in GUI  | Optional for generating QR codes (only needed when GUI enabled)
-
-For the versions used in the release, see [release-process.md](release-process.md) under *Fetch and build inputs*.
 
 System requirements
 --------------------

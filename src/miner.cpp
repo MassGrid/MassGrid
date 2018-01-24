@@ -471,8 +471,6 @@ void static MassGridMiner(CWallet *pwallet)
                 return;
             }
             CBlock *pblock = &pblocktemplate->block;
-            if(pindexPrev->nHeight<15999)
-                pblock->nVersion=4;
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
             LogPrintf("Running MassGridMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
