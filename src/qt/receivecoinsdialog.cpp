@@ -24,7 +24,8 @@
 ReceiveCoinsDialog::ReceiveCoinsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ReceiveCoinsDialog),
-    model(0)
+    model(0),
+    m_wintitle(0)
 {
     ui->setupUi(this);
 
@@ -96,6 +97,11 @@ void ReceiveCoinsDialog::clear()
     ui->reqMessage->setText("");
     ui->reuseAddress->setChecked(false);
     updateDisplayUnit();
+
+    if(!m_wintitle){
+        m_wintitle = new MainwinTitle();
+    }
+    m_wintitle->show();
 }
 
 void ReceiveCoinsDialog::reject()

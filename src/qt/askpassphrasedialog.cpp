@@ -40,28 +40,33 @@ AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget *parent) :
     {
         case Encrypt: // Ask passphrase x2
             ui->warningLabel->setText(tr("Enter the new passphrase to the wallet.<br/>Please use a passphrase of <b>ten or more random characters</b>, or <b>eight or more words</b>."));
-            ui->passLabel1->hide();
-            ui->passEdit1->hide();
-            setWindowTitle(tr("Encrypt wallet"));
+            // ui->passLabel1->hide();
+            // ui->passEdit1->hide();
+            ui->frame->hide();
+            ui->label_titleName->setText(tr("Encrypt wallet"));
             break;
         case Unlock: // Ask passphrase
             ui->warningLabel->setText(tr("This operation needs your wallet passphrase to unlock the wallet."));
-            ui->passLabel2->hide();
-            ui->passEdit2->hide();
-            ui->passLabel3->hide();
-            ui->passEdit3->hide();
-            setWindowTitle(tr("Unlock wallet"));
+            // ui->passLabel2->hide();
+            // ui->passEdit2->hide();
+            // ui->passLabel3->hide();
+            // ui->passEdit3->hide();
+            ui->frame_2->hide();
+            ui->frame_3->hide();
+            ui->label_titleName->setText(tr("Unlock wallet"));
             break;
         case Decrypt:   // Ask passphrase
             ui->warningLabel->setText(tr("This operation needs your wallet passphrase to decrypt the wallet."));
-            ui->passLabel2->hide();
-            ui->passEdit2->hide();
-            ui->passLabel3->hide();
-            ui->passEdit3->hide();
-            setWindowTitle(tr("Decrypt wallet"));
+            // ui->passLabel2->hide();
+            // ui->passEdit2->hide();
+            // ui->passLabel3->hide();
+            // ui->passEdit3->hide();
+            ui->frame_2->hide();
+            ui->frame_3->hide();
+            ui->label_titleName->setText(tr("Decrypt wallet"));
             break;
         case ChangePass: // Ask old passphrase + new passphrase x2
-            setWindowTitle(tr("Change passphrase"));
+            ui->label_titleName->setText(tr("Change passphrase"));
             ui->warningLabel->setText(tr("Enter the old and new passphrase to the wallet."));
             break;
     }
@@ -69,6 +74,9 @@ AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget *parent) :
     connect(ui->passEdit1, SIGNAL(textChanged(QString)), this, SLOT(textChanged()));
     connect(ui->passEdit2, SIGNAL(textChanged(QString)), this, SLOT(textChanged()));
     connect(ui->passEdit3, SIGNAL(textChanged(QString)), this, SLOT(textChanged()));
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+
+    setWindowFlags(Qt::FramelessWindowHint);
 }
 
 AskPassphraseDialog::~AskPassphraseDialog()
@@ -255,4 +263,27 @@ bool AskPassphraseDialog::eventFilter(QObject *object, QEvent *event)
         }
     }
     return QDialog::eventFilter(object, event);
+}
+
+
+//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
+//接下来就是对三个鼠标事件的重写
+void AskPassphraseDialog::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void AskPassphraseDialog::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void AskPassphraseDialog::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
 }

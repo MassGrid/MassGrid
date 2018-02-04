@@ -217,6 +217,14 @@ MassGridAmountField::MassGridAmountField(QWidget *parent) :
 
     // Set default based on configuration
     unitChanged(unit->currentIndex());
+
+    amount->setStyleSheet("AmountSpinBox{\n height:600px;\n width:80px;\nborder:0px solid rgb(174,103,46,0);\n}\nAmountSpinBox::up-button\n{\n height: 0px;\nwidth:0px;\n}\nAmountSpinBox::down-button{\nheight: 0px;\nwidth:0px;\n}");
+    unit->setStyleSheet("QValueComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
+
+    unit->setMaximumWidth(120);
+    unit->setMaximumHeight(32);
+
+    amount->setMaximumHeight(32);
 }
 
 void MassGridAmountField::clear()
@@ -242,9 +250,13 @@ bool MassGridAmountField::validate()
 void MassGridAmountField::setValid(bool valid)
 {
     if (valid)
-        amount->setStyleSheet("");
+        amount->setStyleSheet("AmountSpinBox{\n height:600px;\n width:80px;\nborder:0px solid rgb(174,103,46,0);\n}\nAmountSpinBox::up-button\n{\n height: 0px;\nwidth:0px;\n}\nAmountSpinBox::down-button{\nheight: 0px;\nwidth:0px;\n}");
+        // amount->setStyleSheet("");
     else
         amount->setStyleSheet(STYLE_INVALID);
+        // amount->setStyleSheet("AmountSpinBox{\n height:600px;\n width:80px;\nborder:1px solid rgb(174,103,46);\n}\nAmountSpinBox::up-button\n{\n height: 0px;\nwidth:0px;\n}\nAmountSpinBox::down-button{\nheight: 0px;\nwidth:0px;\n}");
+
+        // amount->setStyleSheet(STYLE_INVALID);
 }
 
 bool MassGridAmountField::eventFilter(QObject *object, QEvent *event)
@@ -299,4 +311,14 @@ void MassGridAmountField::setDisplayUnit(int newUnit)
 void MassGridAmountField::setSingleStep(const CAmount& step)
 {
     amount->setSingleStep(step);
+}
+
+QValueComboBox* MassGridAmountField::getUnitObject()
+{
+    return unit;
+}
+
+void MassGridAmountField::hideUnit()
+{
+    unit->hide();
 }

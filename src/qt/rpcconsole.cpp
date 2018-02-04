@@ -236,6 +236,10 @@ RPCConsole::RPCConsole(QWidget *parent) :
     ui->peerHeading->setText(tr("Select a peer to view detailed information."));
 
     clear();
+    
+    setWindowFlags(Qt::FramelessWindowHint);
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+    ui->label_titlename->setText(this->windowTitle());
 }
 
 RPCConsole::~RPCConsole()
@@ -656,4 +660,26 @@ void RPCConsole::hideEvent(QHideEvent *event)
 
     // stop PeerTableModel auto refresh
     clientModel->getPeerTableModel()->stopAutoRefresh();
+}
+
+//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
+//接下来就是对三个鼠标事件的重写
+void RPCConsole::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void RPCConsole::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void RPCConsole::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
 }

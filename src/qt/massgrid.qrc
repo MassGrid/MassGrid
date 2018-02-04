@@ -1,4 +1,4 @@
-<!DOCTYPE RCC><RCC version="1.0">
+<RCC>
     <qresource prefix="/icons">
         <file alias="massgrid">res/icons/massgrid.png</file>
         <file alias="address-book">res/icons/address-book.png</file>
@@ -45,6 +45,7 @@
         <file alias="filesave">res/icons/filesave.png</file>
         <file alias="qrcode">res/icons/qrcode.png</file>
         <file alias="debugwindow">res/icons/debugwindow.png</file>
+        <file>res/pic/closeBtn.png</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="about">res/images/about.png</file>
@@ -87,5 +88,32 @@
         <file alias="spinner-032">res/movies/spinner-032.png</file>
         <file alias="spinner-033">res/movies/spinner-033.png</file>
         <file alias="spinner-034">res/movies/spinner-034.png</file>
+    </qresource>
+    <qresource prefix="/pic">
+        <file>res/pic/closeBtn.png</file>
+        <file>res/pic/add.png</file>
+        <file>res/pic/background.png</file>
+        <file>res/pic/background_right.png</file>
+        <file>res/pic/change.png</file>
+        <file>res/pic/dlgBackgroud.png</file>
+        <file>res/pic/in.png</file>
+        <file>res/pic/kPic.png</file>
+        <file>res/pic/logo.png</file>
+        <file>res/pic/maxBtn.png</file>
+        <file>res/pic/minBtn.png</file>
+        <file>res/pic/moreSelect.png</file>
+        <file>res/pic/out.png</file>
+        <file>res/pic/outputData.png</file>
+        <file>res/pic/overview.png</file>
+        <file>res/pic/sdCode.png</file>
+        <file>res/pic/sdCodeWhite.png</file>
+        <file>res/pic/search.png</file>
+        <file>res/pic/selectPic.png</file>
+        <file>res/pic/send.png</file>
+        <file>res/pic/sjx.png</file>
+        <file>res/pic/sliderBtn.png</file>
+        <file>res/pic/tx_mined.png</file>
+        <file>res/pic/xjt.png</file>
+        <file>res/pic/background_image.png</file>
     </qresource>
 </RCC>

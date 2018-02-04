@@ -15,7 +15,7 @@
 #include "transactionrecord.h"
 #include "transactiontablemodel.h"
 #include "walletmodel.h"
-
+#include "massgridgui.h"
 #include "ui_interface.h"
 
 #include <QComboBox>
@@ -35,11 +35,14 @@
 #include <QVBoxLayout>
 
 TransactionView::TransactionView(QWidget *parent) :
-    QWidget(parent), model(0), transactionProxyModel(0),
-    transactionView(0)
+    QWidget(parent), model(0), transactionProxyModel(0)
 {
     // Build filter row
     setContentsMargins(0,0,0,0);
+
+    transactionView = 0;
+    typeWidget = 0;
+    dateWidget = 0;
 
     QHBoxLayout *hlayout = new QHBoxLayout();
     hlayout->setContentsMargins(0,0,0,0);
@@ -58,68 +61,86 @@ TransactionView::TransactionView(QWidget *parent) :
     watchOnlyWidget->addItem(QIcon(":/icons/eye_minus"), "", TransactionFilterProxy::WatchOnlyFilter_No);
     hlayout->addWidget(watchOnlyWidget);
 
-    dateWidget = new QComboBox(this);
-#ifdef Q_OS_MAC
-    dateWidget->setFixedWidth(121);
-#else
-    dateWidget->setFixedWidth(120);
-#endif
-    dateWidget->addItem(tr("All"), All);
-    dateWidget->addItem(tr("Today"), Today);
-    dateWidget->addItem(tr("This week"), ThisWeek);
-    dateWidget->addItem(tr("This month"), ThisMonth);
-    dateWidget->addItem(tr("Last month"), LastMonth);
-    dateWidget->addItem(tr("This year"), ThisYear);
-    dateWidget->addItem(tr("Range..."), Range);
-    hlayout->addWidget(dateWidget);
+//     dateWidget = new QComboBox(this);
+// #ifdef Q_OS_MAC
+//     dateWidget->setFixedWidth(121);
+// #else
+//     dateWidget->setFixedWidth(120);
+// #endif
+//     dateWidget->addItem(tr("All"), All);
+//     dateWidget->addItem(tr("Today"), Today);
+//     dateWidget->addItem(tr("This week"), ThisWeek);
+//     dateWidget->addItem(tr("This month"), ThisMonth);
+//     dateWidget->addItem(tr("Last month"), LastMonth);
+//     dateWidget->addItem(tr("This year"), ThisYear);
+//     dateWidget->addItem(tr("Range..."), Range);
+//     hlayout->addWidget(dateWidget);
 
-    typeWidget = new QComboBox(this);
-#ifdef Q_OS_MAC
-    typeWidget->setFixedWidth(121);
-#else
-    typeWidget->setFixedWidth(120);
-#endif
+    // typeWidget = new QComboBox(this);
+// #ifdef Q_OS_MAC
+//     typeWidget->setFixedWidth(121);
+// #else
+//     typeWidget->setFixedWidth(120);
+// #endif
 
-    typeWidget->addItem(tr("All"), TransactionFilterProxy::ALL_TYPES);
-    typeWidget->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) |
-                                        TransactionFilterProxy::TYPE(TransactionRecord::RecvFromOther));
-    typeWidget->addItem(tr("Sent to"), TransactionFilterProxy::TYPE(TransactionRecord::SendToAddress) |
-                                  TransactionFilterProxy::TYPE(TransactionRecord::SendToOther));
-    typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
-    typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
-    typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
+//     dateWidget->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:1px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\n}\n");
+//     typeWidget->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:1px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\n}\n");
+//     dateWidget->setMaximumHeight(32);
+//     typeWidget->setMaximumHeight(32);
 
-    hlayout->addWidget(typeWidget);
+//     typeWidget->addItem(tr("All"), TransactionFilterProxy::ALL_TYPES);
+//     typeWidget->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) |
+//                                         TransactionFilterProxy::TYPE(TransactionRecord::RecvFromOther));
+//     typeWidget->addItem(tr("Sent to"), TransactionFilterProxy::TYPE(TransactionRecord::SendToAddress) |
+//                                   TransactionFilterProxy::TYPE(TransactionRecord::SendToOther));
+//     typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
+//     typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
+//     typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
 
-    addressWidget = new QLineEdit(this);
-#if QT_VERSION >= 0x040700
-    addressWidget->setPlaceholderText(tr("Enter address or label to search"));
-#endif
-    hlayout->addWidget(addressWidget);
+//     hlayout->addWidget(typeWidget);
 
-    amountWidget = new QLineEdit(this);
-#if QT_VERSION >= 0x040700
-    amountWidget->setPlaceholderText(tr("Min amount"));
-#endif
-#ifdef Q_OS_MAC
-    amountWidget->setFixedWidth(97);
-#else
-    amountWidget->setFixedWidth(100);
-#endif
-    amountWidget->setValidator(new QDoubleValidator(0, 1e20, 8, this));
-    hlayout->addWidget(amountWidget);
+    // addressWidget = new QLineEdit(this);
+// #if QT_VERSION >= 0x040700
+//     addressWidget->setPlaceholderText(tr("Enter address or label to search"));
+// #endif
+//     hlayout->addWidget(addressWidget);
+
+//     amountWidget = new QLineEdit(this);
+
+//     // addressWidget->setStyleSheet("border:1px solid rgb(174,103,46);");
+//     amountWidget->setStyleSheet("border:1px solid rgb(174,103,46);");
+//     // addressWidget->setMinimumHeight(32);
+//     amountWidget->setMinimumHeight(32);
+//     // addressWidget->setMaximumHeight(32);
+//     amountWidget->setMaximumHeight(32);
+
+
+// #if QT_VERSION >= 0x040700
+//     amountWidget->setPlaceholderText(tr("Min amount"));
+// #endif
+// #ifdef Q_OS_MAC
+//     amountWidget->setFixedWidth(97);
+// #else
+//     amountWidget->setFixedWidth(100);
+// #endif
+//     amountWidget->setValidator(new QDoubleValidator(0, 1e20, 8, this));
+//     hlayout->addWidget(amountWidget);
 
     QVBoxLayout *vlayout = new QVBoxLayout(this);
     vlayout->setContentsMargins(0,0,0,0);
     vlayout->setSpacing(0);
 
     QTableView *view = new QTableView(this);
+        // view->setAlternatingRowColors(true);
+    view->setShowGrid(false);
     vlayout->addLayout(hlayout);
     vlayout->addWidget(createDateRangeWidget());
     vlayout->addWidget(view);
     vlayout->setSpacing(0);
     int width = view->verticalScrollBar()->sizeHint().width();
     // Cover scroll bar width with spacing
+    vlayout->setMargin(0);
+
 #ifdef Q_OS_MAC
     hlayout->addSpacing(width+2);
 #else
@@ -155,11 +176,11 @@ TransactionView::TransactionView(QWidget *parent) :
     // Connect actions
     connect(mapperThirdPartyTxUrls, SIGNAL(mapped(QString)), this, SLOT(openThirdPartyTxUrl(QString)));
 
-    connect(dateWidget, SIGNAL(activated(int)), this, SLOT(chooseDate(int)));
-    connect(typeWidget, SIGNAL(activated(int)), this, SLOT(chooseType(int)));
+    // connect(dateWidget, SIGNAL(activated(int)), this, SLOT(chooseDate(int)));
+    // connect(typeWidget, SIGNAL(activated(int)), this, SLOT(chooseType(int)));
     connect(watchOnlyWidget, SIGNAL(activated(int)), this, SLOT(chooseWatchonly(int)));
-    connect(addressWidget, SIGNAL(textChanged(QString)), this, SLOT(changedPrefix(QString)));
-    connect(amountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedAmount(QString)));
+    // connect(addressWidget, SIGNAL(textChanged(QString)), this, SLOT(changedPrefix(QString)));
+    // connect(amountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedAmount(QString)));
 
     connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SIGNAL(doubleClicked(QModelIndex)));
     connect(view, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
@@ -170,6 +191,35 @@ TransactionView::TransactionView(QWidget *parent) :
     connect(copyTxIDAction, SIGNAL(triggered()), this, SLOT(copyTxID()));
     connect(editLabelAction, SIGNAL(triggered()), this, SLOT(editLabel()));
     connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
+
+}
+
+void TransactionView::setSearchWidget(QComboBox* dateComboBox,QComboBox* typeComboBox,QLineEdit* addrLineEdit)
+{
+    dateWidget = dateComboBox;
+    typeWidget = typeComboBox;
+    // addressWidget = addrLineEdit;
+
+    dateWidget->addItem(tr("All"), All);
+    dateWidget->addItem(tr("Today"), Today);
+    dateWidget->addItem(tr("This week"), ThisWeek);
+    dateWidget->addItem(tr("This month"), ThisMonth);
+    dateWidget->addItem(tr("Last month"), LastMonth);
+    dateWidget->addItem(tr("This year"), ThisYear);
+    dateWidget->addItem(tr("Range..."), Range);
+
+    typeWidget->addItem(tr("All"), TransactionFilterProxy::ALL_TYPES);
+    typeWidget->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) |
+                                        TransactionFilterProxy::TYPE(TransactionRecord::RecvFromOther));
+    typeWidget->addItem(tr("Sent to"), TransactionFilterProxy::TYPE(TransactionRecord::SendToAddress) |
+                                  TransactionFilterProxy::TYPE(TransactionRecord::SendToOther));
+    typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
+    typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
+    typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
+
+#if QT_VERSION >= 0x040700
+    addrLineEdit->setPlaceholderText(tr("Enter address or label to search"));
+#endif
 }
 
 void TransactionView::setModel(WalletModel *model)
@@ -200,6 +250,9 @@ void TransactionView::setModel(WalletModel *model)
         transactionView->setColumnWidth(TransactionTableModel::Type, TYPE_COLUMN_WIDTH);
         transactionView->setColumnWidth(TransactionTableModel::Amount, AMOUNT_MINIMUM_COLUMN_WIDTH);
 
+        // transactionView->setStyleSheet("QTableView {\n    color: black;\ngridline-color: white;\nbackground-color: white;\nalternate-background-color: rgb(247,242,238);\nselection-color: black;\nselection-background-color: rgb(247,242,238);\nborder:hidden;\n}\n\n  QHeaderView {\ncolor: black;\nfont: bold 10pt;\nbackground-color: white;\nborder: 0px solid rgb(144, 144, 144);\nborder:0px solid rgb(191,191,191);\nborder-left-color: red;\nborder-top-color: red;\nborder-radius:0px;\nmin-height:29px;\n}\n\nQHeaderView::section {\ncolor: black;\nbackground-color: white;\nborder: 5px solid #626262;\nborder-radius:0px;\nborder-color: white;\n\n}\n\n/*垂直滚动条整体*/\nQScrollBar:vertical\n{\n    width:8px;\n    background:rgb(0,0,0,0%);\n    margin:0px,0px,0px,0px;\n    padding-top:12px;   /*上预留位置*/\n    padding-bottom:12px;    /*下预留位置*/\n}\n\n/*滚动条中滑块的样式*/\nQScrollBar::handle:vertical\n{\n    width:8px;\n    background:rgb(0,0,0,25%);\n    border-radius:4px;\n    min-height:20px;\n}\n\n/*鼠标触及滑块样式*/\nQScrollBar::handle:vertical:hover\n{\n    width:9px;\n    background:rgb(0,0,0,50%);\n    border-radius:4px;\n    min-height:20;\n}\n\n/*设置下箭头*/\nQScrollBar::add-line:vertical\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/3.png);\n    subcontrol-position:bottom;\n}\n\n/*设置上箭头*/\nQScrollBar::sub-line:vertical\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/1.png);\n    subcontrol-position:top;\n}\n\n/*设置下箭头:悬浮状态*/\nQScrollBar::add-line:vertical:hover\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/4.png);\n    subcontrol-position:bottom;\n}\n\n/*设置上箭头：悬浮状态*/\nQScrollBar::sub-line:vertical:hover\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/2.png);\n    subcontrol-position:top;\n}\n\n/*当滚动条滚动的时候，上面的部分和下面的部分*/\nQScrollBar::add-page:vertical,QScrollBar::sub-page:vertical\n{\n    background:rgb(0,0,0,10%);\n    border-radius:4px;\n}");
+
+        transactionView->setStyleSheet("QTableView {\n    color: black;\ngridline-color: white;\nbackground-color: white;\nalternate-background-color: rgb(247,242,238);\nselection-color: white;\nselection-background-color: rgb(239,169,4);\nborder:hidden;\n}\n\nQHeaderView {\ncolor: black;\nfont: 10pt;\nbackground-color: white;\nborder: 0px solid rgb(144, 144, 144);\nborder:0px solid rgb(191,191,191);\nborder-left-color: red;\nborder-top-color: red;\nborder-radius:0px;\nmin-height:29px;\n}\n\nQHeaderView::section {\ncolor: black;\nbackground-color: white;\nborder: 5px solid #626262;\nborder-radius:0px;\nborder-color: white;\n}\n\nQTableView::item::selected{\n   color: rgb(255, 255, 255);\n}\n\n/*垂直滚动条整体*/\nQScrollBar:vertical\n{\n    width:8px;\n    background:rgb(0,0,0,0%);\n    margin:0px,0px,0px,0px;\n    padding-top:12px;   /*上预留位置*/\n    padding-bottom:12px;    /*下预留位置*/\n}\n\n/*滚动条中滑块的样式*/\nQScrollBar::handle:vertical\n{\n    width:8px;\n    background:rgb(0,0,0,25%);\n    border-radius:4px;\n    min-height:20px;\n}\n\n/*鼠标触及滑块样式*/\nQScrollBar::handle:vertical:hover\n{\n    width:9px;\n    background:rgb(0,0,0,50%);\n    border-radius:4px;\n    min-height:20;\n}\n\n/*设置下箭头*/\nQScrollBar::add-line:vertical\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/3.png);\n    subcontrol-position:bottom;\n}\n\n/*设置上箭头*/\nQScrollBar::sub-line:vertical\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/1.png);\n    subcontrol-position:top;\n}\n\n/*设置下箭头:悬浮状态*/\nQScrollBar::add-line:vertical:hover\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/4.png);\n    subcontrol-position:bottom;\n}\n\n/*设置上箭头：悬浮状态*/\nQScrollBar::sub-line:vertical:hover\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/2.png);\n    subcontrol-position:top;\n}\n\n/*当滚动条滚动的时候，上面的部分和下面的部分*/\nQScrollBar::add-page:vertical,QScrollBar::sub-page:vertical\n{\n    background:rgb(0,0,0,10%);\n    border-radius:4px;\n}\n");
         columnResizingFixer = new GUIUtil::TableViewLastColumnResizingFixer(transactionView, AMOUNT_MINIMUM_COLUMN_WIDTH, MINIMUM_COLUMN_WIDTH);
 
         if (model->getOptionsModel())
@@ -231,7 +284,7 @@ void TransactionView::setModel(WalletModel *model)
 
 void TransactionView::chooseDate(int idx)
 {
-    if(!transactionProxyModel)
+    if(!transactionProxyModel || !dateWidget)
         return;
     QDate current = QDate::currentDate();
     dateRangeWidget->setVisible(false);
@@ -279,7 +332,7 @@ void TransactionView::chooseDate(int idx)
 
 void TransactionView::chooseType(int idx)
 {
-    if(!transactionProxyModel)
+    if(!transactionProxyModel || !typeWidget)
         return;
     transactionProxyModel->setTypeFilter(
         typeWidget->itemData(idx).toInt());
@@ -424,6 +477,12 @@ void TransactionView::editLabel()
     }
 }
 
+    // OptionsDialog dlg(0, enableWallet);
+    // dlg.setModel(clientModel->getOptionsModel());
+
+
+    // dlg.exec();
+
 void TransactionView::showDetails()
 {
     if(!transactionView->selectionModel())
@@ -432,6 +491,12 @@ void TransactionView::showDetails()
     if(!selection.isEmpty())
     {
         TransactionDescDialog dlg(selection.at(0));
+
+        QPoint pos = MassGridGUI::winPos();
+        QSize size = MassGridGUI::winSize();
+
+        dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
         dlg.exec();
     }
 }

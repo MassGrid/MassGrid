@@ -1,7 +1,7 @@
 Wallet Tools
 ---------------------
 
-### [MgdRPC](/contrib/bitrpc) ###
+### [BitRPC](/contrib/bitrpc) ###
 Allows for sending of all standard MassGrid commands via RPC rather than as command line args.
 
 ### [SpendFrom](/contrib/spendfrom) ###

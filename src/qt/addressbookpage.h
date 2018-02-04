@@ -6,6 +6,7 @@
 #define MASSGRID_QT_ADDRESSBOOKPAGE_H
 
 #include <QDialog>
+#include <QMouseEvent>
 
 class AddressTableModel;
 class OptionsModel;
@@ -59,6 +60,8 @@ private:
     QAction *deleteAction; // to be able to explicitly disable it
     QString newAddressToSelect;
 
+    QPoint m_last;
+
 private slots:
     /** Delete currently selected address entry */
     void on_deleteAddress_clicked();
@@ -82,6 +85,11 @@ private slots:
 
 signals:
     void sendCoins(QString addr);
+
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 };
 
 #endif // MASSGRID_QT_ADDRESSBOOKPAGE_H

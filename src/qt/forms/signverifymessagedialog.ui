@@ -6,206 +6,273 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>380</height>
+    <width>690</width>
+    <height>454</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Signatures - Sign / Verify a Message</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget{
+	background-color: rgb(255, 255, 255);
+}
+
+QTabBar::tab
+{
+color: rgb(172, 99, 43);
+border-bottom:1px solid rgb(174,103,46);
+border-left:0px solid rgb(174,103,46);
+border-right:0px solid rgb(174,103,46);
+border-top:0px solid rgb(174,103,46);
+    min-width: 150px;
+    min-height: 28px;
+}
+
+
+QTabBar::tab:selected, QTabBar::tab:hover
+{
+border-left:1px solid rgb(174,103,46);
+border-right:1px solid rgb(174,103,46);
+border-top:1px solid rgb(174,103,46);
+border-bottom:0px solid rgb(174,103,46);
+}
+
+
+QTabBar::tab:selected
+{
+border-left:1px solid rgb(174,103,46);
+border-right:1px solid rgb(174,103,46);
+border-top:1px solid rgb(174,103,46);
+border-bottom:0px solid rgb(174,103,46);
+}
+
+QTabBar::tab:!selected
+{
+color: rgb(172, 99, 43);
+border-bottom:1px solid rgb(174,103,46);
+border-left:0px solid rgb(174,103,46);
+border-right:0px solid rgb(174,103,46);
+border-top:0px solid rgb(174,103,46);
+}
+
+QTabWidget::pane{
+	border:none;
+}
+
+QFrame{
+border:hidden;
+}
+QLineEdit{
+	border-color: rgb(186, 186, 186);
+	border:1px solid rgb(186, 186, 186);
+}
+
+
+QCheckBox{  
+    spacing: 5px;  
+}  
+  
+QCheckBox::indicator{  
+	width:20px;
+	height:20px; 
+}  
+  
+QCheckBox::indicator:unchecked{  
+	border-image: url(:/pic/res/pic/kPic.png);
+}  
+  
+QCheckBox::indicator:checked{  
+	border-image: url(:/pic/res/pic/selectPic.png);
+}  
+  
+QCheckBox::indicator:checked:disabled{  
+    image:url(:/CheckBox/res/checkedDisabled.png);  
+}  
+
+
+QSpinBox{
+ height:30px;
+ width:30px;
+	background-color: rgba(255, 255, 255, 0);
+	border:hidden;
+}
+QSpinBox::up-button
+{
+	background-color: rgba(255, 255, 255, 0);
+}
+QSpinBox::down-button{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+QFrame#frame_9,QFrame#frame_10{
+	border-color: rgb(186, 186, 186);
+	border:1px solid rgb(186, 186, 186);
+}
+
+QComboBox
+{
+width: 120px;  
+height: 600px;
+border:1px solid rgb(174,103,46);
+font-size: 12pt;
+font-family: 微软雅黑,宋体;
+background-repeat: no-repeat;
+background-position: center left;
+background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);
+selection-color: black;
+selection-background-color: darkgray;
+}
+
+QComboBox::drop-down 
+{
+width: 30px; 
+height:30px;
+image: url(:/pic/res/pic/xjt.png);
+}
+QComboBox QAbstractItemView
+{
+height:100px;
+border: 0px;  
+color: rgb(255, 255, 255);
+selection-color: rgb(255, 255, 255);
+selection-background-color: rgb(239, 169, 4);
+background-color: rgb(198, 125, 26);
+}
+QComboBox QAbstractItemView::item
+{
+height: 20px;
+background-color: rgb(198, 125, 26);
+border:hidden;
+}
+
+QPlainTextEdit{
+border:1px solid rgb(174,103,46);
+}
+
+QFrame#frame,QFrame#frame_2,QFrame#frame_3,QValidatedLineEdit#signatureIn_VM{
+	border-color: rgb(186, 186, 186);
+	border:1px solid rgb(186, 186, 186);
+}
+
+QToolButton{
+min-height:30;
+color: rgb(172, 99, 43);
+border-bottom:1px solid rgb(174,103,46);
+border-left:0px solid rgb(174,103,46);
+border-right:0px solid rgb(174,103,46);
+border-top:0px solid rgb(174,103,46);
+}
+
+</string>
   </property>
   <property name="modal">
    <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>0</number>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <property name="leftMargin">
+      <number>9</number>
      </property>
-     <widget class="QWidget" name="tabSignMessage">
-      <attribute name="title">
-       <string>&amp;Sign Message</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_SM">
-       <item>
-        <widget class="QLabel" name="infoLabel_SM">
-         <property name="text">
-          <string>You can sign messages with your addresses to prove you own them. Be careful not to sign anything vague, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</string>
-         </property>
-         <property name="textFormat">
-          <enum>Qt::PlainText</enum>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_1_SM">
-         <property name="spacing">
-          <number>0</number>
-         </property>
+     <item>
+      <widget class="QLabel" name="label_titleName">
+       <property name="text">
+        <string>title name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="cancelButton">
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QToolButton{
+border:hidden;
+image: url(:/pic/res/pic/closeBtn.png);
+}
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="leftMargin">
+      <number>9</number>
+     </property>
+     <property name="rightMargin">
+      <number>9</number>
+     </property>
+     <property name="bottomMargin">
+      <number>9</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <widget class="QWidget" name="tabSignMessage">
+        <attribute name="title">
+         <string>&amp;Sign Message</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QValidatedLineEdit" name="addressIn_SM">
-           <property name="toolTip">
-            <string>The MassGrid address to sign the message with</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="addressBookButton_SM">
-           <property name="toolTip">
-            <string>Choose previously used address</string>
-           </property>
+          <widget class="QLabel" name="infoLabel_SM">
            <property name="text">
-            <string/>
+            <string>You can sign messages with your addresses to prove you own them. Be careful not to sign anything vague, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</string>
            </property>
-           <property name="icon">
-            <iconset resource="../massgrid.qrc">
-             <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
-           </property>
-           <property name="shortcut">
-            <string>Alt+A</string>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pasteButton_SM">
-           <property name="toolTip">
-            <string>Paste address from clipboard</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../massgrid.qrc">
-             <normaloff>:/icons/editpaste</normaloff>:/icons/editpaste</iconset>
-           </property>
-           <property name="shortcut">
-            <string>Alt+P</string>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPlainTextEdit" name="messageIn_SM">
-         <property name="toolTip">
-          <string>Enter the message you want to sign here</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="signatureLabel_SM">
-         <property name="text">
-          <string>Signature</string>
-         </property>
-         <property name="textFormat">
-          <enum>Qt::PlainText</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2_SM">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLineEdit" name="signatureOut_SM">
-           <property name="font">
-            <font>
-             <italic>true</italic>
-            </font>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="copySignatureButton_SM">
-           <property name="toolTip">
-            <string>Copy the current signature to the system clipboard</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../massgrid.qrc">
-             <normaloff>:/icons/editcopy</normaloff>:/icons/editcopy</iconset>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3_SM">
-         <item>
-          <widget class="QPushButton" name="signMessageButton_SM">
-           <property name="toolTip">
-            <string>Sign the message to prove you own this MassGrid address</string>
-           </property>
-           <property name="text">
-            <string>Sign &amp;Message</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../massgrid.qrc">
-             <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="clearButton_SM">
-           <property name="toolTip">
-            <string>Reset all sign message fields</string>
-           </property>
-           <property name="text">
-            <string>Clear &amp;All</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../massgrid.qrc">
-             <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_1_SM">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>48</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QLabel" name="statusLabel_SM">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string/>
+           <property name="textFormat">
+            <enum>Qt::PlainText</enum>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -213,142 +280,270 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_2_SM">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <widget class="QFrame" name="frame">
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>48</height>
-            </size>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
            </property>
-          </spacer>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="topMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
+             <number>2</number>
+            </property>
+            <item>
+             <widget class="QValidatedLineEdit" name="addressIn_SM">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>The MassGrid address to sign the message with</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:hidden;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="addressBookButton_SM">
+              <property name="toolTip">
+               <string>Choose previously used address</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:hidden;</string>
+              </property>
+              <property name="text">
+               <string>Choose</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../massgrid.qrc">
+                <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
+              </property>
+              <property name="shortcut">
+               <string>Alt+A</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="pasteButton_SM">
+              <property name="toolTip">
+               <string>Paste address from clipboard</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:hidden;</string>
+              </property>
+              <property name="text">
+               <string>Paste</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../massgrid.qrc">
+                <normaloff>:/icons/editpaste</normaloff>:/icons/editpaste</iconset>
+              </property>
+              <property name="shortcut">
+               <string>Alt+P</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="messageIn_SM">
+           <property name="toolTip">
+            <string>Enter the message you want to sign here</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="signatureLabel_SM">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>Signature</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::PlainText</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_2">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="topMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
+             <number>2</number>
+            </property>
+            <item>
+             <widget class="QLineEdit" name="signatureOut_SM">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <italic>true</italic>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:hidden;</string>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="copySignatureButton_SM">
+              <property name="toolTip">
+               <string>Copy the current signature to the system clipboard</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:hidden;</string>
+              </property>
+              <property name="text">
+               <string>Copy</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../massgrid.qrc">
+                <normaloff>:/icons/editcopy</normaloff>:/icons/editcopy</iconset>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3_SM">
+           <item>
+            <widget class="QToolButton" name="signMessageButton_SM">
+             <property name="toolTip">
+              <string>Sign the message to prove you own this MassGrid address</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="text">
+              <string>Sign &amp;Message</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../massgrid.qrc">
+               <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="clearButton_SM">
+             <property name="toolTip">
+              <string>Reset all sign message fields</string>
+             </property>
+             <property name="text">
+              <string>Clear &amp;All</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../massgrid.qrc">
+               <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_1_SM">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>48</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="statusLabel_SM">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2_SM">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>48</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabVerifyMessage">
-      <attribute name="title">
-       <string>&amp;Verify Message</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_VM">
-       <item>
-        <widget class="QLabel" name="infoLabel_VM">
-         <property name="text">
-          <string>Enter the signing address, message (ensure you copy line breaks, spaces, tabs, etc. exactly) and signature below to verify the message. Be careful not to read more into the signature than what is in the signed message itself, to avoid being tricked by a man-in-the-middle attack.</string>
-         </property>
-         <property name="textFormat">
-          <enum>Qt::PlainText</enum>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_1_VM">
-         <property name="spacing">
-          <number>0</number>
-         </property>
+       </widget>
+       <widget class="QWidget" name="tabVerifyMessage">
+        <attribute name="title">
+         <string>&amp;Verify Message</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_VM">
          <item>
-          <widget class="QValidatedLineEdit" name="addressIn_VM">
-           <property name="toolTip">
-            <string>The MassGrid address the message was signed with</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="addressBookButton_VM">
-           <property name="toolTip">
-            <string>Choose previously used address</string>
-           </property>
+          <widget class="QLabel" name="infoLabel_VM">
            <property name="text">
-            <string/>
+            <string>Enter the signing address, message (ensure you copy line breaks, spaces, tabs, etc. exactly) and signature below to verify the message. Be careful not to read more into the signature than what is in the signed message itself, to avoid being tricked by a man-in-the-middle attack.</string>
            </property>
-           <property name="icon">
-            <iconset resource="../massgrid.qrc">
-             <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
+           <property name="textFormat">
+            <enum>Qt::PlainText</enum>
            </property>
-           <property name="shortcut">
-            <string>Alt+A</string>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPlainTextEdit" name="messageIn_VM"/>
-       </item>
-       <item>
-        <widget class="QValidatedLineEdit" name="signatureIn_VM"/>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2_VM">
-         <item>
-          <widget class="QPushButton" name="verifyMessageButton_VM">
-           <property name="toolTip">
-            <string>Verify the message to ensure it was signed with the specified MassGrid address</string>
-           </property>
-           <property name="text">
-            <string>Verify &amp;Message</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../massgrid.qrc">
-             <normaloff>:/icons/transaction_0</normaloff>:/icons/transaction_0</iconset>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="clearButton_VM">
-           <property name="toolTip">
-            <string>Reset all verify message fields</string>
-           </property>
-           <property name="text">
-            <string>Clear &amp;All</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../massgrid.qrc">
-             <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_1_VM">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>48</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QLabel" name="statusLabel_VM">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string/>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -356,23 +551,172 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_2_VM">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
+          <widget class="QFrame" name="frame_3">
+           <property name="minimumSize">
             <size>
-             <width>40</width>
-             <height>48</height>
+             <width>0</width>
+             <height>0</height>
             </size>
            </property>
-          </spacer>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="topMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
+             <number>2</number>
+            </property>
+            <item>
+             <widget class="QValidatedLineEdit" name="addressIn_VM">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>The MassGrid address the message was signed with</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:hidden;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="addressBookButton_VM">
+              <property name="toolTip">
+               <string>Choose previously used address</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:hidden;</string>
+              </property>
+              <property name="text">
+               <string>Choose</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../massgrid.qrc">
+                <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
+              </property>
+              <property name="shortcut">
+               <string>Alt+A</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="messageIn_VM"/>
+         </item>
+         <item>
+          <widget class="QValidatedLineEdit" name="signatureIn_VM">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2_VM">
+           <item>
+            <widget class="QToolButton" name="verifyMessageButton_VM">
+             <property name="toolTip">
+              <string>Verify the message to ensure it was signed with the specified MassGrid address</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="text">
+              <string>Verify &amp;Message</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../massgrid.qrc">
+               <normaloff>:/icons/transaction_0</normaloff>:/icons/transaction_0</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="clearButton_VM">
+             <property name="toolTip">
+              <string>Reset all verify message fields</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="text">
+              <string>Clear &amp;All</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../massgrid.qrc">
+               <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_1_VM">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>48</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="statusLabel_VM">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2_VM">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>48</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
-    </widget>
+       </widget>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

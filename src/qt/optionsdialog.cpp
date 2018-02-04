@@ -113,6 +113,9 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
 
     /* setup/change UI elements when proxy IP is invalid/valid */
     connect(this, SIGNAL(proxyIpChecks(QValidatedLineEdit *, int)), this, SLOT(doProxyIpChecks(QValidatedLineEdit *, int)));
+    setWindowFlags(Qt::FramelessWindowHint);
+    ui->label_titleName->setText(this->windowTitle());
+
 }
 
 OptionsDialog::~OptionsDialog()
@@ -287,4 +290,25 @@ bool OptionsDialog::eventFilter(QObject *object, QEvent *event)
         }
     }
     return QDialog::eventFilter(object, event);
+}
+
+//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
+//接下来就是对三个鼠标事件的重写
+void OptionsDialog::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+void OptionsDialog::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(this->x()+dx, this->y()+dy);
+}
+
+void OptionsDialog::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(this->x()+dx, this->y()+dy);
 }

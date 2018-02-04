@@ -6,8 +6,11 @@
 #define MASSGRID_QT_SIGNVERIFYMESSAGEDIALOG_H
 
 #include <QDialog>
+// #include <QObject>
+#include <QMouseEvent>
 
 class WalletModel;
+// class QMouseEvent;
 
 namespace Ui {
     class SignVerifyMessageDialog;
@@ -35,6 +38,7 @@ private:
     Ui::SignVerifyMessageDialog *ui;
     WalletModel *model;
 
+    QPoint m_last;
 private slots:
     /* sign message */
     void on_addressBookButton_SM_clicked();
@@ -46,6 +50,12 @@ private slots:
     void on_addressBookButton_VM_clicked();
     void on_verifyMessageButton_VM_clicked();
     void on_clearButton_VM_clicked();
+
+
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 };
 
 #endif // MASSGRID_QT_SIGNVERIFYMESSAGEDIALOG_H

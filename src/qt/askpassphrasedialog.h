@@ -6,6 +6,7 @@
 #define MASSGRID_QT_ASKPASSPHRASEDIALOG_H
 
 #include <QDialog>
+#include <QMouseEvent>
 
 class WalletModel;
 
@@ -39,6 +40,7 @@ private:
     Mode mode;
     WalletModel *model;
     bool fCapsLock;
+    QPoint m_last;
 
 private slots:
     void textChanged();
@@ -46,6 +48,9 @@ private slots:
 protected:
     bool event(QEvent *event);
     bool eventFilter(QObject *object, QEvent *event);
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 };
 
 #endif // MASSGRID_QT_ASKPASSPHRASEDIALOG_H

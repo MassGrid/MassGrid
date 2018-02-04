@@ -14,6 +14,7 @@
 #include <QMenu>
 #include <QPoint>
 #include <QVariant>
+#include "mainwintitle.h"
 
 class OptionsModel;
 class WalletModel;
@@ -59,6 +60,8 @@ private:
     QMenu *contextMenu;
     void copyColumnToClipboard(int column);
     virtual void resizeEvent(QResizeEvent *event);
+
+    MainwinTitle* m_wintitle;
 
 private slots:
     void on_receiveButton_clicked();

@@ -6,6 +6,7 @@
 #define MASSGRID_QT_TRANSACTIONDESCDIALOG_H
 
 #include <QDialog>
+#include <QMouseEvent>
 
 namespace Ui {
     class TransactionDescDialog;
@@ -26,6 +27,12 @@ public:
 
 private:
     Ui::TransactionDescDialog *ui;
+    QPoint m_last;
+
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 };
 
 #endif // MASSGRID_QT_TRANSACTIONDESCDIALOG_H

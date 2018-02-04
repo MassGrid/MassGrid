@@ -56,6 +56,9 @@ public:
     */
     QWidget *setupTabChain(QWidget *prev);
 
+    QValueComboBox* getUnitObject();
+    void hideUnit();
+
 signals:
     void valueChanged();
 

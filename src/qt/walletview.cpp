@@ -17,6 +17,8 @@
 #include "transactiontablemodel.h"
 #include "transactionview.h"
 #include "walletmodel.h"
+#include "transactionfilterproxy.h"
+#include "transactionrecord.h"
 
 #include "ui_interface.h"
 
@@ -27,6 +29,10 @@
 #include <QProgressDialog>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QToolButton>
+#include <QLineEdit>
+#include <QLabel>
+#include <QComboBox>
 
 WalletView::WalletView(QWidget *parent):
     QStackedWidget(parent),
@@ -41,15 +47,98 @@ WalletView::WalletView(QWidget *parent):
     QHBoxLayout *hbox_buttons = new QHBoxLayout();
     transactionView = new TransactionView(this);
     vbox->addWidget(transactionView);
-    QPushButton *exportButton = new QPushButton(tr("&Export"), this);
+    QToolButton *exportButton = new QToolButton(this);
+    // exportButton->setText(tr("&Export"));
+    exportButton->setText(tr("Export"));
     exportButton->setToolTip(tr("Export the data in the current tab to a file"));
+
+    exportButton->setStyleSheet("border:hidde;\ncolor: rgb(172, 99, 43);");
+    exportButton->setIcon(QIcon(":/pic/res/pic/outputData.png"));
+    exportButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);  
+
+    QLineEdit *addressEdit = new QLineEdit(this);
+    QComboBox *dateComboBox = new QComboBox(this);
+    QComboBox *typeComboBox = new QComboBox(this);
+
+    addressEdit->setMinimumSize(300,30);
+    dateComboBox->setFixedWidth(120);
+    dateComboBox->setMaximumSize(150,30);
+
+    dateComboBox->setMinimumSize(120,32);
+    dateComboBox->setMaximumSize(120,32);
+
+    typeComboBox->setMinimumSize(120,32);
+    typeComboBox->setMaximumSize(120,32);
+
+    // dateComboBox->addItem(tr("All Date"), TransactionView::All);
+    // dateComboBox->addItem(tr("Today"), TransactionView::Today);
+    // dateComboBox->addItem(tr("This week"), TransactionView::ThisWeek);
+    // dateComboBox->addItem(tr("This month"), TransactionView::ThisMonth);
+    // dateComboBox->addItem(tr("Last month"), TransactionView::LastMonth);
+    // dateComboBox->addItem(tr("This year"), TransactionView::ThisYear);
+    // dateComboBox->addItem(tr("Range..."), TransactionView::Range);
+
+    dateComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255,0);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\n\n");
+    addressEdit->setStyleSheet("QLineEdit\n{\nmin-width:300px;border:1px solid rgb(165, 165, 165);\nbackground-color: rgb(255, 255, 255,0);\n}\n\nQLineEdit::hover{\nborder:1px solid rgb(174,103,46);\nbackground-color: rgb(255, 255, 255,0);\n}");
+    typeComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255,0);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\n\n");
+
+#if QT_VERSION >= 0x040700
+    addressEdit->setPlaceholderText(tr("Enter address or label to search"));
+#endif
+
+// #ifdef Q_OS_MAC
+//     typeComboBox->setFixedWidth(121);
+// #else
+//     typeComboBox->setFixedWidth(120);
+// #endif
+
+    // typeComboBox->setMaximumHeight(32);
+
+    // typeComboBox->addItem(tr("All Type"), TransactionFilterProxy::ALL_TYPES);
+    // typeComboBox->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) |
+    //                                     TransactionFilterProxy::TYPE(TransactionRecord::RecvFromOther));
+    // typeComboBox->addItem(tr("Sent to"), TransactionFilterProxy::TYPE(TransactionRecord::SendToAddress) |
+    //                               TransactionFilterProxy::TYPE(TransactionRecord::SendToOther));
+    // typeComboBox->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
+    // typeComboBox->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
+    // typeComboBox->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
+
+
+
+    transactionView->setSearchWidget(dateComboBox,typeComboBox,addressEdit);
+
+    connect(typeComboBox, SIGNAL(activated(int)), transactionView, SLOT(chooseType(int)));
+    connect(dateComboBox, SIGNAL(activated(int)), transactionView, SLOT(chooseDate(int)));
+    connect(addressEdit, SIGNAL(textChanged(QString)), transactionView, SLOT(changedPrefix(QString)));
+
+    QLabel* label_2 = new QLabel(this);
+    // label_2->setFixedWidth(60);
+
+    label_2->setMinimumSize(160,10);
+    label_2->setMaximumSize(160,10);
+
+    exportButton->setMinimumSize(80,30);
+    exportButton->setMaximumSize(80,30);
+    
+
+    exportButton->setIcon(QIcon(":/pic/res/pic/outputData.png"));
+
 #ifndef Q_OS_MAC // Icons on push buttons are very uncommon on Mac
-    exportButton->setIcon(QIcon(":/icons/export"));
+    exportButton->setIcon(QIcon(":/pic/res/pic/outputData.png"));
 #endif
     hbox_buttons->addStretch();
+
+    hbox_buttons->addWidget(typeComboBox);    
+    hbox_buttons->addWidget(dateComboBox);
+    hbox_buttons->addWidget(addressEdit);
+    hbox_buttons->addWidget(label_2);
+
     hbox_buttons->addWidget(exportButton);
     vbox->addLayout(hbox_buttons);
     transactionsPage->setLayout(vbox);
+
+    transactionsPage->setObjectName("transactionsPage");
+    transactionsPage->setStyleSheet("QWidget#transactionsPage{\n background-color: rgb(255, 255, 255);\n}");
 
     receiveCoinsPage = new ReceiveCoinsDialog();
     sendCoinsPage = new SendCoinsDialog();
@@ -82,6 +171,8 @@ void WalletView::setMassGridGUI(MassGridGUI *gui)
 {
     if (gui)
     {
+        connect(overviewPage,SIGNAL(updateBalance(QString ,QString ,QString )),gui,SIGNAL(updateBalance(QString,QString,QString)));
+
         // Clicking on a transaction on the overview page simply sends you to transaction history page
         connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), gui, SLOT(gotoHistoryPage()));
 
@@ -179,10 +270,16 @@ void WalletView::gotoSendCoinsPage(QString addr)
 void WalletView::gotoSignMessageTab(QString addr)
 {
     // calls show() in showTab_SM()
-    SignVerifyMessageDialog *signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+    SignVerifyMessageDialog *signVerifyMessageDialog = new SignVerifyMessageDialog(0);
     signVerifyMessageDialog->setAttribute(Qt::WA_DeleteOnClose);
     signVerifyMessageDialog->setModel(walletModel);
     signVerifyMessageDialog->showTab_SM(true);
+
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+
+    signVerifyMessageDialog->move(pos.x()+(size.width()-signVerifyMessageDialog->width())/2,pos.y()+(size.height()-signVerifyMessageDialog->height())/2);
+
 
     if (!addr.isEmpty())
         signVerifyMessageDialog->setAddress_SM(addr);
@@ -191,10 +288,16 @@ void WalletView::gotoSignMessageTab(QString addr)
 void WalletView::gotoVerifyMessageTab(QString addr)
 {
     // calls show() in showTab_VM()
-    SignVerifyMessageDialog *signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+    SignVerifyMessageDialog *signVerifyMessageDialog = new SignVerifyMessageDialog(0);
     signVerifyMessageDialog->setAttribute(Qt::WA_DeleteOnClose);
     signVerifyMessageDialog->setModel(walletModel);
     signVerifyMessageDialog->showTab_VM(true);
+
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+
+    signVerifyMessageDialog->move(pos.x()+(size.width()-signVerifyMessageDialog->width())/2,pos.y()+(size.height()-signVerifyMessageDialog->height())/2);
+
 
     if (!addr.isEmpty())
         signVerifyMessageDialog->setAddress_VM(addr);
@@ -219,8 +322,17 @@ void WalletView::encryptWallet(bool status)
 {
     if(!walletModel)
         return;
-    AskPassphraseDialog dlg(status ? AskPassphraseDialog::Encrypt : AskPassphraseDialog::Decrypt, this);
+    AskPassphraseDialog dlg(status ? AskPassphraseDialog::Encrypt : AskPassphraseDialog::Decrypt, 0);
+
+
     dlg.setModel(walletModel);
+
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
+
     dlg.exec();
 
     updateEncryptionStatus();
@@ -247,8 +359,13 @@ void WalletView::backupWallet()
 
 void WalletView::changePassphrase()
 {
-    AskPassphraseDialog dlg(AskPassphraseDialog::ChangePass, this);
+    AskPassphraseDialog dlg(AskPassphraseDialog::ChangePass, 0);
     dlg.setModel(walletModel);
+
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
     dlg.exec();
 }
 
@@ -259,8 +376,13 @@ void WalletView::unlockWallet()
     // Unlock wallet when requested by wallet model
     if (walletModel->getEncryptionStatus() == WalletModel::Locked)
     {
-        AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, this);
+        AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, 0);
         dlg.setModel(walletModel);
+
+        QPoint pos = MassGridGUI::winPos();
+        QSize size = MassGridGUI::winSize();
+        dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
         dlg.exec();
     }
 }
@@ -269,9 +391,14 @@ void WalletView::usedSendingAddresses()
 {
     if(!walletModel)
         return;
-    AddressBookPage *dlg = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::SendingTab, this);
+    AddressBookPage *dlg = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::SendingTab, 0);
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->setModel(walletModel->getAddressTableModel());
+
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+    dlg->move(pos.x()+(size.width()-dlg->width())/2,pos.y()+(size.height()-dlg->height())/2);
+
     dlg->show();
 }
 
@@ -279,9 +406,13 @@ void WalletView::usedReceivingAddresses()
 {
     if(!walletModel)
         return;
-    AddressBookPage *dlg = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, this);
+    AddressBookPage *dlg = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, 0);
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->setModel(walletModel->getAddressTableModel());
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+    dlg->move(pos.x()+(size.width()-dlg->width())/2,pos.y()+(size.height()-dlg->height())/2);
+
     dlg->show();
 }
 

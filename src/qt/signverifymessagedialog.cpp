@@ -41,6 +41,10 @@ SignVerifyMessageDialog::SignVerifyMessageDialog(QWidget *parent) :
 
     ui->signatureOut_SM->setFont(GUIUtil::massgridAddressFont());
     ui->signatureIn_VM->setFont(GUIUtil::massgridAddressFont());
+
+    setWindowFlags(Qt::FramelessWindowHint);
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+    ui->label_titleName->setText(this->windowTitle());
 }
 
 SignVerifyMessageDialog::~SignVerifyMessageDialog()
@@ -269,4 +273,27 @@ bool SignVerifyMessageDialog::eventFilter(QObject *object, QEvent *event)
         }
     }
     return QDialog::eventFilter(object, event);
+}
+
+
+//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
+//接下来就是对三个鼠标事件的重写
+void SignVerifyMessageDialog::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void SignVerifyMessageDialog::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void SignVerifyMessageDialog::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
 }

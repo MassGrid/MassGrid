@@ -90,6 +90,8 @@ private slots:
     void updateMinFeeLabel();
     void updateSmartFeeLabel();
     void updateGlobalFeeVariables();
+    void on_backButton_clicked();
+    void on_moreButton_clicked();
 
 signals:
     // Fired when a message should be reported to the user

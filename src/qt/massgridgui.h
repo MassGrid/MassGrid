@@ -17,6 +17,14 @@
 #include <QMenu>
 #include <QPoint>
 #include <QSystemTrayIcon>
+#include <QMenu>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QMouseEvent>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QResizeEvent>
+#include "mainwintitle.h"
 
 class ClientModel;
 class NetworkStyle;
@@ -27,6 +35,7 @@ class SendCoinsRecipient;
 class UnitDisplayStatusBarControl;
 class WalletFrame;
 class WalletModel;
+class MainwinTitle;
 
 class CWallet;
 
@@ -54,6 +63,9 @@ public:
         The client model represents the part of the core that communicates with the P2P network, and is wallet-agnostic.
     */
     void setClientModel(ClientModel *clientModel);
+
+    static QPoint winPos();
+    static QSize winSize();
 
 #ifdef ENABLE_WALLET
     /** Set the wallet model.
@@ -137,6 +149,8 @@ private:
 signals:
     /** Signal raised when a URI was entered or dragged to the GUI */
     void receivedURI(const QString &uri);
+    
+    void updateBalance(QString,QString,QString);
 
 public slots:
     /** Set number of connections shown in the UI */
@@ -152,6 +166,9 @@ public slots:
        @param[in] ret       pointer to a bool that will be modified to whether Ok was clicked (modal only)
     */
     void message(const QString &title, const QString &message, unsigned int style, bool *ret = NULL);
+    // void updateBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, 
+    //                     const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance);
+
 
 #ifdef ENABLE_WALLET
     /** Set the encryption status as shown in the UI.
@@ -208,6 +225,18 @@ private slots:
 
     /** Show progress dialog e.g. for verifychain */
     void showProgress(const QString &title, int nProgress);
+
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
+    // void resizeEvent(QResizeEvent*);
+
+private:
+    QPoint m_last;
+    MainwinTitle* m_mainTitle;
+private:
+    void createMainWin();
 };
 
 class UnitDisplayStatusBarControl : public QLabel

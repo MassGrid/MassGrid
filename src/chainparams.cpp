@@ -151,11 +151,36 @@ public:
         genesis.hashPrevBlock = 0;
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         genesis.nVersion = 1;
+        // genesis.nTime    = 1501262349;
+        // genesis.nBits    = 0x1d00ffff;
+        // genesis.nNonce   = 3131586093;//-1163381203;
+
+
+        // hashGenesisBlock = genesis.GetHash();
+        // assert(hashGenesisBlock == uint256("0x0000000020bc2c5ec220e3f660c5a9b59ff2f21ca054bcbe8c207eaa0292cce2"));
 
         genesis.nTime    = 1507956294;
         genesis.nBits    = 0x1e0ffff0;
         genesis.nNonce   = 53408;//-1163381203;
 
+        // genesis.nTime=GetTime();
+        // genesis.nNonce=0;
+        // while(true)
+        // {
+        //     genesis.nNonce++;
+
+        //     if(genesis.GetHash()<uint256("0x00000ffff412dfe38e544f6628adfc756cff9486679e51027a14ab65946751ab")&&genesis.GetHash()!=0)
+        //     {
+        //         printf("hash :%s \nnTime:%d\nnNonce:%d\n",genesis.GetHash().GetHex().c_str(),genesis.nTime,genesis.nNonce);
+        //     }
+        //     if ((genesis.nNonce& 0xffff) == 0)
+        //     {
+        //         printf("run%d",genesis.nNonce);
+        //         genesis.nTime=GetTime();
+        //         genesis.nNonce=0;
+        //     }
+        //    // printf("run%d",genesis.nNonce);
+        // }
         hashGenesisBlock = genesis.GetHash();
         assert(hashGenesisBlock == uint256("0x000006cda968d9b220b264050676efed86e2db52e29619ed3ef94fcf23cd86f4"));
         assert(genesis.hashMerkleRoot == uint256("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
@@ -163,13 +188,20 @@ public:
 	vFixedSeeds.clear();
 	vSeeds.clear();
 
-    vSeeds.push_back(CDNSSeedData("seed1.massgrid.net", "seed1.massgrid.net"));
-    vSeeds.push_back(CDNSSeedData("seed2.massgrid.net", "seed2.massgrid.net"));
-    vSeeds.push_back(CDNSSeedData("seed3.massgrid.net", "seed3.massgrid.net"));
-    vSeeds.push_back(CDNSSeedData("seed4.massgrid.net", "seed4.massgrid.net"));
-    vSeeds.push_back(CDNSSeedData("seed5.massgrid.net", "seed5.massgrid.net"));
-    vSeeds.push_back(CDNSSeedData("seed6.massgrid.net", "seed6.massgrid.net"));
+        // vSeeds.push_back(CDNSSeedData("seed1.mgcco.in", "seed1.mgcco.in"));
+        // vSeeds.push_back(CDNSSeedData("seed2.mgcco.in", "seed2.mgcco.in"));
+        // vSeeds.push_back(CDNSSeedData("seed3.mgcco.in", "seed3.mgcco.in"));
+        // vSeeds.push_back(CDNSSeedData("seed4.mgcco.in", "seed4.mgcco.in"));
+        // vSeeds.push_back(CDNSSeedData("seed5.mgcco.in", "seed5.mgcco.in"));
+        // vSeeds.push_back(CDNSSeedData("seed6.mgcco.in", "seed6.mgcco.in"));
 
+        vSeeds.push_back(CDNSSeedData("seed1.mlgbco.in", "seed1.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed2.mlgbco.in", "seed2.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed3.mlgbco.in", "seed3.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed4.mlgbco.in", "seed4.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed5.mlgbco.in", "seed5.mlgbco.in"));
+        vSeeds.push_back(CDNSSeedData("seed6.mlgbco.in", "seed6.mlgbco.in"));
+        
         base58Prefixes[PUBKEY_ADDRESS] = list_of(50);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(38);
         base58Prefixes[SECRET_KEY] =     list_of(25);
@@ -213,12 +245,18 @@ public:
         nRejectBlockOutdatedMajority = 75;
         nToCheckBlockUpgradeMajority = 100;
         nMinerThreads = 0;
-        nTargetTimespan = 60 * 60; //60 blocks
-        nTargetSpacing = 1 * 60;    //a minutes
+        nTargetTimespan = 60 * 60; //! two weeks
+        nTargetSpacing = 1 * 60;
         nMaxTipAge = 0x7fffffff;
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
+        // genesis.nTime = 1501262349;
+        // genesis.nNonce = 3131586093;//-1163381203;
 
+
+
+        // hashGenesisBlock = genesis.GetHash();
+        // assert(hashGenesisBlock == uint256("0x0000000020bc2c5ec220e3f660c5a9b59ff2f21ca054bcbe8c207eaa0292cce2"));
         genesis.nTime    = 1506050827;
         genesis.nNonce   = 17367;//-1163381203;
         hashGenesisBlock = genesis.GetHash();
@@ -226,13 +264,11 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("testseed1.massgrid.net", "testseed1.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed2.massgrid.net", "testseed2.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed3.massgrid.net", "testseed3.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed4.massgrid.net", "testseed4.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed5.massgrid.net", "testseed5.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed6.massgrid.net", "testseed6.massgrid.net"));
-
+        /*vSeeds.push_back(CDNSSeedData("alexykot.me", "testnet-seed.alexykot.me"));
+        vSeeds.push_back(CDNSSeedData("massgrid.petertodd.org", "testnet-seed.massgrid.petertodd.org"));
+        vSeeds.push_back(CDNSSeedData("bluematt.me", "testnet-seed.bluematt.me"));
+        vSeeds.push_back(CDNSSeedData("massgrid.schildbach.de", "testnet-seed.massgrid.schildbach.de"));
+	*/
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(111);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(196);
@@ -278,6 +314,14 @@ public:
         nTargetSpacing = 1 * 60;
         bnProofOfWorkLimit = ~uint256(0) >> 1;
         nMaxTipAge = 24 * 60 * 60;
+        // genesis.nTime = 1501262349;
+        // genesis.nBits = 0x207fffff;
+        // genesis.nNonce = 2;
+
+
+        // hashGenesisBlock = genesis.GetHash();
+        // nDefaultPort = 18444;
+        // assert(hashGenesisBlock == uint256("0x614e2ffb27342a41cedb1762ba3d17783668fc7d1fd27501e5baa2eac3ba367a"));
 
         genesis.nTime = 1506050827;
         genesis.nBits = 0x1e0ffff0;

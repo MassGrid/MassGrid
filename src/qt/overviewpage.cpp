@@ -19,6 +19,7 @@
 
 #define DECORATION_SIZE 64
 #define NUM_ITEMS 3
+#define ITEM_SPACING 10
 
 class TxViewDelegate : public QAbstractItemDelegate
 {
@@ -34,14 +35,49 @@ public:
     {
         painter->save();
 
-        QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
+        QFont font = painter->font();
+        font.setPixelSize(18);
+        // font.setBold(true);
+        painter->setFont(font);
+
         QRect mainRect = option.rect;
+
+        static int index_2 =0;
+        if(index_2++ %2){
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QColor(247,242,238)/*QColor(247,242,238)*/);
+            painter->drawRect(mainRect);
+        }
+        else{
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(Qt::white);
+            painter->drawRect(mainRect);
+        }
+
+        QRect iconRect = QRect(mainRect.x(),mainRect.y(),mainRect.width()*0.2,mainRect.height());
+
+        QRect dateRect = QRect(iconRect.width()+iconRect.x(),mainRect.y(),mainRect.width()*0.3,mainRect.height());
+
+        QRect _amountRect = QRect(dateRect.width()+dateRect.x(),mainRect.y(),mainRect.width()*0.5-10,mainRect.height());
+
+
+        QRect timeRect = QRect(dateRect.x(),dateRect.y(),dateRect.width(),dateRect.height()/2-ITEM_SPACING/2);
+        QRect stateRect = QRect(dateRect.x(),dateRect.y()+dateRect.height()-(dateRect.height()/2-ITEM_SPACING/2),
+                                dateRect.width(),dateRect.height()/2-ITEM_SPACING/2);
+
+        QRect amountRect = QRect(_amountRect.x(),_amountRect.y(),_amountRect.width(),_amountRect.height()/2-ITEM_SPACING/2);
+        QRect addressRect = QRect(_amountRect.x(),_amountRect.y()+_amountRect.height()-(_amountRect.height()/2-ITEM_SPACING/2),
+                           _amountRect.width(),_amountRect.height()/2-ITEM_SPACING/2);
+
+
+        QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
+
         QRect decorationRect(mainRect.topLeft(), QSize(DECORATION_SIZE, DECORATION_SIZE));
-        int xspace = DECORATION_SIZE + 8;
+        // int xspace = DECORATION_SIZE + 8;
         int ypad = 6;
         int halfheight = (mainRect.height() - 2*ypad)/2;
-        QRect amountRect(mainRect.left() + xspace, mainRect.top()+ypad, mainRect.width() - xspace, halfheight);
-        QRect addressRect(mainRect.left() + xspace, mainRect.top()+ypad+halfheight, mainRect.width() - xspace, halfheight);
+        // QRect amountRect(mainRect.left() + xspace, mainRect.top()+ypad, mainRect.width() - xspace, halfheight);
+        // QRect addressRect(mainRect.left() + xspace, mainRect.top()+ypad+halfheight, mainRect.width() - xspace, halfheight);
         icon.paint(painter, decorationRect);
 
         QDateTime date = index.data(TransactionTableModel::DateRole).toDateTime();
@@ -58,7 +94,7 @@ public:
 
         painter->setPen(foreground);
         QRect boundingRect;
-        painter->drawText(addressRect, Qt::AlignLeft|Qt::AlignVCenter, address, &boundingRect);
+        painter->drawText(addressRect, Qt::AlignRight|Qt::AlignTop, address, &boundingRect); //Qt::AlignLeft|Qt::AlignVCenter
 
         if (index.data(TransactionTableModel::WatchonlyRole).toBool())
         {
@@ -67,9 +103,13 @@ public:
             iconWatchonly.paint(painter, watchonlyRect);
         }
 
+
+        QString transactionsType = tr("Received with");
+
         if(amount < 0)
         {
             foreground = COLOR_NEGATIVE;
+            transactionsType = tr("Send to");
         }
         else if(!confirmed)
         {
@@ -77,6 +117,7 @@ public:
         }
         else
         {
+
             foreground = option.palette.color(QPalette::Text);
         }
         painter->setPen(foreground);
@@ -85,10 +126,12 @@ public:
         {
             amountText = QString("[") + amountText + QString("]");
         }
-        painter->drawText(amountRect, Qt::AlignRight|Qt::AlignVCenter, amountText);
+        painter->drawText(amountRect, Qt::AlignRight|Qt::AlignBottom, amountText); //Qt::AlignRight|Qt::AlignVCenter
 
         painter->setPen(option.palette.color(QPalette::Text));
-        painter->drawText(amountRect, Qt::AlignLeft|Qt::AlignVCenter, GUIUtil::dateTimeStr(date));
+        painter->drawText(timeRect, Qt::AlignLeft|Qt::AlignBottom, GUIUtil::dateTimeStr(date)); //Qt::AlignLeft|Qt::AlignVCenter
+
+        painter->drawText(stateRect, Qt::AlignLeft|Qt::AlignTop, transactionsType); //Qt::AlignLeft|Qt::AlignVCenter
 
         painter->restore();
     }
@@ -133,6 +176,8 @@ OverviewPage::OverviewPage(QWidget *parent) :
 
     // start with displaying the "out of sync" warnings
     showOutOfSyncWarning(true);
+
+    ui->stackedWidget->setCurrentIndex(1);
 }
 
 void OverviewPage::handleTransactionClicked(const QModelIndex &index)
@@ -144,7 +189,7 @@ void OverviewPage::handleTransactionClicked(const QModelIndex &index)
 OverviewPage::~OverviewPage()
 {
     delete ui;
-}
+}                   
 
 void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance)
 {
@@ -155,10 +200,15 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     currentWatchOnlyBalance = watchOnlyBalance;
     currentWatchUnconfBalance = watchUnconfBalance;
     currentWatchImmatureBalance = watchImmatureBalance;
-    ui->labelBalance->setText(MassGridUnits::formatWithUnit(unit, balance, false, MassGridUnits::separatorAlways));
-    ui->labelUnconfirmed->setText(MassGridUnits::formatWithUnit(unit, unconfirmedBalance, false, MassGridUnits::separatorAlways));
+
+    QString Balance = MassGridUnits::formatWithUnit(unit, balance, false, MassGridUnits::separatorAlways);
+    QString Unconfirmed = MassGridUnits::formatWithUnit(unit, unconfirmedBalance, false, MassGridUnits::separatorAlways);
+    QString Total = MassGridUnits::formatWithUnit(unit, balance + unconfirmedBalance + immatureBalance, false, MassGridUnits::separatorAlways);
+
+    ui->labelBalance->setText(Balance);
+    ui->labelUnconfirmed->setText(Unconfirmed);
     ui->labelImmature->setText(MassGridUnits::formatWithUnit(unit, immatureBalance, false, MassGridUnits::separatorAlways));
-    ui->labelTotal->setText(MassGridUnits::formatWithUnit(unit, balance + unconfirmedBalance + immatureBalance, false, MassGridUnits::separatorAlways));
+    ui->labelTotal->setText(Total);
     ui->labelWatchAvailable->setText(MassGridUnits::formatWithUnit(unit, watchOnlyBalance, false, MassGridUnits::separatorAlways));
     ui->labelWatchPending->setText(MassGridUnits::formatWithUnit(unit, watchUnconfBalance, false, MassGridUnits::separatorAlways));
     ui->labelWatchImmature->setText(MassGridUnits::formatWithUnit(unit, watchImmatureBalance, false, MassGridUnits::separatorAlways));
@@ -173,6 +223,8 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     ui->labelImmature->setVisible(showImmature || showWatchOnlyImmature);
     ui->labelImmatureText->setVisible(showImmature || showWatchOnlyImmature);
     ui->labelWatchImmature->setVisible(showWatchOnlyImmature); // show watch-only immature balance
+
+    emit updateBalance(Balance,Unconfirmed,Total);
 }
 
 // show/hide watch-only labels

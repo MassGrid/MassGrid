@@ -75,6 +75,10 @@ HelpMessageDialog::HelpMessageDialog(QWidget *parent, bool about) :
         text = version + "\n" + header + "\n" + coreOptions + "\n" + uiOptions;
         ui->helpMessageLabel->setText(text);
     }
+
+    setWindowFlags(Qt::FramelessWindowHint);
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+    ui->label_titleName->setText(this->windowTitle());
 }
 
 HelpMessageDialog::~HelpMessageDialog()
@@ -103,6 +107,28 @@ void HelpMessageDialog::showOrPrint()
 void HelpMessageDialog::on_okButton_accepted()
 {
     close();
+}
+
+//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
+//接下来就是对三个鼠标事件的重写
+void HelpMessageDialog::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void HelpMessageDialog::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void HelpMessageDialog::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
 }
 
 

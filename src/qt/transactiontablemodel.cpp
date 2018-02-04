@@ -365,18 +365,24 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
     }
 }
 
+// image: url(:/icons/tx_input);
+// url(:/pic/res/pic/out.png)
+
 QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord *wtx) const
 {
     switch(wtx->type)
     {
     case TransactionRecord::Generated:
-        return QIcon(":/icons/tx_mined");
+        // return QIcon(":/icons/tx_mined");
+        return QIcon(":/pic/res/pic/tx_mined.png");
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
-        return QIcon(":/icons/tx_input");
+        // return QIcon(":/icons/tx_input");
+        return QIcon(":/pic/res/pic/out.png");
     case TransactionRecord::SendToAddress:
     case TransactionRecord::SendToOther:
-        return QIcon(":/icons/tx_output");
+        // return QIcon(":/icons/tx_output");
+        return QIcon(":/pic/res/pic/in.png");
     default:
         return QIcon(":/icons/tx_inout");
     }

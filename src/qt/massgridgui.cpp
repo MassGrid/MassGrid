@@ -59,6 +59,8 @@
 #endif
 
 const QString MassGridGUI::DEFAULT_WALLET = "~Default";
+QPoint m_winPos;
+QSize m_winSize;
 
 MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     QMainWindow(parent),
@@ -96,9 +98,10 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     notificator(0),
     rpcConsole(0),
     prevBlocks(0),
-    spinnerFrame(0)
+    spinnerFrame(0),
+    m_mainTitle(0)
 {
-    GUIUtil::restoreWindowGeometry("nWindow", QSize(850, 550), this);
+    GUIUtil::restoreWindowGeometry("nWindow", QSize(850,650),this);
 
     QString windowTitle = tr("MassGrid Core") + " - ";
 #ifdef ENABLE_WALLET
@@ -128,13 +131,16 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     setUnifiedTitleAndToolBarOnMac(true);
 #endif
 
-    rpcConsole = new RPCConsole(enableWallet ? this : 0);
+    rpcConsole = new RPCConsole(enableWallet ? 0 : 0);
 #ifdef ENABLE_WALLET
     if(enableWallet)
     {
         /** Create wallet frame and make it the central widget */
-        walletFrame = new WalletFrame(this);
-        setCentralWidget(walletFrame);
+        // walletFrame = new WalletFrame(this);
+        // setCentralWidget(walletFrame);
+
+        createMainWin();
+
     } else
 #endif // ENABLE_WALLET
     {
@@ -152,10 +158,11 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     createActions(networkStyle);
 
     // Create application menu bar
-    createMenuBar();
+    if(m_mainTitle)
+        createMenuBar();
 
-    // Create the toolbars
-    createToolBars();
+    // Create the toolbars 
+    // createToolBars(); 
 
     // Create system tray icon and notification
     createTrayIcon(networkStyle);
@@ -197,12 +204,16 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     // Override style sheet for progress bar for styles that have a segmented progress bar,
     // as they make the text unreadable (workaround for issue #1071)
     // See https://qt-project.org/doc/qt-4.8/gallery.html
-    QString curStyle = QApplication::style()->metaObject()->className();
-    if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
-    {
-        progressBar->setStyleSheet("QProgressBar { background-color: #e8e8e8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF8000, stop: 1 orange); border-radius: 7px; margin: 0px; }");
-    }
 
+    // QString curStyle = QApplication::style()->metaObject()->className();
+    // if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
+    // {
+    //     progressBar->setStyleSheet("QProgressBar {\nborder: none;\ntext-align: center;\ncolor: white;\nbackground-color: rgb(172, 99, 43);\nbackground-repeat: repeat-x;\ntext-align: center;}\nQProgressBar::chunk {\nborder: none;\nbackground-color: rgb(239, 169, 4);\nbackground-repeat: repeat-x;\n}");
+    //     // progressBar->setStyleSheet("QProgressBar { background-color: #e8e8e8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF8000, stop: 1 orange); border-radius: 7px; margin: 0px; }");
+    // }
+
+    progressBar->setStyleSheet("QProgressBar {\nborder: none;\ntext-align: center;\ncolor: white;\nbackground-color: rgb(172, 99, 43);\nbackground-repeat: repeat-x;\ntext-align: center;}\nQProgressBar::chunk {\nborder: none;\nbackground-color: rgb(239, 169, 4);\nbackground-repeat: repeat-x;\n}");
+    statusBar()->setStyleSheet("QStatusBar {  \n    background-color: rgb(247, 242, 238);\n\n}  ");
     statusBar()->addWidget(progressBarLabel);
     statusBar()->addWidget(progressBar);
     statusBar()->addPermanentWidget(frameBlocks);
@@ -215,6 +226,10 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
 
     // Subscribe to notifications from core
     subscribeToCoreSignals();
+    setWindowFlags(Qt::FramelessWindowHint);
+    resize(850,580);
+    m_winPos = this->pos();
+    m_winSize = this->size();
 }
 
 MassGridGUI::~MassGridGUI()
@@ -229,6 +244,85 @@ MassGridGUI::~MassGridGUI()
     delete appMenuBar;
     MacDockIconHandler::cleanup();
 #endif
+}
+
+void MassGridGUI::createMainWin()
+{
+    QWidget *win = new QWidget();
+    m_mainTitle = new MainwinTitle();
+    connect(m_mainTitle,SIGNAL(sgl_close()),this,SLOT(close()));
+    connect(m_mainTitle,SIGNAL(sgl_showMin()),this,SLOT(showMinimized()));
+    connect(this,SIGNAL(updateBalance(QString,QString,QString)),m_mainTitle,SLOT(updateBalance(QString ,QString ,QString )));
+
+#ifdef ENABLE_WALLET
+    // These showNormalIfMinimized are needed because Send Coins and Receive Coins
+    // can be triggered from the tray menu, and need to show the GUI to be useful.
+
+    connect(m_mainTitle,SIGNAL(sgl_showOverview()),this,SLOT(showNormalIfMinimized()));
+    connect(m_mainTitle,SIGNAL(sgl_showOverview()),this,SLOT(gotoOverviewPage()));
+
+    connect(m_mainTitle,SIGNAL(sgl_showSendPage()),this,SLOT(showNormalIfMinimized()));
+    connect(m_mainTitle,SIGNAL(sgl_showSendPage()),this,SLOT(gotoSendCoinsPage()));  
+
+    connect(m_mainTitle,SIGNAL(sgl_showExchangePage()),this,SLOT(showNormalIfMinimized()));
+    connect(m_mainTitle,SIGNAL(sgl_showExchangePage()),this,SLOT(gotoHistoryPage()));
+
+    // connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    // connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
+    // connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    // connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(gotoSendCoinsPage()));
+    // connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    // connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(gotoReceiveCoinsPage()));
+    // connect(historyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    // connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
+
+#endif // ENABLE_WALLET
+
+    walletFrame = new WalletFrame(this);
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget((m_mainTitle));
+    layout->addWidget(walletFrame);
+    layout->setSpacing(0);
+    layout->setContentsMargins(0, 0, 0, 0);
+    win->setLayout(layout);
+    this->setCentralWidget(win);
+}
+
+// void MassGridGUI::updateBalance(QString balance,QString ,QString total)
+// {
+//     m_mainTitle->updateBalance();
+// }
+
+
+//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
+//接下来就是对三个鼠标事件的重写
+void MassGridGUI::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void MassGridGUI::mouseMoveEvent(QMouseEvent *e)
+{
+    if(!(m_mainTitle && m_mainTitle->pressFlag())){
+        return ;
+    }
+
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    m_winPos = QPoint(this->x()+dx, this->y()+dy);
+    this->move(m_winPos);
+}
+
+void MassGridGUI::mouseReleaseEvent(QMouseEvent *e)
+{
+    if(!(m_mainTitle && m_mainTitle->pressFlag())){
+        return ;
+    }
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_winPos = QPoint(this->x()+dx, this->y()+dy);
+    this->move(m_winPos);
 }
 
 void MassGridGUI::createActions(const NetworkStyle *networkStyle)
@@ -262,6 +356,8 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
     historyAction->setCheckable(true);
     historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
     tabGroup->addAction(historyAction);
+
+    m_mainTitle->setButtonText(tr("&Overview"),tr("&Send"),tr("&Transactions"));
 
 #ifdef ENABLE_WALLET
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
@@ -348,6 +444,7 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
 #endif // ENABLE_WALLET
 }
 
+
 void MassGridGUI::createMenuBar()
 {
 #ifdef Q_OS_MAC
@@ -358,8 +455,13 @@ void MassGridGUI::createMenuBar()
     appMenuBar = menuBar();
 #endif
 
+    //     QMenu* getfileMenu();
+    // QMenu* settingsMenu();
+    // QMenu* helpMenu();
+
     // Configure the menus
-    QMenu *file = appMenuBar->addMenu(tr("&File"));
+    // QMenu *file = appMenuBar->addMenu(tr("&File"));
+    QMenu* file = m_mainTitle->fileMenu(tr("&File"));
     if(walletFrame)
     {
         file->addAction(openAction);
@@ -369,11 +471,13 @@ void MassGridGUI::createMenuBar()
         file->addSeparator();
         file->addAction(usedSendingAddressesAction);
         file->addAction(usedReceivingAddressesAction);
-        file->addSeparator();
+        // file->addSeparator();
     }
-    file->addAction(quitAction);
+    // file->addAction(quitAction);
 
-    QMenu *settings = appMenuBar->addMenu(tr("&Settings"));
+    // QMenu *settings = appMenuBar->addMenu(tr("&Settings"));
+    QMenu* settings = m_mainTitle->settingsMenu(tr("&Settings"));
+
     if(walletFrame)
     {
         settings->addAction(encryptWalletAction);
@@ -382,7 +486,8 @@ void MassGridGUI::createMenuBar()
     }
     settings->addAction(optionsAction);
 
-    QMenu *help = appMenuBar->addMenu(tr("&Help"));
+    // QMenu *help = appMenuBar->addMenu(tr("&Help"));
+    QMenu *help = m_mainTitle->helpMenu(tr("&Help"));
     if(walletFrame)
     {
         help->addAction(openRPCConsoleAction);
@@ -434,6 +539,16 @@ void MassGridGUI::setClientModel(ClientModel *clientModel)
         if(walletFrame)
         {
             walletFrame->setClientModel(clientModel);
+
+            // setBalance(clientModel->getBalance(), clientModel->getUnconfirmedBalance(), clientModel->getImmatureBalance(),
+            //             clientModel->getWatchBalance(), clientModel->getWatchUnconfirmedBalance(), clientModel->getWatchImmatureBalance());
+
+            // connect(clientModel, SIGNAL(balanceChanged(CAmount,CAmount,CAmount,CAmount,CAmount,CAmount)), 
+            //     this, SLOT(updateBalance(CAmount,CAmount,CAmount,CAmount,CAmount,CAmount)));
+
+        //             // Keep up to date with wallet
+
+
         }
 #endif // ENABLE_WALLET
         unitDisplayControl->setOptionsModel(clientModel->getOptionsModel());
@@ -447,6 +562,22 @@ void MassGridGUI::setClientModel(ClientModel *clientModel)
         }
     }
 }
+
+// void MassGridGUI::updateBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, 
+//     const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance)
+// {
+
+//     // if(clientModel){
+//     //     int unit = clientModel->getOptionsModel()->getDisplayUnit();
+
+//     //     QString balance = MassGridUnits::formatWithUnit(unit, balance, false); //, MassGridUnits::separatorAlways
+//     //     QString unconfirmed = MassGridUnits::formatWithUnit(unit, unconfirmedBalance);//, false, MassGridUnits::separatorAlways
+//     //     QString total = MassGridUnits::formatWithUnit(unit, balance + unconfirmedBalance + immatureBalance, false);//, MassGridUnits::separatorAlways
+
+//     //     m_mainTitle->updateBalance(balance,unconfirmed,total);
+//     // }
+
+// }
 
 #ifdef ENABLE_WALLET
 bool MassGridGUI::addWallet(const QString& name, WalletModel *walletModel)
@@ -549,13 +680,26 @@ void MassGridGUI::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 }
 #endif
 
+QPoint MassGridGUI::winPos()
+{
+    return m_winPos;
+}
+
+QSize MassGridGUI::winSize()
+{
+    return m_winSize;
+}
+
 void MassGridGUI::optionsClicked()
 {
     if(!clientModel || !clientModel->getOptionsModel())
         return;
 
-    OptionsDialog dlg(this, enableWallet);
+    OptionsDialog dlg(0, enableWallet);
     dlg.setModel(clientModel->getOptionsModel());
+
+    dlg.move(this->x()+(850-dlg.width())/2,this->y()+(580-dlg.height())/2);
+
     dlg.exec();
 }
 
@@ -564,7 +708,10 @@ void MassGridGUI::aboutClicked()
     if(!clientModel)
         return;
 
-    HelpMessageDialog dlg(this, true);
+    HelpMessageDialog dlg(0, true);
+
+    dlg.move(this->x()+(850-dlg.width())/2,this->y()+(580-dlg.height())/2);
+
     dlg.exec();
 }
 
@@ -572,21 +719,28 @@ void MassGridGUI::showDebugWindow()
 {
     rpcConsole->showNormal();
     rpcConsole->show();
+
+    rpcConsole->move(this->x()+(this->width()-rpcConsole->width())/2,this->y()+(this->height()-rpcConsole->height())/2);
+
     rpcConsole->raise();
     rpcConsole->activateWindow();
 }
 
 void MassGridGUI::showHelpMessageClicked()
 {
-    HelpMessageDialog *help = new HelpMessageDialog(this, false);
+    HelpMessageDialog *help = new HelpMessageDialog(0, false);
     help->setAttribute(Qt::WA_DeleteOnClose);
+    help->move(this->x()+(850-help->width())/2,this->y()+(580-help->height())/2);
+
     help->show();
 }
 
 #ifdef ENABLE_WALLET
 void MassGridGUI::openClicked()
 {
-    OpenURIDialog dlg(this);
+    OpenURIDialog dlg(0);
+    dlg.move(this->x()+(850-dlg.width())/2,this->y()+(580-dlg.height())/2);
+
     if(dlg.exec())
     {
         emit receivedURI(dlg.getURI());

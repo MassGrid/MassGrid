@@ -8,6 +8,7 @@
 #include "walletmodel.h"
 
 #include <QStackedWidget>
+#include "qvaluecombobox.h"
 
 class WalletModel;
 
@@ -45,8 +46,12 @@ public:
 
     void setFocus();
 
+    QValueComboBox* hideComboBoxUnit();
+
+
 public slots:
     void clear();
+    void openAddressBook();
 
 signals:
     void removeEntry(SendCoinsEntry *entry);

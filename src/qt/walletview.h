@@ -17,6 +17,9 @@ class SendCoinsDialog;
 class SendCoinsRecipient;
 class TransactionView;
 class WalletModel;
+class QLineEdit;
+class QComboBox;
+class QLabel;
 
 QT_BEGIN_NAMESPACE
 class QModelIndex;
@@ -64,6 +67,8 @@ private:
     TransactionView *transactionView;
 
     QProgressDialog *progressDialog;
+
+
 
 public slots:
     /** Switch to overview (home) page */
@@ -114,6 +119,9 @@ signals:
     void encryptionStatusChanged(int status);
     /** Notify that a new transaction appeared */
     void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address);
+
+    //send update balance to main title
+    void updateBalance(QString,QString,QString);
 };
 
 #endif // MASSGRID_QT_WALLETVIEW_H

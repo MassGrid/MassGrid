@@ -6,6 +6,7 @@
 #define MASSGRID_QT_OPENURIDIALOG_H
 
 #include <QDialog>
+#include <QMouseEvent>
 
 namespace Ui {
     class OpenURIDialog;
@@ -29,6 +30,13 @@ private slots:
 
 private:
     Ui::OpenURIDialog *ui;
+
+    QPoint m_last;
+
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 };
 
 #endif // MASSGRID_QT_OPENURIDIALOG_H

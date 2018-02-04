@@ -16,9 +16,35 @@ TransactionDescDialog::TransactionDescDialog(const QModelIndex &idx, QWidget *pa
     ui->setupUi(this);
     QString desc = idx.data(TransactionTableModel::LongDescriptionRole).toString();
     ui->detailText->setHtml(desc);
+
+    setWindowFlags(Qt::FramelessWindowHint);
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+
+    // ui->label_titlename->setText(tr("Trasnaction Desc"));
+    ui->label_titlename->setText(this->windowTitle());
 }
 
 TransactionDescDialog::~TransactionDescDialog()
 {
     delete ui;
+}
+
+void TransactionDescDialog::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void TransactionDescDialog::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(this->x()+dx, this->y()+dy);
+}
+
+void TransactionDescDialog::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(this->x()+dx, this->y()+dy);
 }

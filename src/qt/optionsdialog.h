@@ -6,6 +6,10 @@
 #define MASSGRID_QT_OPTIONSDIALOG_H
 
 #include <QDialog>
+#include <QMouseEvent>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QResizeEvent>
 
 class OptionsModel;
 class QValidatedLineEdit;
@@ -56,6 +60,15 @@ private:
     OptionsModel *model;
     QDataWidgetMapper *mapper;
     bool fProxyIpValid;
+
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
+
+private:
+    QPoint m_last;
+
 };
 
 #endif // MASSGRID_QT_OPTIONSDIALOG_H

@@ -57,6 +57,8 @@ public:
         MINIMUM_COLUMN_WIDTH = 23
     };
 
+    void setSearchWidget(QComboBox*,QComboBox*,QLineEdit*);
+
 private:
     WalletModel *model;
     TransactionFilterProxy *transactionProxyModel;
@@ -65,8 +67,8 @@ private:
     QComboBox *dateWidget;
     QComboBox *typeWidget;
     QComboBox *watchOnlyWidget;
-    QLineEdit *addressWidget;
-    QLineEdit *amountWidget;
+    // QLineEdit *addressWidget;
+    // QLineEdit *amountWidget;
 
     QMenu *contextMenu;
     QSignalMapper *mapperThirdPartyTxUrls;

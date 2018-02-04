@@ -10,6 +10,7 @@
 #include "guiutil.h"
 #include "optionsmodel.h"
 #include "walletmodel.h"
+#include "massgridgui.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -40,6 +41,10 @@ SendCoinsEntry::SendCoinsEntry(QWidget *parent) :
     connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteClicked()));
     connect(ui->deleteButton_is, SIGNAL(clicked()), this, SLOT(deleteClicked()));
     connect(ui->deleteButton_s, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+
+    ui->addressBookButton->hide();
+    ui->deleteButton->hide();
+    ui->pasteButton->hide();
 }
 
 SendCoinsEntry::~SendCoinsEntry()
@@ -57,8 +62,13 @@ void SendCoinsEntry::on_addressBookButton_clicked()
 {
     if(!model)
         return;
-    AddressBookPage dlg(AddressBookPage::ForSelection, AddressBookPage::SendingTab, this);
+    AddressBookPage dlg(AddressBookPage::ForSelection, AddressBookPage::SendingTab, 0);
     dlg.setModel(model->getAddressTableModel());
+
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
     if(dlg.exec())
     {
         ui->payTo->setText(dlg.getReturnValue());
@@ -101,6 +111,11 @@ void SendCoinsEntry::clear()
 
     // update the display unit, to not use the default ("MGD")
     updateDisplayUnit();
+}
+
+void SendCoinsEntry::openAddressBook()
+{
+    on_addressBookButton_clicked();
 }
 
 void SendCoinsEntry::deleteClicked()
@@ -252,4 +267,11 @@ bool SendCoinsEntry::updateLabel(const QString &address)
     }
 
     return false;
+}
+
+QValueComboBox* SendCoinsEntry::hideComboBoxUnit()
+{
+    ui->payAmount->hideUnit();
+
+    return ui->payAmount->getUnitObject();
 }
