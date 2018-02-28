@@ -1,5 +1,5 @@
 #!/bin/bash
-# Mlgb wallet startup scripts.
+# MGD wallet startup scripts.
 # Created by jesse
 # 2017-08-24
 
