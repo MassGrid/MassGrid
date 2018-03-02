@@ -175,12 +175,18 @@ sudo make install
 
 Boost
 -----
-If you need to build Boost yourself:
-	wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
-	tar -xvf boost*.tar.gz
-	sudo chmod a+x bootstrap.sh
-    sudo ./bootstrap.sh
-    sodu ./bjam install
+If you need to build Boost yourself:   
+
+	wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz   
+
+	tar -xvf boost*.tar.gz   
+
+	sudo chmod a+x bootstrap.sh   
+
+    sudo ./bootstrap.sh    
+
+    sudo ./bjam install
+
 
 
 Security
