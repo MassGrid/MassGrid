@@ -10,6 +10,11 @@
 #include <QWidget>
 #include <QKeyEvent>
 
+#include <QDateTimeEdit>
+#include <QDateTime>
+#include <QDateEdit>
+#include <QCalendarWidget>
+
 class TransactionFilterProxy;
 class WalletModel;
 
@@ -22,7 +27,20 @@ class QMenu;
 class QModelIndex;
 class QSignalMapper;
 class QTableView;
+
+class MDateEdit;
+
+
+class QLabel;
+class QComboBox;
+class QPushButton;
+class QTimeEdit;
+class QDateTime;
+
 QT_END_NAMESPACE
+
+
+
 
 /** Widget showing the transaction list for a wallet, including a filter row.
     Using the filter row, the user can view or export a subset of the transactions.
@@ -74,8 +92,8 @@ private:
     QSignalMapper *mapperThirdPartyTxUrls;
 
     QFrame *dateRangeWidget;
-    QDateTimeEdit *dateFrom;
-    QDateTimeEdit *dateTo;
+    MDateEdit *dateFrom;
+    MDateEdit *dateTo;
 
     QWidget *createDateRangeWidget();
 
@@ -111,7 +129,65 @@ public slots:
     void changedAmount(const QString &amount);
     void exportClicked();
     void focusTransaction(const QModelIndex&);
+};
+
+
+
+
+class DefineCalendar : public QCalendarWidget
+{
+    Q_OBJECT
+
+public:
+    DefineCalendar(QWidget *parent);
+    ~DefineCalendar();
+
+signals:
+    void setFinished(const QDateTime &dateTime);
+
+public slots:
+    void UpdateYear();
+    void UpdatePage();
+    void SetToday();
+    void ClearTime();
+
+protected slots:
+    void BtnSlots();
+    void ComboBoxSlots(int index);
+    void CurPageChange(int year, int month);
+
+protected:
+    void paintCell(QPainter *painter, const QRect &rect, const QDate &date) const;
+
+private:
+    void InitWidgets();
+    QWidget *widget_top;
+    QPushButton *pushBtn_YL;
+    QComboBox *comboBox_Year;
+    QPushButton *pushBtn_YR;
+    QPushButton *pushBtn_ML;
+    QComboBox *comboBox_Month;
+    QPushButton *pushBtn_MR;
+};
+
+
+class MDateEdit : public QDateEdit
+{
+    Q_OBJECT
+
+public:
+    MDateEdit(QWidget *parent);
+    ~MDateEdit();
+    void setMyStytle();
+
+protected slots:
+    void getDateTime(const QDateTime &dateTime);
+
+private:
+    DefineCalendar *m_DefCalendar;
 
 };
+
+
 
 #endif // MASSGRID_QT_TRANSACTIONVIEW_H

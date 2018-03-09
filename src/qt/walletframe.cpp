@@ -59,6 +59,17 @@ bool WalletFrame::addWallet(const QString& name, WalletModel *walletModel)
     return true;
 }
 
+
+WalletModel* WalletFrame::getWalletModel()
+{
+    WalletView *walletView = currentWalletView();
+    if (walletView)
+        return walletView->getWalletModel();
+    else
+        return NULL;
+}
+
+
 bool WalletFrame::setCurrentWallet(const QString& name)
 {
     if (mapWalletViews.count(name) == 0)

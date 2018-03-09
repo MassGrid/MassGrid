@@ -20,8 +20,8 @@ TransactionDescDialog::TransactionDescDialog(const QModelIndex &idx, QWidget *pa
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
 
-    // ui->label_titlename->setText(tr("Trasnaction Desc"));
     ui->label_titlename->setText(this->windowTitle());
+    this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
 TransactionDescDialog::~TransactionDescDialog()

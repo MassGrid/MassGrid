@@ -115,6 +115,8 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     connect(this, SIGNAL(proxyIpChecks(QValidatedLineEdit *, int)), this, SLOT(doProxyIpChecks(QValidatedLineEdit *, int)));
     setWindowFlags(Qt::FramelessWindowHint);
     ui->label_titleName->setText(this->windowTitle());
+    this->setAttribute(Qt::WA_TranslucentBackground);
+
 
 }
 

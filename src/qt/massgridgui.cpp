@@ -50,6 +50,7 @@
 #include <QTimer>
 #include <QToolBar>
 #include <QVBoxLayout>
+#include <QSpacerItem>
 
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
@@ -63,7 +64,7 @@ QPoint m_winPos;
 QSize m_winSize;
 
 MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
-    QMainWindow(parent),
+    QWidget(parent),
     clientModel(0),
     walletFrame(0),
     unitDisplayControl(0),
@@ -73,7 +74,7 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     progressBarLabel(0),
     progressBar(0),
     progressDialog(0),
-    appMenuBar(0),
+    // appMenuBar(0),
     overviewAction(0),
     historyAction(0),
     quitAction(0),
@@ -139,7 +140,7 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
         // walletFrame = new WalletFrame(this);
         // setCentralWidget(walletFrame);
 
-        createMainWin();
+        createMainWin(networkStyle);
 
     } else
 #endif // ENABLE_WALLET
@@ -147,7 +148,17 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
         /* When compiled without wallet or -disablewallet is provided,
          * the central widget is the rpc console.
          */
-        setCentralWidget(rpcConsole);
+        // setCentralWidget(rpcConsole);
+
+
+        QVBoxLayout *layout = new QVBoxLayout();
+        layout->addWidget((rpcConsole));
+        // layout->addWidget(walletFrame);
+        layout->setSpacing(0);
+        layout->setContentsMargins(0, 0, 0, 0);
+        // win->setLayout(layout);
+        // this->setCentralWidget(win);
+        this->setLayout(layout);
     }
 
     // Accept D&D of URIs
@@ -168,7 +179,7 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     createTrayIcon(networkStyle);
 
     // Create status bar
-    statusBar();
+    // statusBar();
 
     // Status bar notification icons
     QFrame *frameBlocks = new QFrame();
@@ -212,11 +223,27 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     //     // progressBar->setStyleSheet("QProgressBar { background-color: #e8e8e8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF8000, stop: 1 orange); border-radius: 7px; margin: 0px; }");
     // }
 
-    progressBar->setStyleSheet("QProgressBar {\nborder: none;\ntext-align: center;\ncolor: white;\nbackground-color: rgb(172, 99, 43);\nbackground-repeat: repeat-x;\ntext-align: center;}\nQProgressBar::chunk {\nborder: none;\nbackground-color: rgb(239, 169, 4);\nbackground-repeat: repeat-x;\n}");
-    statusBar()->setStyleSheet("QStatusBar {  \n    background-color: rgb(247, 242, 238);\n\n}  ");
-    statusBar()->addWidget(progressBarLabel);
-    statusBar()->addWidget(progressBar);
-    statusBar()->addPermanentWidget(frameBlocks);
+    progressBar->setStyleSheet("QProgressBar {\nborder: none;\n min-height:30px; min-width:500px; max-height:30px; text-align: center;\ncolor: white;\nbackground-color: rgb(172, 99, 43);\nbackground-repeat: repeat-x;\ntext-align: center;}\nQProgressBar::chunk {\nborder: none;\nbackground-color: rgb(239, 169, 4);\nbackground-repeat: repeat-x;\n}");
+    statusFrame->setObjectName("statusFrame");
+    statusFrame->setStyleSheet("QFrame#statusFrame {  \n    background-color: rgb(247, 242, 238);\n\n}  ");
+
+    QHBoxLayout *statusFrameLayout = new QHBoxLayout(statusFrame);
+    statusFrame->setLayout(statusFrameLayout);
+
+    statusFrameLayout->setContentsMargins(9,0,0,0);
+    statusFrameLayout->setSpacing(0);
+
+    QSpacerItem* spacerItem = new QSpacerItem(850,20);
+
+    statusFrameLayout->addWidget(progressBarLabel);
+    statusFrameLayout->addWidget(progressBar);
+    statusFrameLayout->addSpacerItem(spacerItem);
+    statusFrameLayout->addWidget(frameBlocks);
+
+    // statusBar()->setStyleSheet("QStatusBar {  \n    background-color: rgb(247, 242, 238);\n\n}  ");
+    // statusBar()->addWidget(progressBarLabel);
+    // statusBar()->addWidget(progressBar);
+    // statusBar()->addPermanentWidget(frameBlocks);
 
     // Install event filter to be able to catch status tip events (QEvent::StatusTip)
     this->installEventFilter(this);
@@ -227,7 +254,7 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     // Subscribe to notifications from core
     subscribeToCoreSignals();
     setWindowFlags(Qt::FramelessWindowHint);
-    resize(850,580);
+    resize(850,650);
     m_winPos = this->pos();
     m_winSize = this->size();
 }
@@ -240,18 +267,24 @@ MassGridGUI::~MassGridGUI()
     GUIUtil::saveWindowGeometry("nWindow", this);
     if(trayIcon) // Hide tray icon, as deleting will let it linger until quit (on Ubuntu)
         trayIcon->hide();
-#ifdef Q_OS_MAC
-    delete appMenuBar;
-    MacDockIconHandler::cleanup();
-#endif
+// #ifdef Q_OS_MAC
+//     delete appMenuBar;
+//     MacDockIconHandler::cleanup();
+// #endif
 }
 
-void MassGridGUI::createMainWin()
+void MassGridGUI::createMainWin(const NetworkStyle *networkStyle)
 {
-    QWidget *win = new QWidget();
+    createBackgroundWin();
+
     m_mainTitle = new MainwinTitle();
+    // m_mainTitle->setTitle(networkStyle->getTitleAddText());
+
     connect(m_mainTitle,SIGNAL(sgl_close()),this,SLOT(close()));
     connect(m_mainTitle,SIGNAL(sgl_showMin()),this,SLOT(showMinimized()));
+    connect(m_mainTitle,SIGNAL(sgl_showMax()),this,SLOT(showMaxWin())); 
+
+    connect(m_mainTitle,SIGNAL(sgl_open2DCodePage()),this,SLOT(open2DCodePage()));
     connect(this,SIGNAL(updateBalance(QString,QString,QString)),m_mainTitle,SLOT(updateBalance(QString ,QString ,QString )));
 
 #ifdef ENABLE_WALLET
@@ -279,13 +312,87 @@ void MassGridGUI::createMainWin()
 #endif // ENABLE_WALLET
 
     walletFrame = new WalletFrame(this);
+
+    statusFrame = new QFrame(this);
+    statusFrame->setStyleSheet("background-color:rgb(255,255,0);");
+    // statusFrame->setMaximumSize(100000,40);
+    statusFrame->setMinimumSize(800,40);
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget((m_mainTitle));
     layout->addWidget(walletFrame);
+    layout->addWidget(statusFrame);
+
     layout->setSpacing(0);
     layout->setContentsMargins(0, 0, 0, 0);
-    win->setLayout(layout);
-    this->setCentralWidget(win);
+    // win->setLayout(layout);
+    // this->setCentralWidget(win);
+    // this->setLayout(layout);
+    mainFrame->setLayout(layout);
+}
+
+void MassGridGUI::updateAddr(WalletModel *walletModel)
+{
+    // m_mainTitle->setModel(walletModel->getAddressTableModel());
+    AddressTableModel *addrmodel = walletModel->getAddressTableModel();
+    if(!addrmodel)
+        return ;
+    m_mainTitle->setModel(walletModel);
+    m_mainTitle->loadRow(0);
+}
+
+void MassGridGUI::open2DCodePage()
+{
+    // AddressTableModel *addrmodel = walletFrame->getWalletModel()->getAddressTableModel();
+    // if(!addrmodel)
+    //     return ;
+    // m_mainTitle->setModel(addrmodel);
+    // m_mainTitle->loadRow(0);
+}
+
+void MassGridGUI::showMaxWin()
+{
+    if(this->isMaximized()){
+        if(backgroudlayout)
+            backgroudlayout->setContentsMargins(40,40,40,40);
+        this->showNormal();
+
+    }
+    else{
+        if(backgroudlayout)
+            backgroudlayout->setContentsMargins(0,0,0,0);
+        this->showMaximized();
+    }
+}  
+
+
+void MassGridGUI::createBackgroundWin()
+{
+    this->setWindowFlags(Qt::FramelessWindowHint);
+    this->setAttribute(Qt::WA_TranslucentBackground);
+
+    QGridLayout* layout = new QGridLayout(this);
+    backgroudlayout = new QGridLayout(this);
+    this->setLayout(layout);
+
+    layout->setContentsMargins(0,0,0,0);
+    QWidget * centerWin = new QWidget(this);
+    centerWin->setObjectName("centerWin");
+
+    layout->addWidget(centerWin);
+
+    centerWin->setStyleSheet("QWidget#centerWin{\n  border-image: url(:/pic/res/pic/dlgBackgroud.png);\n}");
+
+    centerWin->setLayout(backgroudlayout);
+
+    mainFrame = new QFrame(this);
+    mainFrame->setObjectName("mainFrame");
+
+    mainFrame->setStyleSheet("QFrame#mainFrame{\n   background-color: rgb(255, 255, 255);\n}");
+    mainFrame->setMinimumSize(850,650);
+
+    backgroudlayout->addWidget(mainFrame);
+    backgroudlayout->setContentsMargins(40,40,40,40);
+    centerWin->setLayout(backgroudlayout);
 }
 
 // void MassGridGUI::updateBalance(QString balance,QString ,QString total)
@@ -376,7 +483,8 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
     quitAction->setStatusTip(tr("Quit application"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
-    aboutAction = new QAction(networkStyle->getAppIcon(), tr("&About MassGrid Core"), this);
+    // networkStyle->getAppIcon()
+    aboutAction = new QAction( QIcon(":/pic/res/pic/menuicon/about.png"), tr("&About MassGrid Core"), this);
     aboutAction->setStatusTip(tr("Show information about MassGrid Core"));
     aboutAction->setMenuRole(QAction::AboutRole);
 #if QT_VERSION < 0x050000
@@ -386,36 +494,37 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
 #endif
     aboutQtAction->setStatusTip(tr("Show information about Qt"));
     aboutQtAction->setMenuRole(QAction::AboutQtRole);
-    optionsAction = new QAction(QIcon(":/icons/options"), tr("&Options..."), this);
+    optionsAction = new QAction(QIcon(":/pic/res/pic/menuicon/options.png"), tr("&Options..."), this);
     optionsAction->setStatusTip(tr("Modify configuration options for MassGrid"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
     toggleHideAction = new QAction(networkStyle->getAppIcon(), tr("&Show / Hide"), this);
     toggleHideAction->setStatusTip(tr("Show or hide the main Window"));
 
-    encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet..."), this);
+    encryptWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/lock_closed.png"), tr("&Encrypt Wallet..."), this);
     encryptWalletAction->setStatusTip(tr("Encrypt the private keys that belong to your wallet"));
     encryptWalletAction->setCheckable(true);
-    backupWalletAction = new QAction(QIcon(":/icons/filesave"), tr("&Backup Wallet..."), this);
+    backupWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&Backup Wallet..."), this);
     backupWalletAction->setStatusTip(tr("Backup wallet to another location"));
-    changePassphraseAction = new QAction(QIcon(":/icons/key"), tr("&Change Passphrase..."), this);
+    changePassphraseAction = new QAction(QIcon(":/pic/res/pic/menuicon/key.png"), tr("&Change Passphrase..."), this);
     changePassphraseAction->setStatusTip(tr("Change the passphrase used for wallet encryption"));
-    signMessageAction = new QAction(QIcon(":/icons/edit"), tr("Sign &message..."), this);
+    signMessageAction = new QAction(QIcon(":/pic/res/pic/menuicon/edit.png"), tr("Sign &message..."), this);
     signMessageAction->setStatusTip(tr("Sign messages with your MassGrid addresses to prove you own them"));
-    verifyMessageAction = new QAction(QIcon(":/icons/transaction_0"), tr("&Verify message..."), this);
+    verifyMessageAction = new QAction(QIcon(":/pic/res/pic/menuicon/verifyMessage.png"), tr("&Verify message..."), this);
     verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified MassGrid addresses"));
 
-    openRPCConsoleAction = new QAction(QIcon(":/icons/debugwindow"), tr("&Debug window"), this);
+    openRPCConsoleAction = new QAction(QIcon(":/pic/res/pic/menuicon/debugwindow.png"), tr("&Debug window"), this);
     openRPCConsoleAction->setStatusTip(tr("Open debugging and diagnostic console"));
 
-    usedSendingAddressesAction = new QAction(QIcon(":/icons/address-book"), tr("&Sending addresses..."), this);
+    usedSendingAddressesAction = new QAction(QIcon(":/pic/res/pic/menuicon/address-book.png"), tr("&Sending addresses..."), this);
     usedSendingAddressesAction->setStatusTip(tr("Show the list of used sending addresses and labels"));
-    usedReceivingAddressesAction = new QAction(QIcon(":/icons/address-book"), tr("&Receiving addresses..."), this);
+    usedReceivingAddressesAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Receiving addresses..."), this);
     usedReceivingAddressesAction->setStatusTip(tr("Show the list of used receiving addresses and labels"));
-
-    openAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_FileIcon), tr("Open &URI..."), this);
+    //QApplication::style()->standardIcon(QStyle::SP_FileIcon)
+    openAction = new QAction(QIcon(":/pic/res/pic/menuicon/openFile.png"), tr("Open &URI..."), this);
     openAction->setStatusTip(tr("Open a massgrid: URI or payment request"));
+    //QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation)
 
-    showHelpMessageAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("&Command-line options"), this);
+    showHelpMessageAction = new QAction(QIcon(":/pic/res/pic/menuicon/command.png") , tr("&Command-line options"), this);
     showHelpMessageAction->setMenuRole(QAction::NoRole);
     showHelpMessageAction->setStatusTip(tr("Show the MassGrid Core help message to get a list with possible MassGrid command-line options"));
 
@@ -447,13 +556,13 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
 
 void MassGridGUI::createMenuBar()
 {
-#ifdef Q_OS_MAC
-    // Create a decoupled menu bar on Mac which stays even if the window is closed
-    appMenuBar = new QMenuBar();
-#else
-    // Get the main window's menu bar on other platforms
-    appMenuBar = menuBar();
-#endif
+// #ifdef Q_OS_MAC
+//     // Create a decoupled menu bar on Mac which stays even if the window is closed
+//     appMenuBar = new QMenuBar();
+// #else
+//     // Get the main window's menu bar on other platforms
+//     appMenuBar = menuBar();
+// #endif
 
     //     QMenu* getfileMenu();
     // QMenu* settingsMenu();
@@ -502,12 +611,12 @@ void MassGridGUI::createToolBars()
 {
     if(walletFrame)
     {
-        QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
-        toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        toolbar->addAction(overviewAction);
-        toolbar->addAction(sendCoinsAction);
-        toolbar->addAction(receiveCoinsAction);
-        toolbar->addAction(historyAction);
+        // QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
+        // toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        // toolbar->addAction(overviewAction);
+        // toolbar->addAction(sendCoinsAction);
+        // toolbar->addAction(receiveCoinsAction);
+        // toolbar->addAction(historyAction);
         overviewAction->setChecked(true);
     }
 }
@@ -585,6 +694,7 @@ bool MassGridGUI::addWallet(const QString& name, WalletModel *walletModel)
     if(!walletFrame)
         return false;
     setWalletActionsEnabled(true);
+    updateAddr(walletModel);
     return walletFrame->addWallet(name, walletModel);
 }
 
@@ -643,12 +753,35 @@ void MassGridGUI::createTrayIconMenu()
     trayIconMenu = new QMenu(this);
     trayIcon->setContextMenu(trayIconMenu);
 
+    // trayIconMenu->setStyleSheet(
+    //     " QMenu {\
+    //     color:rgb(255,255,255);\
+    //     background-color: rgb(198,125,26); /* sets background of the menu 设置整个菜单区域的背景色，我用的是白色：white*/\
+    //     /*border: 1px solid white;整个菜单区域的边框粗细、样式、颜色*/\
+    // }\
+    // QMenu::item {\
+    //     min-width:120px;\
+    //     min-height:30px;\
+    //     color:rgb(255,255,255);\
+    //     background-color: transparent;\
+    //     padding:0px 0px 0px 0px;/*设置菜单项文字上下和左右的内边距，效果就是菜单中的条目左右上下有了间隔*/\
+    //     /*margin:1px 1px;设置菜单项的外边距*/\
+    //     /*border-bottom:1px solid #DBDBDB;为菜单项之间添加横线间隔*/\
+    // }\
+    // QMenu::item:selected { /* when user selects item using mouse or keyboard */\
+    // color:rgb(255,255,255);\
+    //     background-color: rgb(239,169,4);/*这一句是设置菜单项鼠标经过选中的样式*/\
+    // }");
+
+    // trayIconMenu->setStyleSheet("QMenu{\n    background:white;\n    border:1px solid lightgray; /*边框为灰色*/\n}\n \nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 5px;\n    height:25px;\n}\n \nQMenu::item:selected:enabled{\n    background: lightgray;   /*菜单项选中时背景色设置为浅灰色*/\n    color: white;            /*文本颜色设置为白色，否则看不清文本内容了*/\n}\n \nQMenu::separator{\n    height:1px;\n    background: lightgray;   /*菜单分割线也设置为浅灰色*/\n    margin:2px 0px 2px 0px;\n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}\n \nQPushButton#TrayButton {\n    border: none;    /*无边框按钮*/\n    background: transparent;  /*按钮背景设置为透明，这样不会受到默认主题颜色干扰*/\n}\n \nQPushButton#TrayButton:hover {\n    background: rgb(233, 237, 252);  /*鼠标悬停时，按钮背景色设为淡色*/\n    color: rgb(42, 120, 192);    /*鼠标悬停时，文本颜色不变*/\n}");
+    trayIconMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
+
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
 #else
     // Note: On Mac, the dock icon is used to provide the tray's functionality.
     MacDockIconHandler *dockIconHandler = MacDockIconHandler::instance();
-    dockIconHandler->setMainWindow((QMainWindow *)this);
+    dockIconHandler->setMainWindow((QWidget *)this);
     trayIconMenu = dockIconHandler->dockMenu();
 #endif
 
@@ -698,7 +831,7 @@ void MassGridGUI::optionsClicked()
     OptionsDialog dlg(0, enableWallet);
     dlg.setModel(clientModel->getOptionsModel());
 
-    dlg.move(this->x()+(850-dlg.width())/2,this->y()+(580-dlg.height())/2);
+    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
 
     dlg.exec();
 }
@@ -710,7 +843,7 @@ void MassGridGUI::aboutClicked()
 
     HelpMessageDialog dlg(0, true);
 
-    dlg.move(this->x()+(850-dlg.width())/2,this->y()+(580-dlg.height())/2);
+    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
 
     dlg.exec();
 }
@@ -730,7 +863,7 @@ void MassGridGUI::showHelpMessageClicked()
 {
     HelpMessageDialog *help = new HelpMessageDialog(0, false);
     help->setAttribute(Qt::WA_DeleteOnClose);
-    help->move(this->x()+(850-help->width())/2,this->y()+(580-help->height())/2);
+    help->move(this->x()+(this->width()-help->width())/2,this->y()+(this->height()-help->height())/2);
 
     help->show();
 }
@@ -739,7 +872,7 @@ void MassGridGUI::showHelpMessageClicked()
 void MassGridGUI::openClicked()
 {
     OpenURIDialog dlg(0);
-    dlg.move(this->x()+(850-dlg.width())/2,this->y()+(580-dlg.height())/2);
+    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
 
     if(dlg.exec())
     {
@@ -803,7 +936,7 @@ void MassGridGUI::setNumBlocks(int count)
         return;
 
     // Prevent orphan statusbar messages (e.g. hover Quit in main menu, wait until chain-sync starts -> garbelled text)
-    statusBar()->clearMessage();
+    // statusBar()->clearMessage();
 
     // Acquire current block source
     enum BlockSource blockSource = clientModel->getBlockSource();
@@ -835,7 +968,7 @@ void MassGridGUI::setNumBlocks(int count)
     if(secs < 90*60)
     {
         tooltip = tr("Up to date") + QString(".<br>") + tooltip;
-        labelBlocksIcon->setPixmap(QIcon(":/icons/synced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelBlocksIcon->setPixmap(QIcon(":/pic/res/pic/selectPic.png").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE)); //:/icons/synced
 
 #ifdef ENABLE_WALLET
         if(walletFrame)
@@ -968,7 +1101,7 @@ void MassGridGUI::message(const QString &title, const QString &message, unsigned
 
 void MassGridGUI::changeEvent(QEvent *e)
 {
-    QMainWindow::changeEvent(e);
+    QWidget::changeEvent(e);
 #ifndef Q_OS_MAC // Ignored on Mac
     if(e->type() == QEvent::WindowStateChange)
     {
@@ -997,7 +1130,7 @@ void MassGridGUI::closeEvent(QCloseEvent *event)
         }
     }
 #endif
-    QMainWindow::closeEvent(event);
+    QWidget::closeEvent(event);
 }
 
 #ifdef ENABLE_WALLET
@@ -1044,7 +1177,7 @@ bool MassGridGUI::eventFilter(QObject *object, QEvent *event)
         if (progressBarLabel->isVisible() || progressBar->isVisible())
             return true;
     }
-    return QMainWindow::eventFilter(object, event);
+    return QWidget::eventFilter(object, event);
 }
 
 #ifdef ENABLE_WALLET
@@ -1170,6 +1303,7 @@ static bool ThreadSafeMessageBox(MassGridGUI *gui, const std::string& message, c
     return ret;
 }
 
+
 void MassGridGUI::subscribeToCoreSignals()
 {
     // Connect signals to client
@@ -1206,6 +1340,30 @@ void UnitDisplayStatusBarControl::createContextMenu()
         menuAction->setData(QVariant(u));
         menu->addAction(menuAction);
     }
+
+    // menu->setStyleSheet(
+    //     " QMenu {\
+    //     color:rgb(255,255,255);\
+    //     background-color: rgb(198,125,26); /* sets background of the menu 设置整个菜单区域的背景色，我用的是白色：white*/\
+    //     /*border: 1px solid white;整个菜单区域的边框粗细、样式、颜色*/\
+    // }\
+    // QMenu::item {\
+    //     min-width:60px;\
+    //     min-height:30px;\
+    //     color:rgb(255,255,255);\
+    //     background-color: transparent;\
+    //     padding:0px 0px 0px 0px;/*设置菜单项文字上下和左右的内边距，效果就是菜单中的条目左右上下有了间隔*/\
+    //     /*margin:1px 1px;设置菜单项的外边距*/\
+    //     /*border-bottom:1px solid #DBDBDB;为菜单项之间添加横线间隔*/\
+    // }\
+    // QMenu::item:selected { /* when user selects item using mouse or keyboard */\
+    // color:rgb(255,255,255);\
+    //     background-color: rgb(239,169,4);/*这一句是设置菜单项鼠标经过选中的样式*/\
+    // }");
+
+    menu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
+
+
     connect(menu,SIGNAL(triggered(QAction*)),this,SLOT(onMenuSelection(QAction*)));
 }
 

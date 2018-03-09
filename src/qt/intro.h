@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <QMutex>
 #include <QThread>
+#include <QMouseEvent>
 
 class FreespaceChecker;
 
@@ -68,6 +69,12 @@ private:
     QString getPathToCheck();
 
     friend class FreespaceChecker;
+
+    QPoint m_last;
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 };
 
 #endif // MASSGRID_QT_INTRO_H

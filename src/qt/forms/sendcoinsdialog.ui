@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>925</width>
-    <height>505</height>
+    <height>502</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,16 +19,16 @@
 }  
   
 QCheckBox::indicator{  
-	width:20px;
-	height:20px; 
+	width:28px;
+	height:22px; 
 }  
   
 QCheckBox::indicator:unchecked{  
-	border-image: url(:/pic/res/pic/kPic.png);
+	image: url(:/pic/res/pic/kPic.png);
 }  
   
 QCheckBox::indicator:checked{  
-	border-image: url(:/pic/res/pic/selectPic.png);
+	image: url(:/pic/res/pic/check-selected.png);
 }  
   
 QCheckBox::indicator:checked:disabled{  
@@ -1428,9 +1428,12 @@ QLineEdit{
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="1" column="1">
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <layout class="QVBoxLayout" name="verticalLayout_6" stretch="1,0,0,2">
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_5">
+              <property name="spacing">
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_10">
                 <property name="leftMargin">
@@ -1453,8 +1456,8 @@ QLineEdit{
                  <widget class="QScrollArea" name="scrollArea">
                   <property name="minimumSize">
                    <size>
-                    <width>0</width>
-                    <height>160</height>
+                    <width>500</width>
+                    <height>150</height>
                    </size>
                   </property>
                   <property name="styleSheet">
@@ -1463,7 +1466,7 @@ background-color:rgb(255,255,255);
 }
 
 QScrollArea{
-border:hidden;
+border: hidden;
 }
 
 </string>
@@ -1476,8 +1479,8 @@ border:hidden;
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>487</width>
-                     <height>160</height>
+                     <width>500</width>
+                     <height>150</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
@@ -1602,7 +1605,7 @@ border:hidden;
                  <number>0</number>
                 </property>
                 <widget class="QWidget" name="page_3">
-                 <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0">
+                 <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0">
                   <property name="leftMargin">
                    <number>0</number>
                   </property>
@@ -1621,25 +1624,15 @@ border:hidden;
                      <number>0</number>
                     </property>
                     <property name="topMargin">
-                     <number>10</number>
+                     <number>0</number>
                     </property>
-                    <item>
-                     <spacer name="verticalSpacer_13">
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>20</width>
-                        <height>40</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_14">
                       <property name="leftMargin">
                        <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>6</number>
                       </property>
                       <property name="rightMargin">
                        <number>0</number>
@@ -1662,6 +1655,12 @@ border:hidden;
                       </item>
                       <item>
                        <widget class="QLabel" name="labelSmartFee">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
                         <property name="minimumSize">
                          <size>
                           <width>0</width>
@@ -1822,6 +1821,28 @@ QSlider::sub-page:horizontal{
                           <number>0</number>
                          </property>
                          <item>
+                          <widget class="QLabel" name="label_8">
+                           <property name="minimumSize">
+                            <size>
+                             <width>10</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>10</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                           <property name="styleSheet">
+                            <string notr="true">border-image: url(:/pic/res/pic/moreSelect.png);</string>
+                           </property>
+                           <property name="text">
+                            <string/>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
                           <widget class="QToolButton" name="moreButton">
                            <property name="sizePolicy">
                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -1842,28 +1863,6 @@ color: rgb(173, 100, 45);</string>
                            </property>
                            <property name="text">
                             <string>Choose...</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QLabel" name="label_8">
-                           <property name="minimumSize">
-                            <size>
-                             <width>10</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                           <property name="maximumSize">
-                            <size>
-                             <width>10</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                           <property name="styleSheet">
-                            <string notr="true">border-image: url(:/pic/res/pic/moreSelect.png);</string>
-                           </property>
-                           <property name="text">
-                            <string/>
                            </property>
                           </widget>
                          </item>
@@ -1929,6 +1928,9 @@ color: rgb(173, 100, 45);</string>
                           </property>
                           <property name="text">
                            <string>normal</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                          </widget>
                         </item>
@@ -2033,36 +2035,10 @@ color: rgb(173, 100, 45);</string>
                     </item>
                    </layout>
                   </item>
-                  <item>
-                   <spacer name="verticalSpacer_9">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>38</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
                  </layout>
                 </widget>
                 <widget class="QWidget" name="page_4">
                  <layout class="QVBoxLayout" name="verticalLayout_10">
-                  <item>
-                   <spacer name="verticalSpacer_11">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>29</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_18">
                     <property name="spacing">
@@ -2218,7 +2194,7 @@ border:hidden;
                           </size>
                          </property>
                          <property name="styleSheet">
-                          <string notr="true">border-image: url(:/pic/res/pic/moreSelect.png);</string>
+                          <string notr="true">border-image: url(:/pic/res/pic/back.png);</string>
                          </property>
                          <property name="text">
                           <string/>
@@ -2318,6 +2294,19 @@ color: rgb(173, 100, 45);</string>
              </layout>
             </item>
             <item>
+             <spacer name="verticalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_12">
               <item>
                <spacer name="horizontalSpacer_10">
@@ -2385,9 +2374,9 @@ background-color: rgb(238, 169, 4);</string>
                    </property>
                    <property name="font">
                     <font>
-                     <pointsize>12</pointsize>
-                     <weight>50</weight>
-                     <bold>false</bold>
+                     <pointsize>14</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
                     </font>
                    </property>
                    <property name="styleSheet">
@@ -2400,12 +2389,12 @@ color: rgb(255, 255, 255);</string>
                    </property>
                    <property name="icon">
                     <iconset resource="../massgrid.qrc">
-                     <normaloff>:/pic/res/pic/send.png</normaloff>:/pic/res/pic/send.png</iconset>
+                     <normaloff>:/pic/res/pic/menuicon/address-book.png</normaloff>:/pic/res/pic/menuicon/address-book.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
                      <width>60</width>
-                     <height>30</height>
+                     <height>40</height>
                     </size>
                    </property>
                    <property name="toolButtonStyle">
@@ -2516,7 +2505,7 @@ color: rgb(255, 255, 255);</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupFee"/>
   <buttongroup name="groupCustomFee"/>
+  <buttongroup name="groupFee"/>
  </buttongroups>
 </ui>

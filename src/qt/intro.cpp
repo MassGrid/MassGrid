@@ -114,6 +114,10 @@ Intro::Intro(QWidget *parent) :
     ui->setupUi(this);
     ui->sizeWarningLabel->setText(ui->sizeWarningLabel->text().arg(BLOCK_CHAIN_SIZE/GB_BYTES));
     startThread();
+
+    setWindowFlags(Qt::FramelessWindowHint); //| Qt::WindowStaysOnTopHint
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+    this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
 Intro::~Intro()
@@ -289,4 +293,24 @@ QString Intro::getPathToCheck()
     signalled = false; /* new request can be queued now */
     mutex.unlock();
     return retval;
+}
+
+void Intro::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void Intro::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void Intro::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
 }

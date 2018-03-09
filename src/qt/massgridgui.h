@@ -12,7 +12,8 @@
 #include "amount.h"
 
 #include <QLabel>
-#include <QMainWindow>
+// #include <QMainWindow>
+#include <QWidget>
 #include <QMap>
 #include <QMenu>
 #include <QPoint>
@@ -36,6 +37,7 @@ class UnitDisplayStatusBarControl;
 class WalletFrame;
 class WalletModel;
 class MainwinTitle;
+class QGridLayout;
 
 class CWallet;
 
@@ -49,7 +51,7 @@ QT_END_NAMESPACE
   MassGrid GUI main class. This class represents the main window of the MassGrid UI. It communicates with both the client and
   wallet models to give the user an up-to-date view of the current core state.
 */
-class MassGridGUI : public QMainWindow
+class MassGridGUI : public QWidget
 {
     Q_OBJECT
 
@@ -97,7 +99,9 @@ private:
     QProgressBar *progressBar;
     QProgressDialog *progressDialog;
 
-    QMenuBar *appMenuBar;
+    QFrame *statusFrame;
+    QFrame *mainFrame;
+    // QMenuBar *appMenuBar;
     QAction *overviewAction;
     QAction *historyAction;
     QAction *quitAction;
@@ -168,6 +172,8 @@ public slots:
     void message(const QString &title, const QString &message, unsigned int style, bool *ret = NULL);
     // void updateBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, 
     //                     const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance);
+    void open2DCodePage();
+    void showMaxWin();
 
 
 #ifdef ENABLE_WALLET
@@ -235,8 +241,11 @@ protected:
 private:
     QPoint m_last;
     MainwinTitle* m_mainTitle;
+    QGridLayout* backgroudlayout;
 private:
-    void createMainWin();
+    void createMainWin(const NetworkStyle *networkStyle);
+    void createBackgroundWin();
+    void updateAddr(WalletModel *walletModel);
 };
 
 class UnitDisplayStatusBarControl : public QLabel

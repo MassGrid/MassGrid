@@ -115,5 +115,26 @@
         <file>res/pic/tx_mined.png</file>
         <file>res/pic/xjt.png</file>
         <file>res/pic/background_image.png</file>
+        <file>res/pic/menuicon/about.png</file>
+        <file>res/pic/menuicon/address-book.png</file>
+        <file>res/pic/menuicon/command.png</file>
+        <file>res/pic/menuicon/debugwindow.png</file>
+        <file>res/pic/menuicon/download.png</file>
+        <file>res/pic/menuicon/edit.png</file>
+        <file>res/pic/menuicon/filesave.png</file>
+        <file>res/pic/menuicon/key.png</file>
+        <file>res/pic/menuicon/lock_closed.png</file>
+        <file>res/pic/menuicon/openFile.png</file>
+        <file>res/pic/menuicon/options.png</file>
+        <file>res/pic/menuicon/verifyMessage.png</file>
+        <file>res/pic/check-selected.png</file>
+        <file>res/pic/back.png</file>
+        <file>res/pic/ad.png</file>
+        <file>res/pic/al.png</file>
+        <file>res/pic/ar.png</file>
+        <file>res/pic/au.png</file>
+        <file>res/pic/calendar.png</file>
+        <file>res/pic/outputData-white.png</file>
+        <file>res/pic/outputData-yellow.png</file>
     </qresource>
 </RCC>

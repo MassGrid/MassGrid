@@ -102,6 +102,13 @@ ReceiveRequestDialog::ReceiveRequestDialog(QWidget *parent) :
 #endif
 
     connect(ui->btnSaveAs, SIGNAL(clicked()), ui->lblQRCode, SLOT(saveImage()));
+
+
+    setWindowFlags(Qt::FramelessWindowHint);
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+    ui->label_titleName->setText(this->windowTitle());
+    this->setAttribute(Qt::WA_TranslucentBackground);
+
 }
 
 ReceiveRequestDialog::~ReceiveRequestDialog()
@@ -135,7 +142,8 @@ void ReceiveRequestDialog::update()
         target = info.address;
     setWindowTitle(tr("Request payment to %1").arg(target));
 
-    QString uri = GUIUtil::formatMassGridURI(info);
+    // QString uri = GUIUtil::formatMassGridURI(info);
+    QString uri = info.address;
     ui->btnSaveAs->setEnabled(false);
     QString html;
     html += "<html><font face='verdana, arial, helvetica, sans-serif'>";
@@ -194,4 +202,24 @@ void ReceiveRequestDialog::on_btnCopyURI_clicked()
 void ReceiveRequestDialog::on_btnCopyAddress_clicked()
 {
     GUIUtil::setClipboard(info.address);
+}
+
+void ReceiveRequestDialog::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void ReceiveRequestDialog::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void ReceiveRequestDialog::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
 }

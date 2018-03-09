@@ -42,6 +42,11 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
 
     mapper = new QDataWidgetMapper(this);
     mapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
+
+    setWindowFlags(Qt::FramelessWindowHint);
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+    ui->label_titleName->setText(this->windowTitle());
+    this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
 EditAddressDialog::~EditAddressDialog()
@@ -62,7 +67,7 @@ void EditAddressDialog::setModel(AddressTableModel *model)
 
 void EditAddressDialog::loadRow(int row)
 {
-    mapper->setCurrentIndex(row);
+    mapper->setCurrentIndex(row);//row
 }
 
 bool EditAddressDialog::saveCurrentRow()
@@ -139,6 +144,6 @@ QString EditAddressDialog::getAddress() const
 
 void EditAddressDialog::setAddress(const QString &address)
 {
-    this->address = address;
-    ui->addressEdit->setText(address);
+    // this->address = address;
+    // ui->addressEdit->setText(address);
 }

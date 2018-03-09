@@ -36,7 +36,7 @@ public:
         painter->save();
 
         QFont font = painter->font();
-        font.setPixelSize(18);
+        font.setPixelSize(16);
         // font.setBold(true);
         painter->setFont(font);
 
@@ -58,8 +58,7 @@ public:
 
         QRect dateRect = QRect(iconRect.width()+iconRect.x(),mainRect.y(),mainRect.width()*0.3,mainRect.height());
 
-        QRect _amountRect = QRect(dateRect.width()+dateRect.x(),mainRect.y(),mainRect.width()*0.5-10,mainRect.height());
-
+        QRect _amountRect = QRect(dateRect.width()+dateRect.x(),mainRect.y(),mainRect.width()*0.5-20,mainRect.height());
 
         QRect timeRect = QRect(dateRect.x(),dateRect.y(),dateRect.width(),dateRect.height()/2-ITEM_SPACING/2);
         QRect stateRect = QRect(dateRect.x(),dateRect.y()+dateRect.height()-(dateRect.height()/2-ITEM_SPACING/2),
@@ -72,7 +71,7 @@ public:
 
         QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
 
-        QRect decorationRect(mainRect.topLeft(), QSize(DECORATION_SIZE, DECORATION_SIZE));
+        QRect decorationRect(QPoint(20,mainRect.topLeft().y()), QSize(DECORATION_SIZE, DECORATION_SIZE)); //mainRect.topLeft()
         // int xspace = DECORATION_SIZE + 8;
         int ypad = 6;
         int halfheight = (mainRect.height() - 2*ypad)/2;

@@ -94,6 +94,11 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
 
     connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(accept()));
+
+    setWindowFlags(Qt::FramelessWindowHint);
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+    ui->label_titleName->setText(this->windowTitle());
+    this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
 AddressBookPage::~AddressBookPage()
@@ -145,9 +150,6 @@ void AddressBookPage::setModel(AddressTableModel *model)
 
     selectionChanged();
 
-    setWindowFlags(Qt::FramelessWindowHint);
-    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
-    ui->label_titleName->setText(this->windowTitle());
 }
 
 void AddressBookPage::on_copyAddress_clicked()
@@ -174,7 +176,13 @@ void AddressBookPage::onEditAction()
     EditAddressDialog dlg(
         tab == SendingTab ?
         EditAddressDialog::EditSendingAddress :
-        EditAddressDialog::EditReceivingAddress, this);
+        EditAddressDialog::EditReceivingAddress, 0);
+
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
+
     dlg.setModel(model);
     QModelIndex origIndex = proxyModel->mapToSource(indexes.at(0));
     dlg.loadRow(origIndex.row());
@@ -189,7 +197,7 @@ void AddressBookPage::on_newAddress_clicked()
     EditAddressDialog dlg(
         tab == SendingTab ?
         EditAddressDialog::NewSendingAddress :
-        EditAddressDialog::NewReceivingAddress, this);
+        EditAddressDialog::NewReceivingAddress, 0);
     dlg.setModel(model);
     if(dlg.exec())
     {

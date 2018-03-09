@@ -625,6 +625,13 @@ int main(int argc, char *argv[])
     if (GetBoolArg("-splash", true) && !GetBoolArg("-min", false))
         app.createSplashScreen(networkStyle.data());
 
+#if defined(Q_OS_WIN)
+    QFont appfont = app.font();    
+    appfont.setFamily("微软雅黑");
+    // appfont.setPointSize(12);
+    app.setFont(appfont);
+#endif
+
     try
     {
         app.createWindow(networkStyle.data());

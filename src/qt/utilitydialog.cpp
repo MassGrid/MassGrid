@@ -79,6 +79,7 @@ HelpMessageDialog::HelpMessageDialog(QWidget *parent, bool about) :
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     ui->label_titleName->setText(this->windowTitle());
+    this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
 HelpMessageDialog::~HelpMessageDialog()

@@ -50,6 +50,7 @@ public:
         functionality.
     */
     void setWalletModel(WalletModel *walletModel);
+    WalletModel* getWalletModel();
 
     bool handlePaymentRequest(const SendCoinsRecipient& recipient);
 

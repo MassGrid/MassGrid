@@ -11,19 +11,9 @@
    </rect>
   </property>
   <property name="styleSheet">
-   <string notr="true">QToolButton{
-width:80;
-height:30;
-border:hidden;
-}
-QWidget{
-	background-color: rgb(255, 255, 255);
-}</string>
+   <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="spacing">
-    <number>0</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -36,103 +26,160 @@ QWidget{
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <property name="leftMargin">
-      <number>9</number>
+   <item row="0" column="0">
+    <widget class="QWidget" name="centerWin" native="true">
+     <property name="styleSheet">
+      <string notr="true">QWidget#centerWin{
+border-image: url(:/pic/res/pic/dlgBackgroud.png);
+}</string>
      </property>
-     <item>
-      <widget class="QLabel" name="label_titleName">
-       <property name="text">
-        <string>title name</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QToolButton" name="cancelButton">
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QToolButton{
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="leftMargin">
+       <number>33</number>
+      </property>
+      <property name="topMargin">
+       <number>20</number>
+      </property>
+      <property name="rightMargin">
+       <number>33</number>
+      </property>
+      <property name="bottomMargin">
+       <number>20</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QFrame" name="mainframe">
+        <property name="styleSheet">
+         <string notr="true">QFrame#mainframe{
+border:hidden;
+background-color: rgb(255, 255, 255);
+}
+
+QToolButton{
+width:80;
+height:30;
+border:hidden;
+}
+</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <property name="leftMargin">
+            <number>9</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_titleName">
+             <property name="text">
+              <string>title name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QToolButton" name="cancelButton">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QToolButton{
 border:hidden;
 image: url(:/pic/res/pic/closeBtn.png);
 }
 </string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="leftMargin">
-      <number>9</number>
-     </property>
-     <property name="rightMargin">
-      <number>9</number>
-     </property>
-     <property name="bottomMargin">
-      <number>9</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="labelExplanation">
-       <property name="textFormat">
-        <enum>Qt::PlainText</enum>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTableView" name="tableView">
-       <property name="contextMenuPolicy">
-        <enum>Qt::CustomContextMenu</enum>
-       </property>
-       <property name="toolTip">
-        <string>Right-click to edit address or label</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QTableView {
-    color: black;
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="leftMargin">
+            <number>9</number>
+           </property>
+           <property name="rightMargin">
+            <number>9</number>
+           </property>
+           <property name="bottomMargin">
+            <number>9</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="labelExplanation">
+             <property name="textFormat">
+              <enum>Qt::PlainText</enum>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTableView" name="tableView">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
+             <property name="toolTip">
+              <string>Right-click to edit address or label</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QTableView {
+color: black;
 gridline-color: white;
 background-color: white;
-alternate-background-color: rgb(247,242,238);
+ outline: 0px;
+ alternate-background-color: rgb(247,242,238);
 selection-color: white;
-selection-background-color: rgb(247,242,238);
-border:1px solid rgb(174,103,46);
+selection-background-color: rgb(239,169,4);
+border:hidden;
 }
 
 QHeaderView {
 color: black;
-font: 10pt;
-background-color: white;
+font: 12pt;
 border: 0px solid rgb(144, 144, 144);
 border:0px solid rgb(191,191,191);
 border-left-color: red;
@@ -143,11 +190,16 @@ min-height:29px;
 
 QHeaderView::section {
 color: black;
-background-color: white;
-border: 5px solid #626262;
+background-color: rgb(234, 221, 210);
+border: 0px solid #626262;
 border-radius:0px;
 border-color: white;
+}
 
+QTableView::item::selected
+{
+border:hidden;
+	background-color: rgb(239, 169, 4);
 }
 
 /*垂直滚动条整体*/
@@ -221,126 +273,150 @@ QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical
     border-radius:4px;
 }
 </string>
-       </property>
-       <property name="tabKeyNavigation">
-        <bool>false</bool>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::SingleSelection</enum>
-       </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
-       </property>
-       <property name="sortingEnabled">
-        <bool>true</bool>
-       </property>
-       <attribute name="verticalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QToolButton" name="newAddress">
-         <property name="toolTip">
-          <string>Create a new address</string>
-         </property>
-         <property name="text">
-          <string>&amp;New</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../massgrid.qrc">
-           <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="copyAddress">
-         <property name="toolTip">
-          <string>Copy the currently selected address to the system clipboard</string>
-         </property>
-         <property name="text">
-          <string>&amp;Copy</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../massgrid.qrc">
-           <normaloff>:/icons/editcopy</normaloff>:/icons/editcopy</iconset>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="deleteAddress">
-         <property name="toolTip">
-          <string>Delete the currently selected address from the list</string>
-         </property>
-         <property name="text">
-          <string>&amp;Delete</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../massgrid.qrc">
-           <normaloff>:/pic/res/pic/closeBtn.png</normaloff>:/pic/res/pic/closeBtn.png</iconset>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QToolButton" name="exportButton">
-         <property name="toolTip">
-          <string>Export the data in the current tab to a file</string>
-         </property>
-         <property name="text">
-          <string>&amp;Export</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../massgrid.qrc">
-           <normaloff>:/icons/export</normaloff>:/icons/export</iconset>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="closeButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>C&amp;lose</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
+             </property>
+             <property name="tabKeyNavigation">
+              <bool>false</bool>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>false</bool>
+             </property>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QToolButton" name="newAddress">
+               <property name="toolTip">
+                <string>Create a new address</string>
+               </property>
+               <property name="text">
+                <string>&amp;New</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../massgrid.qrc">
+                 <normaloff>:/pic/res/pic/add.png</normaloff>:/pic/res/pic/add.png</iconset>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="copyAddress">
+               <property name="toolTip">
+                <string>Copy the currently selected address to the system clipboard</string>
+               </property>
+               <property name="text">
+                <string>&amp;Copy</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../massgrid.qrc">
+                 <normaloff>:/icons/editcopy</normaloff>:/icons/editcopy</iconset>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="deleteAddress">
+               <property name="toolTip">
+                <string>Delete the currently selected address from the list</string>
+               </property>
+               <property name="text">
+                <string>&amp;Delete</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../massgrid.qrc">
+                 <normaloff>:/pic/res/pic/closeBtn.png</normaloff>:/pic/res/pic/closeBtn.png</iconset>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QToolButton" name="exportButton">
+               <property name="toolTip">
+                <string>Export the data in the current tab to a file</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QToolButton{
+width:80;
+height:30;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+}</string>
+               </property>
+               <property name="text">
+                <string>&amp;Export</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../massgrid.qrc">
+                 <normaloff>:/pic/res/pic/outputData-white.png</normaloff>:/pic/res/pic/outputData-white.png</iconset>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="closeButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QToolButton{
+width:80;
+height:30;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+}</string>
+               </property>
+               <property name="text">
+                <string>C&amp;lose</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

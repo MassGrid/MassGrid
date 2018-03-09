@@ -69,7 +69,8 @@ QT_MOC_CPP = \
   qt/moc_walletframe.cpp \
   qt/moc_walletmodel.cpp \
   qt/moc_walletview.cpp\
-  qt/moc_mainwintitle.cpp
+  qt/moc_mainwintitle.cpp\
+  qt/moc_mitemdelegate.cpp
 
 MASSGRID_MM = \
   qt/macdockiconhandler.mm \
@@ -141,7 +142,8 @@ MASSGRID_QT_H = \
   qt/walletmodeltransaction.h \
   qt/walletview.h \
   qt/winshutdownmonitor.h\
-  qt/mainwintitle.h
+  qt/mainwintitle.h\
+  qt/mitemdelegate.h
 
 RES_ICONS = \
   qt/res/icons/add.png \
@@ -242,7 +244,9 @@ MASSGRID_QT_CPP += \
   qt/walletmodel.cpp \
   qt/walletmodeltransaction.cpp \
   qt/walletview.cpp\
-  qt/mainwintitle.cpp
+  qt/mainwintitle.cpp\
+  qt/mitemdelegate.cpp
+
 endif
 
 RES_IMAGES = \

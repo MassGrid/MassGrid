@@ -11,7 +11,7 @@
 #include "net.h"
 
 #include <QDialog>
-
+#include <QResizeEvent>
 class ClientModel;
 
 namespace Ui {
@@ -104,6 +104,7 @@ protected:
     void mousePressEvent(QMouseEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
+    // void resizeEvent(QResizeEvent* event);
 };
 
 #endif // MASSGRID_QT_RPCCONSOLE_H

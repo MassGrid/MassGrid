@@ -77,6 +77,8 @@ AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget *parent) :
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
 
     setWindowFlags(Qt::FramelessWindowHint);
+    this->setAttribute(Qt::WA_TranslucentBackground);
+
 }
 
 AskPassphraseDialog::~AskPassphraseDialog()
@@ -265,9 +267,6 @@ bool AskPassphraseDialog::eventFilter(QObject *object, QEvent *event)
     return QDialog::eventFilter(object, event);
 }
 
-
-//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
-//接下来就是对三个鼠标事件的重写
 void AskPassphraseDialog::mousePressEvent(QMouseEvent *e)
 {
     m_last = e->globalPos();

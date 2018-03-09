@@ -11,6 +11,10 @@
 #include <QStatusBar>
 #include <QResizeEvent>
 #include <QLabel>
+#include <QDataWidgetMapper>
+
+class AddressTableModel;
+class WalletModel;
 
 namespace Ui {
 class MainwinTitle;
@@ -31,6 +35,9 @@ public:
     QMenu* helpMenu(const QString& text);
 
     void setButtonText(const QString& overview,const QString& send,const QString& Transactions);
+    void setModel(WalletModel *model);
+    void loadRow(int row);
+    void setTitle(const QString& titleName);
 
 private:
     Ui::MainwinTitle *ui; 
@@ -40,6 +47,8 @@ private:
     QMenu *m_fileMenu;
     QMenu *m_settingsMenu;
     QMenu *m_helpMenu;
+    QDataWidgetMapper *m_mapper;
+    WalletModel *walletModel;
 
     void setLabelStyle(QLabel* label);
 
@@ -54,12 +63,14 @@ signals:
     void sgl_showOverview();
     void sgl_showSendPage();
     void sgl_showExchangePage();
+    void sgl_open2DCodePage();
 
 private slots:
     void updateBalance(QString balance,QString unconfirmed,QString total);
     void openFileMenu();
     void openSettingsMenu();
     void openHelpMenu();
+    void open2DCodePage();
     void on_toolButton_clicked();
     void on_toolButton_2_clicked();
     void on_toolButton_3_clicked();

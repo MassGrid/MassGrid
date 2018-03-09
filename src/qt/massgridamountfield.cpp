@@ -13,6 +13,7 @@
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLineEdit>
+#include <QSizePolicy>
 
 /** QSpinBox that uses fixed-point numbers internally and uses our own
  * formatting/parsing functions.
@@ -101,6 +102,8 @@ public:
             int h = lineEdit()->minimumSizeHint().height();
             int w = fm.width(MassGridUnits::format(MassGridUnits::MGD, MassGridUnits::maxMoney(), false, MassGridUnits::separatorAlways));
             w += 2; // cursor blinking space
+
+            w = 202;
 
             QStyleOptionSpinBox opt;
             initStyleOption(&opt);
@@ -196,12 +199,21 @@ MassGridAmountField::MassGridAmountField(QWidget *parent) :
     amount = new AmountSpinBox(this);
     amount->setLocale(QLocale::c());
     amount->installEventFilter(this);
-    amount->setMaximumWidth(170);
+    // // amount->setMaximumWidth(170);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(amount);
     unit = new QValueComboBox(this);
     unit->setModel(new MassGridUnits(this));
+
+    QSizePolicy amountSizePolicy = amount->sizePolicy();
+    amountSizePolicy.setHorizontalPolicy(QSizePolicy::Minimum);
+    amount->setSizePolicy(amountSizePolicy);
+
+    QSizePolicy unitSizePolicy = unit->sizePolicy();
+    unitSizePolicy.setHorizontalPolicy(QSizePolicy::Fixed);
+    unit->setSizePolicy(unitSizePolicy);
+
     layout->addWidget(unit);
     layout->addStretch(1);
     layout->setContentsMargins(0,0,0,0);
@@ -217,14 +229,23 @@ MassGridAmountField::MassGridAmountField(QWidget *parent) :
 
     // Set default based on configuration
     unitChanged(unit->currentIndex());
+    // border:0px solid rgb(174,103,46,0);
+    amount->setStyleSheet("AmountSpinBox{\n height:32px;\n min-width:250px;\n border:hidden; \n}\nAmountSpinBox::up-button\n{\n height: 0px;\nwidth:0px;\n}\nAmountSpinBox::down-button{\nheight: 0px;\nwidth:0px;\n}");
+    unit->setStyleSheet("QValueComboBox\n{\nmin-width: 80px;  \nmin-height: 32px;\nmax-width: 80px;  \nmax-height: 32px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
 
-    amount->setStyleSheet("AmountSpinBox{\n height:600px;\n width:80px;\nborder:0px solid rgb(174,103,46,0);\n}\nAmountSpinBox::up-button\n{\n height: 0px;\nwidth:0px;\n}\nAmountSpinBox::down-button{\nheight: 0px;\nwidth:0px;\n}");
-    unit->setStyleSheet("QValueComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
-
-    unit->setMaximumWidth(120);
+    unit->setMaximumWidth(80);
     unit->setMaximumHeight(32);
 
     amount->setMaximumHeight(32);
+
+    setMinimumWidth(400);
+    // setMaximumWidth(400);
+
+
+    // setStyleSheet("background-color: rgb(137, 255, 157);");
+    // unit->hide();
+    // amount->hide();
+
 }
 
 void MassGridAmountField::clear()

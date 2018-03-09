@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>152</height>
+    <width>494</width>
+    <height>149</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -44,7 +44,12 @@ min-width:28px;
 }
 QFrame#SendCoins{
 border:hidden;
-}</string>
+}
+
+QFrame#frame_10,QFrame#frame_2,QFrame#frame_3{
+	border:1px solid rgb(186, 186, 186);
+}
+</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -112,6 +117,15 @@ border:hidden;
            <height>0</height>
           </size>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="text">
           <string>Pay &amp;To:</string>
          </property>
@@ -125,8 +139,17 @@ border:hidden;
        </item>
        <item>
         <widget class="QValidatedLineEdit" name="payTo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="toolTip">
           <string>The MassGrid address to send the payment to</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
         </widget>
        </item>
@@ -195,6 +218,9 @@ border:hidden;
         <height>40</height>
        </size>
       </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -222,6 +248,15 @@ border:hidden;
            <height>0</height>
           </size>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="text">
           <string>&amp;Label:</string>
          </property>
@@ -235,8 +270,17 @@ border:hidden;
        </item>
        <item>
         <widget class="QLineEdit" name="addAsLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="toolTip">
           <string>Enter a label for this address to add it to the list of used addresses</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
         </widget>
        </item>
@@ -257,7 +301,7 @@ border:hidden;
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,10">
        <property name="leftMargin">
         <number>1</number>
        </property>
@@ -278,6 +322,15 @@ border:hidden;
            <height>0</height>
           </size>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="text">
           <string>A&amp;mount:</string>
          </property>
@@ -290,7 +343,23 @@ border:hidden;
         </widget>
        </item>
        <item>
-        <widget class="MassGridAmountField" name="payAmount"/>
+        <widget class="MassGridAmountField" name="payAmount">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

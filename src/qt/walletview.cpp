@@ -78,9 +78,12 @@ WalletView::WalletView(QWidget *parent):
     // dateComboBox->addItem(tr("This year"), TransactionView::ThisYear);
     // dateComboBox->addItem(tr("Range..."), TransactionView::Range);
 
-    dateComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255,0);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\n\n");
+    // dateComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255,0);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\n\n");
     addressEdit->setStyleSheet("QLineEdit\n{\nmin-width:300px;border:1px solid rgb(165, 165, 165);\nbackground-color: rgb(255, 255, 255,0);\n}\n\nQLineEdit::hover{\nborder:1px solid rgb(174,103,46);\nbackground-color: rgb(255, 255, 255,0);\n}");
-    typeComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255,0);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\n\n");
+    // typeComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255,0);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\n\n");
+
+    typeComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 32px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
+    dateComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 32px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
 
 #if QT_VERSION >= 0x040700
     addressEdit->setPlaceholderText(tr("Enter address or label to search"));
@@ -121,10 +124,10 @@ WalletView::WalletView(QWidget *parent):
     exportButton->setMaximumSize(80,30);
     
 
-    exportButton->setIcon(QIcon(":/pic/res/pic/outputData.png"));
+    exportButton->setIcon(QIcon(":/pic/res/pic/outputData-yellow.png"));
 
 #ifndef Q_OS_MAC // Icons on push buttons are very uncommon on Mac
-    exportButton->setIcon(QIcon(":/pic/res/pic/outputData.png"));
+    exportButton->setIcon(QIcon(":/pic/res/pic/outputData-yellow.png"));
 #endif
     hbox_buttons->addStretch();
 
@@ -414,6 +417,14 @@ void WalletView::usedReceivingAddresses()
     dlg->move(pos.x()+(size.width()-dlg->width())/2,pos.y()+(size.height()-dlg->height())/2);
 
     dlg->show();
+}
+
+WalletModel* WalletView::getWalletModel()
+{
+    if(walletModel)
+        return walletModel;
+    else
+        return NULL;
 }
 
 void WalletView::showProgress(const QString &title, int nProgress)

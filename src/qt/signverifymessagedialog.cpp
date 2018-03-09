@@ -45,6 +45,7 @@ SignVerifyMessageDialog::SignVerifyMessageDialog(QWidget *parent) :
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     ui->label_titleName->setText(this->windowTitle());
+    this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
 SignVerifyMessageDialog::~SignVerifyMessageDialog()
@@ -87,7 +88,7 @@ void SignVerifyMessageDialog::on_addressBookButton_SM_clicked()
 {
     if (model && model->getAddressTableModel())
     {
-        AddressBookPage dlg(AddressBookPage::ForSelection, AddressBookPage::ReceivingTab, this);
+        AddressBookPage dlg(AddressBookPage::ForSelection, AddressBookPage::ReceivingTab, 0);
         dlg.setModel(model->getAddressTableModel());
         if (dlg.exec())
         {
@@ -178,7 +179,7 @@ void SignVerifyMessageDialog::on_addressBookButton_VM_clicked()
 {
     if (model && model->getAddressTableModel())
     {
-        AddressBookPage dlg(AddressBookPage::ForSelection, AddressBookPage::SendingTab, this);
+        AddressBookPage dlg(AddressBookPage::ForSelection, AddressBookPage::SendingTab, 0);
         dlg.setModel(model->getAddressTableModel());
         if (dlg.exec())
         {

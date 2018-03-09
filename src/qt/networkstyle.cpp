@@ -28,6 +28,7 @@ NetworkStyle::NetworkStyle(const QString &appName, const QString &appIcon, const
     titleAddText(qApp->translate("SplashScreen", titleAddText)),
     splashImage(splashImage)
 {
+    
 }
 
 const NetworkStyle *NetworkStyle::instantiate(const QString &networkId)
