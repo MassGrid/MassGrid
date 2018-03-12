@@ -164,9 +164,9 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     // Accept D&D of URIs
     setAcceptDrops(true);
 
-    // Create actions for the toolbar, menu bar and tray/dock icon
-    // Needs walletFrame to be initialized
-    createActions(networkStyle);
+    // Create system tray icon and notification
+    createTrayIcon(networkStyle);
+
 
     // Create application menu bar
     if(m_mainTitle)
@@ -175,8 +175,6 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     // Create the toolbars 
     // createToolBars(); 
 
-    // Create system tray icon and notification
-    createTrayIcon(networkStyle);
 
     // Create status bar
     // statusBar();
@@ -628,7 +626,7 @@ void MassGridGUI::setClientModel(ClientModel *clientModel)
     {
         // Create system tray menu (or setup the dock menu) that late to prevent users from calling actions,
         // while the client has not yet fully loaded
-        createTrayIconMenu();
+        // createTrayIconMenu();
 
         // Keep up to date with client
         setNumConnections(clientModel->getNumConnections());
@@ -732,15 +730,35 @@ void MassGridGUI::setWalletActionsEnabled(bool enabled)
 
 void MassGridGUI::createTrayIcon(const NetworkStyle *networkStyle)
 {
+// #ifndef Q_OS_MAC
+//     trayIcon = new QSystemTrayIcon(this);
+//     QString toolTip = tr("MassGrid Core client") + " " + networkStyle->getTitleAddText();
+//     trayIcon->setToolTip(toolTip);
+//     trayIcon->setIcon(networkStyle->getAppIcon());
+//     trayIcon->show();
+// #endif
+
+//     notificator = new Notificator(QApplication::applicationName(), trayIcon, this);
+
+
 #ifndef Q_OS_MAC
     trayIcon = new QSystemTrayIcon(this);
     QString toolTip = tr("MassGrid Core client") + " " + networkStyle->getTitleAddText();
     trayIcon->setToolTip(toolTip);
     trayIcon->setIcon(networkStyle->getAppIcon());
     trayIcon->show();
+
+    // Create actions for the toolbar, menu bar and tray/dock icon
+    // Needs walletFrame to be initialized
+    createActions(networkStyle);
+    createTrayIconMenu();
+    trayIcon->show();
 #endif
 
+
     notificator = new Notificator(QApplication::applicationName(), trayIcon, this);
+
+
 }
 
 void MassGridGUI::createTrayIconMenu()
@@ -753,28 +771,7 @@ void MassGridGUI::createTrayIconMenu()
     trayIconMenu = new QMenu(this);
     trayIcon->setContextMenu(trayIconMenu);
 
-    // trayIconMenu->setStyleSheet(
-    //     " QMenu {\
-    //     color:rgb(255,255,255);\
-    //     background-color: rgb(198,125,26); /* sets background of the menu 设置整个菜单区域的背景色，我用的是白色：white*/\
-    //     /*border: 1px solid white;整个菜单区域的边框粗细、样式、颜色*/\
-    // }\
-    // QMenu::item {\
-    //     min-width:120px;\
-    //     min-height:30px;\
-    //     color:rgb(255,255,255);\
-    //     background-color: transparent;\
-    //     padding:0px 0px 0px 0px;/*设置菜单项文字上下和左右的内边距，效果就是菜单中的条目左右上下有了间隔*/\
-    //     /*margin:1px 1px;设置菜单项的外边距*/\
-    //     /*border-bottom:1px solid #DBDBDB;为菜单项之间添加横线间隔*/\
-    // }\
-    // QMenu::item:selected { /* when user selects item using mouse or keyboard */\
-    // color:rgb(255,255,255);\
-    //     background-color: rgb(239,169,4);/*这一句是设置菜单项鼠标经过选中的样式*/\
-    // }");
-
-    // trayIconMenu->setStyleSheet("QMenu{\n    background:white;\n    border:1px solid lightgray; /*边框为灰色*/\n}\n \nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 5px;\n    height:25px;\n}\n \nQMenu::item:selected:enabled{\n    background: lightgray;   /*菜单项选中时背景色设置为浅灰色*/\n    color: white;            /*文本颜色设置为白色，否则看不清文本内容了*/\n}\n \nQMenu::separator{\n    height:1px;\n    background: lightgray;   /*菜单分割线也设置为浅灰色*/\n    margin:2px 0px 2px 0px;\n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}\n \nQPushButton#TrayButton {\n    border: none;    /*无边框按钮*/\n    background: transparent;  /*按钮背景设置为透明，这样不会受到默认主题颜色干扰*/\n}\n \nQPushButton#TrayButton:hover {\n    background: rgb(233, 237, 252);  /*鼠标悬停时，按钮背景色设为淡色*/\n    color: rgb(42, 120, 192);    /*鼠标悬停时，文本颜色不变*/\n}");
-    trayIconMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
+    trayIconMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n min-width:180px;    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
