@@ -21,6 +21,7 @@ def Cmd(cmd,to,amt):
 		try:
 			famt=float(amt)
 			logger.debug(to+"\t"+str(famt))
+			input('Continue...')
 			logger.debug(access.sendtoaddress(to,famt))
 			return 0
 		except:
@@ -29,7 +30,6 @@ def Cmd(cmd,to,amt):
 	else:
 		return 2
 if __name__=='__main__':
-
 	# ===== BEGIN LOG SETTINGS =====
 	logger = logging.getLogger("autotransfer.py")
 	formatter = logging.Formatter('%(asctime)s %(levelname)-8s: %(message)s')
