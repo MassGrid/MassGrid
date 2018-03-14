@@ -402,7 +402,7 @@ boost::filesystem::path GetDefaultDataDir()
     return pathRet / "MassGrid";
 #else
     // Unix
-    return pathRet / ".massgrid";
+    return pathRet / "massgrid";
 #endif
 #endif
 }

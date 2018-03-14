@@ -112,7 +112,8 @@ Intro::Intro(QWidget *parent) :
     signalled(false)
 {
     ui->setupUi(this);
-    ui->sizeWarningLabel->setText(ui->sizeWarningLabel->text().arg(BLOCK_CHAIN_SIZE/GB_BYTES));
+    ui->sizeWarningLabel->setText(ui->sizeWarningLabel->text().arg(BLOCK_CHAIN_SIZE/GB_BYTES));    
+    ui->label_defaultData->setText(getDefaultDataDirectory());
     startThread();
 
     setWindowFlags(Qt::FramelessWindowHint); //| Qt::WindowStaysOnTopHint
@@ -314,3 +315,5 @@ void Intro::mouseReleaseEvent(QMouseEvent *e)
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));
 }
+
+
