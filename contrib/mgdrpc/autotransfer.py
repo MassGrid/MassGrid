@@ -21,7 +21,7 @@ def Cmd(cmd,to,amt):
 		try:
 			famt=float(amt)
 			logger.debug(to+"\t"+str(famt))
-			input('Continue...')
+			raw_input('Continue...')
 			logger.debug(access.sendtoaddress(to,famt))
 			return 0
 		except:
