@@ -51,6 +51,7 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QSpacerItem>
+#include <QFileDialog>
 
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
@@ -503,6 +504,11 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
     encryptWalletAction->setCheckable(true);
     backupWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&Backup Wallet..."), this);
     backupWalletAction->setStatusTip(tr("Backup wallet to another location"));
+
+    inputWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&input Wallet..."), this);
+    inputWalletAction->setStatusTip(tr("input wallet file"));
+    
+
     changePassphraseAction = new QAction(QIcon(":/pic/res/pic/menuicon/key.png"), tr("&Change Passphrase..."), this);
     changePassphraseAction->setStatusTip(tr("Change the passphrase used for wallet encryption"));
     signMessageAction = new QAction(QIcon(":/pic/res/pic/menuicon/edit.png"), tr("Sign &message..."), this);
@@ -541,6 +547,7 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
     {
         connect(encryptWalletAction, SIGNAL(triggered(bool)), walletFrame, SLOT(encryptWallet(bool)));
         connect(backupWalletAction, SIGNAL(triggered()), walletFrame, SLOT(backupWallet()));
+        connect(inputWalletAction, SIGNAL(triggered()), this, SLOT(inputWalletFile()));
         connect(changePassphraseAction, SIGNAL(triggered()), walletFrame, SLOT(changePassphrase()));
         connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
         connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
@@ -573,6 +580,7 @@ void MassGridGUI::createMenuBar()
     {
         file->addAction(openAction);
         file->addAction(backupWalletAction);
+        file->addAction(inputWalletAction);
         file->addAction(signMessageAction);
         file->addAction(verifyMessageAction);
         file->addSeparator();
@@ -1311,6 +1319,47 @@ void MassGridGUI::unsubscribeFromCoreSignals()
 {
     // Disconnect signals from client
     uiInterface.ThreadSafeMessageBox.disconnect(boost::bind(ThreadSafeMessageBox, this, _1, _2, _3));
+}
+
+void MassGridGUI::inputWalletFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                      "/home",
+                                                      tr("Wallat (*.dat)"));
+    QString curdir = GetDataDir().string().c_str();
+
+    copyFileToPath(fileName,curdir,true);
+
+    // if(copyFileToPath(fileName,curdir,true))
+    //     qDebug() << "copy file sucess!";
+    // else
+    //     qDebug() << "copy file fail!";
+}
+
+bool MassGridGUI::copyFileToPath(QString sourceDir ,QString toDir, bool coverFileIfExist)
+{
+    toDir.replace("\\","/");
+    QString filename = sourceDir.split("/").last();
+    toDir.append(QString("/%1").arg(filename));
+    if (sourceDir == toDir){
+        return true;
+    }
+    if (!QFile::exists(sourceDir)){
+        return false;
+    }
+    QDir *createfile     = new QDir;
+    bool exist = createfile->exists(toDir);
+    if (exist){
+        if(coverFileIfExist){
+            createfile->remove(toDir);
+        }
+    }//end if
+
+    if(!QFile::copy(sourceDir, toDir))
+    {
+        return false;
+    }
+    return true;
 }
 
 UnitDisplayStatusBarControl::UnitDisplayStatusBarControl() :

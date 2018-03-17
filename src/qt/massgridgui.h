@@ -116,6 +116,7 @@ private:
     QAction *toggleHideAction;
     QAction *encryptWalletAction;
     QAction *backupWalletAction;
+    QAction *inputWalletAction;
     QAction *changePassphraseAction;
     QAction *aboutQtAction;
     QAction *openRPCConsoleAction;
@@ -207,6 +208,9 @@ private slots:
 
     /** Show open dialog */
     void openClicked();
+
+    void inputWalletFile();
+
 #endif // ENABLE_WALLET
     /** Show configuration dialog */
     void optionsClicked();
@@ -246,6 +250,7 @@ private:
     void createMainWin(const NetworkStyle *networkStyle);
     void createBackgroundWin();
     void updateAddr(WalletModel *walletModel);
+    bool copyFileToPath(QString sourceDir ,QString toDir, bool coverFileIfExist);
 };
 
 class UnitDisplayStatusBarControl : public QLabel

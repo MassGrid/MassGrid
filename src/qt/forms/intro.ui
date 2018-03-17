@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>624</width>
-    <height>385</height>
+    <height>477</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -218,6 +218,16 @@ image: url(:/pic/res/pic/closeBtn.png);
             <widget class="QLabel" name="sizeWarningLabel">
              <property name="text">
               <string>MassGrid Core will download and store a copy of the MassGrid block chain. At least %1GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>为了保证资产安全，请务必将数据目录安装在C盘以外的磁盘中，避免系统故障时登陆不进C盘，导致钱包丢失，以及务必备份好钱包文件。</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>

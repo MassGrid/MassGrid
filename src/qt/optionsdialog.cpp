@@ -16,6 +16,7 @@
 #include "main.h" // for MAX_SCRIPTCHECK_THREADS
 #include "netbase.h"
 #include "txdb.h" // for -dbcache defaults
+#include "util.h"
 
 #ifdef ENABLE_WALLET
 #include "wallet.h" // for CWallet::minTxFee
@@ -117,7 +118,7 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     ui->label_titleName->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
 
-
+    ui->dataDirPath->setText(GetDataDir().string().c_str());
 }
 
 OptionsDialog::~OptionsDialog()
