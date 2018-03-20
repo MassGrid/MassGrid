@@ -302,7 +302,7 @@ std::string HelpMessage(HelpMessageMode mode)
 #ifdef ENABLE_WALLET
     strUsage += "\n" + _("Wallet options:") + "\n";
     strUsage += "  -disablewallet         " + _("Do not load the wallet and disable wallet RPC calls") + "\n";
-    strUsage += "  -keypool=<n>           " + strprintf(_("Set key pool size to <n> (default: %u)"), 100) + "\n";
+    strUsage += "  -keypool=<n>           " + strprintf(_("Set key pool size to <n> (default: %u)"), 0) + "\n";
     if (GetBoolArg("-help-debug", false))
         strUsage += "  -mintxfee=<amt>        " + strprintf(_("Fees (in MGD/Kb) smaller than this are considered zero fee for transaction creation (default: %s)"), FormatMoney(CWallet::minTxFee.GetFeePerK())) + "\n";
     strUsage += "  -paytxfee=<amt>        " + strprintf(_("Fee (in MGD/kB) to add to transactions you send (default: %s)"), FormatMoney(payTxFee.GetFeePerK())) + "\n";

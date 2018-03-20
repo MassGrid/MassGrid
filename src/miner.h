@@ -7,7 +7,7 @@
 #define MASSGRID_MINER_H
 
 #include <stdint.h>
-
+#include <stddef.h>
 class CBlock;
 class CBlockHeader;
 class CBlockIndex;
@@ -21,7 +21,7 @@ struct CBlockTemplate;
 void GenerateMassGrids(bool fGenerate, CWallet* pwallet, int nThreads);
 /** Generate a new block, without valid proof-of-work */
 CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn);
-CBlockTemplate* CreateNewBlockWithKey(CReserveKey& reservekey);
+CBlockTemplate* CreateNewBlockWithKey(CReserveKey& reservekey,CWallet* pwallet= NULL);
 /** Modify the extranonce in a block */
 void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& nExtraNonce);
 /** Check mined block */

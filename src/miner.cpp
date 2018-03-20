@@ -16,6 +16,7 @@
 #include "timedata.h"
 #include "util.h"
 #include "utilmoneystr.h"
+#include "base58.h"
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #endif
@@ -392,13 +393,21 @@ bool static ScanHash(CBlockHeader *pblock, uint32_t& nNonce, uint256 *phash)
     }
 }
 
-CBlockTemplate* CreateNewBlockWithKey(CReserveKey& reservekey)
+CBlockTemplate* CreateNewBlockWithKey(CReserveKey& reservekey,CWallet* pwallet)
 {
-    CPubKey pubkey;
-    if (!reservekey.GetReservedKey(pubkey))
-        return NULL;
+    // CPubKey pubkey;
+    // if (!reservekey.GetReservedKey(pubkey))
+    //     return NULL;
 
-    CScript scriptPubKey = CScript() << ToByteVector(pubkey) << OP_CHECKSIG;
+    // CScript scriptPubKey = CScript() << ToByteVector(pubkey) << OP_CHECKSIG;
+    CMassGridAddress addr;
+    BOOST_FOREACH(const PAIRTYPE(CMassGridAddress, CAddressBookData)& item, pwallet->mapAddressBook){
+        addr = item.first;
+        break;
+    }
+    CKeyID keyid;
+    addr.GetKeyID(keyid);
+    CScript scriptPubKey = GetScriptForDestination(keyid);
     return CreateNewBlock(scriptPubKey);
 }
 
@@ -415,7 +424,7 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     }
 
     // Remove key from key pool
-    reservekey.KeepKey();
+    //reservekey.KeepKey();
 
     // Track how many getdata requests this block gets
     {
@@ -464,7 +473,7 @@ void static MassGridMiner(CWallet *pwallet)
             unsigned int nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
             CBlockIndex* pindexPrev = chainActive.Tip();
 
-            auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlockWithKey(reservekey));
+            auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlockWithKey(reservekey,pwallet));
             if (!pblocktemplate.get())
             {
                 LogPrintf("Error in MassGridMiner: Keypool ran out, please call keypoolrefill before restarting the mining thread\n");

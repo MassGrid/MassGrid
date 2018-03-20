@@ -170,7 +170,7 @@ Value setgenerate(const Array& params, bool fHelp)
         Array blockHashes;
         while (nHeight < nHeightEnd)
         {
-            auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlockWithKey(reservekey));
+            auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlockWithKey(reservekey,pwalletMain));
             if (!pblocktemplate.get())
                 throw JSONRPCError(RPC_INTERNAL_ERROR, "Wallet keypool empty");
             CBlock *pblock = &pblocktemplate->block;

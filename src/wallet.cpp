@@ -1436,11 +1436,19 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, CAmount> >& vecSend,
                     // TODO: pass in scriptChange instead of reservekey so
                     // change transaction isn't always pay-to-massgrid-address
                     CScript scriptChange;
-
+                    
                     // coin control: send change to custom address
-                    if (coinControl && !boost::get<CNoDestination>(&coinControl->destChange))
-                        scriptChange = GetScriptForDestination(coinControl->destChange);
+                    if (coinControl){// && !boost::get<CNoDestination>(&coinControl->destChange)){
+                        CMassGridAddress addr;
+                        BOOST_FOREACH(const PAIRTYPE(CMassGridAddress, CAddressBookData)& item, this->mapAddressBook){
+                            addr = item.first;
+                            break;
+                        }
+                        CKeyID keyid;
+                        addr.GetKeyID(keyid);
+                        scriptChange = GetScriptForDestination(keyid);
 
+                    }
                     // no coin control: send change to newly generated address
                     else
                     {
@@ -1563,7 +1571,7 @@ bool CWallet::CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey)
             CWalletDB* pwalletdb = fFileBacked ? new CWalletDB(strWalletFile,"r") : NULL;
 
             // Take key pair from key pool so it won't be used again
-            reservekey.KeepKey();
+            //reservekey.KeepKey();
 
             // Add tx to wallet, because if it has change it's also ours,
             // otherwise just for transaction history.
@@ -1747,7 +1755,7 @@ bool CWallet::NewKeyPool()
         if (IsLocked())
             return false;
 
-        int64_t nKeys = max(GetArg("-keypool", 100), (int64_t)0);
+        int64_t nKeys = max(GetArg("-keypool", 0), (int64_t)0);
         for (int i = 0; i < nKeys; i++)
         {
             int64_t nIndex = i+1;
@@ -1774,8 +1782,8 @@ bool CWallet::TopUpKeyPool(unsigned int kpSize)
         if (kpSize > 0)
             nTargetSize = kpSize;
         else
-            nTargetSize = max(GetArg("-keypool", 100), (int64_t) 0);
-
+            nTargetSize = max(GetArg("-keypool", 0), (int64_t) 0);
+       // LogPrintf("kpsz %d",nTargetSize);
         while (setKeyPool.size() < (nTargetSize + 1))
         {
             int64_t nEnd = 1;
@@ -1803,7 +1811,7 @@ void CWallet::ReserveKeyFromKeyPool(int64_t& nIndex, CKeyPool& keypool)
         // Get the oldest key
         if(setKeyPool.empty())
             return;
-
+        
         CWalletDB walletdb(strWalletFile);
 
         nIndex = *(setKeyPool.begin());
