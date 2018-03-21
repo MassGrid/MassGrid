@@ -647,18 +647,6 @@ boost::filesystem::path static GetAutostartDir()
     return fs::path();
 }
 
-// boost::filesystem::path static GetDataDir()
-// {
-//     namespace fs = boost::filesystem;
-
-//     char* pszConfigHome = getenv("XDG_CONFIG_HOME");
-//     if (pszConfigHome) return fs::path(pszConfigHome) / "autostart";
-//     char* pszHome = getenv("HOME");
-//     if (pszHome) return fs::path(pszHome) / ".config" / "autostart";
-//     return fs::path();
-// }
-
-
 boost::filesystem::path static GetAutostartFilePath()
 {
     return GetAutostartDir() / "massgrid.desktop";

@@ -117,6 +117,8 @@ private:
     QAction *encryptWalletAction;
     QAction *backupWalletAction;
     QAction *inputWalletAction;
+    QAction *softUpdateAction;
+    
     QAction *changePassphraseAction;
     QAction *aboutQtAction;
     QAction *openRPCConsoleAction;
@@ -173,7 +175,6 @@ public slots:
     void message(const QString &title, const QString &message, unsigned int style, bool *ret = NULL);
     // void updateBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, 
     //                     const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance);
-    void open2DCodePage();
     void showMaxWin();
 
 
@@ -210,6 +211,8 @@ private slots:
     void openClicked();
 
     void inputWalletFile();
+
+    void openWebUrl();
 
 #endif // ENABLE_WALLET
     /** Show configuration dialog */

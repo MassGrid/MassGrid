@@ -1447,7 +1447,7 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, CAmount> >& vecSend,
                         CKeyID keyid;
                         addr.GetKeyID(keyid);
                         scriptChange = GetScriptForDestination(keyid);
-
+                        // std::string strAddress = addr.ToString();
                     }
                     // no coin control: send change to newly generated address
                     else

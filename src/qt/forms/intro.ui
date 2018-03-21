@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>624</width>
-    <height>477</height>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -93,7 +93,7 @@ QFrame#frame{
        <number>27</number>
       </property>
       <property name="topMargin">
-       <number>20</number>
+       <number>24</number>
       </property>
       <property name="rightMargin">
        <number>27</number>
@@ -225,14 +225,21 @@ image: url(:/pic/res/pic/closeBtn.png);
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>为了保证资产安全，请务必将数据目录安装在C盘以外的磁盘中，避免系统故障时登陆不进C盘，导致钱包丢失，以及务必备份好钱包文件。</string>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <property name="leftMargin">
+              <number>0</number>
              </property>
-             <property name="wordWrap">
-              <bool>true</bool>
+             <property name="topMargin">
+              <number>0</number>
              </property>
-            </widget>
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>Data directory:MainView-&gt;Settings-&gt;Options-&gt;Display-&gt;Data Directory Path</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <widget class="QRadioButton" name="dataDirDefault">

@@ -923,7 +923,7 @@ background-color: rgb(255, 255, 255,0);
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_7">
+                 <layout class="QVBoxLayout" name="verticalLayout_10">
                   <item>
                    <widget class="QCheckBox" name="minimizeToTray">
                     <property name="toolTip">

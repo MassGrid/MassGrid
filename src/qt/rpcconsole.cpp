@@ -302,15 +302,22 @@ void RPCConsole::setClientModel(ClientModel *model)
         updateTrafficStats(model->getTotalBytesRecv(), model->getTotalBytesSent());
         connect(model, SIGNAL(bytesChanged(quint64,quint64)), this, SLOT(updateTrafficStats(quint64, quint64)));
 
+        // ui->peerWidget->resizeColumnsToContents();  
+        // ui->peerWidget->resizeRowsToContents();
+
+        ui->peerWidget->setColumnWidth(PeerTableModel::Address, 150);
+        ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, 150);
+        ui->peerWidget->setColumnWidth(PeerTableModel::Ping, 150);        
+
         // set up peer table
         ui->peerWidget->setModel(model->getPeerTableModel());
         ui->peerWidget->verticalHeader()->hide();
         ui->peerWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
         ui->peerWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
         ui->peerWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-        ui->peerWidget->setColumnWidth(PeerTableModel::Address, ADDRESS_COLUMN_WIDTH);
-        ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, SUBVERSION_COLUMN_WIDTH);
-        ui->peerWidget->setColumnWidth(PeerTableModel::Ping, PING_COLUMN_WIDTH+10);
+        // ui->peerWidget->setColumnWidth(PeerTableModel::Address, 200); //ADDRESS_COLUMN_WIDTH
+        // ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, 185); //SUBVERSION_COLUMN_WIDTH
+        // ui->peerWidget->setColumnWidth(PeerTableModel::Ping, 185); //PING_COLUMN_WIDTH+10
 
         ui->peerWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -646,13 +653,18 @@ void RPCConsole::resizeEvent(QResizeEvent *event)
     // ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, SUBVERSION_COLUMN_WIDTH);
     // ui->peerWidget->setColumnWidth(PeerTableModel::Ping, PING_COLUMN_WIDTH+10);
 
-    int width = ui->peerWidget->width()/9*4;
-    int width2 = ui->peerWidget->width()/9*3;
-    int width3 = ui->peerWidget->width()/9*2.5;
+    // int width = ui->peerWidget->width()/9*4>150?ui->peerWidget->width()/9*4:150;
+    // int width2 = ui->peerWidget->width()/9*3>120?ui->peerWidget->width()/9*3:120;
+    // int width3 = ui->peerWidget->width()/9*2.5>120?ui->peerWidget->width()/9*2.5:120;
 
-    ui->peerWidget->setColumnWidth(PeerTableModel::Address, width);
-    ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, width2);
-    ui->peerWidget->setColumnWidth(PeerTableModel::Ping, width3);
+    // ui->peerWidget->setColumnWidth(PeerTableModel::Address, width);
+    // ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, width2);
+    // ui->peerWidget->setColumnWidth(PeerTableModel::Ping, width3);
+
+    ui->peerWidget->setColumnWidth(PeerTableModel::Address, 170);
+    ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, 150);
+    ui->peerWidget->setColumnWidth(PeerTableModel::Ping, 150); 
+
     QWidget::resizeEvent(event);
 }
 
@@ -699,12 +711,3 @@ void RPCConsole::mouseReleaseEvent(QMouseEvent *e)
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));
 }
-
-// void RPCConsole::resizeEvent(QResizeEvent *event)
-// {
-//     int width = ui->peerWidget->width() - ADDRESS_COLUMN_WIDTH - SUBVERSION_COLUMN_WIDTH;
-//     // ui->peerWidget->setColumnWidth(PeerTableModel::Address, ADDRESS_COLUMN_WIDTH);
-//     // ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, SUBVERSION_COLUMN_WIDTH);
-//     ui->peerWidget->setColumnWidth(PeerTableModel::Ping, width);
-
-// }

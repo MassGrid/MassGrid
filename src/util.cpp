@@ -387,7 +387,7 @@ boost::filesystem::path GetDefaultDataDir()
     // Unix: ~/.massgrid
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "MassGrid";
+    return GetSpecialFolderPath(CSIDL_PERSONAL) / "MassGrid";  //CSIDL_APPDATA
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -402,7 +402,7 @@ boost::filesystem::path GetDefaultDataDir()
     return pathRet / "MassGrid";
 #else
     // Unix
-    return pathRet / "massgrid";
+    return pathRet / "MassGrid";
 #endif
 #endif
 }

@@ -388,7 +388,7 @@ QToolButton{
 </string>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>3</number>
              </property>
              <widget class="QWidget" name="tab_info">
               <attribute name="title">
@@ -1314,6 +1314,18 @@ QSlider::sub-page:horizontal{
               <layout class="QGridLayout" name="gridLayout_2">
                <item row="0" column="0" rowspan="2">
                 <widget class="QTableView" name="peerWidget">
+                 <property name="minimumSize">
+                  <size>
+                   <width>470</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>470</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>

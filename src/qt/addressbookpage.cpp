@@ -14,6 +14,8 @@
 #include "csvmodelwriter.h"
 #include "editaddressdialog.h"
 #include "guiutil.h"
+#include "wallet.h"
+#include "walletmodel.h"
 
 #include <QIcon>
 #include <QMenu>
@@ -149,7 +151,6 @@ void AddressBookPage::setModel(AddressTableModel *model)
     connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(selectNewAddress(QModelIndex,int,int)));
 
     selectionChanged();
-
 }
 
 void AddressBookPage::on_copyAddress_clicked()
@@ -234,15 +235,17 @@ void AddressBookPage::selectionChanged()
             ui->deleteAddress->setEnabled(true);
             ui->deleteAddress->setVisible(true);
             deleteAction->setEnabled(true);
+            ui->copyAddress->setEnabled(true);
             break;
         case ReceivingTab:
             // Deleting receiving addresses, however, is not allowed
             ui->deleteAddress->setEnabled(false);
             ui->deleteAddress->setVisible(false);
             deleteAction->setEnabled(false);
+            ui->newAddress->setEnabled(false);
             break;
         }
-        ui->copyAddress->setEnabled(true);
+        // ui->copyAddress->setEnabled(true);
     }
     else
     {

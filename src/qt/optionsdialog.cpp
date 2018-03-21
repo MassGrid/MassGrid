@@ -119,6 +119,7 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     this->setAttribute(Qt::WA_TranslucentBackground);
 
     ui->dataDirPath->setText(GetDataDir().string().c_str());
+
 }
 
 OptionsDialog::~OptionsDialog()

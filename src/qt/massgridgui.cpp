@@ -52,6 +52,7 @@
 #include <QVBoxLayout>
 #include <QSpacerItem>
 #include <QFileDialog>
+#include <QDesktopServices>
 
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
@@ -283,7 +284,6 @@ void MassGridGUI::createMainWin(const NetworkStyle *networkStyle)
     connect(m_mainTitle,SIGNAL(sgl_showMin()),this,SLOT(showMinimized()));
     connect(m_mainTitle,SIGNAL(sgl_showMax()),this,SLOT(showMaxWin())); 
 
-    connect(m_mainTitle,SIGNAL(sgl_open2DCodePage()),this,SLOT(open2DCodePage()));
     connect(this,SIGNAL(updateBalance(QString,QString,QString)),m_mainTitle,SLOT(updateBalance(QString ,QString ,QString )));
 
 #ifdef ENABLE_WALLET
@@ -331,21 +331,11 @@ void MassGridGUI::createMainWin(const NetworkStyle *networkStyle)
 
 void MassGridGUI::updateAddr(WalletModel *walletModel)
 {
-    // m_mainTitle->setModel(walletModel->getAddressTableModel());
     AddressTableModel *addrmodel = walletModel->getAddressTableModel();
     if(!addrmodel)
         return ;
     m_mainTitle->setModel(walletModel);
     m_mainTitle->loadRow(0);
-}
-
-void MassGridGUI::open2DCodePage()
-{
-    // AddressTableModel *addrmodel = walletFrame->getWalletModel()->getAddressTableModel();
-    // if(!addrmodel)
-    //     return ;
-    // m_mainTitle->setModel(addrmodel);
-    // m_mainTitle->loadRow(0);
 }
 
 void MassGridGUI::showMaxWin()
@@ -507,7 +497,9 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
 
     inputWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&input Wallet..."), this);
     inputWalletAction->setStatusTip(tr("input wallet file"));
-    
+
+    softUpdateAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&检测更新"), this);
+    softUpdateAction->setStatusTip(tr("检测更新"));
 
     changePassphraseAction = new QAction(QIcon(":/pic/res/pic/menuicon/key.png"), tr("&Change Passphrase..."), this);
     changePassphraseAction->setStatusTip(tr("Change the passphrase used for wallet encryption"));
@@ -548,6 +540,8 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
         connect(encryptWalletAction, SIGNAL(triggered(bool)), walletFrame, SLOT(encryptWallet(bool)));
         connect(backupWalletAction, SIGNAL(triggered()), walletFrame, SLOT(backupWallet()));
         connect(inputWalletAction, SIGNAL(triggered()), this, SLOT(inputWalletFile()));
+        connect(softUpdateAction, SIGNAL(triggered()), this, SLOT(openWebUrl()));
+        
         connect(changePassphraseAction, SIGNAL(triggered()), walletFrame, SLOT(changePassphrase()));
         connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
         connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
@@ -586,6 +580,7 @@ void MassGridGUI::createMenuBar()
         file->addSeparator();
         file->addAction(usedSendingAddressesAction);
         file->addAction(usedReceivingAddressesAction);
+        file->addAction(softUpdateAction);
         // file->addSeparator();
     }
     // file->addAction(quitAction);
@@ -691,7 +686,6 @@ void MassGridGUI::setClientModel(ClientModel *clientModel)
 
 //     //     m_mainTitle->updateBalance(balance,unconfirmed,total);
 //     // }
-
 // }
 
 #ifdef ENABLE_WALLET
@@ -699,7 +693,11 @@ bool MassGridGUI::addWallet(const QString& name, WalletModel *walletModel)
 {
     if(!walletFrame)
         return false;
+
+    static int index =1;
+
     setWalletActionsEnabled(true);
+
     updateAddr(walletModel);
     return walletFrame->addWallet(name, walletModel);
 }
@@ -1334,6 +1332,11 @@ void MassGridGUI::inputWalletFile()
     //     qDebug() << "copy file sucess!";
     // else
     //     qDebug() << "copy file fail!";
+}
+
+void MassGridGUI::openWebUrl()
+{
+    QDesktopServices::openUrl(QUrl("https://www.massgrid.com/"));
 }
 
 bool MassGridGUI::copyFileToPath(QString sourceDir ,QString toDir, bool coverFileIfExist)
