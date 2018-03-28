@@ -41,6 +41,8 @@ public:
         CMD_ERROR
     };
 
+    static void RunCommand(const QString& command,int& category,QString &retCommand);
+
 protected:
     virtual bool eventFilter(QObject* obj, QEvent *event);
 

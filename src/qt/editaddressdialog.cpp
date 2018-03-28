@@ -9,7 +9,7 @@
 #include "guiutil.h"
 
 #include <QDataWidgetMapper>
-#include <QMessageBox>
+#include "cmessagebox.h"
 
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     QDialog(parent),
@@ -111,24 +111,24 @@ void EditAddressDialog::accept()
             // No changes were made during edit operation. Just reject.
             break;
         case AddressTableModel::INVALID_ADDRESS:
-            QMessageBox::warning(this, windowTitle(),
+            CMessageBox::warning(this, windowTitle(),
                 tr("The entered address \"%1\" is not a valid MassGrid address.").arg(ui->addressEdit->text()),
-                QMessageBox::Ok, QMessageBox::Ok);
+                CMessageBox::Ok, CMessageBox::Ok);
             break;
         case AddressTableModel::DUPLICATE_ADDRESS:
-            QMessageBox::warning(this, windowTitle(),
+            CMessageBox::warning(this, windowTitle(),
                 tr("The entered address \"%1\" is already in the address book.").arg(ui->addressEdit->text()),
-                QMessageBox::Ok, QMessageBox::Ok);
+                CMessageBox::Ok, CMessageBox::Ok);
             break;
         case AddressTableModel::WALLET_UNLOCK_FAILURE:
-            QMessageBox::critical(this, windowTitle(),
+            CMessageBox::critical(this, windowTitle(),
                 tr("Could not unlock wallet."),
-                QMessageBox::Ok, QMessageBox::Ok);
+                CMessageBox::Ok, CMessageBox::Ok);
             break;
         case AddressTableModel::KEY_GENERATION_FAILURE:
-            QMessageBox::critical(this, windowTitle(),
+            CMessageBox::critical(this, windowTitle(),
                 tr("New key generation failed."),
-                QMessageBox::Ok, QMessageBox::Ok);
+                CMessageBox::Ok, CMessageBox::Ok);
             break;
 
         }
@@ -146,4 +146,24 @@ void EditAddressDialog::setAddress(const QString &address)
 {
     // this->address = address;
     // ui->addressEdit->setText(address);
+}
+
+void EditAddressDialog::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void EditAddressDialog::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void EditAddressDialog::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
 }

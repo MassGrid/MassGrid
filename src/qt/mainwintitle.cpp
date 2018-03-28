@@ -1,12 +1,12 @@
 #include "mainwintitle.h"
 #include "ui_mainwintitle.h"
-#include <QMessageBox>
 #include <QSortFilterProxyModel>
 #include "addresstablemodel.h"
 #include "receiverequestdialog.h"
 #include "editaddressdialog.h"
 #include "massgridgui.h"
 #include "wallet.h"
+#include "guiutil.h"
 
 #ifdef ENABLE_WALLET
 #include "walletmodel.h"
@@ -61,10 +61,14 @@ bool MainwinTitle::pressFlag()
 	return m_mousePress;
 }
 
-void MainwinTitle::updateBalance(QString balance,QString unconfirmed,QString total)
+void MainwinTitle::updateBalance(QString balance,QString unconfirmed,QString immature,bool showImmature,bool showWatchOnlyImmature,QString total)
 {
 	ui->label_balance->setText(balance);
 	ui->label_unconfirmed->setText(unconfirmed);
+    ui->labelWatchImmature->setText(immature);
+
+    ui->labelWatchImmature->setVisible(showImmature||showWatchOnlyImmature); // show watch-only immature balance
+    ui->labelmmatureText->setVisible(showImmature||showWatchOnlyImmature);
 	ui->label_total->setText(total);
 }
 
@@ -136,7 +140,7 @@ void MainwinTitle::setButtonText(const QString& overview,const QString& send,con
 {
 	ui->toolButton->setText(overview);
 	ui->toolButton_2->setText(send);
-	ui->toolButton_3->setText(Transactions);
+	ui->transactionButton->setText(Transactions);
 }
 
 void MainwinTitle::on_toolButton_clicked()
@@ -151,7 +155,7 @@ void MainwinTitle::on_toolButton_2_clicked()
 	emit sgl_showSendPage();
 }
 
-void MainwinTitle::on_toolButton_3_clicked()
+void MainwinTitle::on_transactionButton_clicked()
 {
 	setLabelStyle(ui->label_transactions);
 	emit sgl_showExchangePage();
@@ -187,7 +191,13 @@ void MainwinTitle::setModel(WalletModel *model)
     m_mapper->setModel(proxyModel);
     // mapper->addMapping(ui->labelEdit, AddressTableModel::Label);
     m_mapper->addMapping(ui->addressEdit, AddressTableModel::Address);
+
 }
+
+// QString mainwintitle::getReceiveAddr()
+// {
+//     return ui->addressEdit->text();
+// }
 
     // SendCoinsRecipient info(address, label,
     //     ui->reqAmount->value(), ui->reqMessage->text());
@@ -213,9 +223,17 @@ void MainwinTitle::open2DCodePage()
 void MainwinTitle::loadRow(int row)
 {
     m_mapper->setCurrentIndex(row);
+
+    GUIUtil::setReceiveAddr(ui->addressEdit->text());
 }
 
 void MainwinTitle::setTitle(const QString& titleName)
 {
     ui->label_title->setText(titleName);
+}
+
+void MainwinTitle::setTransactionButtonStyle()
+{
+    // on_transactionButton_clicked();
+    setLabelStyle(ui->label_transactions);
 }

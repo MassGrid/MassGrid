@@ -58,6 +58,9 @@ class RPCExecutor : public QObject
 {
     Q_OBJECT
 
+public:
+    void request(const QString& command,int& category,QString& retCommand);
+
 public slots:
     void request(const QString &command);
 
@@ -199,6 +202,67 @@ void RPCExecutor::request(const QString &command)
     }
 }
 
+
+void RPCExecutor::request(const QString& command,int& category,QString& retCommand)
+{
+        std::vector<std::string> args;
+    if(!parseCommandLine(args, command.toStdString()))
+    {
+        // emit reply(RPCConsole::CMD_ERROR, QString("Parse error: unbalanced ' or \""));
+        category = RPCConsole::CMD_ERROR;
+        retCommand = QString("Parse error: unbalanced ' or \"");
+        return;
+    }
+    if(args.empty())
+        return; // Nothing to do
+    try
+    {
+        std::string strPrint;
+        // Convert argument list to JSON objects in method-dependent way,
+        // and pass it along with the method name to the dispatcher.
+        json_spirit::Value result = tableRPC.execute(
+            args[0],
+            RPCConvertValues(args[0], std::vector<std::string>(args.begin() + 1, args.end())));
+
+        // Format result reply
+        if (result.type() == json_spirit::null_type)
+            strPrint = "";
+        else if (result.type() == json_spirit::str_type)
+            strPrint = result.get_str();
+        else
+            strPrint = write_string(result, true);
+
+        // emit reply(RPCConsole::CMD_REPLY, QString::fromStdString(strPrint));
+        category = RPCConsole::CMD_REPLY;
+        retCommand = QString::fromStdString(strPrint);
+    }
+    catch (json_spirit::Object& objError)
+    {
+        try // Nice formatting for standard-format error
+        {
+            int code = find_value(objError, "code").get_int();
+            std::string message = find_value(objError, "message").get_str();
+            // emit reply(RPCConsole::CMD_ERROR, QString::fromStdString(message) + " (code " + QString::number(code) + ")");
+            category = RPCConsole::CMD_ERROR;
+            retCommand = QString::fromStdString(message) + " (code " + QString::number(code) + ")";
+        }
+        catch(std::runtime_error &) // raised when converting to invalid type, i.e. missing code or message
+        {   // Show raw JSON object
+            // emit reply(RPCConsole::CMD_ERROR, QString::fromStdString(write_string(json_spirit::Value(objError), false)));
+            category = RPCConsole::CMD_ERROR;
+            retCommand = QString::fromStdString(write_string(json_spirit::Value(objError), false));
+
+        }
+    }
+    catch (std::exception& e)
+    {
+        // emit reply(RPCConsole::CMD_ERROR, QString("Error: ") + QString::fromStdString(e.what()));
+        category = RPCConsole::CMD_ERROR;
+        retCommand = QString("Error: ") + QString::fromStdString(e.what());
+    }
+}
+
+
 RPCConsole::RPCConsole(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RPCConsole),
@@ -248,6 +312,12 @@ RPCConsole::~RPCConsole()
     GUIUtil::saveWindowGeometry("nRPCConsoleWindow", this);
     emit stopExecutor();
     delete ui;
+}
+
+void RPCConsole::RunCommand(const QString& command,int& category,QString &retCommand)
+{
+    RPCExecutor executor;
+    executor.request(command,category,retCommand);
 }
 
 bool RPCConsole::eventFilter(QObject* obj, QEvent *event)

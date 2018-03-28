@@ -1,0 +1,131 @@
+#include "cmessagebox.h"
+#include "ui_cmessagebox.h"
+#include "massgridgui.h"
+#include <QDebug>
+
+CMessageBox::CMessageBox(QWidget *parent,QString title,QString text) :
+    QDialog(0),
+    ui(new Ui::CMessageBox)
+{
+    ui->setupUi(this);
+
+    setWindowFlags(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_TranslucentBackground);
+
+    ui->helpMessageLabel->setTextFormat(Qt::RichText);
+    ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->label_titleName->setText(title);
+    ui->helpMessageLabel->setText(text);
+
+
+    if(parent!=0){
+        QPoint pos = MassGridGUI::winPos();
+        QSize size = MassGridGUI::winSize();
+        move(pos.x()+(size.width()-width())/2,pos.y()+(size.height()-height())/2);
+    }
+}
+
+CMessageBox::~CMessageBox()
+{
+    delete ui;
+}
+
+void CMessageBox::setmode(StandardButton mode)
+{
+    switch (mode) {
+    case Ok:
+    {
+        ui->closeButton->setVisible(false);
+        ui->okButton->setVisible(false);
+    }
+        break;
+    case Cancel:
+        ui->okButton->setVisible(false);
+        ui->okButton2->setVisible(false);
+        break;
+    case Ok_Cancel:
+        ui->okButton2->setVisible(false);
+        break;
+    default:
+        break;
+    }
+}
+
+CMessageBox::StandardButton CMessageBox::information(QWidget *parent, const QString &title,
+                                   const QString &text, StandardButton buttons,
+                                   StandardButton defaultButton)
+{
+    CMessageBox dlg(parent,title,text);
+    dlg.setmode(buttons);
+
+    if(dlg.exec() == QDialog::Accepted){
+        return Ok;
+    }
+    else {
+        return Cancel;
+    }
+}
+
+CMessageBox::StandardButton CMessageBox::critical(QWidget *parent, const QString &title,
+     const QString &text, StandardButton buttons,
+     StandardButton defaultButton)
+{
+    CMessageBox dlg(parent,title,text);
+    dlg.setmode(buttons);
+
+    if(dlg.exec() == QDialog::Accepted){
+        return Ok;
+    }
+    else {
+        return Cancel;
+    }
+}
+
+CMessageBox::StandardButton CMessageBox::question(QWidget *parent, const QString &title,
+     const QString &text, StandardButton buttons,StandardButton defaultButton)
+{
+    CMessageBox dlg(parent,title,text);
+    dlg.setmode(buttons);
+
+    if(dlg.exec() == QDialog::Accepted){
+        return Ok;
+    }
+    else {
+        return Cancel;
+    }
+}
+
+CMessageBox::StandardButton CMessageBox::warning(QWidget *parent, const QString &title,
+     const QString &text, StandardButton buttons,StandardButton defaultButton)
+{
+    CMessageBox dlg(parent,title,text);
+    dlg.setmode(buttons);
+
+    if(dlg.exec() == QDialog::Accepted){
+        return Ok;
+    }
+    else {
+        return Cancel;
+    }
+}
+
+
+void CMessageBox::mousePressEvent(QMouseEvent *e)
+{
+    m_last = e->globalPos();
+}
+
+void CMessageBox::mouseMoveEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void CMessageBox::mouseReleaseEvent(QMouseEvent *e)
+{
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}

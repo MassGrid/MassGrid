@@ -16,7 +16,10 @@ FORMS += \
     ../src/qt/forms/sendcoinsentry.ui \
     ../src/qt/forms/signverifymessagedialog.ui \
     ../src/qt/forms/transactiondescdialog.ui \
-    ../src/qt/forms/mainwintitle.ui
+    ../src/qt/forms/mainwintitle.ui\
+    ../src/qt/forms/cmessagebox.ui \
+    ../src/qt/forms/privkeymgr.ui
+
 
 RESOURCES += \
     ../src/qt/massgrid.qrc

@@ -15,6 +15,8 @@
 #include "optionsmodel.h"
 #include "rpcconsole.h"
 #include "utilitydialog.h"
+#include "miner.h"
+#include "cupdatethread.h"
 
 #ifdef ENABLE_WALLET
 #include "walletframe.h"
@@ -28,6 +30,8 @@
 #include "init.h"
 #include "ui_interface.h"
 #include "util.h"
+#include "cmessagebox.h"
+#include "privkeymgr.h"
 
 #include <iostream>
 
@@ -40,6 +44,7 @@
 #include <QListWidget>
 #include <QMenuBar>
 #include <QMessageBox>
+
 #include <QMimeData>
 #include <QProgressBar>
 #include <QProgressDialog>
@@ -53,6 +58,8 @@
 #include <QSpacerItem>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <QTimer>
+#include <QEventLoop>
 
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
@@ -96,13 +103,17 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     openRPCConsoleAction(0),
     openAction(0),
     showHelpMessageAction(0),
+    importPrivKeyAction(0),
+    dumpPrivKeyAction(0),
     trayIcon(0),
     trayIconMenu(0),
     notificator(0),
     rpcConsole(0),
     prevBlocks(0),
     spinnerFrame(0),
-    m_mainTitle(0)
+    m_mainTitle(0),
+    m_updateClientThread(0)
+
 {
     GUIUtil::restoreWindowGeometry("nWindow", QSize(850,650),this);
 
@@ -253,10 +264,14 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
 
     // Subscribe to notifications from core
     subscribeToCoreSignals();
+
     setWindowFlags(Qt::FramelessWindowHint);
     resize(850,650);
     m_winPos = this->pos();
     m_winSize = this->size();
+
+    /*start time to open update thread*/
+    QTimer::singleShot(10000, this, SLOT(startUpdateThread()));
 }
 
 MassGridGUI::~MassGridGUI()
@@ -267,6 +282,17 @@ MassGridGUI::~MassGridGUI()
     GUIUtil::saveWindowGeometry("nWindow", this);
     if(trayIcon) // Hide tray icon, as deleting will let it linger until quit (on Ubuntu)
         trayIcon->hide();
+
+    if(m_updateClientThread != 0){
+        QEventLoop loop;
+        connect(m_updateClientThread,SIGNAL(threadStoped()),&loop,SLOT(quit()));
+        m_updateClientThread->stopThread();
+        loop.exec();
+        m_updateClientThread->quit();
+        m_updateClientThread->wait();
+        delete m_updateClientThread;
+    }
+
 // #ifdef Q_OS_MAC
 //     delete appMenuBar;
 //     MacDockIconHandler::cleanup();
@@ -284,7 +310,7 @@ void MassGridGUI::createMainWin(const NetworkStyle *networkStyle)
     connect(m_mainTitle,SIGNAL(sgl_showMin()),this,SLOT(showMinimized()));
     connect(m_mainTitle,SIGNAL(sgl_showMax()),this,SLOT(showMaxWin())); 
 
-    connect(this,SIGNAL(updateBalance(QString,QString,QString)),m_mainTitle,SLOT(updateBalance(QString ,QString ,QString )));
+    connect(this,SIGNAL(updateBalance(QString,QString,QString,bool,bool,QString)),m_mainTitle,SLOT(updateBalance(QString ,QString ,QString,bool,bool,QString)));
 
 #ifdef ENABLE_WALLET
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
@@ -384,14 +410,6 @@ void MassGridGUI::createBackgroundWin()
     centerWin->setLayout(backgroudlayout);
 }
 
-// void MassGridGUI::updateBalance(QString balance,QString ,QString total)
-// {
-//     m_mainTitle->updateBalance();
-// }
-
-
-//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
-//接下来就是对三个鼠标事件的重写
 void MassGridGUI::mousePressEvent(QMouseEvent *e)
 {
     m_last = e->globalPos();
@@ -419,6 +437,21 @@ void MassGridGUI::mouseReleaseEvent(QMouseEvent *e)
     int dy = e->globalY() - m_last.y();
     m_winPos = QPoint(this->x()+dx, this->y()+dy);
     this->move(m_winPos);
+}
+
+void MassGridGUI::resizeEvent(QResizeEvent*)
+{
+    m_winSize = this->size();
+}
+
+void MassGridGUI::startUpdateThread()
+{
+    if(m_updateClientThread == 0){
+        m_updateClientThread = new CUpdateThread(this);
+        connect(m_updateClientThread,SIGNAL(updateClient(QString,bool)),this,SLOT(updateClient(QString,bool)));
+    }
+    LogPrintStr("start to scan update client.\n");
+    m_updateClientThread->start();
 }
 
 void MassGridGUI::createActions(const NetworkStyle *networkStyle)
@@ -495,11 +528,11 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
     backupWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&Backup Wallet..."), this);
     backupWalletAction->setStatusTip(tr("Backup wallet to another location"));
 
-    inputWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&input Wallet..."), this);
-    inputWalletAction->setStatusTip(tr("input wallet file"));
+    inputWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&Import Wallet..."), this);
+    inputWalletAction->setStatusTip(tr("Import wallet file"));
 
-    softUpdateAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&检测更新"), this);
-    softUpdateAction->setStatusTip(tr("检测更新"));
+    softUpdateAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&Soft Update"), this);
+    softUpdateAction->setStatusTip(tr("Soft Update"));
 
     changePassphraseAction = new QAction(QIcon(":/pic/res/pic/menuicon/key.png"), tr("&Change Passphrase..."), this);
     changePassphraseAction->setStatusTip(tr("Change the passphrase used for wallet encryption"));
@@ -524,6 +557,12 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
     showHelpMessageAction->setMenuRole(QAction::NoRole);
     showHelpMessageAction->setStatusTip(tr("Show the MassGrid Core help message to get a list with possible MassGrid command-line options"));
 
+    importPrivKeyAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Import privkey"), this);
+    importPrivKeyAction->setStatusTip(tr("import the private key."));
+
+    dumpPrivKeyAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Dump privkey"), this);
+    dumpPrivKeyAction->setStatusTip(tr("dump out the private key."));
+
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutClicked()));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -540,7 +579,7 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
         connect(encryptWalletAction, SIGNAL(triggered(bool)), walletFrame, SLOT(encryptWallet(bool)));
         connect(backupWalletAction, SIGNAL(triggered()), walletFrame, SLOT(backupWallet()));
         connect(inputWalletAction, SIGNAL(triggered()), this, SLOT(inputWalletFile()));
-        connect(softUpdateAction, SIGNAL(triggered()), this, SLOT(openWebUrl()));
+        connect(softUpdateAction, SIGNAL(triggered()), this, SLOT(checkoutUpdateClient()));
         
         connect(changePassphraseAction, SIGNAL(triggered()), walletFrame, SLOT(changePassphrase()));
         connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
@@ -548,6 +587,10 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
         connect(usedSendingAddressesAction, SIGNAL(triggered()), walletFrame, SLOT(usedSendingAddresses()));
         connect(usedReceivingAddressesAction, SIGNAL(triggered()), walletFrame, SLOT(usedReceivingAddresses()));
         connect(openAction, SIGNAL(triggered()), this, SLOT(openClicked()));
+
+        connect(importPrivKeyAction, SIGNAL(triggered()), this, SLOT(importPrivkey()));
+        connect(dumpPrivKeyAction, SIGNAL(triggered()), this, SLOT(dumpPrivkey()));
+
     }
 #endif // ENABLE_WALLET
 }
@@ -581,6 +624,8 @@ void MassGridGUI::createMenuBar()
         file->addAction(usedSendingAddressesAction);
         file->addAction(usedReceivingAddressesAction);
         file->addAction(softUpdateAction);
+        file->addAction(importPrivKeyAction);
+        file->addAction(dumpPrivKeyAction);
         // file->addSeparator();
     }
     // file->addAction(quitAction);
@@ -649,16 +694,6 @@ void MassGridGUI::setClientModel(ClientModel *clientModel)
         if(walletFrame)
         {
             walletFrame->setClientModel(clientModel);
-
-            // setBalance(clientModel->getBalance(), clientModel->getUnconfirmedBalance(), clientModel->getImmatureBalance(),
-            //             clientModel->getWatchBalance(), clientModel->getWatchUnconfirmedBalance(), clientModel->getWatchImmatureBalance());
-
-            // connect(clientModel, SIGNAL(balanceChanged(CAmount,CAmount,CAmount,CAmount,CAmount,CAmount)), 
-            //     this, SLOT(updateBalance(CAmount,CAmount,CAmount,CAmount,CAmount,CAmount)));
-
-        //             // Keep up to date with wallet
-
-
         }
 #endif // ENABLE_WALLET
         unitDisplayControl->setOptionsModel(clientModel->getOptionsModel());
@@ -673,28 +708,11 @@ void MassGridGUI::setClientModel(ClientModel *clientModel)
     }
 }
 
-// void MassGridGUI::updateBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, 
-//     const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance)
-// {
-
-//     // if(clientModel){
-//     //     int unit = clientModel->getOptionsModel()->getDisplayUnit();
-
-//     //     QString balance = MassGridUnits::formatWithUnit(unit, balance, false); //, MassGridUnits::separatorAlways
-//     //     QString unconfirmed = MassGridUnits::formatWithUnit(unit, unconfirmedBalance);//, false, MassGridUnits::separatorAlways
-//     //     QString total = MassGridUnits::formatWithUnit(unit, balance + unconfirmedBalance + immatureBalance, false);//, MassGridUnits::separatorAlways
-
-//     //     m_mainTitle->updateBalance(balance,unconfirmed,total);
-//     // }
-// }
-
 #ifdef ENABLE_WALLET
 bool MassGridGUI::addWallet(const QString& name, WalletModel *walletModel)
 {
     if(!walletFrame)
         return false;
-
-    static int index =1;
 
     setWalletActionsEnabled(true);
 
@@ -736,17 +754,6 @@ void MassGridGUI::setWalletActionsEnabled(bool enabled)
 
 void MassGridGUI::createTrayIcon(const NetworkStyle *networkStyle)
 {
-// #ifndef Q_OS_MAC
-//     trayIcon = new QSystemTrayIcon(this);
-//     QString toolTip = tr("MassGrid Core client") + " " + networkStyle->getTitleAddText();
-//     trayIcon->setToolTip(toolTip);
-//     trayIcon->setIcon(networkStyle->getAppIcon());
-//     trayIcon->show();
-// #endif
-
-//     notificator = new Notificator(QApplication::applicationName(), trayIcon, this);
-
-
 #ifndef Q_OS_MAC
     trayIcon = new QSystemTrayIcon(this);
     QString toolTip = tr("MassGrid Core client") + " " + networkStyle->getTitleAddText();
@@ -883,6 +890,21 @@ void MassGridGUI::openClicked()
     }
 }
 
+void MassGridGUI::importPrivkey()
+{
+    
+    PrivKeyMgr dlg(true,0);
+    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
+    dlg.exec();
+}
+
+void MassGridGUI::dumpPrivkey()
+{
+    PrivKeyMgr dlg(false,0);
+    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
+    dlg.exec();
+}
+
 void MassGridGUI::gotoOverviewPage()
 {
     overviewAction->setChecked(true);
@@ -891,6 +913,7 @@ void MassGridGUI::gotoOverviewPage()
 
 void MassGridGUI::gotoHistoryPage()
 {
+    m_mainTitle->setTransactionButtonStyle();
     historyAction->setChecked(true);
     if (walletFrame) walletFrame->gotoHistoryPage();
 }
@@ -1289,6 +1312,26 @@ void MassGridGUI::showProgress(const QString &title, int nProgress)
         progressDialog->setValue(nProgress);
 }
 
+void MassGridGUI::updateClient(QString version,bool stopMinerFlag)
+{
+    openWebUrl(version,stopMinerFlag);
+}
+
+void MassGridGUI::checkoutUpdateClient()
+{
+    QString version;
+    bool stopMinerFlag = false;
+    bool needUpdate = false;
+    CUpdateThread::ChecketUpdate(needUpdate,version,stopMinerFlag);
+
+    if(needUpdate)
+        updateClient(version,stopMinerFlag);
+    else
+        CMessageBox::information(this, tr("Soft Update"),tr("Your version is up to date."));
+
+// Your version is up to date.
+}
+
 static bool ThreadSafeMessageBox(MassGridGUI *gui, const std::string& message, const std::string& caption, unsigned int style)
 {
     bool modal = (style & CClientUIInterface::MODAL);
@@ -1306,7 +1349,6 @@ static bool ThreadSafeMessageBox(MassGridGUI *gui, const std::string& message, c
     return ret;
 }
 
-
 void MassGridGUI::subscribeToCoreSignals()
 {
     // Connect signals to client
@@ -1321,22 +1363,63 @@ void MassGridGUI::unsubscribeFromCoreSignals()
 
 void MassGridGUI::inputWalletFile()
 {
+    // CMessageBox::warning(this, tr("Inport Wallet"),
+    //                  "<qt>" +
+    //                  tr("MassGrid will close now to finish the encryption process. "
+    //                  "Remember that encrypting your wallet cannot fully protect "
+    //                  "your massgrids from being stolen by malware infecting your computer.") +
+    //                  "<br><br><b>" +
+    //                  tr("IMPORTANT: Any previous backups you have made of your wallet file "
+    //                  "should be replaced with the newly generated, encrypted wallet file. "
+    //                  "For security reasons, previous backups of the unencrypted wallet file "
+    //                  "will become useless as soon as you start using the new, encrypted wallet.") +
+    //                  "</b></qt>");
+    //                 QApplication::quit();
+
+    CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Import Wallet"),
+            tr("Import wallet file will cover the old one,please back up your old wallet."),
+            CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+    if(btnRetVal == CMessageBox::Cancel)
+        return;
+
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                       "/home",
                                                       tr("Wallat (*.dat)"));
     QString curdir = GetDataDir().string().c_str();
 
-    copyFileToPath(fileName,curdir,true);
+    // copyFileToPath(fileName,curdir,true);
 
-    // if(copyFileToPath(fileName,curdir,true))
-    //     qDebug() << "copy file sucess!";
-    // else
-    //     qDebug() << "copy file fail!";
+    if(copyFileToPath(fileName,curdir,true)){
+        // qDebug() << "copy file sucess!";
+        CMessageBox::warning(this, tr("Import Wallet"),
+             "<qt>" +
+             tr("MassGrid will close now to update the Wallet. ")
+             +"</qt>");
+        QApplication::quit();
+    }
+    else{
+        // qDebug() << "copy file fail!";
+        CMessageBox::warning(this, tr("Import Error"),
+             "<qt>" +
+             tr("Import wallet error,please checkout the wallet file is exists.")
+             +"</qt>");
+    }
 }
 
-void MassGridGUI::openWebUrl()
+void MassGridGUI::openWebUrl(const QString& version,bool stopMinerFlag)
 {
-    QDesktopServices::openUrl(QUrl("https://www.massgrid.com/"));
+    //get network checkout 
+    //TODO:If need to stop rpc
+    if(stopMinerFlag)
+        StopMiner();
+
+    CMessageBox::information(this, tr("Soft Update"),
+                tr("Checkout an Update,version is %1.").arg(version) + "<br><br>" + 
+                tr("We will open the downloads url,or you can open this url to download the new Application.") + "<br><br>" + 
+                "https://www.massgrid.com/downloads.html?language=en");
+                        
+    QDesktopServices::openUrl(QUrl("https://www.massgrid.com/downloads.html?language=en"));
 }
 
 bool MassGridGUI::copyFileToPath(QString sourceDir ,QString toDir, bool coverFileIfExist)
@@ -1389,26 +1472,6 @@ void UnitDisplayStatusBarControl::createContextMenu()
         menuAction->setData(QVariant(u));
         menu->addAction(menuAction);
     }
-
-    // menu->setStyleSheet(
-    //     " QMenu {\
-    //     color:rgb(255,255,255);\
-    //     background-color: rgb(198,125,26); /* sets background of the menu 设置整个菜单区域的背景色，我用的是白色：white*/\
-    //     /*border: 1px solid white;整个菜单区域的边框粗细、样式、颜色*/\
-    // }\
-    // QMenu::item {\
-    //     min-width:60px;\
-    //     min-height:30px;\
-    //     color:rgb(255,255,255);\
-    //     background-color: transparent;\
-    //     padding:0px 0px 0px 0px;/*设置菜单项文字上下和左右的内边距，效果就是菜单中的条目左右上下有了间隔*/\
-    //     /*margin:1px 1px;设置菜单项的外边距*/\
-    //     /*border-bottom:1px solid #DBDBDB;为菜单项之间添加横线间隔*/\
-    // }\
-    // QMenu::item:selected { /* when user selects item using mouse or keyboard */\
-    // color:rgb(255,255,255);\
-    //     background-color: rgb(239,169,4);/*这一句是设置菜单项鼠标经过选中的样式*/\
-    // }");
 
     menu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
 

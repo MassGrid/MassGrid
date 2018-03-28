@@ -17,6 +17,9 @@
 #include "netbase.h"
 #include "txdb.h" // for -dbcache defaults
 #include "util.h"
+#include "clientversion.h"
+#include "cmessagebox.h"
+#include "addressbookpage.h"
 
 #ifdef ENABLE_WALLET
 #include "wallet.h" // for CWallet::minTxFee
@@ -28,7 +31,6 @@
 #include <QDir>
 #include <QIntValidator>
 #include <QLocale>
-#include <QMessageBox>
 #include <QTimer>
 
 OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
@@ -119,6 +121,9 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     this->setAttribute(Qt::WA_TranslucentBackground);
 
     ui->dataDirPath->setText(GetDataDir().string().c_str());
+
+    // QString version = QString(FormatFullVersion().c_str()).split("-").first();
+    // ui->versionLineEdit->setText(version);
 
 }
 
@@ -216,11 +221,11 @@ void OptionsDialog::on_resetButton_clicked()
     if(model)
     {
         // confirmation dialog
-        QMessageBox::StandardButton btnRetVal = QMessageBox::question(this, tr("Confirm options reset"),
+        CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Confirm options reset"),
             tr("Client restart required to activate changes.") + "<br><br>" + tr("Client will be shutdown, do you want to proceed?"),
-            QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel);
+            CMessageBox::Ok_Cancel, CMessageBox::Cancel);
 
-        if(btnRetVal == QMessageBox::Cancel)
+        if(btnRetVal == CMessageBox::Cancel)
             return;
 
         /* reset all options and close GUI */
@@ -238,6 +243,15 @@ void OptionsDialog::on_okButton_clicked()
 void OptionsDialog::on_cancelButton_clicked()
 {
     reject();
+}
+
+void OptionsDialog::on_openAddressBookButton_clicked()
+{
+    // HelpMessageDialog dlg(0, true);
+    // dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
+    // dlg.exec();
+
+    
 }
 
 void OptionsDialog::showRestartWarning(bool fPersistent)

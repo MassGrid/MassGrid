@@ -75,6 +75,9 @@ extern double NSAppKitVersionNumber;
 #endif
 #endif
 
+QString receiveAddr;
+
+
 namespace GUIUtil {
 
 QString dateTimeStr(const QDateTime &date)
@@ -96,6 +99,15 @@ QFont massgridAddressFont()
     font.setStyleHint(QFont::TypeWriter);
 #endif
     return font;
+}
+
+QString getReceiveAddr()
+{
+    return receiveAddr;
+}
+void setReceiveAddr(const QString& addr)
+{
+    receiveAddr = addr;
 }
 
 void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)

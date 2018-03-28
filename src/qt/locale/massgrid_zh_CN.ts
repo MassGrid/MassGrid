@@ -101,7 +101,7 @@
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished"></translation>
+        <translation>标题栏</translation>
     </message>
 </context>
 <context>
@@ -227,7 +227,26 @@
     </message>
     <message>
         <source>title name</source>
+        <translation>标题栏</translation>
+    </message>
+</context>
+<context>
+    <name>CMessageBox</name>
+    <message>
+        <source>Dialog</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>title name</source>
+        <translation>标题栏</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>关闭</translation>
     </message>
 </context>
 <context>
@@ -461,6 +480,61 @@
     </message>
 </context>
 <context>
+    <name>DefineCalendar</name>
+    <message>
+        <source>Jan</source>
+        <translation>一月</translation>
+    </message>
+    <message>
+        <source>Feb</source>
+        <translation>二月</translation>
+    </message>
+    <message>
+        <source>Mar</source>
+        <translation>三月</translation>
+    </message>
+    <message>
+        <source>Apr</source>
+        <translation>四月</translation>
+    </message>
+    <message>
+        <source>May</source>
+        <translation>五月</translation>
+    </message>
+    <message>
+        <source>Jun</source>
+        <translation>六月</translation>
+    </message>
+    <message>
+        <source>Jul</source>
+        <translation>七月</translation>
+    </message>
+    <message>
+        <source>Aug</source>
+        <translation>八月</translation>
+    </message>
+    <message>
+        <source>Sep</source>
+        <translation>九月</translation>
+    </message>
+    <message>
+        <source>Oct</source>
+        <translation>十月</translation>
+    </message>
+    <message>
+        <source>Nov</source>
+        <translation>十一月</translation>
+    </message>
+    <message>
+        <source>Dec</source>
+        <translation>十二月</translation>
+    </message>
+    <message>
+        <source>%1</source>
+        <translation>%1</translation>
+    </message>
+</context>
+<context>
     <name>EditAddressDialog</name>
     <message>
         <source>Edit Address</source>
@@ -513,6 +587,10 @@
     <message>
         <source>New key generation failed.</source>
         <translation>新的密钥生成失败。</translation>
+    </message>
+    <message>
+        <source>title name</source>
+        <translation>标题栏</translation>
     </message>
 </context>
 <context>
@@ -595,7 +673,7 @@
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished"></translation>
+        <translation>标题栏</translation>
     </message>
 </context>
 <context>
@@ -647,6 +725,10 @@
         <translation>
             <numerusform>(需要%n GB空间)</numerusform>
         </translation>
+    </message>
+    <message>
+        <source>Data directory:MainView-&gt;Settings-&gt;Options-&gt;Display-&gt;Data Directory Path</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -700,7 +782,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>MB9CnDedkjweWKvhFEy7WPiX7w1bCoeM1Q</source>
+        <source>Immature:</source>
+        <translation>未成熟的：</translation>
+    </message>
+    <message>
+        <source>0.00</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -872,7 +958,7 @@
     </message>
     <message>
         <source>Tabs toolbar</source>
-        <translation>分页工具栏</translation>
+        <translation type="vanished">分页工具栏</translation>
     </message>
     <message>
         <source>MassGrid Core</source>
@@ -1012,7 +1098,87 @@ Address: %4
     </message>
     <message>
         <source>A fatal error occurred. MassGrid can no longer continue safely and will quit.</source>
+        <translation>一个致命的错误发生，MassGrid无法继续安全执行，即将关闭客户端</translation>
+    </message>
+    <message>
+        <source>&amp;input Wallet...</source>
+        <translation type="vanished">导入钱包文件</translation>
+    </message>
+    <message>
+        <source>input wallet file</source>
+        <translation type="vanished">导入钱包文件</translation>
+    </message>
+    <message>
+        <source>&amp;Soft Update</source>
+        <translation>软件更新</translation>
+    </message>
+    <message>
+        <source>Soft Update</source>
+        <translation>软件更新</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>打开文件</translation>
+    </message>
+    <message>
+        <source>Wallat (*.dat)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Import Wallet...</source>
+        <translation>导入钱包</translation>
+    </message>
+    <message>
+        <source>Import wallet file</source>
+        <translation>导入钱包文件</translation>
+    </message>
+    <message>
+        <source>&amp;Import privkey</source>
+        <translation>导入私钥</translation>
+    </message>
+    <message>
+        <source>import the private key.</source>
+        <translation>导入私钥</translation>
+    </message>
+    <message>
+        <source>&amp;Dump privkey</source>
+        <translation>导出私钥</translation>
+    </message>
+    <message>
+        <source>dump out the private key.</source>
+        <translation>导出私钥</translation>
+    </message>
+    <message>
+        <source>Your version is up to date.</source>
+        <translation>你的版本是最新的</translation>
+    </message>
+    <message>
+        <source>Import Wallet</source>
+        <translation>导入私钥</translation>
+    </message>
+    <message>
+        <source>Import wallet file will cover the old one,please back up your old wallet.</source>
+        <translation>导入钱包文件将会覆盖旧的文件，请备份好旧的钱包文件</translation>
+    </message>
+    <message>
+        <source>Import Error</source>
+        <translation>导入错误</translation>
+    </message>
+    <message>
+        <source>Import wallet error,please checkout the wallet file is exists.</source>
+        <translation>导入钱包错误，请确认钱包文件是否存在</translation>
+    </message>
+    <message>
+        <source>Checkout an Update,version is %1.</source>
+        <translation>检测到新版本:%1</translation>
+    </message>
+    <message>
+        <source>We will open the downloads url,or you can open this url to download the new Application.</source>
+        <translation>即将打开下载地址，或者你可以打开以下地址以便下载最新的客户端。</translation>
+    </message>
+    <message>
+        <source>MassGrid will close now to update the Wallet. </source>
+        <translation>MassGrid更新钱包，即将关闭</translation>
     </message>
 </context>
 <context>
@@ -1039,7 +1205,7 @@ Address: %4
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">标题栏</translation>
     </message>
 </context>
 <context>
@@ -1242,18 +1408,26 @@ Address: %4
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">标题栏</translation>
     </message>
     <message>
-        <source>1</source>
-        <translation type="unfinished"></translation>
+        <source>Version</source>
+        <translation type="vanished">版本</translation>
     </message>
     <message>
-        <source>2</source>
-        <translation type="unfinished"></translation>
+        <source>Data Dirctory Path</source>
+        <translation>数据目录路径</translation>
     </message>
     <message>
-        <source>3</source>
+        <source>Main Address</source>
+        <translation>主接收地址</translation>
+    </message>
+    <message>
+        <source>Select an address to be the main address</source>
+        <translation>请选择一个地址作为主接收地址</translation>
+    </message>
+    <message>
+        <source>...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1440,6 +1614,61 @@ Address: %4
     <message>
         <source>Ping Time</source>
         <translation>Ping 时间</translation>
+    </message>
+</context>
+<context>
+    <name>PrivKeyMgr</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">表单</translation>
+    </message>
+    <message>
+        <source>title name</source>
+        <translation type="unfinished">标题栏</translation>
+    </message>
+    <message>
+        <source>Please input your wallet password</source>
+        <translation type="vanished">请输入你的钱包密码</translation>
+    </message>
+    <message>
+        <source>Please input the wallet address</source>
+        <translation type="vanished">请输入需要导出私钥的钱包地址</translation>
+    </message>
+    <message>
+        <source>This is your Private key</source>
+        <translation>即将生成私钥</translation>
+    </message>
+    <message>
+        <source>Please input your Private key</source>
+        <translation type="vanished">请输入你的私钥</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <source>Import private key</source>
+        <translation>导出私钥</translation>
+    </message>
+    <message>
+        <source>Dump private key</source>
+        <translation>导出私钥</translation>
+    </message>
+    <message>
+        <source>Error command</source>
+        <translation>错误命令</translation>
+    </message>
+    <message>
+        <source>Please import your wallet password</source>
+        <translation>请输入你的钱包密码</translation>
+    </message>
+    <message>
+        <source>Please import the wallet address</source>
+        <translation>请输入你的钱包地址</translation>
+    </message>
+    <message>
+        <source>Please import your Private key</source>
+        <translation>请输入你的私钥</translation>
     </message>
 </context>
 <context>
@@ -1756,7 +1985,7 @@ Address: %4
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">标题栏</translation>
     </message>
 </context>
 <context>
@@ -1895,6 +2124,10 @@ Address: %4
     <message>
         <source>Error encoding URI into QR Code.</source>
         <translation>将 URI 转为二维码失败。</translation>
+    </message>
+    <message>
+        <source>title name</source>
+        <translation type="unfinished">标题栏</translation>
     </message>
 </context>
 <context>
@@ -2437,7 +2670,7 @@ Address: %4
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">标题栏</translation>
     </message>
     <message>
         <source>Choose</source>
@@ -2646,12 +2879,8 @@ Address: %4
         <translation>当前面板显示了交易的详细信息</translation>
     </message>
     <message>
-        <source>Trasnaction Desc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>title name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">标题栏</translation>
     </message>
 </context>
 <context>

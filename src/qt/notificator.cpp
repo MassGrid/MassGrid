@@ -3,12 +3,13 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "notificator.h"
+#include "cmessagebox.h"
 
 #include <QApplication>
 #include <QByteArray>
 #include <QIcon>
 #include <QImageWriter>
-#include <QMessageBox>
+
 #include <QMetaType>
 #include <QStyle>
 #include <QSystemTrayIcon>
@@ -319,7 +320,7 @@ void Notificator::notify(Class cls, const QString &title, const QString &text, c
         if(cls == Critical)
         {
             // Fall back to old fashioned pop-up dialog if critical and no other notification available
-            QMessageBox::critical(parent, title, text, QMessageBox::Ok, QMessageBox::Ok);
+            CMessageBox::critical(parent, title, text, CMessageBox::Ok, CMessageBox::Ok);
         }
         break;
     }

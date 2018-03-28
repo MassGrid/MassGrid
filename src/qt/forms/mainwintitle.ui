@@ -511,7 +511,7 @@ color: rgb(172, 99, 43);</string>
             </widget>
            </item>
            <item>
-            <widget class="QToolButton" name="toolButton_3">
+            <widget class="QToolButton" name="transactionButton">
              <property name="minimumSize">
               <size>
                <width>150</width>
@@ -734,6 +734,21 @@ border:hidden;
         <property name="topMargin">
          <number>10</number>
         </property>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_unconfirmed">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>123.45</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_2">
           <property name="sizePolicy">
@@ -776,7 +791,7 @@ border:hidden;
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="label_4">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -797,15 +812,27 @@ border:hidden;
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="label_unconfirmed">
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelmmatureText">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>123.45</string>
+           <string>Immature:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelWatchImmature">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>0.00</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -899,7 +926,7 @@ background-color: rgba(255, 255, 255, 0);
 color: rgb(255, 255, 255);</string>
             </property>
             <property name="text">
-             <string>M9qTcchkNJhXpoQqsA8Q528eL8VAm4NkTR1</string>
+             <string/>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

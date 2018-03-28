@@ -58,6 +58,8 @@ CoinControlDialog::CoinControlDialog(QWidget *parent) :
     contextMenu->addAction(lockAction);
     contextMenu->addAction(unlockAction);
 
+    contextMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
+
     // context menu signals
     connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showMenu(QPoint)));
     connect(copyAddressAction, SIGNAL(triggered()), this, SLOT(copyAddress()));

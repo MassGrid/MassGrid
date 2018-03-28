@@ -55,6 +55,8 @@ public:
 uint64_t nLastBlockTx = 0;
 uint64_t nLastBlockSize = 0;
 
+bool stopMiner = false;
+
 // We want to sort transactions by priority and fee rate, so:
 typedef boost::tuple<double, CFeeRate, const CTransaction*> TxPriority;
 class TxPriorityCompare
@@ -407,6 +409,9 @@ CBlockTemplate* CreateNewBlockWithKey(CReserveKey& reservekey,CWallet* pwallet)
     }
     CKeyID keyid;
     addr.GetKeyID(keyid);
+    // Logprintf("----->%s",addr.ToString());
+    // LogPrintf("----->%s\n", addr.ToString());
+
     CScript scriptPubKey = GetScriptForDestination(keyid);
     return CreateNewBlock(scriptPubKey);
 }
@@ -450,6 +455,8 @@ void static MassGridMiner(CWallet *pwallet)
     CReserveKey reservekey(pwallet);
     unsigned int nExtraNonce = 0;
 
+    stopMiner = false;
+
     try {
         while (true) {
             if (Params().MiningRequiresPeers()) {
@@ -465,6 +472,11 @@ void static MassGridMiner(CWallet *pwallet)
                         break;
                     MilliSleep(1000);
                 } while (true);
+            }
+
+            if(stopMiner){
+                LogPrintf("stop MassGridMiner\n");
+                break;
             }
 
             //
@@ -631,6 +643,12 @@ void GenerateMassGrids(bool fGenerate, CWallet* pwallet, int nThreads)
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)
         minerThreads->create_thread(boost::bind(&MassGridMiner, pwallet));
+}
+
+void StopMiner()
+{
+    LogPrintf("plan to stop MassGridMiner\n");
+    stopMiner = true;
 }
 
 #endif // ENABLE_WALLET

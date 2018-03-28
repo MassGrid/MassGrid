@@ -484,7 +484,7 @@ QWidget *TransactionView::createDateRangeWidget()
     layout->addSpacing(23);
     layout->addWidget(new QLabel(tr("Range:")));
 
-    dateFrom = new MDateEdit(this);
+    dateFrom = new MDateEdit(this); //MDateEdit
     dateFrom->setDisplayFormat("dd/MM/yy");
     dateFrom->setCalendarPopup(true);
     dateFrom->setMinimumWidth(100);
@@ -492,7 +492,7 @@ QWidget *TransactionView::createDateRangeWidget()
     layout->addWidget(dateFrom);
     layout->addWidget(new QLabel(tr("to")));
 
-    dateTo = new MDateEdit(this);
+    dateTo = new MDateEdit(this); //QDateEdit
     dateTo->setDisplayFormat("dd/MM/yy");
     dateTo->setCalendarPopup(true);
     dateTo->setMinimumWidth(100);
@@ -602,7 +602,7 @@ void MDateEdit::setMyStytle()
     QString strTemp;
     //QWidget
     strTemp.append("QWidget{font:normal 10pt Microsoft YaHei;}");
-    strTemp.append("QWidget#CalTopWidget{background-color:rgb(172,99,43);}");
+    strTemp.append("QWidget#CalTopWidget{background-color:rgb(172,99,43);}"); 
     strTemp.append("QWidget#CalBottomWidget{background-color:white;}");
     //QLabel
     strTemp.append("QLabel#CalLabel{border:1px solid lightgray; color:rgb(172,99,43);}");
@@ -638,7 +638,7 @@ void MDateEdit::setMyStytle()
     strTemp.append("QTimeEdit#CalTimeEdit::down-arrow{  image:url(:/pic/res/pic/ad.png);}");
 
     //QDateEdit
-    strTemp.append("QDateEdit{border:1px solid gray; height:24px; }");
+    strTemp.append("QDateEdit{border:1px solid rgb(172,99,43); height:24px; }");
     strTemp.append("QDateEdit::down-arrow{image:url(:/pic/res/pic/calendar.png);}");
     strTemp.append("QDateEdit::drop-down{width:30px; border:0px solid red;\
                    subcontrol-origin: padding;subcontrol-position: top right;}");
@@ -660,10 +660,11 @@ DefineCalendar::DefineCalendar(QWidget *parent)
     setMinimumDate(QDate(2000,1,1));
     setMaximumDate(QDate(2100,1,1));
     InitWidgets();
+    // setMinimumWidth(460);
     setMinimumHeight(240);
     setNavigationBarVisible(false);
     setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
-    this->layout()->setSizeConstraint(QLayout::SetFixedSize);
+    // this->layout()->setSizeConstraint(QLayout::SetFixedSize);
     connect(this, SIGNAL(currentPageChanged(int,int)), this, SLOT(CurPageChange(int,int)));
     UpdateYear();
 

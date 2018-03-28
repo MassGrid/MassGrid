@@ -40,6 +40,7 @@ class MainwinTitle;
 class QGridLayout;
 
 class CWallet;
+class CUpdateThread;
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -124,6 +125,8 @@ private:
     QAction *openRPCConsoleAction;
     QAction *openAction;
     QAction *showHelpMessageAction;
+    QAction *importPrivKeyAction;
+    QAction *dumpPrivKeyAction;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
@@ -157,7 +160,7 @@ signals:
     /** Signal raised when a URI was entered or dragged to the GUI */
     void receivedURI(const QString &uri);
     
-    void updateBalance(QString,QString,QString);
+    void updateBalance(QString,QString,QString,bool,bool,QString);
 
 public slots:
     /** Set number of connections shown in the UI */
@@ -173,10 +176,7 @@ public slots:
        @param[in] ret       pointer to a bool that will be modified to whether Ok was clicked (modal only)
     */
     void message(const QString &title, const QString &message, unsigned int style, bool *ret = NULL);
-    // void updateBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, 
-    //                     const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance);
     void showMaxWin();
-
 
 #ifdef ENABLE_WALLET
     /** Set the encryption status as shown in the UI.
@@ -210,9 +210,14 @@ private slots:
     /** Show open dialog */
     void openClicked();
 
+    void importPrivkey();
+
+    void dumpPrivkey();
+
     void inputWalletFile();
 
-    void openWebUrl();
+    void checkoutUpdateClient();
+    void openWebUrl(const QString& version,bool stopMinerFlag);
 
 #endif // ENABLE_WALLET
     /** Show configuration dialog */
@@ -239,16 +244,21 @@ private slots:
     /** Show progress dialog e.g. for verifychain */
     void showProgress(const QString &title, int nProgress);
 
+    void updateClient(QString,bool);
+
+    void startUpdateThread();
+
 protected:
     void mousePressEvent(QMouseEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
-    // void resizeEvent(QResizeEvent*);
+    void resizeEvent(QResizeEvent*);
 
 private:
     QPoint m_last;
     MainwinTitle* m_mainTitle;
     QGridLayout* backgroudlayout;
+    CUpdateThread *m_updateClientThread;
 private:
     void createMainWin(const NetworkStyle *networkStyle);
     void createBackgroundWin();

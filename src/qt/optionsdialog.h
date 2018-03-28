@@ -47,6 +47,7 @@ private slots:
     void on_resetButton_clicked();
     void on_okButton_clicked();
     void on_cancelButton_clicked();
+    void on_openAddressBookButton_clicked();
 
     void showRestartWarning(bool fPersistent = false);
     void clearStatusLabel();

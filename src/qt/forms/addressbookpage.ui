@@ -362,6 +362,9 @@ QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical
              </item>
              <item>
               <widget class="QToolButton" name="exportButton">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
                <property name="toolTip">
                 <string>Export the data in the current tab to a file</string>
                </property>
@@ -393,6 +396,9 @@ border:hidden;
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
                </property>
                <property name="styleSheet">
                 <string notr="true">QToolButton{

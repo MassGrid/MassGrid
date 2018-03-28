@@ -92,7 +92,7 @@ private:
     QSignalMapper *mapperThirdPartyTxUrls;
 
     QFrame *dateRangeWidget;
-    MDateEdit *dateFrom;
+    MDateEdit *dateFrom; //MDateEdit
     MDateEdit *dateTo;
 
     QWidget *createDateRangeWidget();

@@ -41,7 +41,7 @@ public slots:
 
 signals:
     void transactionClicked(const QModelIndex &index);
-    void updateBalance(QString Balance,QString Unconfirmed,QString Total);
+    void updateBalance(QString Balance,QString Unconfirmed,QString Immature,bool showImmature,bool showWatchOnlyImmature,QString Total);
 
 private:
     Ui::OverviewPage *ui;

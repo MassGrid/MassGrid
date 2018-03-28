@@ -13,7 +13,7 @@
 
 #include <QFileDialog>
 #include <QSettings>
-#include <QMessageBox>
+#include "cmessagebox.h"
 
 /* Minimum free space (in bytes) needed for data directory */
 static const uint64_t GB_BYTES = 1000000000LL;
@@ -186,7 +186,7 @@ void Intro::pickDataDirectory()
                 TryCreateDirectory(GUIUtil::qstringToBoostPath(dataDir));
                 break;
             } catch(fs::filesystem_error &e) {
-                QMessageBox::critical(0, tr("MassGrid Core"),
+                CMessageBox::critical(0, tr("MassGrid Core"),
                     tr("Error: Specified data directory \"%1\" cannot be created.").arg(dataDir));
                 /* fall through, back to choosing screen */
             }

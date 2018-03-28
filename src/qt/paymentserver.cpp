@@ -13,6 +13,7 @@
 #include "ui_interface.h"
 #include "util.h"
 #include "wallet.h"
+#include "cmessagebox.h"
 
 #include <cstdlib>
 
@@ -314,7 +315,7 @@ PaymentServer::PaymentServer(QObject* parent, bool startLocalServer) :
 
         if (!uriServer->listen(name)) {
             // constructor is called early in init, so don't use "emit message()" here
-            QMessageBox::critical(0, tr("Payment request error"),
+            CMessageBox::critical(0, tr("Payment request error"),
                 tr("Cannot start massgrid: click-to-pay handler"));
         }
         else {

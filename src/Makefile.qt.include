@@ -23,7 +23,9 @@ QT_FORMS_UI = \
   qt/forms/sendcoinsentry.ui \
   qt/forms/signverifymessagedialog.ui \
   qt/forms/transactiondescdialog.ui\
-  qt/forms/mainwintitle.ui
+  qt/forms/mainwintitle.ui\
+  qt/forms/cmessagebox.ui\
+  qt/forms/privkeymgr.ui
 
 QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
@@ -70,7 +72,11 @@ QT_MOC_CPP = \
   qt/moc_walletmodel.cpp \
   qt/moc_walletview.cpp\
   qt/moc_mainwintitle.cpp\
-  qt/moc_mitemdelegate.cpp
+  qt/moc_cmessagebox.cpp\  
+  qt/moc_mitemdelegate.cpp\
+  qt/moc_cupdatethread.cpp\
+  qt/moc_privkeymgr.cpp
+  
 
 MASSGRID_MM = \
   qt/macdockiconhandler.mm \
@@ -143,7 +149,10 @@ MASSGRID_QT_H = \
   qt/walletview.h \
   qt/winshutdownmonitor.h\
   qt/mainwintitle.h\
-  qt/mitemdelegate.h
+  qt/cmessagebox.h\
+  qt/mitemdelegate.h\
+  qt/cupdatethread.h\
+  qt/privkeymgr.h
 
 RES_ICONS = \
   qt/res/icons/add.png \
@@ -245,7 +254,10 @@ MASSGRID_QT_CPP += \
   qt/walletmodeltransaction.cpp \
   qt/walletview.cpp\
   qt/mainwintitle.cpp\
-  qt/mitemdelegate.cpp
+  qt/cmessagebox.cpp\  
+  qt/mitemdelegate.cpp\
+  qt/cupdatethread.cpp\
+  qt/privkeymgr.cpp
 
 endif
 

@@ -174,7 +174,7 @@ void WalletView::setMassGridGUI(MassGridGUI *gui)
 {
     if (gui)
     {
-        connect(overviewPage,SIGNAL(updateBalance(QString ,QString ,QString )),gui,SIGNAL(updateBalance(QString,QString,QString)));
+        connect(overviewPage,SIGNAL(updateBalance(QString ,QString ,QString ,bool ,bool ,QString )),gui,SIGNAL(updateBalance(QString,QString,QString,bool,bool,QString)));
 
         // Clicking on a transaction on the overview page simply sends you to transaction history page
         connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), gui, SLOT(gotoHistoryPage()));

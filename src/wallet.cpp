@@ -1441,13 +1441,14 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, CAmount> >& vecSend,
                     if (coinControl){// && !boost::get<CNoDestination>(&coinControl->destChange)){
                         CMassGridAddress addr;
                         BOOST_FOREACH(const PAIRTYPE(CMassGridAddress, CAddressBookData)& item, this->mapAddressBook){
-                            addr = item.first;
-                            break;
+                            if(item.second.purpose == "receive"){
+                                addr = item.first;
+                                break;
+                            }
                         }
                         CKeyID keyid;
                         addr.GetKeyID(keyid);
                         scriptChange = GetScriptForDestination(keyid);
-                        // std::string strAddress = addr.ToString();
                     }
                     // no coin control: send change to newly generated address
                     else

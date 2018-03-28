@@ -9,7 +9,6 @@
 
 #include <QEvent>
 #include <QHeaderView>
-#include <QMessageBox>
 #include <QObject>
 #include <QProgressBar>
 #include <QString>
@@ -108,6 +107,9 @@ namespace GUIUtil
 
     // Replace invalid default fonts with known good ones
     void SubstituteFonts(const QString& language);
+
+    QString getReceiveAddr();
+    void setReceiveAddr(const QString& addr);
 
     /** Qt event filter that intercepts ToolTipChange events, and replaces the tooltip with a rich text
       representation if needed. This assures that Qt can word-wrap long tooltip messages.

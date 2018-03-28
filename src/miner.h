@@ -28,6 +28,8 @@ void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& 
 bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey);
 void UpdateTime(CBlockHeader* block, const CBlockIndex* pindexPrev);
 
+void StopMiner();
+
 extern double dHashesPerSec;
 extern int64_t nHPSTimerStart;
 

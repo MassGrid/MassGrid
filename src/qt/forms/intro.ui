@@ -243,6 +243,9 @@ image: url(:/pic/res/pic/closeBtn.png);
            </item>
            <item>
             <widget class="QRadioButton" name="dataDirDefault">
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
              <property name="text">
               <string>Use the default data directory</string>
              </property>
@@ -270,6 +273,9 @@ image: url(:/pic/res/pic/closeBtn.png);
            </item>
            <item>
             <widget class="QRadioButton" name="dataDirCustom">
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
              <property name="text">
               <string>Use a custom data directory:</string>
              </property>

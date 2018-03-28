@@ -6,6 +6,7 @@
 #define MASSGRID_QT_EDITADDRESSDIALOG_H
 
 #include <QDialog>
+#include <QMouseEvent>
 
 class AddressTableModel;
 
@@ -52,6 +53,14 @@ private:
     AddressTableModel *model;
 
     QString address;
+    QPoint m_last;
+
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 };
 
 #endif // MASSGRID_QT_EDITADDRESSDIALOG_H
+
+

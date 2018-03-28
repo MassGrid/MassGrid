@@ -16,10 +16,11 @@
 #include "guiutil.h"
 #include "wallet.h"
 #include "walletmodel.h"
+#include "util.h"
 
 #include <QIcon>
 #include <QMenu>
-#include <QMessageBox>
+#include "cmessagebox.h"
 #include <QSortFilterProxyModel>
 
 AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
@@ -69,6 +70,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     case ReceivingTab:
         ui->labelExplanation->setText(tr("These are your MassGrid addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
         ui->deleteAddress->setVisible(false);
+        ui->newAddress->setEnabled(false);
         break;
     }
 
@@ -83,14 +85,18 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(editAction);
+
     if(tab == SendingTab)
         contextMenu->addAction(deleteAction);
     contextMenu->addSeparator();
+
+    contextMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
 
     // Connect signals for context menu actions
     connect(copyAddressAction, SIGNAL(triggered()), this, SLOT(on_copyAddress_clicked()));
     connect(copyLabelAction, SIGNAL(triggered()), this, SLOT(onCopyLabelAction()));
     connect(editAction, SIGNAL(triggered()), this, SLOT(onEditAction()));
+
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteAddress_clicked()));
 
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
@@ -200,6 +206,9 @@ void AddressBookPage::on_newAddress_clicked()
         EditAddressDialog::NewSendingAddress :
         EditAddressDialog::NewReceivingAddress, 0);
     dlg.setModel(model);
+
+    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
+
     if(dlg.exec())
     {
         newAddressToSelect = dlg.getAddress();
@@ -208,13 +217,15 @@ void AddressBookPage::on_newAddress_clicked()
 
 void AddressBookPage::on_deleteAddress_clicked()
 {
+    LogPrintf("delete address 1\n");
     QTableView *table = ui->tableView;
     if(!table->selectionModel())
         return;
-
+    LogPrintf("delete address 2\n");
     QModelIndexList indexes = table->selectionModel()->selectedRows();
     if(!indexes.isEmpty())
     {
+        LogPrintf("delete address 3\n");
         table->model()->removeRow(indexes.at(0).row());
     }
 }
@@ -239,10 +250,10 @@ void AddressBookPage::selectionChanged()
             break;
         case ReceivingTab:
             // Deleting receiving addresses, however, is not allowed
-            ui->deleteAddress->setEnabled(false);
-            ui->deleteAddress->setVisible(false);
-            deleteAction->setEnabled(false);
-            ui->newAddress->setEnabled(false);
+            ui->deleteAddress->setEnabled(false); 
+            ui->deleteAddress->setVisible(false); 
+            deleteAction->setEnabled(false); 
+            ui->newAddress->setEnabled(false); 
             break;
         }
         // ui->copyAddress->setEnabled(true);
@@ -296,7 +307,7 @@ void AddressBookPage::on_exportButton_clicked()
     writer.addColumn("Address", AddressTableModel::Address, Qt::EditRole);
 
     if(!writer.write()) {
-        QMessageBox::critical(this, tr("Exporting Failed"),
+        CMessageBox::information(0, tr("Exporting Failed"),
             tr("There was an error trying to save the address list to %1. Please try again.").arg(filename));
     }
 }
@@ -322,9 +333,6 @@ void AddressBookPage::selectNewAddress(const QModelIndex &parent, int begin, int
     }
 }
 
-
-//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
-//接下来就是对三个鼠标事件的重写
 void AddressBookPage::mousePressEvent(QMouseEvent *e)
 {
     m_last = e->globalPos();

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>871</width>
+    <width>876</width>
     <height>495</height>
    </rect>
   </property>
@@ -149,6 +149,30 @@ QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical
     background:rgb(0,0,0,10%);
     border-radius:4px;
 }
+
+QMenu{
+color:rgb(255,255,255);
+    background:rgb(198,125,26);
+    border:0px solid transparent;
+}
+QMenu::item{
+    padding:0px 20px 0px 20px;
+    margin-left: 2px;
+  margin-right: 2px;
+    margin-top: 2px;
+  margin-bottom: 2px;
+    height:30px;
+}
+ 
+QMenu::item:selected:enabled{
+    background-color: rgb(239,169,4); 
+    color: white;            
+}
+ 
+QMenu::item:selected:!enabled{
+    background:transparent;
+}
+
 </string>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
@@ -385,10 +409,83 @@ QToolButton{
 	border:hidden;
 }
 
+
+
+/*垂直滚动条整体*/
+QScrollBar:vertical
+{
+    width:8px;
+    background:rgb(0,0,0,0%);
+    margin:0px,0px,0px,0px;
+    padding-top:12px;   /*上预留位置*/
+    padding-bottom:12px;    /*下预留位置*/
+}
+
+/*滚动条中滑块的样式*/
+QScrollBar::handle:vertical
+{
+    width:8px;
+    background:rgb(0,0,0,25%);
+    border-radius:4px;
+    min-height:20px;
+}
+
+/*鼠标触及滑块样式*/
+QScrollBar::handle:vertical:hover
+{
+    width:9px;
+    background:rgb(0,0,0,50%);
+    border-radius:4px;
+    min-height:20;
+}
+
+/*设置下箭头*/
+QScrollBar::add-line:vertical
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/3.png);
+    subcontrol-position:bottom;
+}
+
+/*设置上箭头*/
+QScrollBar::sub-line:vertical
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/1.png);
+    subcontrol-position:top;
+}
+
+/*设置下箭头:悬浮状态*/
+QScrollBar::add-line:vertical:hover
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/4.png);
+    subcontrol-position:bottom;
+}
+
+/*设置上箭头：悬浮状态*/
+QScrollBar::sub-line:vertical:hover
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/2.png);
+    subcontrol-position:top;
+}
+
+/*当滚动条滚动的时候，上面的部分和下面的部分*/
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical
+{
+    background:rgb(0,0,0,10%);
+    border-radius:4px;
+}
+
 </string>
              </property>
              <property name="currentIndex">
-              <number>3</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tab_info">
               <attribute name="title">
@@ -629,6 +726,9 @@ QToolButton{
                </item>
                <item row="11" column="0">
                 <widget class="QLabel" name="label_3">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
                  <property name="text">
                   <string>Current number of blocks</string>
                  </property>

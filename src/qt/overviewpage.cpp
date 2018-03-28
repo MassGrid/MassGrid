@@ -202,7 +202,9 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
 
     QString Balance = MassGridUnits::formatWithUnit(unit, balance, false, MassGridUnits::separatorAlways);
     QString Unconfirmed = MassGridUnits::formatWithUnit(unit, unconfirmedBalance, false, MassGridUnits::separatorAlways);
+    QString Immature = MassGridUnits::formatWithUnit(unit, immatureBalance, false, MassGridUnits::separatorAlways);
     QString Total = MassGridUnits::formatWithUnit(unit, balance + unconfirmedBalance + immatureBalance, false, MassGridUnits::separatorAlways);
+
 
     ui->labelBalance->setText(Balance);
     ui->labelUnconfirmed->setText(Unconfirmed);
@@ -212,6 +214,7 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     ui->labelWatchPending->setText(MassGridUnits::formatWithUnit(unit, watchUnconfBalance, false, MassGridUnits::separatorAlways));
     ui->labelWatchImmature->setText(MassGridUnits::formatWithUnit(unit, watchImmatureBalance, false, MassGridUnits::separatorAlways));
     ui->labelWatchTotal->setText(MassGridUnits::formatWithUnit(unit, watchOnlyBalance + watchUnconfBalance + watchImmatureBalance, false, MassGridUnits::separatorAlways));
+
 
     // only show immature (newly mined) balance if it's non-zero, so as not to complicate things
     // for the non-mining users
@@ -223,7 +226,7 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     ui->labelImmatureText->setVisible(showImmature || showWatchOnlyImmature);
     ui->labelWatchImmature->setVisible(showWatchOnlyImmature); // show watch-only immature balance
 
-    emit updateBalance(Balance,Unconfirmed,Total);
+    emit updateBalance(Balance,Unconfirmed,Immature,showImmature,showWatchOnlyImmature,Total);
 }
 
 // show/hide watch-only labels

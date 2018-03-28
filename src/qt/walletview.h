@@ -122,7 +122,7 @@ signals:
     void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address);
 
     //send update balance to main title
-    void updateBalance(QString,QString,QString);
+    void updateBalance(QString,QString,QString,bool,bool,QString);
 };
 
 #endif // MASSGRID_QT_WALLETVIEW_H

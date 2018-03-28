@@ -18,8 +18,9 @@
 #include "coincontrol.h"
 #include "ui_interface.h"
 #include "wallet.h"
+#include "guiutil.h"
 
-#include <QMessageBox>
+#include "cmessagebox.h"
 #include <QScrollBar>
 #include <QSettings>
 #include <QTextDocument>
@@ -77,6 +78,9 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     ui->labelCoinControlPriority->addAction(clipboardPriorityAction);
     ui->labelCoinControlLowOutput->addAction(clipboardLowOutputAction);
     ui->labelCoinControlChange->addAction(clipboardChangeAction);
+
+
+    ui->checkBoxCoinControlChange->setChecked(true);
 
     // init transaction fee section
     QSettings settings;
@@ -203,6 +207,8 @@ void SendCoinsDialog::on_sendButton_clicked()
     if(!model || !model->getOptionsModel())
         return;
 
+    coinControlChangeEdited(GUIUtil::getReceiveAddr());
+
     QList<SendCoinsRecipient> recipients;
     bool valid = true;
 
@@ -321,12 +327,12 @@ void SendCoinsDialog::on_sendButton_clicked()
         .arg(MassGridUnits::formatHtmlWithUnit(model->getOptionsModel()->getDisplayUnit(), totalAmount))
         .arg(alternativeUnits.join(" " + tr("or") + "<br />")));
 
-    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm send coins"),
+    CMessageBox::StandardButton retval = CMessageBox::question(0, tr("Confirm send coins"),
         questionString.arg(formatted.join("<br />")),
-        QMessageBox::Yes | QMessageBox::Cancel,
-        QMessageBox::Cancel);
+        CMessageBox::Ok_Cancel,
+        CMessageBox::Cancel);
 
-    if(retval != QMessageBox::Yes)
+    if(retval != CMessageBox::Ok)
     {
         fNewRecipientAllowed = true;
         return;

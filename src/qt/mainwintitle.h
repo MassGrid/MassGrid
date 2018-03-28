@@ -39,6 +39,9 @@ public:
     void loadRow(int row);
     void setTitle(const QString& titleName);
 
+    // QString getReceiveAddr();
+    void setTransactionButtonStyle();
+
 private:
     Ui::MainwinTitle *ui; 
 
@@ -66,14 +69,15 @@ signals:
     void sgl_open2DCodePage();
 
 private slots:
-    void updateBalance(QString balance,QString unconfirmed,QString total);
+    void updateBalance(QString balance,QString unconfirmed,QString immature,bool showImmature,bool showWatchOnlyImmature,QString total);
     void openFileMenu();
     void openSettingsMenu();
     void openHelpMenu();
     void open2DCodePage();
     void on_toolButton_clicked();
     void on_toolButton_2_clicked();
-    void on_toolButton_3_clicked();
+    // void on_toolButton_3_clicked();
+    void on_transactionButton_clicked();
 };
 
 #endif // MAINWINTITLE_H
