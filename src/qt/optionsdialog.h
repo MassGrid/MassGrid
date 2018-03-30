@@ -13,6 +13,7 @@
 
 class OptionsModel;
 class QValidatedLineEdit;
+class WalletModel;
 
 QT_BEGIN_NAMESPACE
 class QDataWidgetMapper;
@@ -32,6 +33,7 @@ public:
     ~OptionsDialog();
 
     void setModel(OptionsModel *model);
+    void setWalletModel(WalletModel* model);
     void setMapper();
 
 protected:
@@ -59,6 +61,7 @@ signals:
 private:
     Ui::OptionsDialog *ui;
     OptionsModel *model;
+    WalletModel *walletModel;
     QDataWidgetMapper *mapper;
     bool fProxyIpValid;
 

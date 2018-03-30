@@ -1605,7 +1605,7 @@ border:hidden;
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="page_3">
                  <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0">
@@ -2090,6 +2090,9 @@ border:hidden;
                         <layout class="QHBoxLayout" name="horizontalLayout_16">
                          <item>
                           <widget class="QRadioButton" name="radioCustomPerKilobyte">
+                           <property name="focusPolicy">
+                            <enum>Qt::NoFocus</enum>
+                           </property>
                            <property name="text">
                             <string>per kilobyte</string>
                            </property>
@@ -2103,6 +2106,9 @@ border:hidden;
                          </item>
                          <item>
                           <widget class="QRadioButton" name="radioCustomAtLeast">
+                           <property name="focusPolicy">
+                            <enum>Qt::NoFocus</enum>
+                           </property>
                            <property name="text">
                             <string>total at least</string>
                            </property>
@@ -2269,6 +2275,9 @@ color: rgb(173, 100, 45);</string>
               </item>
               <item>
                <widget class="QCheckBox" name="checkBoxFreeTx">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>Send as zero-fee transaction if possible</string>
                 </property>
@@ -2508,7 +2517,7 @@ color: rgb(255, 255, 255);</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupCustomFee"/>
   <buttongroup name="groupFee"/>
+  <buttongroup name="groupCustomFee"/>
  </buttongroups>
 </ui>

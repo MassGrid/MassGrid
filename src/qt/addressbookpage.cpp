@@ -17,6 +17,7 @@
 #include "wallet.h"
 #include "walletmodel.h"
 #include "util.h"
+#include "optionsmodel.h"
 
 #include <QIcon>
 #include <QMenu>
@@ -46,6 +47,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
         {
         case SendingTab: setWindowTitle(tr("Choose the address to send coins to")); break;
         case ReceivingTab: setWindowTitle(tr("Choose the address to receive coins with")); break;
+        case MainAddressTab: setWindowTitle(tr("Choose the address as the default receive address")); break;        
         }
         connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
         ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -58,6 +60,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
         {
         case SendingTab: setWindowTitle(tr("Sending addresses")); break;
         case ReceivingTab: setWindowTitle(tr("Receiving addresses")); break;
+        case MainAddressTab: break;
         }
         break;
     }
@@ -66,11 +69,21 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     case SendingTab:
         ui->labelExplanation->setText(tr("These are your MassGrid addresses for sending payments. Always check the amount and the receiving address before sending coins."));
         ui->deleteAddress->setVisible(true);
+        ui->okButton->setVisible(false);
         break;
     case ReceivingTab:
         ui->labelExplanation->setText(tr("These are your MassGrid addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
         ui->deleteAddress->setVisible(false);
+        ui->newAddress->setVisible(false);
+        ui->okButton->setVisible(false);
+        ui->copyAddress->setVisible(false);
+        break;
+    case MainAddressTab:
+        ui->labelExplanation->setText(tr("These are your MassGrid addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
+        ui->deleteAddress->setVisible(false);
         ui->newAddress->setEnabled(false);
+        ui->closeButton->hide();
+        ui->exportButton->hide();
         break;
     }
 
@@ -78,13 +91,17 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     QAction *copyAddressAction = new QAction(tr("&Copy Address"), this);
     QAction *copyLabelAction = new QAction(tr("Copy &Label"), this);
     QAction *editAction = new QAction(tr("&Edit"), this);
+    QAction *setMianAddrAction = new QAction(tr("&Set Main Address"), this);
     deleteAction = new QAction(ui->deleteAddress->text(), this);
+
+
 
     // Build context menu
     contextMenu = new QMenu();
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(editAction);
+    // contextMenu->addAction(setMianAddrAction);
 
     if(tab == SendingTab)
         contextMenu->addAction(deleteAction);
@@ -98,6 +115,8 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(editAction, SIGNAL(triggered()), this, SLOT(onEditAction()));
 
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteAddress_clicked()));
+
+    connect(setMianAddrAction, SIGNAL(triggered()), this, SLOT(setMainAddress()));
 
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
 
@@ -137,6 +156,8 @@ void AddressBookPage::setModel(AddressTableModel *model)
         proxyModel->setFilterRole(AddressTableModel::TypeRole);
         proxyModel->setFilterFixedString(AddressTableModel::Send);
         break;
+    case MainAddressTab: break;
+
     }
     ui->tableView->setModel(proxyModel);
     ui->tableView->sortByColumn(0, Qt::AscendingOrder);
@@ -217,17 +238,43 @@ void AddressBookPage::on_newAddress_clicked()
 
 void AddressBookPage::on_deleteAddress_clicked()
 {
-    LogPrintf("delete address 1\n");
     QTableView *table = ui->tableView;
     if(!table->selectionModel())
         return;
-    LogPrintf("delete address 2\n");
     QModelIndexList indexes = table->selectionModel()->selectedRows();
     if(!indexes.isEmpty())
     {
-        LogPrintf("delete address 3\n");
         table->model()->removeRow(indexes.at(0).row());
     }
+}
+
+void AddressBookPage::setMainAddress()
+{
+    QTableView *table = ui->tableView;
+    int curRow = table->currentIndex().row();
+
+    if(curRow<0){
+        int rowCount = table->model()->rowCount();
+
+        if(rowCount<0){
+            return ;
+        }
+        else{
+            curRow = 0;
+        }
+    }
+
+    QString address = ui->tableView->model()->index(curRow,1).data().toString();
+    // ui->label_mainAddress->setText(tr("(Main address:%1)").arg(address));
+
+
+    WalletModel* walletModel=this->model->getWalletModel();
+
+    if(walletModel != 0){
+        OptionsModel* optionsModel = walletModel->getOptionsModel();
+        optionsModel->setMainAddress(address);
+    }
+
 }
 
 void AddressBookPage::selectionChanged()
@@ -255,6 +302,7 @@ void AddressBookPage::selectionChanged()
             deleteAction->setEnabled(false); 
             ui->newAddress->setEnabled(false); 
             break;
+        case MainAddressTab: break;
         }
         // ui->copyAddress->setEnabled(true);
     }
@@ -309,6 +357,16 @@ void AddressBookPage::on_exportButton_clicked()
     if(!writer.write()) {
         CMessageBox::information(0, tr("Exporting Failed"),
             tr("There was an error trying to save the address list to %1. Please try again.").arg(filename));
+    }
+}
+
+void AddressBookPage::on_okButton_clicked()
+{
+    QTableView *table = ui->tableView;
+    int curRow = table->currentIndex().row();
+    if(curRow>=0){
+        setMainAddress();
+        accept();
     }
 }
 

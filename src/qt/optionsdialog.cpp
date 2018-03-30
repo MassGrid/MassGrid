@@ -20,6 +20,8 @@
 #include "clientversion.h"
 #include "cmessagebox.h"
 #include "addressbookpage.h"
+#include "walletmodel.h"
+#include "massgridgui.h"
 
 #ifdef ENABLE_WALLET
 #include "wallet.h" // for CWallet::minTxFee
@@ -166,6 +168,10 @@ void OptionsDialog::setModel(OptionsModel *model)
     /* Display */
     connect(ui->lang, SIGNAL(valueChanged()), this, SLOT(showRestartWarning()));
     connect(ui->thirdPartyTxUrls, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));
+    connect(ui->MainAddress, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));
+
+    // connect(ui->mainaddress, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));
+
 }
 
 void OptionsDialog::setMapper()
@@ -178,6 +184,7 @@ void OptionsDialog::setMapper()
     /* Wallet */
     mapper->addMapping(ui->spendZeroConfChange, OptionsModel::SpendZeroConfChange);
     mapper->addMapping(ui->coinControlFeatures, OptionsModel::CoinControlFeatures);
+    // mapper->addMapping(ui->mainaddress, OptionsModel::MainAddress);
 
     /* Network */
     mapper->addMapping(ui->mapPortUpnp, OptionsModel::MapPortUPnP);
@@ -197,6 +204,7 @@ void OptionsDialog::setMapper()
     mapper->addMapping(ui->lang, OptionsModel::Language);
     mapper->addMapping(ui->unit, OptionsModel::DisplayUnit);
     mapper->addMapping(ui->thirdPartyTxUrls, OptionsModel::ThirdPartyTxUrls);
+    mapper->addMapping(ui->MainAddress, OptionsModel::MainAddress);
 }
 
 void OptionsDialog::enableOkButton()
@@ -245,12 +253,26 @@ void OptionsDialog::on_cancelButton_clicked()
     reject();
 }
 
+void OptionsDialog::setWalletModel(WalletModel* model)
+{
+    walletModel = model;
+}
+
 void OptionsDialog::on_openAddressBookButton_clicked()
 {
-    // HelpMessageDialog dlg(0, true);
-    // dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
-    // dlg.exec();
+    if(!walletModel)
+        return;
 
+    AddressBookPage dlg(AddressBookPage::ForSelection, AddressBookPage::MainAddressTab, 0);
+    dlg.setModel(walletModel->getAddressTableModel());
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
+    if(dlg.exec() == QDialog::Accepted){
+
+        ui->MainAddress->setText(model->getMainAddress());
+    }
     
 }
 

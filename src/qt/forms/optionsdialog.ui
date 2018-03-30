@@ -330,7 +330,7 @@ image: url(:/pic/res/pic/closeBtn.png);
               <string notr="true"/>
              </property>
              <property name="currentIndex">
-              <number>4</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tabMain">
               <attribute name="title">
@@ -627,7 +627,7 @@ image: url(:/pic/res/pic/closeBtn.png);
                        <string>Third party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items. %s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</string>
                       </property>
                       <property name="text">
-                       <string>Main Address</string>
+                       <string>Default Receive Address</string>
                       </property>
                       <property name="buddy">
                        <cstring>thirdPartyTxUrls</cstring>
@@ -665,27 +665,24 @@ image: url(:/pic/res/pic/closeBtn.png);
                         <number>0</number>
                        </property>
                        <item>
-                        <widget class="QValidatedLineEdit" name="mainaddress">
+                        <widget class="QLineEdit" name="MainAddress">
                          <property name="minimumSize">
                           <size>
-                           <width>160</width>
+                           <width>0</width>
                            <height>30</height>
                           </size>
                          </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>16777215</width>
-                           <height>16777215</height>
-                          </size>
-                         </property>
                          <property name="toolTip">
-                          <string>IP address of the proxy (e.g. IPv4: 127.0.0.1 / IPv6: ::1)</string>
+                          <string>Select an address as the default main address</string>
                          </property>
                          <property name="styleSheet">
-                          <string notr="true"/>
+                          <string notr="true">border:hidden;</string>
+                         </property>
+                         <property name="readOnly">
+                          <bool>true</bool>
                          </property>
                          <property name="placeholderText">
-                          <string>Select an address to be the main address</string>
+                          <string>Select an address as the default main address</string>
                          </property>
                         </widget>
                        </item>

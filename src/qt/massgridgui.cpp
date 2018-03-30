@@ -528,11 +528,8 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
     backupWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&Backup Wallet..."), this);
     backupWalletAction->setStatusTip(tr("Backup wallet to another location"));
 
-    inputWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&Import Wallet..."), this);
+    inputWalletAction = new QAction(QIcon(":/pic/res/pic/menuicon/importwallet.png"), tr("&Import Wallet..."), this);
     inputWalletAction->setStatusTip(tr("Import wallet file"));
-
-    softUpdateAction = new QAction(QIcon(":/pic/res/pic/menuicon/filesave.png"), tr("&Soft Update"), this);
-    softUpdateAction->setStatusTip(tr("Soft Update"));
 
     changePassphraseAction = new QAction(QIcon(":/pic/res/pic/menuicon/key.png"), tr("&Change Passphrase..."), this);
     changePassphraseAction->setStatusTip(tr("Change the passphrase used for wallet encryption"));
@@ -557,11 +554,14 @@ void MassGridGUI::createActions(const NetworkStyle *networkStyle)
     showHelpMessageAction->setMenuRole(QAction::NoRole);
     showHelpMessageAction->setStatusTip(tr("Show the MassGrid Core help message to get a list with possible MassGrid command-line options"));
 
-    importPrivKeyAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Import privkey"), this);
+    importPrivKeyAction = new QAction(QIcon(":/pic/res/pic/menuicon/importprivkey.png"), tr("&Import privkey"), this);
     importPrivKeyAction->setStatusTip(tr("import the private key."));
 
-    dumpPrivKeyAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Dump privkey"), this);
+    dumpPrivKeyAction = new QAction(QIcon(":/pic/res/pic/menuicon/dumpprivkey.png"), tr("&Dump privkey"), this);
     dumpPrivKeyAction->setStatusTip(tr("dump out the private key."));
+
+    softUpdateAction = new QAction(QIcon(":/pic/res/pic/menuicon/softupdate.png"), tr("&Soft Update"), this);
+    softUpdateAction->setStatusTip(tr("Soft Update"));
 
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutClicked()));
@@ -623,9 +623,9 @@ void MassGridGUI::createMenuBar()
         file->addSeparator();
         file->addAction(usedSendingAddressesAction);
         file->addAction(usedReceivingAddressesAction);
-        file->addAction(softUpdateAction);
         file->addAction(importPrivKeyAction);
         file->addAction(dumpPrivKeyAction);
+        file->addAction(softUpdateAction);
         // file->addSeparator();
     }
     // file->addAction(quitAction);
@@ -713,7 +713,7 @@ bool MassGridGUI::addWallet(const QString& name, WalletModel *walletModel)
 {
     if(!walletFrame)
         return false;
-
+    m_walletModel = walletModel;
     setWalletActionsEnabled(true);
 
     updateAddr(walletModel);
@@ -840,6 +840,7 @@ void MassGridGUI::optionsClicked()
 
     OptionsDialog dlg(0, enableWallet);
     dlg.setModel(clientModel->getOptionsModel());
+    dlg.setWalletModel(m_walletModel);
 
     dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
 
@@ -1386,10 +1387,13 @@ void MassGridGUI::inputWalletFile()
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                       "/home",
                                                       tr("Wallat (*.dat)"));
+
+    if(fileName.isEmpty())
+        return ;
+
     QString curdir = GetDataDir().string().c_str();
 
     // copyFileToPath(fileName,curdir,true);
-
     if(copyFileToPath(fileName,curdir,true)){
         // qDebug() << "copy file sucess!";
         CMessageBox::warning(this, tr("Import Wallet"),
@@ -1433,11 +1437,11 @@ bool MassGridGUI::copyFileToPath(QString sourceDir ,QString toDir, bool coverFil
     if (!QFile::exists(sourceDir)){
         return false;
     }
-    QDir *createfile     = new QDir;
-    bool exist = createfile->exists(toDir);
+    QDir createfile;
+    bool exist = createfile.exists(toDir);
     if (exist){
         if(coverFileIfExist){
-            createfile->remove(toDir);
+            createfile.remove(toDir);
         }
     }//end if
 

@@ -65,6 +65,10 @@ void OptionsModel::Init()
         settings.setValue("strThirdPartyTxUrls", "");
     strThirdPartyTxUrls = settings.value("strThirdPartyTxUrls", "").toString();
 
+    if (!settings.contains("strMainAddress"))
+        settings.setValue("strMainAddress", "");
+    strMainAddress = settings.value("strMainAddress", "").toString();
+
     if (!settings.contains("fCoinControlFeatures"))
         settings.setValue("fCoinControlFeatures", false);
     fCoinControlFeatures = settings.value("fCoinControlFeatures", false).toBool();
@@ -186,6 +190,8 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
             return nDisplayUnit;
         case ThirdPartyTxUrls:
             return strThirdPartyTxUrls;
+        case MainAddress:
+            return strMainAddress;
         case Language:
             return settings.value("language");
         case CoinControlFeatures:
@@ -277,6 +283,13 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
                 setRestartRequired(true);
             }
             break;
+        case MainAddress:
+            if (strMainAddress != value.toString()) {
+                strMainAddress = value.toString();
+                settings.setValue("strMainAddress", strMainAddress);
+                setRestartRequired(true);
+            }
+            break;
         case Language:
             if (settings.value("language") != value) {
                 settings.setValue("language", value);
@@ -356,4 +369,11 @@ bool OptionsModel::isRestartRequired()
 {
     QSettings settings;
     return settings.value("fRestartRequired", false).toBool();
+}
+
+void OptionsModel::setMainAddress(const QString& address)
+{
+    strMainAddress = address;
+    QSettings settings;
+    return settings.setValue("strMainAddress", strMainAddress);
 }

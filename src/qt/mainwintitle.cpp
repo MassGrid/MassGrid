@@ -7,6 +7,8 @@
 #include "massgridgui.h"
 #include "wallet.h"
 #include "guiutil.h"
+#include "optionsmodel.h"
+#include "util.h"
 
 #ifdef ENABLE_WALLET
 #include "walletmodel.h"
@@ -178,7 +180,6 @@ void MainwinTitle::setModel(WalletModel *model)
 
 
     AddressTableModel* addressModel = walletModel->getAddressTableModel();
-
     QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(addressModel);
     proxyModel->setDynamicSortFilter(true);
@@ -188,19 +189,33 @@ void MainwinTitle::setModel(WalletModel *model)
     proxyModel->setFilterRole(AddressTableModel::TypeRole);
     proxyModel->setFilterFixedString(AddressTableModel::Receive);
 
-    m_mapper->setModel(proxyModel);
-    // mapper->addMapping(ui->labelEdit, AddressTableModel::Label);
-    m_mapper->addMapping(ui->addressEdit, AddressTableModel::Address);
+    // m_mapper->setModel(proxyModel);
+    // // mapper->addMapping(ui->labelEdit, AddressTableModel::Label);
+    // m_mapper->addMapping(ui->addressEdit, AddressTableModel::Address);
 
+
+    OptionsModel* optionsmodel = walletModel->getOptionsModel();
+    QString mainAddress = optionsmodel->getMainAddress();
+
+    if(!mainAddress.isEmpty()){
+
+        int rowCount = proxyModel->rowCount();
+
+        for(int i=0;i<rowCount;i++){
+            QString address = proxyModel->index(i,1).data().toString();
+
+            LogPrintf("mainAddress:%s , address:%s\n",mainAddress.toStdString().c_str(),mainAddress.toStdString().c_str());
+
+            if(mainAddress.contains(address)){
+                ui->addressEdit->setText(mainAddress);
+                ui->addressEdit->setStyleSheet("border:hidden;\nbackground-color: rgba(255, 255, 255, 0);\ncolor: rgb(255, 255, 255);");
+                return ;
+            }
+        }
+    }
+    optionsmodel->setMainAddress("");
+    ui->openAddr->setEnabled(false);
 }
-
-// QString mainwintitle::getReceiveAddr()
-// {
-//     return ui->addressEdit->text();
-// }
-
-    // SendCoinsRecipient info(address, label,
-    //     ui->reqAmount->value(), ui->reqMessage->text());
 
 void MainwinTitle::open2DCodePage()
 {

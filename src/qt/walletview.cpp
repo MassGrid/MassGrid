@@ -409,14 +409,25 @@ void WalletView::usedReceivingAddresses()
 {
     if(!walletModel)
         return;
-    AddressBookPage *dlg = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, 0);
-    dlg->setAttribute(Qt::WA_DeleteOnClose);
-    dlg->setModel(walletModel->getAddressTableModel());
+    AddressBookPage dlg(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, 0);
+    // dlg.setAttribute(Qt::WA_DeleteOnClose);
+    dlg.setModel(walletModel->getAddressTableModel());
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dlg->move(pos.x()+(size.width()-dlg->width())/2,pos.y()+(size.height()-dlg->height())/2);
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
 
-    dlg->show();
+    dlg.exec();
+    // dlg->show();
+
+
+    // AddressBookPage *dlg = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, 0);
+    // dlg->setAttribute(Qt::WA_DeleteOnClose);
+    // dlg->setModel(walletModel->getAddressTableModel());
+    // QPoint pos = MassGridGUI::winPos();
+    // QSize size = MassGridGUI::winSize();
+    // dlg->move(pos.x()+(size.width()-dlg->width())/2,pos.y()+(size.height()-dlg->height())/2);
+
+    // dlg->show();
 }
 
 WalletModel* WalletView::getWalletModel()

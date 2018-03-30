@@ -14,7 +14,6 @@
 #include "timedata.h"
 #include "util.h"
 #include "utilmoneystr.h"
-
 #include <assert.h>
 
 #include <boost/algorithm/string/replace.hpp>
@@ -1437,37 +1436,58 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, CAmount> >& vecSend,
                     // change transaction isn't always pay-to-massgrid-address
                     CScript scriptChange;
                     
-                    // coin control: send change to custom address
-                    if (coinControl){// && !boost::get<CNoDestination>(&coinControl->destChange)){
-                        CMassGridAddress addr;
+                    // // coin control: send change to custom address
+                    // if (coinControl){// && !boost::get<CNoDestination>(&coinControl->destChange)){
+                    //     CMassGridAddress addr;
+                    //     BOOST_FOREACH(const PAIRTYPE(CMassGridAddress, CAddressBookData)& item, this->mapAddressBook){
+                    //         if(item.second.purpose == "receive"){
+                    //             addr = item.first;
+                    //             break;
+                    //         }
+                    //     }
+                    //     CKeyID keyid;
+                    //     addr.GetKeyID(keyid);
+                    //     scriptChange = GetScriptForDestination(keyid);
+                    // }
+                    // // no coin control: send change to newly generated address
+                    // else
+                    // {
+                    //     // Note: We use a new key here to keep it from being obvious which side is the change.
+                    //     //  The drawback is that by not reusing a previous key, the change may be lost if a
+                    //     //  backup is restored, if the backup doesn't have the new private key for the change.
+                    //     //  If we reused the old key, it would be possible to add code to look for and
+                    //     //  rediscover unknown transactions that were written with keys of ours to recover
+                    //     //  post-backup change.
+
+                    //     // Reserve a new key pair from key pool
+                    //     CPubKey vchPubKey;
+                    //     bool ret;
+                    //     ret = reservekey.GetReservedKey(vchPubKey);
+                    //     assert(ret); // should never fail, as we just unlocked
+
+                    //     scriptChange = GetScriptForDestination(vchPubKey.GetID());
+                    // }
+
+                    std::string mainAddress = DefaultReceiveAddress();
+
+                    LogPrintf("wallet CreateTransaction mainAddress:%s\n",mainAddress);
+
+                    CMassGridAddress addr;
+                    if(mainAddress.size()>0){
+                        addr.SetString(mainAddress);
+                    }
+                    else{
                         BOOST_FOREACH(const PAIRTYPE(CMassGridAddress, CAddressBookData)& item, this->mapAddressBook){
                             if(item.second.purpose == "receive"){
                                 addr = item.first;
                                 break;
                             }
                         }
-                        CKeyID keyid;
-                        addr.GetKeyID(keyid);
-                        scriptChange = GetScriptForDestination(keyid);
                     }
-                    // no coin control: send change to newly generated address
-                    else
-                    {
-                        // Note: We use a new key here to keep it from being obvious which side is the change.
-                        //  The drawback is that by not reusing a previous key, the change may be lost if a
-                        //  backup is restored, if the backup doesn't have the new private key for the change.
-                        //  If we reused the old key, it would be possible to add code to look for and
-                        //  rediscover unknown transactions that were written with keys of ours to recover
-                        //  post-backup change.
 
-                        // Reserve a new key pair from key pool
-                        CPubKey vchPubKey;
-                        bool ret;
-                        ret = reservekey.GetReservedKey(vchPubKey);
-                        assert(ret); // should never fail, as we just unlocked
-
-                        scriptChange = GetScriptForDestination(vchPubKey.GetID());
-                    }
+                    CKeyID keyid;
+                    addr.GetKeyID(keyid);
+                    scriptChange = GetScriptForDestination(keyid);
 
                     CTxOut newTxOut(nChange, scriptChange);
 

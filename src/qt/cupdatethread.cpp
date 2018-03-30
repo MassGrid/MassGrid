@@ -50,7 +50,7 @@ void CUpdateThread::run()
         emit updateClient(version,stopMiner);
 
     int firsttime = (24 - hour.toInt())*3600;
-    firsttime+=(min.toInt()-60)*60;
+    firsttime+=(60 - min.toInt())*60;
 
     while(--firsttime){
         QThread::sleep(1);

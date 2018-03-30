@@ -136,5 +136,9 @@
         <file>res/pic/calendar.png</file>
         <file>res/pic/outputData-white.png</file>
         <file>res/pic/outputData-yellow.png</file>
+        <file>res/pic/menuicon/dumpprivkey.png</file>
+        <file>res/pic/menuicon/importprivkey.png</file>
+        <file>res/pic/menuicon/importwallet.png</file>
+        <file>res/pic/menuicon/softupdate.png</file>
     </qresource>
 </RCC>

@@ -107,6 +107,9 @@ boost::filesystem::path GetTempPath();
 void ShrinkDebugFile();
 void runCommand(std::string strCommand);
 
+void SetDefaultReceiveAddress(const std::string& address);
+std::string DefaultReceiveAddress();
+
 inline bool IsSwitchChar(char c)
 {
 #ifdef WIN32

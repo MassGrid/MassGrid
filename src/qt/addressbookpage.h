@@ -32,7 +32,8 @@ class AddressBookPage : public QDialog
 public:
     enum Tabs {
         SendingTab = 0,
-        ReceivingTab = 1
+        ReceivingTab = 1,
+        MainAddressTab = 2
     };
 
     enum Mode {
@@ -76,12 +77,16 @@ private slots:
     /** Export button clicked */
     void on_exportButton_clicked();
 
+    void on_okButton_clicked();
+
     /** Set button states based on selected tab and selection */
     void selectionChanged();
     /** Spawn contextual menu (right mouse menu) for address book entry */
     void contextualMenu(const QPoint &point);
     /** New entry/entries were added to address table */
     void selectNewAddress(const QModelIndex &parent, int begin, int /*end*/);
+
+    void setMainAddress();
 
 signals:
     void sendCoins(QString addr);

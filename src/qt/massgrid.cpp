@@ -338,6 +338,10 @@ void MassGridApplication::createPaymentServer()
 void MassGridApplication::createOptionsModel()
 {
     optionsModel = new OptionsModel();
+
+    std::string mainAddress = optionsModel->getMainAddress().toStdString();
+    SetDefaultReceiveAddress(mainAddress);
+    // LogPrintf("MassGridApplication mainAddress:: %s\n", mainAddress);
 }
 
 void MassGridApplication::createWindow(const NetworkStyle *networkStyle)

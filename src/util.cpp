@@ -106,6 +106,8 @@ bool fLogTimestamps = false;
 bool fLogIPs = false;
 volatile bool fReopenDebugLog = false;
 
+std::string defaultReceiveAddress = "";
+
 /** Init OpenSSL library multithreading support */
 static CCriticalSection** ppmutexOpenSSL;
 void locking_callback(int mode, int i, const char* file, int line)
@@ -402,7 +404,7 @@ boost::filesystem::path GetDefaultDataDir()
     return pathRet / "MassGrid";
 #else
     // Unix
-    return pathRet / "MassGrid";
+    return pathRet / "massGrid";
 #endif
 #endif
 }
@@ -647,6 +649,16 @@ void ShrinkDebugFile()
     }
     else if (file != NULL)
         fclose(file);
+}
+
+void SetDefaultReceiveAddress(const std::string& address)
+{
+    defaultReceiveAddress = address;
+}
+
+std::string DefaultReceiveAddress()
+{
+    return defaultReceiveAddress;
 }
 
 #ifdef WIN32

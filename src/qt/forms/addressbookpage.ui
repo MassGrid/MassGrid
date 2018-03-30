@@ -96,6 +96,16 @@ border:hidden;
             </widget>
            </item>
            <item>
+            <widget class="QLabel" name="label_mainAddress">
+             <property name="styleSheet">
+              <string notr="true">color: rgb(204, 0, 0);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer_3">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -386,6 +396,22 @@ border:hidden;
                </property>
                <property name="toolButtonStyle">
                 <enum>Qt::ToolButtonTextBesideIcon</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="okButton">
+               <property name="styleSheet">
+                <string notr="true">QToolButton{
+width:80;
+height:30;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+}</string>
+               </property>
+               <property name="text">
+                <string>O&amp;k</string>
                </property>
               </widget>
              </item>

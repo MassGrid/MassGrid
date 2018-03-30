@@ -259,6 +259,7 @@ private:
     MainwinTitle* m_mainTitle;
     QGridLayout* backgroudlayout;
     CUpdateThread *m_updateClientThread;
+    WalletModel *m_walletModel;
 private:
     void createMainWin(const NetworkStyle *networkStyle);
     void createBackgroundWin();

@@ -103,6 +103,22 @@
         <source>title name</source>
         <translation>标题栏</translation>
     </message>
+    <message>
+        <source>O&amp;k</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <source>Choose the address to set the main receive address</source>
+        <translation>选择一个地址作为主接收地址</translation>
+    </message>
+    <message>
+        <source>&amp;Set Main Address</source>
+        <translation>默认接收地址</translation>
+    </message>
+    <message>
+        <source>Choose the address as the default receive address</source>
+        <translation>选择一个地址作为默认接收地址</translation>
+    </message>
 </context>
 <context>
     <name>AddressTableModel</name>
@@ -789,6 +805,14 @@
         <source>0.00</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Please set the Main Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>set the Main Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MassGridGUI</name>
@@ -1420,15 +1444,23 @@ Address: %4
     </message>
     <message>
         <source>Main Address</source>
-        <translation>主接收地址</translation>
+        <translation type="vanished">主接收地址</translation>
     </message>
     <message>
         <source>Select an address to be the main address</source>
-        <translation>请选择一个地址作为主接收地址</translation>
+        <translation type="vanished">请选择一个地址作为主接收地址</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
+    </message>
+    <message>
+        <source>Default Receive Address</source>
+        <translation>默认接收地址</translation>
+    </message>
+    <message>
+        <source>Select an address as the default main address</source>
+        <translation>选择一个地址作为默认接收地址</translation>
     </message>
 </context>
 <context>
@@ -1719,7 +1751,7 @@ Address: %4
     </message>
     <message>
         <source>MassGrid Core</source>
-        <translation type="unfinished">MGD核心</translation>
+        <translation>MGD核心</translation>
     </message>
     <message>
         <source>Error: Specified data directory &quot;%1&quot; does not exist.</source>
@@ -2127,7 +2159,7 @@ Address: %4
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished">标题栏</translation>
+        <translation>标题栏</translation>
     </message>
 </context>
 <context>
@@ -2670,19 +2702,19 @@ Address: %4
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished">标题栏</translation>
+        <translation>标题栏</translation>
     </message>
     <message>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>选择</translation>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>黏贴</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>复制</translation>
     </message>
 </context>
 <context>
@@ -3139,11 +3171,11 @@ Address: %4
     <name>TxViewDelegate</name>
     <message>
         <source>Received with</source>
-        <translation type="unfinished">接收于</translation>
+        <translation>接收于</translation>
     </message>
     <message>
         <source>Send to</source>
-        <translation type="unfinished">发送给</translation>
+        <translation>发送给</translation>
     </message>
 </context>
 <context>
@@ -3203,11 +3235,11 @@ Address: %4
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">导出</translation>
+        <translation>导出</translation>
     </message>
     <message>
         <source>Enter address or label to search</source>
-        <translation type="unfinished">输入地址或标签进行搜索</translation>
+        <translation>输入地址或标签进行搜索</translation>
     </message>
 </context>
 <context>
