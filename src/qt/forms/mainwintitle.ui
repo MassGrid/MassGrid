@@ -921,7 +921,7 @@ border:hidden;
              </font>
             </property>
             <property name="toolTip">
-             <string>Please set the Main Receive Address(Settings-&gt;Options-&gt;Wallet)</string>
+             <string>Please set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</string>
             </property>
             <property name="styleSheet">
              <string notr="true">border:hidden;
@@ -929,13 +929,16 @@ background-color: rgba(255, 255, 255, 0);
 color: rgb(255, 0, 0);</string>
             </property>
             <property name="text">
-             <string>set the Main Receive Address(Settings-&gt;Options-&gt;Wallet)</string>
+             <string>Set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
             <property name="readOnly">
              <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string/>
             </property>
            </widget>
           </item>

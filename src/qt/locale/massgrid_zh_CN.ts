@@ -109,7 +109,7 @@
     </message>
     <message>
         <source>Choose the address to set the main receive address</source>
-        <translation>选择一个地址作为主接收地址</translation>
+        <translation type="vanished">选择一个地址作为主接收地址</translation>
     </message>
     <message>
         <source>&amp;Set Main Address</source>
@@ -249,10 +249,6 @@
 <context>
     <name>CMessageBox</name>
     <message>
-        <source>Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>title name</source>
         <translation>标题栏</translation>
     </message>
@@ -263,6 +259,10 @@
     <message>
         <source>Close</source>
         <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -744,7 +744,7 @@
     </message>
     <message>
         <source>Data directory:MainView-&gt;Settings-&gt;Options-&gt;Display-&gt;Data Directory Path</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -752,6 +752,22 @@
     <message>
         <source>Form</source>
         <translation type="unfinished">表单</translation>
+    </message>
+    <message>
+        <source>Available:</source>
+        <translation>可使用的余额：</translation>
+    </message>
+    <message>
+        <source>Pending:</source>
+        <translation>等待中的余额：</translation>
+    </message>
+    <message>
+        <source>Total:</source>
+        <translation>总额：</translation>
+    </message>
+    <message>
+        <source>Immature:</source>
+        <translation>未成熟的：</translation>
     </message>
     <message>
         <source>文件</source>
@@ -778,40 +794,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Available:</source>
-        <translation>可使用的余额：</translation>
-    </message>
-    <message>
         <source>123.45</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pending:</source>
-        <translation>等待中的余额：</translation>
-    </message>
-    <message>
-        <source>Total:</source>
-        <translation>总额：</translation>
-    </message>
-    <message>
-        <source>123,45</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Immature:</source>
-        <translation>未成熟的：</translation>
     </message>
     <message>
         <source>0.00</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please set the Main Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
+        <source>123,45</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>set the Main Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
-        <translation type="unfinished"></translation>
+        <source>Please set the Main Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
+        <translation>请设置默认接收地址(设置-&gt;选项-&gt;钱包)</translation>
+    </message>
+    <message>
+        <source>Please set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
+        <translation>请设置默认接收地址(设置-&gt;选项-&gt;钱包)</translation>
+    </message>
+    <message>
+        <source>Set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
+        <translation>请设置默认接收地址(设置-&gt;选项-&gt;钱包)</translation>
     </message>
 </context>
 <context>
@@ -1145,10 +1149,6 @@ Address: %4
         <translation>打开文件</translation>
     </message>
     <message>
-        <source>Wallat (*.dat)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Import Wallet...</source>
         <translation>导入钱包</translation>
     </message>
@@ -1203,6 +1203,10 @@ Address: %4
     <message>
         <source>MassGrid will close now to update the Wallet. </source>
         <translation>MassGrid更新钱包，即将关闭</translation>
+    </message>
+    <message>
+        <source>Wallat (*.dat)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2464,16 +2468,16 @@ Address: %4
         <translation>已添加交易费</translation>
     </message>
     <message>
-        <source>交易费用</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Back</source>
         <translation>返回</translation>
     </message>
     <message>
         <source>Select &amp;Recipient</source>
         <translation>选择收款人</translation>
+    </message>
+    <message>
+        <source>交易费用</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

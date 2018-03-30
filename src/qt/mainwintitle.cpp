@@ -213,6 +213,7 @@ void MainwinTitle::setModel(WalletModel *model)
             }
         }
     }
+    // ui->addressEdit->setText(tr("Set the Main Receive Address(Settings->Options->Wallet)"));
     optionsmodel->setMainAddress("");
     ui->openAddr->setEnabled(false);
 }
