@@ -164,7 +164,7 @@ image: url(:/pic/res/pic/closeBtn.png);
            <item>
             <widget class="QStackedWidget" name="stackedWidget">
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="page">
               <layout class="QGridLayout" name="gridLayout">
@@ -199,7 +199,7 @@ image: url(:/pic/res/pic/closeBtn.png);
                  <item>
                   <widget class="QLabel" name="label">
                    <property name="text">
-                    <string>Please import your wallet password</string>
+                    <string>Please enter your wallet password</string>
                    </property>
                   </widget>
                  </item>

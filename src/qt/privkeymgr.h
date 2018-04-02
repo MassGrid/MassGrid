@@ -19,10 +19,14 @@ public:
 private slots:
     void on_okButton_clicked();
 
+    void on_stackedWidget_currentChanged(int arg1);
+
 private:
     Ui::PrivKeyMgr *ui;
 
     bool inputMode;
+
+    void changeCurrentPage(int index);
 };
 
 #endif // PRIVKEYMGR_H

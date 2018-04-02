@@ -771,43 +771,43 @@
     </message>
     <message>
         <source>文件</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>设置</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>帮助</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>概况</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>发送</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>交易</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>123.45</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>0.00</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>123,45</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Please set the Main Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
-        <translation>请设置默认接收地址(设置-&gt;选项-&gt;钱包)</translation>
+        <translation type="vanished">请设置默认接收地址(设置-&gt;选项-&gt;钱包)</translation>
     </message>
     <message>
         <source>Please set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
@@ -1684,7 +1684,7 @@ Address: %4
     </message>
     <message>
         <source>Import private key</source>
-        <translation>导出私钥</translation>
+        <translation>导入私钥</translation>
     </message>
     <message>
         <source>Dump private key</source>
@@ -1705,6 +1705,26 @@ Address: %4
     <message>
         <source>Please import your Private key</source>
         <translation>请输入你的私钥</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>导入</translation>
+    </message>
+    <message>
+        <source>Enter the password</source>
+        <translation>输入密码</translation>
+    </message>
+    <message>
+        <source>Please enter your wallet password</source>
+        <translation>请输入钱包密码</translation>
     </message>
 </context>
 <context>
