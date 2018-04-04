@@ -165,7 +165,9 @@ void Intro::pickDataDirectory()
     /* 1) Default data directory for operating system */
     QString dataDir = getDefaultDataDirectory();
     /* 2) Allow QSettings to override default dir */
-    dataDir = settings.value("strDataDir", dataDir).toString();
+    dataDir = settings.value("strDataDir2", dataDir).toString();
+
+    LogPrintf("Intro::pickDataDirectory dataDir:%s\n",dataDir.toStdString().c_str());
 
     if(!fs::exists(GUIUtil::qstringToBoostPath(dataDir)) || GetBoolArg("-choosedatadir", false))
     {
@@ -192,7 +194,7 @@ void Intro::pickDataDirectory()
             }
         }
 
-        settings.setValue("strDataDir", dataDir);
+        settings.setValue("strDataDir2", dataDir);
     }
     /* Only override -datadir if different from the default, to make it possible to
      * override -datadir in the massgrid.conf file in the default data directory

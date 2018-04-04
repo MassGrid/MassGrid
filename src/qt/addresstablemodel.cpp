@@ -9,6 +9,7 @@
 
 #include "base58.h"
 #include "wallet.h"
+#include "util.h"
 
 #include <QFont>
 #include <QDebug>
@@ -403,7 +404,7 @@ bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent
 {
     Q_UNUSED(parent);
     AddressTableEntry *rec = priv->index(row);
-    if(count != 1 || !rec || rec->type == AddressTableEntry::Receiving)
+    if(count != 1 || !rec) //|| rec->type == AddressTableEntry::Receiving
     {
         // Can only remove one row at a time, and cannot remove rows not in model.
         // Also refuse to remove receiving addresses.
@@ -412,7 +413,9 @@ bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent
     {
         LOCK(wallet->cs_wallet);
         wallet->DelAddressBook(CMassGridAddress(rec->address.toStdString()).Get());
+        // LogPrintf("AddressTableModel::removeRows DelAddressBookflag:%d\n",DelAddressBookflag);
     }
+    // LogPrintf("AddressTableModel::removeRows address:%s\n",rec->address.toStdString().c_str());
     return true;
 }
 

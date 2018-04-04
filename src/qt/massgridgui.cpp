@@ -32,6 +32,7 @@
 #include "util.h"
 #include "cmessagebox.h"
 #include "privkeymgr.h"
+#include "rpcserver.h"
 
 #include <iostream>
 
@@ -1415,8 +1416,10 @@ void MassGridGUI::openWebUrl(const QString& version,bool stopMinerFlag)
 {
     //get network checkout 
     //TODO:If need to stop rpc
-    if(stopMinerFlag)
+    if(stopMinerFlag){
         StopMiner();
+        StopRPCThreads();
+    }
 
     CMessageBox::information(this, tr("Soft Update"),
                 tr("Checkout an Update,version is %1.").arg(version) + "<br><br>" + 

@@ -1717,6 +1717,7 @@ bool CWallet::SetAddressBook(const CTxDestination& address, const string& strNam
     }
     NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address) != ISMINE_NO,
                              strPurpose, (fUpdated ? CT_UPDATED : CT_NEW) );
+
     if (!fFileBacked)
         return false;
     if (!strPurpose.empty() && !CWalletDB(strWalletFile).WritePurpose(CMassGridAddress(address).ToString(), strPurpose))
@@ -1742,10 +1743,10 @@ bool CWallet::DelAddressBook(const CTxDestination& address)
     }
 
     NotifyAddressBookChanged(this, address, "", ::IsMine(*this, address) != ISMINE_NO, "", CT_DELETED);
-
     if (!fFileBacked)
         return false;
     CWalletDB(strWalletFile).ErasePurpose(CMassGridAddress(address).ToString());
+
     return CWalletDB(strWalletFile).EraseName(CMassGridAddress(address).ToString());
 }
 

@@ -73,7 +73,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
         break;
     case ReceivingTab:
         ui->labelExplanation->setText(tr("These are your MassGrid addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
-        ui->deleteAddress->setVisible(false);
+        // ui->deleteAddress->setVisible(false);
         ui->newAddress->setVisible(false);
         ui->okButton->setVisible(false);
         ui->copyAddress->setVisible(false);
@@ -245,6 +245,7 @@ void AddressBookPage::on_deleteAddress_clicked()
     if(!indexes.isEmpty())
     {
         table->model()->removeRow(indexes.at(0).row());
+        LogPrintf("AddressBookPage::on_deleteAddress_clicked remove model:%d\n",indexes.at(0).row());
     }
 }
 
@@ -297,9 +298,9 @@ void AddressBookPage::selectionChanged()
             break;
         case ReceivingTab:
             // Deleting receiving addresses, however, is not allowed
-            ui->deleteAddress->setEnabled(false); 
-            ui->deleteAddress->setVisible(false); 
-            deleteAction->setEnabled(false); 
+            ui->deleteAddress->setEnabled(true); 
+            ui->deleteAddress->setVisible(true); 
+            deleteAction->setEnabled(true); 
             ui->newAddress->setEnabled(false); 
             break;
         case MainAddressTab: break;

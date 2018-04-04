@@ -746,6 +746,10 @@
         <source>Data directory:MainView-&gt;Settings-&gt;Options-&gt;Display-&gt;Data Directory Path</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Data directory:Settings-&gt;Options-&gt;Display-&gt;Data Directory Path</source>
+        <translation type="unfinished">数据目录:设置-&gt;选项-&gt;显示-&gt;数据目录路径</translation>
+    </message>
 </context>
 <context>
     <name>MainwinTitle</name>
@@ -1696,7 +1700,7 @@ Address: %4
     </message>
     <message>
         <source>Please import your wallet password</source>
-        <translation>请输入你的钱包密码</translation>
+        <translation type="vanished">请输入你的钱包密码</translation>
     </message>
     <message>
         <source>Please import the wallet address</source>

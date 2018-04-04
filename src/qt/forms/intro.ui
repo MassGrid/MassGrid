@@ -235,7 +235,7 @@ image: url(:/pic/res/pic/closeBtn.png);
              <item>
               <widget class="QLabel" name="label_3">
                <property name="text">
-                <string>Data directory:MainView-&gt;Settings-&gt;Options-&gt;Display-&gt;Data Directory Path</string>
+                <string>Data directory:Settings-&gt;Options-&gt;Display-&gt;Data Directory Path</string>
                </property>
               </widget>
              </item>

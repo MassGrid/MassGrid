@@ -112,7 +112,6 @@ void AskPassphraseDialog::accept()
     switch(mode)
     {
     case Encrypt: {
-        if(newpass1.empty() || newpass2.empty())
         {
             // Cannot encrypt with empty passphrase
             break;

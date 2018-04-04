@@ -744,6 +744,7 @@ void StopRPCThreads()
     delete rpc_worker_group; rpc_worker_group = NULL;
     delete rpc_ssl_context; rpc_ssl_context = NULL;
     delete rpc_io_service; rpc_io_service = NULL;
+    LogPrintf("StopRPCThreads done\n");
 }
 
 bool IsRPCRunning()
