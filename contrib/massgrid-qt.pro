@@ -18,7 +18,8 @@ FORMS += \
     ../src/qt/forms/transactiondescdialog.ui \
     ../src/qt/forms/mainwintitle.ui\
     ../src/qt/forms/cmessagebox.ui \
-    ../src/qt/forms/privkeymgr.ui
+    ../src/qt/forms/privkeymgr.ui \
+    ../src/qt/forms/cprogressdialog.ui
 
 
 RESOURCES += \

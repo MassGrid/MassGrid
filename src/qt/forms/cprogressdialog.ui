@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CProgressDialog</class>
+ <widget class="QDialog" name="CProgressDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>312</width>
+    <height>118</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QWidget" name="centerWin" native="true">
+     <property name="styleSheet">
+      <string notr="true">QWidget#centerWin{
+border:hidden;
+border-image: url(:/pic/res/pic/dlgBackgroud.png);
+}
+
+QFrame{
+border:hidden;
+}
+
+QScrollArea{
+border:hidden;
+}
+
+/*垂直滚动条整体*/
+QScrollBar:vertical
+{
+    width:8px;
+    background:rgb(0,0,0,0%);
+    margin:0px,0px,0px,0px;
+    padding-top:12px;   /*上预留位置*/
+    padding-bottom:12px;    /*下预留位置*/
+}
+
+/*滚动条中滑块的样式*/
+QScrollBar::handle:vertical
+{
+    width:8px;
+    background:rgb(0,0,0,25%);
+    border-radius:4px;
+    min-height:20px;
+}
+
+/*鼠标触及滑块样式*/
+QScrollBar::handle:vertical:hover
+{
+    width:9px;
+    background:rgb(0,0,0,50%);
+    border-radius:4px;
+    min-height:20;
+}
+
+/*设置下箭头*/
+QScrollBar::add-line:vertical
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/3.png);
+    subcontrol-position:bottom;
+}
+
+/*设置上箭头*/
+QScrollBar::sub-line:vertical
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/1.png);
+    subcontrol-position:top;
+}
+
+/*设置下箭头:悬浮状态*/
+QScrollBar::add-line:vertical:hover
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/4.png);
+    subcontrol-position:bottom;
+}
+
+/*设置上箭头：悬浮状态*/
+QScrollBar::sub-line:vertical:hover
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/2.png);
+    subcontrol-position:top;
+}
+
+/*当滚动条滚动的时候，上面的部分和下面的部分*/
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical
+{
+    background:rgb(0,0,0,10%);
+    border-radius:4px;
+}
+
+
+
+QScrollBar:horizontal{
+height:10px;
+background:transparent;
+background-color:rgb(248, 248, 248);
+margin:0px,0px,0px,0px;
+padding-left:10px;padding-right:10px;
+}
+
+QScrollBar::handle:horizontal{
+height:10px;
+background:lightgray;
+border-radius:5px;/*min-height:20;*/
+}
+QScrollBar::handle:horizontal:hover{
+height:10px;
+background:gray;
+border-radius:5px;/*min-height:20;*/
+}
+QScrollBar::add-line:horizontal{
+/*height:10px;width:10px;*/
+border-image:url(:/button/images/button/right.png);
+/*subcontrol-position:right;*/
+}
+QScrollBar::sub-line:horizontal{
+/*height:10px;width:10px;*/
+border-image:url(:/button/images/button/left.png);
+/*subcontrol-position:left;*/
+}
+QScrollBar::add-line:horizontal:hover{
+/*height:10px;width:10px;*/
+border-image:url(:/button/images/button/right_mouseDown.png);
+/*subcontrol-position:right;*/
+}
+QScrollBar::sub-line:horizontal:hover{
+/*height:10px;width:10px;*/
+border-image:url(:/button/images/button/left_mouseDown.png);
+/*subcontrol-position:left;*/
+}
+QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{
+background:transparent;
+border-radius:5px;
+}
+
+QToolButton{
+width:80;
+height:30;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+}</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="leftMargin">
+       <number>12</number>
+      </property>
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <property name="rightMargin">
+       <number>12</number>
+      </property>
+      <property name="bottomMargin">
+       <number>6</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QFrame" name="mainframe">
+        <property name="styleSheet">
+         <string notr="true">QFrame#mainframe{
+border:hidden;
+	background-color: rgb(255, 255, 255);
+}</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="1,2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <property name="leftMargin">
+            <number>9</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_titleName">
+             <property name="text">
+              <string>title name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QToolButton" name="cancelButton">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QToolButton{
+border:hidden;
+	background-color: rgb(255, 255, 255,0);
+image: url(:/icons/res/pic/closeBtn.png);
+}
+
+</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="leftMargin">
+            <number>10</number>
+           </property>
+           <property name="rightMargin">
+            <number>10</number>
+           </property>
+           <item>
+            <widget class="QProgressBar" name="progressBar">
+             <property name="styleSheet">
+              <string notr="true">QProgressBar {
+border: none;
+ text-align: center;
+color: white;
+background-color: rgb(172, 99, 43);
+background-repeat: repeat-x;
+text-align: center;}
+QProgressBar::chunk {
+border: none;
+background-color: rgb(239, 169, 4);
+background-repeat: repeat-x;
+}
+</string>
+             </property>
+             <property name="value">
+              <number>24</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

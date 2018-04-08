@@ -266,6 +266,17 @@
     </message>
 </context>
 <context>
+    <name>CProgressDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>title name</source>
+        <translation type="unfinished">标题栏</translation>
+    </message>
+</context>
+<context>
     <name>ClientModel</name>
     <message>
         <source>Network Alert</source>
@@ -743,10 +754,6 @@
         </translation>
     </message>
     <message>
-        <source>Data directory:MainView-&gt;Settings-&gt;Options-&gt;Display-&gt;Data Directory Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Data directory:Settings-&gt;Options-&gt;Display-&gt;Data Directory Path</source>
         <translation type="unfinished">数据目录:设置-&gt;选项-&gt;显示-&gt;数据目录路径</translation>
     </message>
@@ -774,42 +781,6 @@
         <translation>未成熟的：</translation>
     </message>
     <message>
-        <source>文件</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>设置</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>帮助</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>概况</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>发送</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>交易</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>123.45</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>0.00</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>123,45</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Please set the Main Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
         <translation type="vanished">请设置默认接收地址(设置-&gt;选项-&gt;钱包)</translation>
     </message>
@@ -820,6 +791,42 @@
     <message>
         <source>Set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</source>
         <translation>请设置默认接收地址(设置-&gt;选项-&gt;钱包)</translation>
+    </message>
+    <message>
+        <source>文件</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>帮助</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>概况</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>发送</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>交易</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>123.45</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>0.00</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>123,45</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1212,6 +1219,26 @@ Address: %4
         <source>Wallat (*.dat)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Import private key</source>
+        <translation type="unfinished">导入私钥</translation>
+    </message>
+    <message>
+        <source>Import the private key will override the original one, please make sure the wallet balance is 0 and then do this.(you can close client and remove the wallet.dat then do the import operation)</source>
+        <translation type="vanished">导入私钥将覆盖原始密钥，请确保钱包余额为0再执行此操作。(您可以关闭客户端并删除钱包。然后执行导入操作)</translation>
+    </message>
+    <message>
+        <source>Load progress</source>
+        <translation>加载进度</translation>
+    </message>
+    <message>
+        <source>Importing the private key deletes the existing receive address. This process is irreversible. Please confirm whether to do that?</source>
+        <translation>导入私钥将删除现有的接收地址。这个过程是不可逆的。请确认是否要这样做?</translation>
+    </message>
+    <message>
+        <source>Import the private key will override the original one, please make sure the wallet balance is 0 and then do this.</source>
+        <translation>导入私钥将覆盖原始密钥，请确保钱包余额为0再执行此操作。</translation>
+    </message>
 </context>
 <context>
     <name>OpenURIDialog</name>
@@ -1237,7 +1264,7 @@ Address: %4
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished">标题栏</translation>
+        <translation>标题栏</translation>
     </message>
 </context>
 <context>
@@ -1440,11 +1467,11 @@ Address: %4
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished">标题栏</translation>
+        <translation>标题栏</translation>
     </message>
     <message>
         <source>Version</source>
-        <translation type="vanished">版本</translation>
+        <translation>版本</translation>
     </message>
     <message>
         <source>Data Dirctory Path</source>
@@ -1452,11 +1479,11 @@ Address: %4
     </message>
     <message>
         <source>Main Address</source>
-        <translation type="vanished">主接收地址</translation>
+        <translation>主接收地址</translation>
     </message>
     <message>
         <source>Select an address to be the main address</source>
-        <translation type="vanished">请选择一个地址作为主接收地址</translation>
+        <translation>请选择一个地址作为主接收地址</translation>
     </message>
     <message>
         <source>...</source>
@@ -1660,19 +1687,19 @@ Address: %4
     <name>PrivKeyMgr</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">表单</translation>
+        <translation>表单</translation>
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished">标题栏</translation>
+        <translation>标题栏</translation>
     </message>
     <message>
         <source>Please input your wallet password</source>
-        <translation type="vanished">请输入你的钱包密码</translation>
+        <translation>请输入你的钱包密码</translation>
     </message>
     <message>
         <source>Please input the wallet address</source>
-        <translation type="vanished">请输入需要导出私钥的钱包地址</translation>
+        <translation>请输入需要导出私钥的钱包地址</translation>
     </message>
     <message>
         <source>This is your Private key</source>
@@ -1680,7 +1707,7 @@ Address: %4
     </message>
     <message>
         <source>Please input your Private key</source>
-        <translation type="vanished">请输入你的私钥</translation>
+        <translation>请输入你的私钥</translation>
     </message>
     <message>
         <source>OK</source>
@@ -1700,7 +1727,7 @@ Address: %4
     </message>
     <message>
         <source>Please import your wallet password</source>
-        <translation type="vanished">请输入你的钱包密码</translation>
+        <translation>请输入你的钱包密码</translation>
     </message>
     <message>
         <source>Please import the wallet address</source>
@@ -2045,7 +2072,7 @@ Address: %4
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished">标题栏</translation>
+        <translation>标题栏</translation>
     </message>
 </context>
 <context>
@@ -2501,7 +2528,7 @@ Address: %4
     </message>
     <message>
         <source>交易费用</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>

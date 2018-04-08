@@ -178,7 +178,6 @@ void MainwinTitle::setModel(WalletModel *model)
     if(!model)
         return;
 
-
     AddressTableModel* addressModel = walletModel->getAddressTableModel();
     QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(addressModel);
@@ -234,6 +233,24 @@ void MainwinTitle::open2DCodePage()
     QSize size = MassGridGUI::winSize();
     dialog.move(pos.x()+(size.width()-dialog.width())/2,pos.y()+(size.height()-dialog.height())/2);
     dialog.exec();
+}
+
+// bool MassGridUnits::parse(int unit, const QString &value, CAmount *val_out)
+
+CAmount MainwinTitle::getTotal()
+{
+    OptionsModel* optionsmodel = walletModel->getOptionsModel();
+    int unit = optionsmodel->getDisplayUnit();
+
+    QString total = ui->label_total->text().remove("\n");
+    QString totalUnit = total.split(" ").last();
+    total.replace(totalUnit,"");
+    total.replace(" ","");
+
+    CAmount mount = 0;
+    MassGridUnits::parse(unit,total,&mount);
+
+    return mount;
 }
 
 void MainwinTitle::loadRow(int row)

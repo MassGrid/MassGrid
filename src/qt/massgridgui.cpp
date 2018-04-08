@@ -17,7 +17,7 @@
 #include "utilitydialog.h"
 #include "miner.h"
 #include "cupdatethread.h"
-
+#include "cprogressdialog.h"
 #ifdef ENABLE_WALLET
 #include "walletframe.h"
 #include "walletmodel.h"
@@ -33,6 +33,7 @@
 #include "cmessagebox.h"
 #include "privkeymgr.h"
 #include "rpcserver.h"
+#include "addresstablemodel.h"
 
 #include <iostream>
 
@@ -61,6 +62,7 @@
 #include <QDesktopServices>
 #include <QTimer>
 #include <QEventLoop>
+#include <QSortFilterProxyModel>
 
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
@@ -894,15 +896,43 @@ void MassGridGUI::openClicked()
 
 void MassGridGUI::importPrivkey()
 {
-    
-    PrivKeyMgr dlg(true,0);
+    CAmount total = m_mainTitle->getTotal();
+    LogPrintf("MassGridGUI::importPrivkey total:%d\n",total);
+    if(total>0){
+        CMessageBox::information(this, tr("Import private key"),tr("Import the private key will override the original one, please make sure the wallet balance is 0 and then do this.")); //导入私钥将覆盖原来的私钥，请确保钱包余额为0再进行此操作
+        return ;
+    }
+    else{
+        CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Import private key"),
+            tr("Importing the private key deletes the existing receive address. This process is irreversible. Please confirm whether to do that?"),
+            CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+        if(btnRetVal == CMessageBox::Cancel)
+            return;
+    }
+
+
+    AddressTableModel* addressModel = m_walletModel->getAddressTableModel();
+    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
+    proxyModel->setSourceModel(addressModel);
+    proxyModel->setDynamicSortFilter(true);
+    proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+    proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+
+    proxyModel->setFilterRole(AddressTableModel::TypeRole);
+    proxyModel->setFilterFixedString(AddressTableModel::Receive);
+
+    int rowCount = proxyModel->rowCount();
+    for(int i =0;i<rowCount;i++)
+        proxyModel->removeRow(0);
+
+    PrivKeyMgr dlg(true,this,0);
     dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
     dlg.exec();
 }
 
 void MassGridGUI::dumpPrivkey()
 {
-    PrivKeyMgr dlg(false,0);
+    PrivKeyMgr dlg(false,this,0);
     dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
     dlg.exec();
 }
@@ -1293,25 +1323,44 @@ void MassGridGUI::detectShutdown()
 
 void MassGridGUI::showProgress(const QString &title, int nProgress)
 {
+
+    LogPrintf("MassGridGUI::showProgress nprogress:%d\n",nProgress);
+
     if (nProgress == 0)
     {
-        progressDialog = new QProgressDialog(title, "", 0, 100);
+        progressDialog = new QProgressDialog(tr("Load progress"), "", 0, 100,this);
         progressDialog->setWindowModality(Qt::ApplicationModal);
+        progressDialog->setStyleSheet("QProgressBar {\nborder: none;\n text-align: center;\ncolor: white;\nbackground-color: rgb(172, 99, 43);\nbackground-repeat: repeat-x;\ntext-align: center;}\nQProgressBar::chunk {\nborder: none;\nbackground-color: rgb(239, 169, 4);\nbackground-repeat: repeat-x;\n}");
         progressDialog->setMinimumDuration(0);
         progressDialog->setCancelButton(0);
         progressDialog->setAutoClose(false);
         progressDialog->setValue(0);
+        // progressDialog->move(10,10);
+        progressDialog->move(this->x()+(this->width()-progressDialog->width())/2,this->y()+(this->height()-progressDialog->height())/2);
     }
     else if (nProgress == 100)
     {
-        if (progressDialog)
-        {
-            progressDialog->close();
-            progressDialog->deleteLater();
-        }
+        // if (progressDialog)
+        // {
+        //     progressDialog->close();
+        //     progressDialog->deleteLater();
+        // }
+        closeProgress();
     }
     else if (progressDialog)
         progressDialog->setValue(nProgress);
+
+    progressDialog->setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    progressDialog->show();
+}
+
+void MassGridGUI::closeProgress()
+{
+    if (progressDialog)
+    {
+        progressDialog->close();
+        progressDialog->deleteLater();
+    }
 }
 
 void MassGridGUI::updateClient(QString version,bool stopMinerFlag)

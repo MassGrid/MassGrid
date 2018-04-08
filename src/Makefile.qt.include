@@ -25,7 +25,8 @@ QT_FORMS_UI = \
   qt/forms/transactiondescdialog.ui\
   qt/forms/mainwintitle.ui\
   qt/forms/cmessagebox.ui\
-  qt/forms/privkeymgr.ui
+  qt/forms/privkeymgr.ui\
+  qt/forms/cprogressdialog.ui
 
 QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
@@ -75,7 +76,8 @@ QT_MOC_CPP = \
   qt/moc_cmessagebox.cpp\  
   qt/moc_mitemdelegate.cpp\
   qt/moc_cupdatethread.cpp\
-  qt/moc_privkeymgr.cpp
+  qt/moc_privkeymgr.cpp\
+  qt/moc_cprogressdialog.cpp
   
 
 MASSGRID_MM = \
@@ -152,7 +154,8 @@ MASSGRID_QT_H = \
   qt/cmessagebox.h\
   qt/mitemdelegate.h\
   qt/cupdatethread.h\
-  qt/privkeymgr.h
+  qt/privkeymgr.h\
+  qt/cprogressdialog.h
 
 RES_ICONS = \
   qt/res/icons/add.png \
@@ -257,7 +260,8 @@ MASSGRID_QT_CPP += \
   qt/cmessagebox.cpp\  
   qt/mitemdelegate.cpp\
   qt/cupdatethread.cpp\
-  qt/privkeymgr.cpp
+  qt/privkeymgr.cpp\
+  qt/cprogressdialog.cpp
 
 endif
 

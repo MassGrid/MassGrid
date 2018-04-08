@@ -46,6 +46,7 @@ QT_BEGIN_NAMESPACE
 class QAction;
 class QProgressBar;
 class QProgressDialog;
+class CProgressDialog;
 QT_END_NAMESPACE
 
 /**
@@ -241,12 +242,15 @@ private slots:
     /** called by a timer to check if fRequestShutdown has been set **/
     void detectShutdown();
 
-    /** Show progress dialog e.g. for verifychain */
-    void showProgress(const QString &title, int nProgress);
-
     void updateClient(QString,bool);
 
     void startUpdateThread();
+
+public slots:
+    /** Show progress dialog e.g. for verifychain */
+    void showProgress(const QString &title, int nProgress);
+    void closeProgress();
+
 
 protected:
     void mousePressEvent(QMouseEvent *e);

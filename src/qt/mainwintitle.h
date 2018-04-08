@@ -13,6 +13,8 @@
 #include <QLabel>
 #include <QDataWidgetMapper>
 
+#include "massgridunits.h"
+
 class AddressTableModel;
 class WalletModel;
 
@@ -41,6 +43,8 @@ public:
 
     // QString getReceiveAddr();
     void setTransactionButtonStyle();
+
+    CAmount getTotal();
 
 private:
     Ui::MainwinTitle *ui; 

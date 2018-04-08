@@ -1745,7 +1745,12 @@ bool CWallet::DelAddressBook(const CTxDestination& address)
     NotifyAddressBookChanged(this, address, "", ::IsMine(*this, address) != ISMINE_NO, "", CT_DELETED);
     if (!fFileBacked)
         return false;
-    CWalletDB(strWalletFile).ErasePurpose(CMassGridAddress(address).ToString());
+    
+    LogPrintf("CWallet::DelAddressBook eraseFlag:%d\n",false);
+
+    bool eraseFlag = CWalletDB(strWalletFile).ErasePurpose(CMassGridAddress(address).ToString());
+
+    LogPrintf("CWallet::DelAddressBook eraseFlag:%d\n",eraseFlag);
 
     return CWalletDB(strWalletFile).EraseName(CMassGridAddress(address).ToString());
 }
