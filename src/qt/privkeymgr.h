@@ -34,7 +34,7 @@ private slots:
 private:
     Ui::PrivKeyMgr *ui;
 
-    bool inputMode;
+    bool m_inputMode;
 
     MassGridGUI *m_guiObj;
 

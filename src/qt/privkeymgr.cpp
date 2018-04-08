@@ -8,7 +8,8 @@
 
 PrivKeyMgr::PrivKeyMgr(bool inputMode,MassGridGUI *parentObj,QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PrivKeyMgr)
+    ui(new Ui::PrivKeyMgr),
+    m_inputMode(inputMode)
 {
     ui->setupUi(this);
 
@@ -23,7 +24,7 @@ PrivKeyMgr::PrivKeyMgr(bool inputMode,MassGridGUI *parentObj,QWidget *parent) :
         changeCurrentPage(0);
     }
     else{
-        if(inputMode){
+        if(m_inputMode){
             // ui->stackedWidget->setCurrentIndex(2);
             // ui->label_titleName->setText(tr("Import private key"));
             // ui->okButton->setText(tr("Import"));
@@ -64,7 +65,7 @@ void PrivKeyMgr::on_okButton_clicked()
             command = QString("walletpassphrase %1 60").arg(password);
             RPCConsole::RunCommand(command,category,retCommand);
             if(category == RPCConsole::CMD_REPLY){
-                if(inputMode){
+                if(m_inputMode){
                     // ui->stackedWidget->setCurrentIndex(2);
                     // ui->okButton->setText(tr("Generate"));
                     changeCurrentPage(2);
@@ -129,7 +130,6 @@ void PrivKeyMgr::on_stackedWidget_currentChanged(int index)
             break;
     }
 }
-
 
 void PrivKeyMgr::changeCurrentPage(int index)
 {

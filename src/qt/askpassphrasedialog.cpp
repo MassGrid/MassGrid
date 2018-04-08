@@ -100,6 +100,7 @@ void AskPassphraseDialog::accept()
     SecureString oldpass, newpass1, newpass2;
     if(!model)
         return;
+
     oldpass.reserve(MAX_PASSPHRASE_SIZE);
     newpass1.reserve(MAX_PASSPHRASE_SIZE);
     newpass2.reserve(MAX_PASSPHRASE_SIZE);
@@ -112,6 +113,7 @@ void AskPassphraseDialog::accept()
     switch(mode)
     {
     case Encrypt: {
+        if(newpass1.empty() || newpass2.empty())
         {
             // Cannot encrypt with empty passphrase
             break;
@@ -120,6 +122,7 @@ void AskPassphraseDialog::accept()
                  tr("Warning: If you encrypt your wallet and lose your passphrase, you will <b>LOSE ALL OF YOUR MASSGRIDS</b>!") + "<br><br>" + tr("Are you sure you wish to encrypt your wallet?"),
                  CMessageBox::Ok_Cancel,
                  CMessageBox::Cancel);
+
         if(retval == CMessageBox::Ok)
         {
             if(newpass1 == newpass2)

@@ -1213,7 +1213,7 @@ Address: %4
     </message>
     <message>
         <source>MassGrid will close now to update the Wallet. </source>
-        <translation>MassGrid更新钱包，即将关闭</translation>
+        <translation type="vanished">MassGrid更新钱包，即将关闭</translation>
     </message>
     <message>
         <source>Wallat (*.dat)</source>
@@ -1238,6 +1238,10 @@ Address: %4
     <message>
         <source>Import the private key will override the original one, please make sure the wallet balance is 0 and then do this.</source>
         <translation>导入私钥将覆盖原始密钥，请确保钱包余额为0再执行此操作。</translation>
+    </message>
+    <message>
+        <source>MassGrid will close now to update the Wallet,Please restart your wallet later.</source>
+        <translation>MassGrid更新钱包,即将关闭,稍后请重新启动钱包</translation>
     </message>
 </context>
 <context>
@@ -1471,7 +1475,7 @@ Address: %4
     </message>
     <message>
         <source>Version</source>
-        <translation>版本</translation>
+        <translation type="vanished">版本</translation>
     </message>
     <message>
         <source>Data Dirctory Path</source>
@@ -1479,11 +1483,11 @@ Address: %4
     </message>
     <message>
         <source>Main Address</source>
-        <translation>主接收地址</translation>
+        <translation type="vanished">主接收地址</translation>
     </message>
     <message>
         <source>Select an address to be the main address</source>
-        <translation>请选择一个地址作为主接收地址</translation>
+        <translation type="vanished">请选择一个地址作为主接收地址</translation>
     </message>
     <message>
         <source>...</source>
@@ -1695,11 +1699,11 @@ Address: %4
     </message>
     <message>
         <source>Please input your wallet password</source>
-        <translation>请输入你的钱包密码</translation>
+        <translation type="vanished">请输入你的钱包密码</translation>
     </message>
     <message>
         <source>Please input the wallet address</source>
-        <translation>请输入需要导出私钥的钱包地址</translation>
+        <translation type="vanished">请输入需要导出私钥的钱包地址</translation>
     </message>
     <message>
         <source>This is your Private key</source>
@@ -1707,7 +1711,7 @@ Address: %4
     </message>
     <message>
         <source>Please input your Private key</source>
-        <translation>请输入你的私钥</translation>
+        <translation type="vanished">请输入你的私钥</translation>
     </message>
     <message>
         <source>OK</source>
@@ -1727,7 +1731,7 @@ Address: %4
     </message>
     <message>
         <source>Please import your wallet password</source>
-        <translation>请输入你的钱包密码</translation>
+        <translation type="vanished">请输入你的钱包密码</translation>
     </message>
     <message>
         <source>Please import the wallet address</source>

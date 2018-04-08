@@ -576,7 +576,7 @@ MDateEdit::MDateEdit(QWidget *parent)
 {
     this->setCalendarPopup(true);
     m_DefCalendar = new DefineCalendar(this);
-    m_DefCalendar->setLocale(QLocale(QLocale::English));
+    // m_DefCalendar->setLocale(QLocale(QLocale::English));
 
     setCalendarWidget(m_DefCalendar);
 
@@ -650,7 +650,7 @@ void MDateEdit::setMyStytle()
                    QScrollBar::sub-line{background-color:white;}\
                    QScrollBar::add-line{background-color:white;}");
 
-                   this->setStyleSheet(strTemp);
+    this->setStyleSheet(strTemp);
 }
 
 
@@ -706,6 +706,10 @@ void DefineCalendar::InitWidgets()
     pushBtn_ML = new QPushButton(this);
     pushBtn_MR = new QPushButton(this);
 
+    // QListView *yearListview = new QListView(); 
+    // QListView *monthListview = new QListView(); 
+    // yearListview->setMaximumHeight(300);
+    // monthListview->setMaximumHeight(300);
     comboBox_Year->setView(new QListView());
     comboBox_Month->setView(new QListView());
 
@@ -743,6 +747,9 @@ void DefineCalendar::InitWidgets()
     HTopLayout->addWidget(pushBtn_ML);
     HTopLayout->addWidget(comboBox_Month);
     HTopLayout->addWidget(pushBtn_MR);
+
+    // HTopLayout->setSizeConstraint(QLayout::SetFixedSize);
+
 
     QVBoxLayout *VMainLayout = qobject_cast<QVBoxLayout *>(this->layout());
     VMainLayout->insertWidget(0,widget_top);
@@ -783,7 +790,7 @@ void DefineCalendar::SetToday()
     int month = curDate.month();
     this->setSelectedDate(curDate);
     QString yearStr = QString::number(year);
-    // comboBox_Year->setCurrentText(yearStr);
+    comboBox_Year->setCurrentText(yearStr);
     comboBox_Month->setCurrentIndex(month-1);
 }
 
@@ -849,6 +856,10 @@ void DefineCalendar::UpdatePage()
 
 void DefineCalendar::CurPageChange( int year, int month )
 {
-    // comboBox_Year->setCurrentText(QString::number(year));
+    comboBox_Year->setCurrentText(QString::number(year));
     comboBox_Month->setCurrentIndex(month-1);
+
+    QDate curDate;
+    curDate.setDate(year,month,1);
+    emit setFinished(QDateTime(curDate));
 }

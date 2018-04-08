@@ -1414,19 +1414,6 @@ void MassGridGUI::unsubscribeFromCoreSignals()
 
 void MassGridGUI::inputWalletFile()
 {
-    // CMessageBox::warning(this, tr("Inport Wallet"),
-    //                  "<qt>" +
-    //                  tr("MassGrid will close now to finish the encryption process. "
-    //                  "Remember that encrypting your wallet cannot fully protect "
-    //                  "your massgrids from being stolen by malware infecting your computer.") +
-    //                  "<br><br><b>" +
-    //                  tr("IMPORTANT: Any previous backups you have made of your wallet file "
-    //                  "should be replaced with the newly generated, encrypted wallet file. "
-    //                  "For security reasons, previous backups of the unencrypted wallet file "
-    //                  "will become useless as soon as you start using the new, encrypted wallet.") +
-    //                  "</b></qt>");
-    //                 QApplication::quit();
-
     CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Import Wallet"),
             tr("Import wallet file will cover the old one,please back up your old wallet."),
             CMessageBox::Ok_Cancel, CMessageBox::Cancel);
@@ -1442,13 +1429,16 @@ void MassGridGUI::inputWalletFile()
         return ;
 
     QString curdir = GetDataDir().string().c_str();
+    // curdir+="/wallet.dat";
+
+    // LogPrintf("MassGridGUI::inputWalletFile curdir:%s\n",curdir.toStdString().c_str());
 
     // copyFileToPath(fileName,curdir,true);
     if(copyFileToPath(fileName,curdir,true)){
         // qDebug() << "copy file sucess!";
         CMessageBox::warning(this, tr("Import Wallet"),
              "<qt>" +
-             tr("MassGrid will close now to update the Wallet. ")
+             tr("MassGrid will close now to update the Wallet,Please restart your wallet later.")
              +"</qt>");
         QApplication::quit();
     }
@@ -1482,6 +1472,7 @@ bool MassGridGUI::copyFileToPath(QString sourceDir ,QString toDir, bool coverFil
 {
     toDir.replace("\\","/");
     QString filename = sourceDir.split("/").last();
+    filename = "wallet.dat";
     toDir.append(QString("/%1").arg(filename));
     if (sourceDir == toDir){
         return true;
