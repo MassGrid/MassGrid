@@ -1205,7 +1205,7 @@ Address: %4
     </message>
     <message>
         <source>Checkout an Update,version is %1.</source>
-        <translation>检测到新版本:%1</translation>
+        <translation type="vanished">检测到新版本:%1</translation>
     </message>
     <message>
         <source>We will open the downloads url,or you can open this url to download the new Application.</source>
@@ -1242,6 +1242,27 @@ Address: %4
     <message>
         <source>MassGrid will close now to update the Wallet,Please restart your wallet later.</source>
         <translation>MassGrid更新钱包,即将关闭,稍后请重新启动钱包</translation>
+    </message>
+    <message>
+        <source>The Miner will be close.</source>
+        <translation type="vanished">挖矿程序将被关闭</translation>
+    </message>
+    <message>
+        <source>Checkout an Update,version is %1.%2</source>
+        <translation type="vanished">检测到新版本:%1 {1.%2?}</translation>
+    </message>
+    <message>
+        <source>
+The mining process has been shut down.</source>
+        <translation type="vanished">\n挖矿程序已经被关闭</translation>
+    </message>
+    <message>
+        <source>The mining process has been shut down.</source>
+        <translation>挖矿程序已经被关闭</translation>
+    </message>
+    <message>
+        <source>Checkout an Update,version is %1. %2</source>
+        <translation>检测到新版本:%1.%2</translation>
     </message>
 </context>
 <context>
@@ -1491,7 +1512,7 @@ Address: %4
     </message>
     <message>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="vanished">...</translation>
     </message>
     <message>
         <source>Default Receive Address</source>
@@ -1500,6 +1521,18 @@ Address: %4
     <message>
         <source>Select an address as the default main address</source>
         <translation>选择一个地址作为默认接收地址</translation>
+    </message>
+    <message>
+        <source>Choose previously used address</source>
+        <translation type="unfinished">选择以前用过的地址</translation>
+    </message>
+    <message>
+        <source>Choose</source>
+        <translation type="unfinished">选择</translation>
+    </message>
+    <message>
+        <source>Alt+A</source>
+        <translation type="unfinished">Alt+A</translation>
     </message>
 </context>
 <context>
