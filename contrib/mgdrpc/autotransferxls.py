@@ -19,8 +19,8 @@ def open_excel(file= ''):
     except Exception as e:
         print(str(e))
 
-def readExcel(file,by_name='sheet1_1'):#edit table name
-	print file,' ',by_name
+def readExcel(file,by_name='sheet'):#edit table name
+	print '****** this is',file,' sheetName:',by_name,'******'
 	data = open_excel(file)
 	table = data.sheet_by_name(by_name) #get the table
 	nrows = table.nrows  # get the total rows
@@ -32,13 +32,17 @@ def readExcel(file,by_name='sheet1_1'):#edit table name
 	        lists.append(row)
 	return lists
     
-def Cmd(cmd,to,amt):
+def Cmd(cmd,opt,to,amt):
 	if cmd == "sendtoaddress":
 		try:
 			famt=float(amt)
-			logger.debug(to+"\t"+str(famt))
-			raw_input('Continue...')
-			#logger.debug(access.sendtoaddress(to,famt))
+			if( opt!='' and opt== '-s'):
+				logger.debug(to+"\t"+str(famt))
+			else:
+				logger.debug('[test] '+to+"\t"+str(famt))
+			#raw_input('Continue...')
+			if( opt!='' and opt== '-s'):
+				logger.debug(access.sendtoaddress(to,famt))
 			return 0
 		except:
 			logger.error( "\n---An error occurred---\n")
@@ -67,13 +71,16 @@ if __name__=='__main__':
 	# ==============================================================
 	cmd = "sendtoaddress"
 	csvpath=sys.argv[1]
+	opt=''
+	if( len(sys.argv)==3 ):
+		opt=sys.argv[2]
 
-	tableName=csvpath[:csvpath.find('.')] # get before of the  last '.' string
+	#tableName=csvpath[:csvpath.find('.')] # get before of the  last '.' string
 	cmd="sendtoaddress"
 	data=[]
 	data = readExcel(csvpath)
 	for i in data:
-		if Cmd(cmd,i[0],i[1])!=0 :
+		if Cmd(cmd,opt,i[0],i[1])!=0 :
 			logger.error("run error")
 			exit()
 	logger.debug("successed")
