@@ -688,17 +688,24 @@ image: url(:/pic/res/pic/closeBtn.png);
                        </item>
                        <item>
                         <widget class="QToolButton" name="openAddressBookButton">
-                         <property name="minimumSize">
-                          <size>
-                           <width>30</width>
-                           <height>30</height>
-                          </size>
+                         <property name="toolTip">
+                          <string>Choose previously used address</string>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">border:hidden;</string>
                          </property>
                          <property name="text">
-                          <string>...</string>
+                          <string>Choose</string>
+                         </property>
+                         <property name="icon">
+                          <iconset resource="../massgrid.qrc">
+                           <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
+                         </property>
+                         <property name="shortcut">
+                          <string>Alt+A</string>
+                         </property>
+                         <property name="toolButtonStyle">
+                          <enum>Qt::ToolButtonTextBesideIcon</enum>
                          </property>
                         </widget>
                        </item>
@@ -1796,6 +1803,8 @@ color: rgb(255, 255, 255);</string>
    <header>qvaluecombobox.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../massgrid.qrc"/>
+ </resources>
  <connections/>
 </ui>

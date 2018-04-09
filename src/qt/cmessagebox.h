@@ -39,14 +39,13 @@ public:
 
     static StandardButton warning(QWidget *parent, const QString &title,
          const QString &text, StandardButton buttons = CMessageBox::Ok,
-         StandardButton defaultButton = CMessageBox::NoButton);
-
-         
+         StandardButton defaultButton = CMessageBox::NoButton); 
 
 private:
     Ui::CMessageBox *ui;
 
     QPoint m_last;
+    bool m_mousePress;
 
 protected:
     void mousePressEvent(QMouseEvent *e);

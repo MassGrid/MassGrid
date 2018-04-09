@@ -39,6 +39,7 @@ private:
     WalletModel *model;
 
     QPoint m_last;
+    bool m_mousePress;
 private slots:
     /* sign message */
     void on_addressBookButton_SM_clicked();

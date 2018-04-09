@@ -95,7 +95,8 @@ void QRImageWidget::contextMenuEvent(QContextMenuEvent *event)
 ReceiveRequestDialog::ReceiveRequestDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ReceiveRequestDialog),
-    model(0)
+    model(0),
+    m_mousePress(false)
 {
     ui->setupUi(this);
 
@@ -209,11 +210,25 @@ void ReceiveRequestDialog::on_btnCopyAddress_clicked()
 
 void ReceiveRequestDialog::mousePressEvent(QMouseEvent *e)
 {
-    m_last = e->globalPos();
+    // int posx = e->pos().x();
+    // int posy = e->pos().y();
+    // int framex = ui->mainframe->pos().x();
+    // int framey = ui->mainframe->pos().y();
+    // int frameendx = framex+ui->mainframe->width();
+    // int frameendy = framey+30;
+    // if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
+    //     m_mousePress = true;
+        m_last = e->globalPos();
+    // }
+    // else{
+    //     m_mousePress = false;
+    // }
 }
 
 void ReceiveRequestDialog::mouseMoveEvent(QMouseEvent *e)
 {
+    // if(!m_mousePress)
+    //     return ;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     m_last = e->globalPos();
@@ -222,6 +237,9 @@ void ReceiveRequestDialog::mouseMoveEvent(QMouseEvent *e)
 
 void ReceiveRequestDialog::mouseReleaseEvent(QMouseEvent *e)
 {
+    // if(!m_mousePress)
+    //     return ;
+    // m_mousePress = false;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));

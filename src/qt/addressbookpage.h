@@ -62,6 +62,7 @@ private:
     QString newAddressToSelect;
 
     QPoint m_last;
+    bool m_mousePress;
 
 private slots:
     /** Delete currently selected address entry */

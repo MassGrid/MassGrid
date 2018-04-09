@@ -41,6 +41,7 @@ private:
     WalletModel *model;
     bool fCapsLock;
     QPoint m_last;
+    bool m_mousePress;
 
 private slots:
     void textChanged();

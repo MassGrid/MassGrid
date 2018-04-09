@@ -71,6 +71,7 @@ private:
     friend class FreespaceChecker;
 
     QPoint m_last;
+    bool m_mousePress;
 protected:
     void mousePressEvent(QMouseEvent *e);
     void mouseMoveEvent(QMouseEvent *e);

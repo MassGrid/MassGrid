@@ -22,6 +22,7 @@ private:
     Ui::CProgressDialog *ui;
 
     QPoint m_last;
+    bool m_mousePress;
 
 protected:
     void mousePressEvent(QMouseEvent *e);

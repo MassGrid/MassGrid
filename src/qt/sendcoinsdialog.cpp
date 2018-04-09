@@ -327,7 +327,7 @@ void SendCoinsDialog::on_sendButton_clicked()
         .arg(MassGridUnits::formatHtmlWithUnit(model->getOptionsModel()->getDisplayUnit(), totalAmount))
         .arg(alternativeUnits.join(" " + tr("or") + "<br />")));
 
-    CMessageBox::StandardButton retval = CMessageBox::question(0, tr("Confirm send coins"),
+    CMessageBox::StandardButton retval = CMessageBox::question(this, tr("Confirm send coins"),
         questionString.arg(formatted.join("<br />")),
         CMessageBox::Ok_Cancel,
         CMessageBox::Cancel);
@@ -350,6 +350,8 @@ void SendCoinsDialog::on_sendButton_clicked()
         coinControlUpdateLabels();
     }
     fNewRecipientAllowed = true;
+
+    emit sendCoinSucess();
 }
 
 void SendCoinsDialog::clear()

@@ -29,7 +29,8 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     ui(new Ui::AddressBookPage),
     model(0),
     mode(mode),
-    tab(tab)
+    tab(tab),
+    m_mousePress(false)
 {
     ui->setupUi(this);
 
@@ -73,7 +74,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
         break;
     case ReceivingTab:
         ui->labelExplanation->setText(tr("These are your MassGrid addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
-        // ui->deleteAddress->setVisible(false);
+        ui->deleteAddress->setVisible(false);
         ui->newAddress->setVisible(false);
         ui->okButton->setVisible(false);
         ui->copyAddress->setVisible(false);
@@ -298,8 +299,8 @@ void AddressBookPage::selectionChanged()
             break;
         case ReceivingTab:
             // Deleting receiving addresses, however, is not allowed
-            ui->deleteAddress->setEnabled(true); 
-            ui->deleteAddress->setVisible(true); 
+            ui->deleteAddress->setEnabled(false); 
+            ui->deleteAddress->setVisible(false); 
             deleteAction->setEnabled(true); 
             ui->newAddress->setEnabled(false); 
             break;
@@ -394,11 +395,25 @@ void AddressBookPage::selectNewAddress(const QModelIndex &parent, int begin, int
 
 void AddressBookPage::mousePressEvent(QMouseEvent *e)
 {
-    m_last = e->globalPos();
+    int posx = e->pos().x();
+    int posy = e->pos().y();
+    int framex = ui->mainframe->pos().x();
+    int framey = ui->mainframe->pos().y();
+    int frameendx = framex+ui->mainframe->width();
+    int frameendy = framey+30;
+    if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
+        m_mousePress = true;
+        m_last = e->globalPos();
+    }
+    else{
+        m_mousePress = false;
+    }
 }
 
 void AddressBookPage::mouseMoveEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     m_last = e->globalPos();
@@ -407,6 +422,9 @@ void AddressBookPage::mouseMoveEvent(QMouseEvent *e)
 
 void AddressBookPage::mouseReleaseEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
+    m_mousePress = false;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));

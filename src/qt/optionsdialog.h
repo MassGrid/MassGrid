@@ -72,6 +72,7 @@ protected:
 
 private:
     QPoint m_last;
+    bool m_mousePress;
 
 };
 

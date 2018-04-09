@@ -12,13 +12,13 @@
 
 OpenURIDialog::OpenURIDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::OpenURIDialog)
+    ui(new Ui::OpenURIDialog),
+    m_mousePress(false)
 {
     ui->setupUi(this);
 #if QT_VERSION >= 0x040700
     ui->uriEdit->setPlaceholderText("massgrid:");
 #endif
-
 
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
@@ -58,16 +58,27 @@ void OpenURIDialog::on_selectFileButton_clicked()
     ui->uriEdit->setText("massgrid:?r=" + QUrl::toPercentEncoding(fileUri.toString()));
 }
 
-
-//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
-//接下来就是对三个鼠标事件的重写
 void OpenURIDialog::mousePressEvent(QMouseEvent *e)
 {
-    m_last = e->globalPos();
+    int posx = e->pos().x();
+    int posy = e->pos().y();
+    int framex = ui->mainframe->pos().x();
+    int framey = ui->mainframe->pos().y();
+    int frameendx = framex+ui->mainframe->width();
+    int frameendy = framey+30;
+    if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
+        m_mousePress = true;
+        m_last = e->globalPos();
+    }
+    else{
+        m_mousePress = false;
+    }
 }
 
 void OpenURIDialog::mouseMoveEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     m_last = e->globalPos();
@@ -76,6 +87,9 @@ void OpenURIDialog::mouseMoveEvent(QMouseEvent *e)
 
 void OpenURIDialog::mouseReleaseEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
+    m_mousePress = false;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));

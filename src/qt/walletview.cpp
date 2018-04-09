@@ -179,6 +179,8 @@ void WalletView::setMassGridGUI(MassGridGUI *gui)
         // Clicking on a transaction on the overview page simply sends you to transaction history page
         connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), gui, SLOT(gotoHistoryPage()));
 
+        connect(sendCoinsPage, SIGNAL(sendCoinSucess()), gui, SLOT(gotoHistoryPage()));
+
         // Receive and report messages
         connect(this, SIGNAL(message(QString,QString,unsigned int)), gui, SLOT(message(QString,QString,unsigned int)));
 

@@ -54,6 +54,7 @@ private:
 
     QString address;
     QPoint m_last;
+    bool m_mousePress;
 
 protected:
     void mousePressEvent(QMouseEvent *e);

@@ -28,6 +28,7 @@ public:
 private:
     Ui::TransactionDescDialog *ui;
     QPoint m_last;
+    bool m_mousePress;
 
 protected:
     void mousePressEvent(QMouseEvent *e);

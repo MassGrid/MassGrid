@@ -12,6 +12,7 @@
 #include "base58.h"
 #include "init.h"
 #include "wallet.h"
+#include "massgridgui.h"
 
 #include <string>
 #include <vector>
@@ -21,7 +22,8 @@
 SignVerifyMessageDialog::SignVerifyMessageDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SignVerifyMessageDialog),
-    model(0)
+    model(0),
+    m_mousePress(false)
 {
     ui->setupUi(this);
 
@@ -90,6 +92,11 @@ void SignVerifyMessageDialog::on_addressBookButton_SM_clicked()
     {
         AddressBookPage dlg(AddressBookPage::ForSelection, AddressBookPage::ReceivingTab, 0);
         dlg.setModel(model->getAddressTableModel());
+
+        QPoint pos = MassGridGUI::winPos();
+        QSize size = MassGridGUI::winSize();
+        dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
         if (dlg.exec())
         {
             setAddress_SM(dlg.getReturnValue());
@@ -181,6 +188,11 @@ void SignVerifyMessageDialog::on_addressBookButton_VM_clicked()
     {
         AddressBookPage dlg(AddressBookPage::ForSelection, AddressBookPage::SendingTab, 0);
         dlg.setModel(model->getAddressTableModel());
+
+        QPoint pos = MassGridGUI::winPos();
+        QSize size = MassGridGUI::winSize();
+        dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
         if (dlg.exec())
         {
             setAddress_VM(dlg.getReturnValue());
@@ -277,15 +289,27 @@ bool SignVerifyMessageDialog::eventFilter(QObject *object, QEvent *event)
 }
 
 
-//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
-//接下来就是对三个鼠标事件的重写
 void SignVerifyMessageDialog::mousePressEvent(QMouseEvent *e)
 {
-    m_last = e->globalPos();
+    int posx = e->pos().x();
+    int posy = e->pos().y();
+    int framex = ui->mainframe->pos().x();
+    int framey = ui->mainframe->pos().y();
+    int frameendx = framex+ui->mainframe->width();
+    int frameendy = framey+30;
+    if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
+        m_mousePress = true;
+        m_last = e->globalPos();
+    }
+    else{
+        m_mousePress = false;
+    }
 }
 
 void SignVerifyMessageDialog::mouseMoveEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     m_last = e->globalPos();
@@ -294,6 +318,9 @@ void SignVerifyMessageDialog::mouseMoveEvent(QMouseEvent *e)
 
 void SignVerifyMessageDialog::mouseReleaseEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
+    m_mousePress = false;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));

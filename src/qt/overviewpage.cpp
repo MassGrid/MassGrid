@@ -42,8 +42,8 @@ public:
 
         QRect mainRect = option.rect;
 
-        static int index_2 =0;
-        if(index_2++ %2){
+        // static int index_2 =0;
+        if(index.row() %2){
             painter->setPen(Qt::NoPen);
             painter->setBrush(QColor(247,242,238)/*QColor(247,242,238)*/);
             painter->drawRect(mainRect);

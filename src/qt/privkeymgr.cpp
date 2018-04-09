@@ -9,7 +9,8 @@
 PrivKeyMgr::PrivKeyMgr(bool inputMode,MassGridGUI *parentObj,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PrivKeyMgr),
-    m_inputMode(inputMode)
+    m_inputMode(inputMode),
+    m_mousePress(false)
 {
     ui->setupUi(this);
 
@@ -20,20 +21,13 @@ PrivKeyMgr::PrivKeyMgr(bool inputMode,MassGridGUI *parentObj,QWidget *parent) :
     QString errorMsg = QString("Please enter the wallet passphrase with walletpassphrase first");
 
     if(category == RPCConsole::CMD_ERROR && retCommand.contains(errorMsg)){
-        // ui->stackedWidget->setCurrentIndex(0);
         changeCurrentPage(0);
     }
     else{
         if(m_inputMode){
-            // ui->stackedWidget->setCurrentIndex(2);
-            // ui->label_titleName->setText(tr("Import private key"));
-            // ui->okButton->setText(tr("Import"));
             changeCurrentPage(2);
         }
         else{
-            // ui->stackedWidget->setCurrentIndex(1);
-            // ui->label_titleName->setText(tr("Dump private key"));
-            // ui->okButton->setText(tr("Generate"));
             changeCurrentPage(1);
         }
     }
@@ -66,12 +60,9 @@ void PrivKeyMgr::on_okButton_clicked()
             RPCConsole::RunCommand(command,category,retCommand);
             if(category == RPCConsole::CMD_REPLY){
                 if(m_inputMode){
-                    // ui->stackedWidget->setCurrentIndex(2);
-                    // ui->okButton->setText(tr("Generate"));
                     changeCurrentPage(2);
                 }
                 else{
-                    // ui->stackedWidget->setCurrentIndex(1);
                     changeCurrentPage(1);
                 }
                 return ;
@@ -181,3 +172,41 @@ void PrivKeyMgr::slot_timeOut()
         return ;
     m_guiObj->showProgress("",++timeCount);
 }
+
+void PrivKeyMgr::mousePressEvent(QMouseEvent *e)
+{
+    int posx = e->pos().x();
+    int posy = e->pos().y();
+    int framex = ui->mainframe->pos().x();
+    int framey = ui->mainframe->pos().y();
+    int frameendx = framex+ui->mainframe->width();
+    int frameendy = framey+30;
+    if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
+        m_mousePress = true;
+        m_last = e->globalPos();
+    }
+    else{
+        m_mousePress = false;
+    }
+}
+
+void PrivKeyMgr::mouseMoveEvent(QMouseEvent *e)
+{
+    if(!m_mousePress)
+        return ;
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    m_last = e->globalPos();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void PrivKeyMgr::mouseReleaseEvent(QMouseEvent *e)
+{
+    if(!m_mousePress)
+        return ;
+    m_mousePress = false;
+    int dx = e->globalX() - m_last.x();
+    int dy = e->globalY() - m_last.y();
+    this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+

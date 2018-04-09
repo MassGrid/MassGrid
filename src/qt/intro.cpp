@@ -109,7 +109,8 @@ Intro::Intro(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Intro),
     thread(0),
-    signalled(false)
+    signalled(false),
+    m_mousePress(false)
 {
     ui->setupUi(this);
     ui->sizeWarningLabel->setText(ui->sizeWarningLabel->text().arg(BLOCK_CHAIN_SIZE/GB_BYTES));    
@@ -300,11 +301,25 @@ QString Intro::getPathToCheck()
 
 void Intro::mousePressEvent(QMouseEvent *e)
 {
-    m_last = e->globalPos();
+    int posx = e->pos().x();
+    int posy = e->pos().y();
+    int framex = ui->mainframe->pos().x();
+    int framey = ui->mainframe->pos().y();
+    int frameendx = framex+ui->mainframe->width();
+    int frameendy = framey+30;
+    if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
+        m_mousePress = true;
+        m_last = e->globalPos();
+    }
+    else{
+        m_mousePress = false;
+    }
 }
 
 void Intro::mouseMoveEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     m_last = e->globalPos();
@@ -313,9 +328,10 @@ void Intro::mouseMoveEvent(QMouseEvent *e)
 
 void Intro::mouseReleaseEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
+    m_mousePress = false;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));
 }
-
-

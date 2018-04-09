@@ -66,6 +66,7 @@ private:
     OptionsModel *model;
     SendCoinsRecipient info;
     QPoint m_last;
+    bool m_mousePress;
     
 protected:
     void mousePressEvent(QMouseEvent *e);

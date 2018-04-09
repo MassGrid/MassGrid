@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QDialog>
 #include <QTimer>
+#include <QMouseEvent>
 
 class MassGridGUI;
 
@@ -37,8 +38,15 @@ private:
     bool m_inputMode;
 
     MassGridGUI *m_guiObj;
+    bool m_mousePress;
+    QPoint m_last;
 
     void changeCurrentPage(int index);
+
+private:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 };
 
 #endif // PRIVKEYMGR_H

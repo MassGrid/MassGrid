@@ -141,4 +141,7 @@
         <file>res/pic/menuicon/importwallet.png</file>
         <file>res/pic/menuicon/softupdate.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>res/icons/unit_MGD.png</file>
+    </qresource>
 </RCC>

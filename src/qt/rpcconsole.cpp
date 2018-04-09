@@ -268,7 +268,8 @@ RPCConsole::RPCConsole(QWidget *parent) :
     ui(new Ui::RPCConsole),
     clientModel(0),
     historyPtr(0),
-    cachedNodeid(-1)
+    cachedNodeid(-1),
+    m_mousePress(false)
 {
     ui->setupUi(this);
     GUIUtil::restoreWindowGeometry("nRPCConsoleWindow", this->size(), this);
@@ -760,15 +761,27 @@ void RPCConsole::hideEvent(QHideEvent *event)
     clientModel->getPeerTableModel()->stopAutoRefresh();
 }
 
-//可以在构造函数中初始一下last变量用其成员函数setX,setY就是了
-//接下来就是对三个鼠标事件的重写
 void RPCConsole::mousePressEvent(QMouseEvent *e)
 {
-    m_last = e->globalPos();
+    int posx = e->pos().x();
+    int posy = e->pos().y();
+    int framex = ui->mainframe->pos().x();
+    int framey = ui->mainframe->pos().y();
+    int frameendx = framex+ui->mainframe->width();
+    int frameendy = framey+30;
+    if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
+        m_mousePress = true;
+        m_last = e->globalPos();
+    }
+    else{
+        m_mousePress = false;
+    }
 }
 
 void RPCConsole::mouseMoveEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     m_last = e->globalPos();
@@ -777,6 +790,9 @@ void RPCConsole::mouseMoveEvent(QMouseEvent *e)
 
 void RPCConsole::mouseReleaseEvent(QMouseEvent *e)
 {
+    if(!m_mousePress)
+        return ;
+    m_mousePress = false;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));
