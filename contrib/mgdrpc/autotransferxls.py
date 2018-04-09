@@ -33,7 +33,7 @@ def readExcel(file,by_name='sheet'):#edit table name
 	return lists
     
 def Cmd(cmd,opt,to,amt):
-	if cmd == "sendtoaddress":
+	if ( cmd == "sendtoaddress" and to!='' and amt!='' ):
 		try:
 			famt=float(amt)
 			if( opt!='' and opt== '-s'):
@@ -64,15 +64,25 @@ if __name__=='__main__':
 	rpcuser = "user"
 	rpcpass = "pwd"
 	# ====== END USER SETTINGS ======
-	if rpcpass == "":
-		access = AuthServiceProxy("http://127.0.0.1:9442")
+	test=''
+	if( len(sys.argv)==4 ):
+		test=sys.argv[3]
+	if( test!='' and test =='-t' ):
+		if rpcpass == "":
+			access = AuthServiceProxy("http://127.0.0.1:19442")
+		else:
+			access = AuthServiceProxy("http://"+rpcuser+":"+rpcpass+"@127.0.0.1:19442")
 	else:
-		access = AuthServiceProxy("http://"+rpcuser+":"+rpcpass+"@127.0.0.1:9442")
+		if rpcpass == "":
+			access = AuthServiceProxy("http://127.0.0.1:9442")
+		else:
+			access = AuthServiceProxy("http://"+rpcuser+":"+rpcpass+"@127.0.0.1:9442")
 	# ==============================================================
 	cmd = "sendtoaddress"
 	csvpath=sys.argv[1]
+
 	opt=''
-	if( len(sys.argv)==3 ):
+	if( len(sys.argv)>=3 ):
 		opt=sys.argv[2]
 
 	#tableName=csvpath[:csvpath.find('.')] # get before of the  last '.' string
