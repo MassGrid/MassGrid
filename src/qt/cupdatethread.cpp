@@ -49,7 +49,7 @@ void CUpdateThread::run()
     if(needUpdate)
         emit updateClient(version,stopMiner);
 
-    int firsttime = (24 - hour.toInt())*3600;
+    int firsttime = (23 - hour.toInt())*3600;
     firsttime+=(60 - min.toInt())*60;
 
     while(--firsttime){

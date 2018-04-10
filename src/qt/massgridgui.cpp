@@ -18,6 +18,7 @@
 #include "miner.h"
 #include "cupdatethread.h"
 #include "cprogressdialog.h"
+#include "clientversion.h"
 #ifdef ENABLE_WALLET
 #include "walletframe.h"
 #include "walletmodel.h"
@@ -1421,7 +1422,7 @@ void MassGridGUI::inputWalletFile()
     if(btnRetVal == CMessageBox::Cancel)
         return;
 
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+    QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),
                                                       "/home",
                                                       tr("Wallat (*.dat)"));
 
@@ -1451,21 +1452,34 @@ void MassGridGUI::inputWalletFile()
     }
 }
 
+// QString::fromStdString(FormatFullVersion());
+// v1.1.3.0-41ff824 (64 位)
 void MassGridGUI::openWebUrl(const QString& version,bool stopMinerFlag)
 {
     //get network checkout 
     //TODO:If need to stop rpc
+    QString clientversion = QString::fromStdString(FormatFullVersion()).split("-").first();
+    LogPrintf("MassGridGUI::openWebUrl clientversion:%s\n",clientversion.toStdString().c_str());
+    // QString leftversion = 
+    if(version == clientversion)
+        return ;
+
+    QString stopMinerStr = "";
     if(stopMinerFlag){
         StopMiner();
         StopRPCThreads();
+        stopMinerStr = "\n"+tr("The mining process has been shut down.");
     }
 
     CMessageBox::information(this, tr("Soft Update"),
-                tr("Checkout an Update,version is %1.").arg(version) + "<br><br>" + 
+                tr("Checkout an Update,version is %1. %2").arg(version).arg(stopMinerStr) + "<br><br>" + 
+
                 tr("We will open the downloads url,or you can open this url to download the new Application.") + "<br><br>" + 
                 "https://www.massgrid.com/downloads.html?language=en");
                         
     QDesktopServices::openUrl(QUrl("https://www.massgrid.com/downloads.html?language=en"));
+    if(stopMinerFlag)
+        QApplication::quit();
 }
 
 bool MassGridGUI::copyFileToPath(QString sourceDir ,QString toDir, bool coverFileIfExist)
