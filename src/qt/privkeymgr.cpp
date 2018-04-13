@@ -161,6 +161,7 @@ void PrivKeyMgr::slot_RunCMD()
         QDialog::accept();
     }
     else if(category == RPCConsole::CMD_ERROR){
+        timer.stop();
         m_guiObj->closeProgress();
         CMessageBox::information(this, tr("Error command"),retCommand);
     }
