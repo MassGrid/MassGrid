@@ -253,7 +253,7 @@ def Cmd(opt,to,amt):
 
 # one input one output
 def sendtoaddress(opt,data):
-    print 'sendtoaddress'
+    print 'sendtoaddress...'
     for i in data:
         if Cmd(opt,i[0],i[1])!=0 :
             logger.error("run error")
@@ -269,6 +269,9 @@ def sendmany(opt,data):
     for i in data:
         dicts[i[0]]=i[1]
         count=count+1
+        if( opt!= '-s'):
+            logger.debug('[test] '+i[0]+"\t"+str(i[1]))
+
     if( count != len(dicts)):
         logger.debug("\n---warning duplicated address!!!---\n")
         exit()
@@ -298,21 +301,25 @@ if __name__=='__main__':
     rpcuser = "user"
     rpcpass = "pwd"
     # ====== END USER SETTINGS ======
-    
+    if( len(sys.argv)<2):
+        logger.debug('Warning ,please input filename!')
+        exit()
     csvpath=sys.argv[1]
     # -s sendmany
     opt=''
-    if( len(sys.argv)>=3 ):
-        opt=sys.argv[2]
-
-    # -s sendmany 多输出模式
     cmd=''
-    if( len(sys.argv)>=5 ):
-        cmd=sys.argv[4]
-
     test=''
-    if( len(sys.argv)>=4 ):
-    	test=sys.argv[3]
+    for x in range(2,len(sys.argv)):
+        if (sys.argv[x] == '-s'):
+            opt = '-s'
+        elif ( sys.argv[x] == '-sendmany' ):
+            cmd = '-sendmany'
+        elif  ( sys.argv[x] == '-sendtoaddress' ):
+            cmd = '-sendtoaddress'
+        elif ( sys.argv[x] == '-t'):
+            test = '-t'
+        else:
+            break
     if( test!='' and test =='-t' ):
     	if rpcpass == "":
     		access = AuthServiceProxy("http://127.0.0.1:19442")
@@ -330,6 +337,7 @@ if __name__=='__main__':
     data = readExcel(csvpath)
     if ( cmd!='' and cmd == "-sendmany"):
         sendmany(opt,data)
-    else:
-        if ( cmd!='' and cmd == "-sendtoaddress"):
+    elif ( cmd!='' and cmd == "-sendtoaddress"):
             sendtoaddress(opt,data)
+    else:
+        logger.debug('Warning，please specific mode！')
