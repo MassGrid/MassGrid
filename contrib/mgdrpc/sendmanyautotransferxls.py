@@ -253,7 +253,7 @@ def Cmd(opt,to,amt):
 
 # one input one output
 def sendtoaddress(opt,data):
-    print 'sendtoaddress...'
+    logger.debug('sendtoaddress...\n')
     for i in data:
         if Cmd(opt,i[0],i[1])!=0 :
             logger.error("run error")
@@ -262,8 +262,8 @@ def sendtoaddress(opt,data):
 
 
 # one input many output
-def sendmany(opt,data):
-    print 'sendmany...'
+def sendmany(opt,label,data):
+    logger.debug('sendmany...\n')
     dicts={}
     count=0
     for i in data:
@@ -273,12 +273,12 @@ def sendmany(opt,data):
             logger.debug('[test] '+i[0]+"\t"+str(i[1]))
 
     if( count != len(dicts)):
-        logger.debug("\n---warning duplicated address!!!---\n")
+        logger.debug("Warning duplicated address!")
         exit()
     #print strs
     if( opt!='' and opt== '-s'):
 		try:
-			logger.debug(access.sendmany("",dicts))
+			logger.debug(access.sendmany(label,dicts))
 		except:
 			logger.error( "\n---sendmany error occurred---\n")
 			return 1
@@ -290,7 +290,7 @@ if __name__=='__main__':
 	# ===== BEGIN LOG SETTINGS =====
     logger = logging.getLogger("sendmanyautotransferxls.py")
     formatter = logging.Formatter('%(asctime)s %(levelname)-8s: %(message)s')
-    file_handler = logging.FileHandler("debug_sendmany.log")
+    file_handler = logging.FileHandler("debug.log")
     file_handler.setFormatter(formatter)
     console_handler = logging.StreamHandler(sys.stdout)
     logger.addHandler(file_handler)
@@ -302,24 +302,31 @@ if __name__=='__main__':
     rpcpass = "pwd"
     # ====== END USER SETTINGS ======
     if( len(sys.argv)<2):
-        logger.debug('Warning ,please input filename!')
-        exit()
+        logger.debug('Warning ,please input excel filename!')
+        sys.exit()
     csvpath=sys.argv[1]
     # -s sendmany
     opt=''
     cmd=''
     test=''
+    walletlabel=''
     for x in range(2,len(sys.argv)):
         if (sys.argv[x] == '-s'):
             opt = '-s'
         elif ( sys.argv[x] == '-sendmany' ):
             cmd = '-sendmany'
+            if ( x+1 < len(sys.argv) and 0 < len(sys.argv[x+1]) and sys.argv[x+1][0]!='-'):
+                walletlabel=sys.argv[x+1]
         elif  ( sys.argv[x] == '-sendtoaddress' ):
             cmd = '-sendtoaddress'
         elif ( sys.argv[x] == '-t'):
             test = '-t'
+        elif ( sys.argv[x-1]=='-sendmany' ):
+            continue
         else:
-            break
+            logger.debug('Warning，bad parameter!')
+            sys.exit()
+        
     if( test!='' and test =='-t' ):
     	if rpcpass == "":
     		access = AuthServiceProxy("http://127.0.0.1:19442")
@@ -336,8 +343,8 @@ if __name__=='__main__':
     data=[]
     data = readExcel(csvpath)
     if ( cmd!='' and cmd == "-sendmany"):
-        sendmany(opt,data)
+        sendmany(opt,walletlabel,data)
     elif ( cmd!='' and cmd == "-sendtoaddress"):
             sendtoaddress(opt,data)
     else:
-        logger.debug('Warning，please specific mode！')
+        logger.debug('Warning，please specific mode!')
