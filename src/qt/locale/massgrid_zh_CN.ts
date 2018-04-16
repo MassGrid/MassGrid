@@ -2572,7 +2572,7 @@ The mining process has been shut down.</source>
     <name>SendCoinsEntry</name>
     <message>
         <source>A&amp;mount:</source>
-        <translation>金额(&amp;M)</translation>
+        <translation>金额(&amp;M)：</translation>
     </message>
     <message>
         <source>Pay &amp;To:</source>

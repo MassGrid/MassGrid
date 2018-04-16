@@ -274,8 +274,6 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     m_winPos = this->pos();
     m_winSize = this->size();
 
-    /*start time to open update thread*/
-    QTimer::singleShot(10000, this, SLOT(startUpdateThread()));
 }
 
 MassGridGUI::~MassGridGUI()
@@ -1507,6 +1505,22 @@ bool MassGridGUI::copyFileToPath(QString sourceDir ,QString toDir, bool coverFil
         return false;
     }
     return true;
+}
+
+void MassGridGUI::showTipMessages()
+{
+    // if(GUIUtil::isNeedToShowTip()){
+    //         CMessageBox::information(this, tr("新增特性"),
+    //             tr("1.更新UI界面;") + "<br><br>" + 
+    //             tr("2.修改了数据目录的默认安装路径（window系统下为C:\\user\\Documents\\MassGridDataDir;Linux系统下为/home/user/MassGridDataDir）,并在前端中显示该路径,用户可以通过\"设置->选项->显示->数据目录路径\"查到数据目录路径;") + "<br><br>" + 
+    //             tr("3.新增新版本检测更新功能，用户需要安装最新版的钱包，以确保能正常挖矿;") + "<br><br>" + 
+    //             tr("4.新增导入钱包文件功能，该操作会覆盖本地的钱包文件，用户需要谨慎操作;") + "<br><br>" + 
+    //             tr("5.新增导入，导出私钥功能;") + "<br><br>" + 
+    //             tr("6.新版钱包将只有一条收款地址,并且第一次使用新钱包的时候需要设置默认收款地址,可在 \"设置->选项->钱包->默认接收地址\"中执行此操作(原来的钱包由于有找零机制,界面上虽然显示一条收款地址,实际上钱包文件中会有多条地址,这样导致的情况是导出私钥时金额不一定是钱包总额,新版钱包去除了找零机制，限制只有一条收款地址，以确保钱包金额在一条私钥上);"));
+
+    //     // CMessageBox::information(this, tr("The new features && Attention"),msg); //导入私钥将覆盖原来的私钥，请确保钱包余额为0再进行此操作
+    // }
+    startUpdateThread();
 }
 
 UnitDisplayStatusBarControl::UnitDisplayStatusBarControl() :

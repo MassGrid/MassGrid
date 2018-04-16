@@ -874,4 +874,16 @@ QString formatPingTime(double dPingTime)
     return dPingTime == 0 ? QObject::tr("N/A") : QString(QObject::tr("%1 ms")).arg(QString::number((int)(dPingTime * 1000), 10));
 }
 
+bool isNeedToShowTip()
+{
+    QSettings settings;
+    if (!settings.contains("showtip"))
+        settings.setValue("showtip", true);
+    bool retValue = settings.value("showtip").toBool();
+    settings.setValue("showtip", false);
+
+    return retValue;
+}
+
 } // namespace GUIUtil
+

@@ -79,6 +79,8 @@ public:
     bool addWallet(const QString& name, WalletModel *walletModel);
     bool setCurrentWallet(const QString& name);
     void removeAllWallets();
+    void showTipMessages();
+
 #endif // ENABLE_WALLET
     bool enableWallet;
 

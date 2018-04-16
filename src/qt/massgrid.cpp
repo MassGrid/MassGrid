@@ -452,6 +452,7 @@ void MassGridApplication::initializeResult(int retval)
             window->show();
         }
         emit splashFinished(window);
+        window->showTipMessages();
 
 #ifdef ENABLE_WALLET
         // Now that initialization/startup is done, process any command-line
