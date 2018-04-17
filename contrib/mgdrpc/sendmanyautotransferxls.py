@@ -296,7 +296,7 @@ def unlockwallet(opt,pwd):
     return 1
 
 if __name__=='__main__':
-    print sys.argv[0]
+    #print sys.argv[0]
 	# ===== BEGIN LOG SETTINGS =====
     logger = logging.getLogger(sys.argv[0])
     formatter = logging.Formatter('%(asctime)s %(levelname)-8s: %(message)s')
