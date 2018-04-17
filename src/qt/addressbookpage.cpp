@@ -61,7 +61,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
         {
         case SendingTab: setWindowTitle(tr("Sending addresses")); break;
         case ReceivingTab: setWindowTitle(tr("Receiving addresses")); break;
-        case MainAddressTab: break;
+        case MainAddressTab: setWindowTitle(tr("Receiving addresses"));break;
         }
         break;
     }
@@ -157,7 +157,11 @@ void AddressBookPage::setModel(AddressTableModel *model)
         proxyModel->setFilterRole(AddressTableModel::TypeRole);
         proxyModel->setFilterFixedString(AddressTableModel::Send);
         break;
-    case MainAddressTab: break;
+    case MainAddressTab:
+        // Receive filter
+        proxyModel->setFilterRole(AddressTableModel::TypeRole);
+        proxyModel->setFilterFixedString(AddressTableModel::Receive);
+     break;
 
     }
     ui->tableView->setModel(proxyModel);

@@ -16,6 +16,7 @@
 #include "main.h"
 #include "net.h"
 #include "txdb.h" // for -dbcache defaults
+#include "util.h"
 
 #ifdef ENABLE_WALLET
 #include "wallet.h"
@@ -375,5 +376,6 @@ void OptionsModel::setMainAddress(const QString& address)
 {
     strMainAddress = address;
     QSettings settings;
-    return settings.setValue("strMainAddress", strMainAddress);
+    settings.setValue("strMainAddress", strMainAddress);
+    SetDefaultReceiveAddress(address.toStdString().c_str());
 }
