@@ -286,9 +286,19 @@ def sendmany(opt,label,data):
 		return 2
     logger.debug("successed")
 
+def unlockwallet(opt,pwd):
+    if(opt!='' and opt=='-p'):
+        try:
+            if ( access.walletpassphrase(str(pwd),500) == None ):
+                logger.debug('unlock wallet 500s succeed! this password is: ['+pwd+']')
+        except:
+            logger.error( "\n---unlock wallet error occurred---\n")
+    return 1
+
 if __name__=='__main__':
+    print sys.argv[0]
 	# ===== BEGIN LOG SETTINGS =====
-    logger = logging.getLogger("sendmanyautotransferxls.py")
+    logger = logging.getLogger(sys.argv[0])
     formatter = logging.Formatter('%(asctime)s %(levelname)-8s: %(message)s')
     file_handler = logging.FileHandler("debug.log")
     file_handler.setFormatter(formatter)
@@ -310,12 +320,13 @@ if __name__=='__main__':
     cmd=''
     test=''
     walletlabel=''
-    for x in range(2,len(sys.argv)):
+    pnumber=len(sys.argv)
+    for x in range(2,pnumber):
         if (sys.argv[x] == '-s'):
             opt = '-s'
         elif ( sys.argv[x] == '-sendmany' ):
             cmd = '-sendmany'
-            if ( x+1 < len(sys.argv) and 0 < len(sys.argv[x+1]) and sys.argv[x+1][0]!='-'):
+            if ( x+1 < pnumber and 0 < len(sys.argv[x+1]) and sys.argv[x+1][0]!='-'):
                 walletlabel=sys.argv[x+1]
         elif  ( sys.argv[x] == '-sendtoaddress' ):
             cmd = '-sendtoaddress'
@@ -323,10 +334,18 @@ if __name__=='__main__':
             test = '-t'
         elif ( sys.argv[x-1]=='-sendmany' ):
             continue
+        elif ( sys.argv[x] == '-p'):
+            break
         else:
-            logger.debug('Warning，bad parameter!')
+            logger.debug('Warning，unkonw parameter!')
             sys.exit()
         
+    unlock=''
+    passwd=''
+    if(1< pnumber and sys.argv[pnumber-2]== '-p'):
+        unlock='-p'
+        passwd=sys.argv[pnumber-1]
+
     if( test!='' and test =='-t' ):
     	if rpcpass == "":
     		access = AuthServiceProxy("http://127.0.0.1:19442")
@@ -339,6 +358,9 @@ if __name__=='__main__':
     		access = AuthServiceProxy("http://"+rpcuser+":"+rpcpass+"@127.0.0.1:9442")
     # ==============================================================
     
+    #unlock the wallet
+    if ( unlock !='' and unlock == '-p' and passwd != ''):
+        unlockwallet(unlock,passwd)
     #tableName=csvpath[:csvpath.find('.')] # get before of the  last '.' string
     data=[]
     data = readExcel(csvpath)
