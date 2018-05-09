@@ -7,55 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>925</width>
-    <height>502</height>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Send Coins</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QCheckBox{  
-    spacing: 5px;  
-}  
-  
-QCheckBox::indicator{  
-	width:28px;
-	height:22px; 
-}  
-  
-QCheckBox::indicator:unchecked{  
-	image: url(:/pic/res/pic/kPic.png);
-}  
-  
-QCheckBox::indicator:checked{  
-	image: url(:/pic/res/pic/check-selected.png);
-}  
-  
-QCheckBox::indicator:checked:disabled{  
-    image:url(:/CheckBox/res/checkedDisabled.png);  
-}  
-
-QRadioButton{  
-    spacing: 5px;  
-}  
-  
-QRadioButton::indicator{  
-	width:20px;
-	height:20px; 
-}  
-  
-QRadioButton::indicator:unchecked{  
-	border-image: url(:/pic/res/pic/kPic.png);
-}  
-  
-QRadioButton::indicator:checked{  
-	border-image: url(:/pic/res/pic/selectPic.png);
-}  
-  
-QRadioButton::indicator:checked:disabled{  
-    image:url(:/CheckBox/res/checkedDisabled.png);  
-}  
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -1547,14 +1506,14 @@ border: hidden;
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>12</pointsize>
-                      <weight>75</weight>
-                      <bold>true</bold>
+                      <pointsize>15</pointsize>
+                      <weight>50</weight>
+                      <italic>false</italic>
+                      <bold>false</bold>
                      </font>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">border:hidde;
-color: rgb(172, 99, 43);</string>
+                     <string notr="true"/>
                     </property>
                     <property name="text">
                      <string>Select &amp;Recipient</string>
@@ -1565,8 +1524,8 @@ color: rgb(172, 99, 43);</string>
                     </property>
                     <property name="iconSize">
                      <size>
-                      <width>35</width>
-                      <height>35</height>
+                      <width>25</width>
+                      <height>25</height>
                      </size>
                     </property>
                     <property name="popupMode">
@@ -1608,10 +1567,37 @@ color: rgb(172, 99, 43);</string>
                 <property name="styleSheet">
                  <string notr="true">QStackedWidget{
 border:hidden;
+}
+
+QRadioButton{
+    spacing: 5px;
+}
+
+QRadioButton::indicator{
+    width:20px;
+    height:20px;
+}
+
+QRadioButton::indicator:unchecked{
+    border-image: url(:/pic/res/pic/kPic.png);
+    width:20px;
+    height:20px;
+}
+
+QRadioButton::indicator:checked{
+    border-image: url(:/pic/res/pic/selectPic.png);
+    width:20px;
+    height:20px;
+}
+
+QRadioButton::indicator:checked:disabled{
+    image:url(:/CheckBox/res/checkedDisabled.png);
+    width:20px;
+    height:20px;
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="page_3">
                  <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0">
@@ -1861,7 +1847,7 @@ QSlider::sub-page:horizontal{
                            </property>
                            <property name="font">
                             <font>
-                             <pointsize>12</pointsize>
+                             <pointsize>13</pointsize>
                              <weight>75</weight>
                              <bold>true</bold>
                             </font>
@@ -2226,14 +2212,14 @@ border:hidden;
                          </property>
                          <property name="font">
                           <font>
-                           <pointsize>12</pointsize>
-                           <weight>75</weight>
-                           <bold>true</bold>
+                           <pointsize>13</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
                           </font>
                          </property>
                          <property name="styleSheet">
-                          <string notr="true">border:hidden;
-color: rgb(173, 100, 45);</string>
+                          <string notr="true"/>
                          </property>
                          <property name="text">
                           <string>Back</string>

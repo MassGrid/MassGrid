@@ -29,15 +29,7 @@
    <item row="0" column="0">
     <widget class="QWidget" name="centerWin" native="true">
      <property name="styleSheet">
-      <string notr="true">QWidget#centerWin{
-border:hidden;
-	border-image: url(:/pic/res/pic/dlgBackgroud.png);
-}
-
-QFrame#frame,QFrame#frame_2{
-	border:1px solid rgb(186, 186, 186);
-}
-</string>
+      <string notr="true"/>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">
@@ -55,15 +47,7 @@ QFrame#frame,QFrame#frame_2{
       <item row="0" column="0">
        <widget class="QFrame" name="mainframe">
         <property name="styleSheet">
-         <string notr="true">QFrame#mainframe{
-border:hidden;
-	background-color: rgb(255, 255, 255);
-}
-
-QLineEdit{
-border:hidden;
-min-height:30px;
-}</string>
+         <string notr="true"/>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -124,11 +108,7 @@ min-height:30px;
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">QToolButton{
-border:hidden;
-image: url(:/pic/res/pic/closeBtn.png);
-}
-</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string/>

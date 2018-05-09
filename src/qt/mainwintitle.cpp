@@ -39,6 +39,11 @@ MainwinTitle::MainwinTitle(QWidget *parent) :
     m_mapper = new QDataWidgetMapper(this);
     m_mapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
 
+#ifdef Q_OS_MAC
+    ui->openAddr->hide();
+    ui->pBtnMin->hide();
+#endif
+
 }
 
 MainwinTitle::~MainwinTitle()
@@ -79,9 +84,6 @@ QMenu* MainwinTitle::fileMenu(const QString& text)
 	 if(!m_fileMenu){
 	 	m_fileMenu = new QMenu();
 	 	ui->fileButton->setText(text);
-
-        m_fileMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
-
 	 }
 	 return m_fileMenu;  
 }
@@ -91,9 +93,6 @@ QMenu* MainwinTitle::settingsMenu(const QString& text)
 	 if(!m_settingsMenu){
 	 	m_settingsMenu = new QMenu();
 	 	ui->settingsButton->setText(text);
-
-        m_settingsMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
-
 	 }
 	 return m_settingsMenu;
 }
@@ -103,9 +102,6 @@ QMenu* MainwinTitle::helpMenu(const QString& text)
 	 if(!m_helpMenu){
 	 	m_helpMenu = new QMenu();
 	 	ui->helpButton->setText(text);
-
-        m_helpMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
-
 	 }
 	 return m_helpMenu;
 }
@@ -212,7 +208,6 @@ void MainwinTitle::setModel(WalletModel *model)
             }
         }
     }
-    // ui->addressEdit->setText(tr("Set the Main Receive Address(Settings->Options->Wallet)"));
     optionsmodel->setMainAddress("");
     ui->openAddr->setEnabled(false);
 }

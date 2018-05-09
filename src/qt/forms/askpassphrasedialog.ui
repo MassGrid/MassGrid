@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>317</height>
+    <width>512</width>
+    <height>354</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -50,18 +50,7 @@
    <item row="0" column="0">
     <widget class="QWidget" name="centerWin" native="true">
      <property name="styleSheet">
-      <string notr="true">QWidget#centerWin{
-	border-image: url(:/pic/res/pic/dlgBackgroud.png);
-}
-QLineEdit{
-border:hidden;
-background-color:rgb(255,255,255,0);
-}
-QFrame#mainframe{
-border:hidden;
-	background-color: rgb(255, 255, 255);
-}
-</string>
+      <string notr="true"/>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
@@ -79,10 +68,7 @@ border:hidden;
       <item row="0" column="0">
        <widget class="QFrame" name="mainframe">
         <property name="styleSheet">
-         <string notr="true">QFrame#frame_10,QFrame#frame_2,QFrame#frame_3,QFrame#frame{
-	border:1px solid rgb(186, 186, 186);
-}
-</string>
+         <string notr="true"/>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -143,11 +129,7 @@ border:hidden;
               <enum>Qt::NoFocus</enum>
              </property>
              <property name="styleSheet">
-              <string notr="true">QToolButton{
-border:hidden;
-image: url(:/pic/res/pic/closeBtn.png);
-}
-</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string/>
@@ -174,6 +156,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                  <height>40</height>
                 </size>
                </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>50</height>
+                </size>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
@@ -195,6 +183,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                 </property>
                 <item>
                  <widget class="QLineEdit" name="passEdit1">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="echoMode">
                    <enum>QLineEdit::Password</enum>
                   </property>
@@ -212,6 +206,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                 <size>
                  <width>0</width>
                  <height>40</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>50</height>
                 </size>
                </property>
                <property name="frameShape">
@@ -235,6 +235,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                 </property>
                 <item>
                  <widget class="QLineEdit" name="passEdit2">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="echoMode">
                    <enum>QLineEdit::Password</enum>
                   </property>
@@ -252,6 +258,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                 <size>
                  <width>0</width>
                  <height>40</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>50</height>
                 </size>
                </property>
                <property name="frameShape">
@@ -275,6 +287,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                 </property>
                 <item>
                  <widget class="QLineEdit" name="passEdit3">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="echoMode">
                    <enum>QLineEdit::Password</enum>
                   </property>
@@ -335,6 +353,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                </item>
                <item>
                 <widget class="QDialogButtonBox" name="buttonBox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>120</width>

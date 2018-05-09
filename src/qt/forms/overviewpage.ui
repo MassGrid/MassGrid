@@ -14,10 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget{
-border:hidden;
-	background-color: rgb(255, 255, 255);
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
@@ -420,6 +417,11 @@ border:hidden;
       </widget>
      </widget>
      <widget class="QWidget" name="page_4">
+      <property name="styleSheet">
+       <string notr="true">QWidget#page_4{
+background-color: rgb(255, 255, 255);
+}</string>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
         <number>0</number>
@@ -470,7 +472,7 @@ border:hidden;
           <widget class="QLabel" name="label_4">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>13</pointsize>
              <weight>50</weight>
              <bold>false</bold>
             </font>
@@ -484,7 +486,7 @@ border:hidden;
           <widget class="QLabel" name="labelTransactionsStatus">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>13</pointsize>
             </font>
            </property>
            <property name="cursor">

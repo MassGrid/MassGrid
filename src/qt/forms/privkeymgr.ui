@@ -29,29 +29,7 @@
    <item row="0" column="0">
     <widget class="QWidget" name="centerWin" native="true">
      <property name="styleSheet">
-      <string notr="true">QWidget#centerWin{
-border-image: url(:/pic/res/pic/dlgBackgroud.png);
-}
-QStackedWidget{
-border:hidden;
-background-color: rgb(255, 255, 255);
-}
-
-QToolButton#okButton{
-width:80;
-height:30;
-background-color: rgb(239, 169, 4);
-color: rgb(255, 255, 255);
-border:hidden;
-}
-
-QLineEdit{
-	border-color: rgb(186, 186, 186);
-	border:1px solid rgb(186, 186, 186);
-   min-height:35;
-	min-width:400;
-}
-</string>
+      <string notr="true"/>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <property name="leftMargin">
@@ -74,11 +52,7 @@ border:hidden;
 background-color: rgb(255, 255, 255);
 }
 
-QToolButton{
-width:80;
-height:30;
-border:hidden;
-}
+
 </string>
         </property>
         <property name="frameShape">
@@ -87,7 +61,7 @@ border:hidden;
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_7">
+        <layout class="QVBoxLayout" name="verticalLayout_7" stretch="1,10">
          <property name="spacing">
           <number>0</number>
          </property>
@@ -143,11 +117,7 @@ border:hidden;
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">QToolButton{
-border:hidden;
-image: url(:/pic/res/pic/closeBtn.png);
-}
-</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string/>
@@ -207,8 +177,8 @@ image: url(:/pic/res/pic/closeBtn.png);
                   <widget class="QLineEdit" name="lineEdit_password">
                    <property name="minimumSize">
                     <size>
-                     <width>402</width>
-                     <height>37</height>
+                     <width>0</width>
+                     <height>0</height>
                     </size>
                    </property>
                   </widget>
@@ -286,8 +256,8 @@ image: url(:/pic/res/pic/closeBtn.png);
                     <widget class="QLineEdit" name="lineEdit_walletAddre">
                      <property name="minimumSize">
                       <size>
-                       <width>402</width>
-                       <height>37</height>
+                       <width>0</width>
+                       <height>0</height>
                       </size>
                      </property>
                     </widget>
@@ -307,8 +277,8 @@ image: url(:/pic/res/pic/closeBtn.png);
                     <widget class="QLineEdit" name="lineEdit_privKey">
                      <property name="minimumSize">
                       <size>
-                       <width>402</width>
-                       <height>37</height>
+                       <width>0</width>
+                       <height>0</height>
                       </size>
                      </property>
                      <property name="readOnly">
@@ -389,8 +359,8 @@ image: url(:/pic/res/pic/closeBtn.png);
                   <widget class="QLineEdit" name="lineEdit_privKey_2">
                    <property name="minimumSize">
                     <size>
-                     <width>402</width>
-                     <height>37</height>
+                     <width>0</width>
+                     <height>0</height>
                     </size>
                    </property>
                   </widget>
@@ -444,6 +414,13 @@ image: url(:/pic/res/pic/closeBtn.png);
              </item>
              <item>
               <widget class="QToolButton" name="okButton">
+               <property name="styleSheet">
+                <string notr="true">QToolButton{
+width:80;
+height:30;
+border:hidden;
+}</string>
+               </property>
                <property name="text">
                 <string>OK</string>
                </property>

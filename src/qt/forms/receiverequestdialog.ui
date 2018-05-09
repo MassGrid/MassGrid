@@ -94,11 +94,7 @@ border:hidden;
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">QToolButton{
-border:hidden;
-image: url(:/pic/res/pic/closeBtn.png);
-}
-</string>
+            <string notr="true"/>
            </property>
            <property name="text">
             <string/>

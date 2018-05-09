@@ -20,7 +20,6 @@
 #include "mitemdelegate.h"
 // #include "mdateedit.h"
 
-// #include <QComboBox>
 #include <QDateTimeEdit>
 #include <QDesktopServices>
 #include <QDoubleValidator>
@@ -41,6 +40,7 @@
 #include <QPainter>
 #include <QListView>
 #include <QComboBox>
+#include <QStyleFactory>
 
 
 TransactionView::TransactionView(QWidget *parent) :
@@ -108,7 +108,7 @@ TransactionView::TransactionView(QWidget *parent) :
     QAction *showDetailsAction = new QAction(tr("Show transaction details"), this);
 
     contextMenu = new QMenu();
-    contextMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
+    // contextMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(copyAmountAction);
@@ -145,6 +145,30 @@ void TransactionView::setSearchWidget(QComboBox* dateComboBox,QComboBox* typeCom
     typeWidget = typeComboBox;
     // addressWidget = addrLineEdit;
 
+    // ad->dl
+       //QComboBox
+   dateWidget->setStyleSheet("QComboBox{border:0px; background-color:rgb(172,99,43); \
+                    color:white; height:24px; width:40px;}\
+                    QComboBox::down-arrow{\
+                    border:hidden;\
+                    background-color:rgb(172,99,430);\
+                    border-image:url(:/pic/res/pic/al.png);\
+                    background-color:rgba(255,255,255,0);}\
+                    QComboBox::drop-down{width:14px; border:0px;}\
+                    QComboBox QAbstractItemView {\
+                    color:rgb(255,255,255);\
+                    border: 0px solid rgb(172,99,43);\
+                    background-color:rgb(198, 125, 26);\
+                    selection-color:white;\
+                    selection-background-color: rgb(239,169,4);}\
+                    QComboBox QAbstractItemView::item{\
+                        height: 35px;\
+                        background-color: rgb(198, 125, 26);\
+                        border:hidden;\
+                        color: rgb(255, 255, 255);\
+                    }");
+
+
     dateWidget->addItem(tr("All"), All);
     dateWidget->addItem(tr("Today"), Today);
     dateWidget->addItem(tr("This week"), ThisWeek);
@@ -161,6 +185,8 @@ void TransactionView::setSearchWidget(QComboBox* dateComboBox,QComboBox* typeCom
     typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
     typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
     typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
+
+
 
 #if QT_VERSION >= 0x040700
     addrLineEdit->setPlaceholderText(tr("Enter address or label to search"));
@@ -196,7 +222,7 @@ void TransactionView::setModel(WalletModel *model)
         transactionView->setColumnWidth(TransactionTableModel::Amount, AMOUNT_MINIMUM_COLUMN_WIDTH);
         transactionView->horizontalHeader()->setDefaultAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
 
-        transactionView->setStyleSheet("QTableView {\ncolor: black;\ngridline-color: white;\nbackground-color: white;\n outline: 0px;\n alternate-background-color: rgb(247,242,238);\nselection-color: white;\nselection-background-color: rgb(239,169,4);\nborder:hidden;\n}\n\nQHeaderView {\ncolor: black;\nfont: 12pt;\nborder: 0px solid rgb(144, 144, 144);\nborder:0px solid rgb(191,191,191);\nborder-left-color: red;\nborder-top-color: red;\nborder-radius:0px;\nmin-height:29px;\n}\n\nQHeaderView::section {\ncolor: black;\nbackground-color: rgb(234, 221, 210);\nborder: 0px solid #626262;\nborder-radius:0px;\nborder-color: white;\n}\n\nQTableView::item::selected\n{\nborder:hidden;\n    background-color: rgb(239, 169, 4);\n}\n\n/*垂直滚动条整体*/\nQScrollBar:vertical\n{\n    width:8px;\n    background:rgb(0,0,0,0%);\n    margin:0px,0px,0px,0px;\n    padding-top:12px;   /*上预留位置*/\n    padding-bottom:12px;    /*下预留位置*/\n}\n\n/*滚动条中滑块的样式*/\nQScrollBar::handle:vertical\n{\n    width:8px;\n    background:rgb(0,0,0,15%);\n    border-radius:4px;\n    min-height:20px;\n}\n\n/*鼠标触及滑块样式*/\nQScrollBar::handle:vertical:hover\n{\n    width:9px;\n    background:rgb(0,0,0,30%);\n    border-radius:4px;\n    min-height:20;\n}\n\n/*设置下箭头*/\nQScrollBar::add-line:vertical\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/3.png);\n    subcontrol-position:bottom;\n}\n\n/*设置上箭头*/\nQScrollBar::sub-line:vertical\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/1.png);\n    subcontrol-position:top;\n}\n\n/*设置下箭头:悬浮状态*/\nQScrollBar::add-line:vertical:hover\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/4.png);\n    subcontrol-position:bottom;\n}\n\n/*设置上箭头：悬浮状态*/\nQScrollBar::sub-line:vertical:hover\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/2.png);\n    subcontrol-position:top;\n}\n\n/*当滚动条滚动的时候，上面的部分和下面的部分*/\nQScrollBar::add-page:vertical,QScrollBar::sub-page:vertical\n{\n    background:rgb(0,0,0,10%);\n    border-radius:4px;\n}\n");
+        // transactionView->setStyleSheet("QTableView {\ncolor: black;\ngridline-color: white;\nbackground-color: white;\n outline: 0px;\n alternate-background-color: rgb(247,242,238);\nselection-color: white;\nselection-background-color: rgb(239,169,4);\nborder:hidden;\n}\n\nQHeaderView {\ncolor: black;\nfont: 12pt;\nborder: 0px solid rgb(144, 144, 144);\nborder:0px solid rgb(191,191,191);\nborder-left-color: red;\nborder-top-color: red;\nborder-radius:0px;\nmin-height:29px;\n}\n\nQHeaderView::section {\ncolor: black;\nbackground-color: rgb(234, 221, 210);\nborder: 0px solid #626262;\nborder-radius:0px;\nborder-color: white;\n}\n\nQTableView::item::selected\n{\nborder:hidden;\n    background-color: rgb(239, 169, 4);\n}\n\n/*垂直滚动条整体*/\nQScrollBar:vertical\n{\n    width:8px;\n    background:rgb(0,0,0,0%);\n    margin:0px,0px,0px,0px;\n    padding-top:12px;   /*上预留位置*/\n    padding-bottom:12px;    /*下预留位置*/\n}\n\n/*滚动条中滑块的样式*/\nQScrollBar::handle:vertical\n{\n    width:8px;\n    background:rgb(0,0,0,15%);\n    border-radius:4px;\n    min-height:20px;\n}\n\n/*鼠标触及滑块样式*/\nQScrollBar::handle:vertical:hover\n{\n    width:9px;\n    background:rgb(0,0,0,30%);\n    border-radius:4px;\n    min-height:20;\n}\n\n/*设置下箭头*/\nQScrollBar::add-line:vertical\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/3.png);\n    subcontrol-position:bottom;\n}\n\n/*设置上箭头*/\nQScrollBar::sub-line:vertical\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/1.png);\n    subcontrol-position:top;\n}\n\n/*设置下箭头:悬浮状态*/\nQScrollBar::add-line:vertical:hover\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/4.png);\n    subcontrol-position:bottom;\n}\n\n/*设置上箭头：悬浮状态*/\nQScrollBar::sub-line:vertical:hover\n{\n    height:12px;\n    width:10px;\n    border-image:url(:/selectfile/scroll/2.png);\n    subcontrol-position:top;\n}\n\n/*当滚动条滚动的时候，上面的部分和下面的部分*/\nQScrollBar::add-page:vertical,QScrollBar::sub-page:vertical\n{\n    background:rgb(0,0,0,10%);\n    border-radius:4px;\n}\n");
         MItemDelegate* delegate = new MItemDelegate();
         transactionView->setItemDelegate(delegate);
         columnResizingFixer = new GUIUtil::TableViewLastColumnResizingFixer(transactionView, AMOUNT_MINIMUM_COLUMN_WIDTH, MINIMUM_COLUMN_WIDTH);
@@ -400,7 +426,7 @@ void TransactionView::editLabel()
         {
             // Edit sending / receiving address
             QModelIndex modelIdx = addressBook->index(idx, 0, QModelIndex());
-            // Determine type of address, launch appropriate editor dialog type
+            // Determine type of address, lnch appropriate editor dialog type
             QString type = modelIdx.data(AddressTableModel::TypeRole).toString();
 
             EditAddressDialog dlg(
@@ -609,33 +635,46 @@ void MDateEdit::setMyStytle()
                    strTemp.append("QPushButton#CalPushBtnT2{border:1px solid lightgray; color:rgb(172,99,43);}");
             strTemp.append("QPushButton#CalPushBtnT2:hover,QPushButton#CalPushBtnT2:pressed{background-color:rgb(231, 231, 231);}");
    //QComboBox
+// ad->al
    strTemp.append("QComboBox#CalComboBox{border:0px; background-color:rgb(172,99,43); \
                     color:white; height:24px; width:40px;}\
                     QComboBox#CalComboBox::down-arrow{\
-                    image:url(:/pic/res/pic/ad.png);}\
+                    border:hidden;\
+                    background-color:rgb(172,99,43);\
+                    border-image:url(:/pic/res/pic/ad.png);}\
                     QComboBox#CalComboBox::drop-down{width:14px; border:0px;}\
                     QComboBox#CalComboBox QAbstractItemView {\
                     color:rgb(172,99,43);\
                     border: 1px solid rgb(172,99,43);\
-                        background-color:white;\
-                        selection-color:white;\
-                        selection-background-color: rgb(239,169,4);}");
+                    background-color:white;\
+                    selection-color:white;\
+                    selection-background-color: rgb(239,169,4);}\
+                    QComboBox#CalComboBox QAbstractItemView::item{\
+                        height: 30px;\
+                        background-color: rgb(198, 125, 26);\
+                        border:hidden;\
+                        color: rgb(255, 255, 255);\
+                    }");
     //QTimeEdit
+   // au->ar
     strTemp.append("QTimeEdit#CalTimeEdit{ border:1px solid lightgray; color:rgb(172,99,43);}");
     strTemp.append("QTimeEdit#CalTimeEdit:!enabled{ background:rgb(65, 65, 65); color:rgb(90, 90, 90); border:0px; }");
     strTemp.append("QTimeEdit#CalTimeEdit::up-button{  background:rgb(172,99,43);width: 16px;  border-width: 1px;}");
     strTemp.append("QTimeEdit#CalTimeEdit::up-button:hover{ background:rgb(239,169,4); }");
     strTemp.append("QTimeEdit#CalTimeEdit::up-button:!enabled{ background:rgb(65, 65, 65); }");
-    strTemp.append("QTimeEdit#CalTimeEdit::up-arrow{  image:url(:/pic/res/pic/au.png);}");
+    strTemp.append("QTimeEdit#CalTimeEdit::up-arrow{  border-image:url(:/pic/res/pic/au.png);}");
 
     strTemp.append("QTimeEdit#CalTimeEdit::down-button{  background:rgb(172,99,43); width: 16px;  border-width: 1px;}");
     strTemp.append("QTimeEdit#CalTimeEdit::down-button:hover{ background:rgb(239,169,4); }");
     strTemp.append("QTimeEdit#CalTimeEdit::down-button:!enabled{ background:rgb(65, 65, 65); }");
-    strTemp.append("QTimeEdit#CalTimeEdit::down-arrow{  image:url(:/pic/res/pic/ad.png);}");
-
+    strTemp.append("QTimeEdit#CalTimeEdit::down-arrow{  \
+                    border:hidden;\
+                    background-color:rgb(172,99,43);\
+                    border-image:url(:/pic/res/pic/ad.png);}");
+// ad->al
     //QDateEdit
     strTemp.append("QDateEdit{border:1px solid rgb(172,99,43); height:24px; }");
-    strTemp.append("QDateEdit::down-arrow{image:url(:/pic/res/pic/calendar.png);}");
+    strTemp.append("QDateEdit::down-arrow{border-image:url(:/pic/res/pic/calendar.png); height:15px; width:20px;}");
     strTemp.append("QDateEdit::drop-down{width:30px; border:0px solid red;\
                    subcontrol-origin: padding;subcontrol-position: top right;}");
 
@@ -758,6 +797,10 @@ void DefineCalendar::InitWidgets()
     pushBtn_ML->setObjectName("CalPushBtnT1");
     pushBtn_MR->setObjectName("CalPushBtnT1");
 
+#if defined(Q_OS_MAC)
+    comboBox_Year->setStyle(QStyleFactory::create("Windows"));
+    comboBox_Month->setStyle(QStyleFactory::create("Windows"));
+#endif
 
     connect(pushBtn_YL, SIGNAL(clicked()), this, SLOT(BtnSlots()));
     connect(pushBtn_YR, SIGNAL(clicked()), this, SLOT(BtnSlots()));

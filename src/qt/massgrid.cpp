@@ -518,6 +518,7 @@ int main(int argc, char *argv[])
 #endif
 #ifdef Q_OS_MAC
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
     // Register meta types used for QMetaObject::invokeMethod
@@ -549,9 +550,35 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    QString qssFilePath;
+
+#if defined(Q_OS_WIN) 
+    QFont appfont = app.font();    
+    appfont.setFamily("微软雅黑");
+    app.setFont(appfont);
+    qssFilePath = "://res/style/linuxStyle.qss";
+#elif defined(Q_OS_MAC)
+    QFont appfont = app.font();    
+    appfont.setFamily(".SF NS Text");
+    appfont.setPointSize(15);
+    app.setFont(appfont);
+    qssFilePath = "://res/style/macStyle.qss";
+#else
+    QFont appfont = app.font();    
+    appfont.setFamily("Ubuntu");
+    app.setFont(appfont);
+    qssFilePath = "://res/style/linuxStyle.qss";
+#endif
+
+    QFile f(qssFilePath);
+    if (f.open(f.ReadOnly)) {
+        app.setStyleSheet(f.readAll());
+    }
+
     /// 5. Now that settings and translations are available, ask user for data directory
     // User language is set up: pick a data directory
     Intro::pickDataDirectory();
+
 
     /// 6. Determine availability of data directory and parse massgrid.conf
     /// - Do not call GetDataDir(true) before this step finishes
@@ -629,13 +656,6 @@ int main(int argc, char *argv[])
 
     if (GetBoolArg("-splash", true) && !GetBoolArg("-min", false))
         app.createSplashScreen(networkStyle.data());
-
-#if defined(Q_OS_WIN)
-    QFont appfont = app.font();    
-    appfont.setFamily("微软雅黑");
-    // appfont.setPointSize(12);
-    app.setFont(appfont);
-#endif
 
     try
     {

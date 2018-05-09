@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>822</width>
-    <height>431</height>
+    <height>467</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -41,10 +41,7 @@
    <item row="0" column="0">
     <widget class="QWidget" name="mainWin" native="true">
      <property name="styleSheet">
-      <string notr="true">QWidget#mainWin{
-	border-image: url(:/pic/res/pic/dlgBackgroud.png);
-border:hidden;
-}</string>
+      <string notr="true"/>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
@@ -62,158 +59,7 @@ border:hidden;
       <item row="0" column="0">
        <widget class="QFrame" name="mainframe">
         <property name="styleSheet">
-         <string notr="true">QFrame#mainframe{
-	background-color: rgb(255, 255, 255);
-}
-
-QTabBar::tab
-{
-color: rgb(172, 99, 43);
-border-bottom:1px solid rgb(174,103,46);
-border-left:0px solid rgb(174,103,46);
-border-right:0px solid rgb(174,103,46);
-border-top:0px solid rgb(174,103,46);
-    min-width: 150px;
-    min-height: 28px;
-}
-
-
-QTabBar::tab:selected, QTabBar::tab:hover
-{
-border-left:1px solid rgb(174,103,46);
-border-right:1px solid rgb(174,103,46);
-border-top:1px solid rgb(174,103,46);
-border-bottom:0px solid rgb(174,103,46);
-}
-
-
-QTabBar::tab:selected
-{
-border-left:1px solid rgb(174,103,46);
-border-right:1px solid rgb(174,103,46);
-border-top:1px solid rgb(174,103,46);
-border-bottom:0px solid rgb(174,103,46);
-}
-
-QTabBar::tab:!selected
-{
-color: rgb(172, 99, 43);
-border-bottom:1px solid rgb(174,103,46);
-border-left:0px solid rgb(174,103,46);
-border-right:0px solid rgb(174,103,46);
-border-top:0px solid rgb(174,103,46);
-}
-
-QTabWidget::pane{
-	border:none;
-}
-
-QFrame{
-border:hidden;
-}
-QLineEdit{
-	border-color: rgb(186, 186, 186);
-	border:1px solid rgb(186, 186, 186);
-}
-
-
-QCheckBox{  
-    spacing: 5px;  
-}  
-  
-QCheckBox::indicator{  
-	width:20px;
-	height:20px; 
-}  
-  
-QCheckBox::indicator:unchecked{  
-	border-image: url(:/pic/res/pic/kPic.png);
-}  
-  
-QCheckBox::indicator:checked{  
-	border-image: url(:/pic/res/pic/selectPic.png);
-}  
-  
-QCheckBox::indicator:checked:disabled{  
-    image:url(:/CheckBox/res/checkedDisabled.png);  
-}  
-
-
-QSpinBox{
- height:30px;
- width:30px;
-	background-color: rgba(255, 255, 255, 0);
-	border:hidden;
-}
-QSpinBox::up-button
-{
-	background-color: rgba(255, 255, 255, 0);
-}
-QSpinBox::down-button{
-	background-color: rgba(255, 255, 255, 0);
-}
-
-QFrame#frame_9,QFrame#frame_10{
-	border-color: rgb(186, 186, 186);
-	border:1px solid rgb(186, 186, 186);
-}
-
-QComboBox
-{
-width: 120px;  
-height: 600px;
-border:1px solid rgb(174,103,46);
-font-size: 12pt;
-font-family: 微软雅黑,宋体;
-background-repeat: no-repeat;
-background-position: center left;
-background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 0);
-selection-color: black;
-selection-background-color: darkgray;
-}
-
-QComboBox::drop-down 
-{
-width: 30px; 
-height:30px;
-image: url(:/pic/res/pic/xjt.png);
-}
-QComboBox QAbstractItemView
-{
-height:100px;
-border: 0px;  
-color: rgb(255, 255, 255);
-selection-color: rgb(255, 255, 255);
-selection-background-color: rgb(239, 169, 4);
-background-color: rgb(198, 125, 26);
-}
-QComboBox QAbstractItemView::item
-{
-height: 20px;
-background-color: rgb(198, 125, 26);
-border:hidden;
-}
-
-QPlainTextEdit{
-border:1px solid rgb(174,103,46);
-}
-
-QFrame#frame,QFrame#frame_2,QFrame#frame_3,QValidatedLineEdit#signatureIn_VM{
-	border-color: rgb(186, 186, 186);
-	border:1px solid rgb(186, 186, 186);
-}
-
-QToolButton{
-min-height:30;
-color: rgb(172, 99, 43);
-border-bottom:1px solid rgb(174,103,46);
-border-left:0px solid rgb(174,103,46);
-border-right:0px solid rgb(174,103,46);
-border-top:0px solid rgb(174,103,46);
-}
-
-</string>
+         <string notr="true"/>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -260,24 +106,30 @@ border-top:0px solid rgb(174,103,46);
             </spacer>
            </item>
            <item>
-            <widget class="QToolButton" name="cancelButton">
+            <widget class="QPushButton" name="cancelButton">
              <property name="minimumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>34</width>
+               <height>34</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>34</width>
+               <height>34</height>
               </size>
              </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
              <property name="styleSheet">
-              <string notr="true">QToolButton{
-border:hidden;
-image: url(:/pic/res/pic/closeBtn.png);
-}
+              <string notr="true">    min-width:20px;
+    min-height:20px;
+    max-width:20px;
+    max-height:20px;
+    border:7px solid rgb(255,255,255,0);
+    image: url(:/pic/res/pic/closeBtn.png);
+
 </string>
              </property>
              <property name="text">
@@ -300,8 +152,11 @@ image: url(:/pic/res/pic/closeBtn.png);
            </property>
            <item row="0" column="0">
             <widget class="QTabWidget" name="tabWidget">
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="tabSignMessage">
               <attribute name="title">
@@ -361,7 +216,7 @@ image: url(:/pic/res/pic/closeBtn.png);
                      <string>Choose previously used address</string>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">border:hidden;</string>
+                     <string notr="true"/>
                     </property>
                     <property name="text">
                      <string>Choose</string>
@@ -384,7 +239,7 @@ image: url(:/pic/res/pic/closeBtn.png);
                      <string>Paste address from clipboard</string>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">border:hidden;</string>
+                     <string notr="true"/>
                     </property>
                     <property name="text">
                      <string>Paste</string>
@@ -469,7 +324,7 @@ image: url(:/pic/res/pic/closeBtn.png);
                      <string>Copy the current signature to the system clipboard</string>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">border:hidden;</string>
+                     <string notr="true"/>
                     </property>
                     <property name="text">
                      <string>Copy</string>
@@ -510,6 +365,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                  </item>
                  <item>
                   <widget class="QToolButton" name="clearButton_SM">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="toolTip">
                     <string>Reset all sign message fields</string>
                    </property>
@@ -635,7 +496,7 @@ image: url(:/pic/res/pic/closeBtn.png);
                      <string>Choose previously used address</string>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">border:hidden;</string>
+                     <string notr="true"/>
                     </property>
                     <property name="text">
                      <string>Choose</string>
@@ -666,6 +527,9 @@ image: url(:/pic/res/pic/closeBtn.png);
                    <height>30</height>
                   </size>
                  </property>
+                 <property name="styleSheet">
+                  <string notr="true">border:hidden;</string>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -692,6 +556,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                  </item>
                  <item>
                   <widget class="QToolButton" name="clearButton_VM">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="toolTip">
                     <string>Reset all verify message fields</string>
                    </property>
@@ -704,6 +574,12 @@ image: url(:/pic/res/pic/closeBtn.png);
                    <property name="icon">
                     <iconset resource="../massgrid.qrc">
                      <normaloff>:/pic/res/pic/minBtn.png</normaloff>:/pic/res/pic/minBtn.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>10</width>
+                     <height>10</height>
+                    </size>
                    </property>
                    <property name="toolButtonStyle">
                     <enum>Qt::ToolButtonTextBesideIcon</enum>

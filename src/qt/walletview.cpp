@@ -33,6 +33,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QComboBox>
+#include <QStyleFactory>
 
 WalletView::WalletView(QWidget *parent):
     QStackedWidget(parent),
@@ -70,45 +71,28 @@ WalletView::WalletView(QWidget *parent):
     typeComboBox->setMinimumSize(120,32);
     typeComboBox->setMaximumSize(120,32);
 
-    // dateComboBox->addItem(tr("All Date"), TransactionView::All);
-    // dateComboBox->addItem(tr("Today"), TransactionView::Today);
-    // dateComboBox->addItem(tr("This week"), TransactionView::ThisWeek);
-    // dateComboBox->addItem(tr("This month"), TransactionView::ThisMonth);
-    // dateComboBox->addItem(tr("Last month"), TransactionView::LastMonth);
-    // dateComboBox->addItem(tr("This year"), TransactionView::ThisYear);
-    // dateComboBox->addItem(tr("Range..."), TransactionView::Range);
-
-    // dateComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255,0);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\n\n");
     addressEdit->setStyleSheet("QLineEdit\n{\nmin-width:300px;border:1px solid rgb(165, 165, 165);\nbackground-color: rgb(255, 255, 255,0);\n}\n\nQLineEdit::hover{\nborder:1px solid rgb(174,103,46);\nbackground-color: rgb(255, 255, 255,0);\n}");
-    // typeComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 600px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255,0);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\n\n");
 
-    typeComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 32px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
-    dateComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 32px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
+
 
 #if QT_VERSION >= 0x040700
     addressEdit->setPlaceholderText(tr("Enter address or label to search"));
 #endif
 
-// #ifdef Q_OS_MAC
-//     typeComboBox->setFixedWidth(121);
-// #else
-//     typeComboBox->setFixedWidth(120);
-// #endif
-
-    // typeComboBox->setMaximumHeight(32);
-
-    // typeComboBox->addItem(tr("All Type"), TransactionFilterProxy::ALL_TYPES);
-    // typeComboBox->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) |
-    //                                     TransactionFilterProxy::TYPE(TransactionRecord::RecvFromOther));
-    // typeComboBox->addItem(tr("Sent to"), TransactionFilterProxy::TYPE(TransactionRecord::SendToAddress) |
-    //                               TransactionFilterProxy::TYPE(TransactionRecord::SendToOther));
-    // typeComboBox->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
-    // typeComboBox->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
-    // typeComboBox->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
-
-
 
     transactionView->setSearchWidget(dateComboBox,typeComboBox,addressEdit);
+
+
+#ifdef Q_OS_MAC
+    typeComboBox->setStyle(QStyleFactory::create("Windows"));
+    dateComboBox->setStyle(QStyleFactory::create("Windows"));
+    typeComboBox->setStyleSheet("QComboBox{\n    background-color:rgb(172,99,43); \n    color:white;\n    height:30px;\n    width:120px;\n    border:0px solid rgb(174,103,46);\n    background-repeat: no-repeat;\n    background-position: center left;\n    background-color: rgb(255, 255, 255);\n    color: rgb(0, 0, 0);\n    selection-color: black;\n    selection-background-color: darkgray;\n}\nQComboBox::drop-down\n{\n    width: 30px;\n    height:30px;\n    image: url(:/pic/res/pic/xjt.png);\n}\n\nQComboBox QAbstractItemView\n{\n    width:140px;\n  outline: 0px;\n  color: rgb(255, 255, 255);\n    selection-color: rgb(255, 255, 255);\n    selection-background-color: rgb(239, 169, 4);\n    background-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\n    height: 40px;\n  font:15pt;\n  background-color: rgb(198, 125, 26);\n    border:hidden;\n    color: rgb(255, 255, 255);\n}");
+    dateComboBox->setStyleSheet("QComboBox{\n    background-color:rgb(172,99,43); \n    color:white;\n    height:30px;\n    width:120px;\n    border:0px solid rgb(174,103,46);\n    background-repeat: no-repeat;\n    background-position: center left;\n    background-color: rgb(255, 255, 255);\n    color: rgb(0, 0, 0);\n    selection-color: black;\n    selection-background-color: darkgray;\n}\nQComboBox::drop-down\n{\n    width: 30px;\n    height:30px;\n    image: url(:/pic/res/pic/xjt.png);\n}\n\nQComboBox QAbstractItemView\n{\n   width:140px;\n  outline: 0px;\n  color: rgb(255, 255, 255);\n    selection-color: rgb(255, 255, 255);\n    selection-background-color: rgb(239, 169, 4);\n    background-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\n    height: 40px;\n  font:15pt;\n   background-color: rgb(198, 125, 26);\n    border:hidden;\n    color: rgb(255, 255, 255);\n}");
+#else
+    typeComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 32px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
+    dateComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 32px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: 微软雅黑,宋体;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/pic/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
+#endif
+
 
     connect(typeComboBox, SIGNAL(activated(int)), transactionView, SLOT(chooseType(int)));
     connect(dateComboBox, SIGNAL(activated(int)), transactionView, SLOT(chooseDate(int)));

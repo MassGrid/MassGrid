@@ -149,7 +149,7 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     setUnifiedTitleAndToolBarOnMac(true);
 #endif
 
-    rpcConsole = new RPCConsole(enableWallet ? 0 : 0);
+    rpcConsole = new RPCConsole(0); //enableWallet ? 0 : 0
 #ifdef ENABLE_WALLET
     if(enableWallet)
     {
@@ -180,6 +180,10 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
 
     // Accept D&D of URIs
     setAcceptDrops(true);
+
+#ifdef Q_OS_MAC
+    createActions(networkStyle);
+#endif
 
     // Create system tray icon and notification
     createTrayIcon(networkStyle);
@@ -231,14 +235,7 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     // as they make the text unreadable (workaround for issue #1071)
     // See https://qt-project.org/doc/qt-4.8/gallery.html
 
-    // QString curStyle = QApplication::style()->metaObject()->className();
-    // if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
-    // {
-    //     progressBar->setStyleSheet("QProgressBar {\nborder: none;\ntext-align: center;\ncolor: white;\nbackground-color: rgb(172, 99, 43);\nbackground-repeat: repeat-x;\ntext-align: center;}\nQProgressBar::chunk {\nborder: none;\nbackground-color: rgb(239, 169, 4);\nbackground-repeat: repeat-x;\n}");
-    //     // progressBar->setStyleSheet("QProgressBar { background-color: #e8e8e8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF8000, stop: 1 orange); border-radius: 7px; margin: 0px; }");
-    // }
-
-    progressBar->setStyleSheet("QProgressBar {\nborder: none;\n min-height:30px; min-width:500px; max-height:30px; text-align: center;\ncolor: white;\nbackground-color: rgb(172, 99, 43);\nbackground-repeat: repeat-x;\ntext-align: center;}\nQProgressBar::chunk {\nborder: none;\nbackground-color: rgb(239, 169, 4);\nbackground-repeat: repeat-x;\n}");
+    progressBar->setMinimumSize(500,30);
     statusFrame->setObjectName("statusFrame");
     statusFrame->setStyleSheet("QFrame#statusFrame {  \n    background-color: rgb(247, 242, 238);\n\n}  ");
 
@@ -254,11 +251,6 @@ MassGridGUI::MassGridGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     statusFrameLayout->addWidget(progressBar);
     statusFrameLayout->addSpacerItem(spacerItem);
     statusFrameLayout->addWidget(frameBlocks);
-
-    // statusBar()->setStyleSheet("QStatusBar {  \n    background-color: rgb(247, 242, 238);\n\n}  ");
-    // statusBar()->addWidget(progressBarLabel);
-    // statusBar()->addWidget(progressBar);
-    // statusBar()->addPermanentWidget(frameBlocks);
 
     // Install event filter to be able to catch status tip events (QEvent::StatusTip)
     this->installEventFilter(this);
@@ -397,14 +389,14 @@ void MassGridGUI::createBackgroundWin()
 
     layout->addWidget(centerWin);
 
-    centerWin->setStyleSheet("QWidget#centerWin{\n  border-image: url(:/pic/res/pic/dlgBackgroud.png);\n}");
+    // centerWin->setStyleSheet("QWidget#MassGridGUI QWidget#centerWin{\n  border-image: url(:/pic/res/pic/dlgBackgroud.png);\n}");
 
     centerWin->setLayout(backgroudlayout);
 
     mainFrame = new QFrame(this);
     mainFrame->setObjectName("mainFrame");
 
-    mainFrame->setStyleSheet("QFrame#mainFrame{\n   background-color: rgb(255, 255, 255);\n}");
+    // mainFrame->setStyleSheet("QFrame#mainFrame{\n   background-color: rgb(255, 255, 255);\n}");
     mainFrame->setMinimumSize(850,650);
 
     backgroudlayout->addWidget(mainFrame);
@@ -659,12 +651,6 @@ void MassGridGUI::createToolBars()
 {
     if(walletFrame)
     {
-        // QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
-        // toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        // toolbar->addAction(overviewAction);
-        // toolbar->addAction(sendCoinsAction);
-        // toolbar->addAction(receiveCoinsAction);
-        // toolbar->addAction(historyAction);
         overviewAction->setChecked(true);
     }
 }
@@ -676,7 +662,9 @@ void MassGridGUI::setClientModel(ClientModel *clientModel)
     {
         // Create system tray menu (or setup the dock menu) that late to prevent users from calling actions,
         // while the client has not yet fully loaded
-        // createTrayIconMenu();
+#ifdef Q_OS_MAC
+        createTrayIconMenu();
+#endif
 
         // Keep up to date with client
         setNumConnections(clientModel->getNumConnections());
@@ -761,19 +749,15 @@ void MassGridGUI::createTrayIcon(const NetworkStyle *networkStyle)
     QString toolTip = tr("MassGrid Core client") + " " + networkStyle->getTitleAddText();
     trayIcon->setToolTip(toolTip);
     trayIcon->setIcon(networkStyle->getAppIcon());
-    trayIcon->show();
 
-    // Create actions for the toolbar, menu bar and tray/dock icon
-    // Needs walletFrame to be initialized
     createActions(networkStyle);
     createTrayIconMenu();
     trayIcon->show();
+    // Create actions for the toolbar, menu bar and tray/dock icon
+    // Needs walletFrame to be initialized
 #endif
 
-
     notificator = new Notificator(QApplication::applicationName(), trayIcon, this);
-
-
 }
 
 void MassGridGUI::createTrayIconMenu()
@@ -784,16 +768,17 @@ void MassGridGUI::createTrayIconMenu()
         return;
 
     trayIconMenu = new QMenu(this);
+    // trayIconMenu->setMinimumSize();
     trayIcon->setContextMenu(trayIconMenu);
 
-    trayIconMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
+    // trayIconMenu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n  min-width:80px;  background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
 #else
     // Note: On Mac, the dock icon is used to provide the tray's functionality.
     MacDockIconHandler *dockIconHandler = MacDockIconHandler::instance();
-    dockIconHandler->setMainWindow((QWidget *)this);
+    // dockIconHandler->setMainWindow((QWidget *)this);
     trayIconMenu = dockIconHandler->dockMenu();
 #endif
 
@@ -1548,8 +1533,7 @@ void UnitDisplayStatusBarControl::createContextMenu()
         menu->addAction(menuAction);
     }
 
-    menu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
-
+    // menu->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background:rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n  margin-right: 2px;\n    margin-top: 2px;\n  margin-bottom: 2px;\n    height:30px;\n}\n \nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4); \n    color: white;            \n}\n \nQMenu::item:selected:!enabled{\n    background:transparent;\n}");
 
     connect(menu,SIGNAL(triggered(QAction*)),this,SLOT(onMenuSelection(QAction*)));
 }

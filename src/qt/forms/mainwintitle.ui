@@ -151,13 +151,7 @@ border:hidden;
       <item>
        <widget class="QFrame" name="frame_2">
         <property name="styleSheet">
-         <string notr="true">QToolButton{
-border:hidden;
-color: rgb(172, 99, 43);
-}
-QToolButton:hover{
-border:1px solid rgb(174,103,46);
-}</string>
+         <string notr="true"/>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -186,7 +180,7 @@ border:1px solid rgb(174,103,46);
            <item>
             <widget class="QLabel" name="label_title">
              <property name="styleSheet">
-              <string notr="true">color: rgb(172, 99, 43);</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string/>
@@ -241,8 +235,13 @@ border:1px solid rgb(174,103,46);
                  <height>30</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>13</pointsize>
+                </font>
+               </property>
                <property name="styleSheet">
-                <string notr="true">border:hidden;</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>文件</string>
@@ -269,8 +268,13 @@ border:1px solid rgb(174,103,46);
                  <height>30</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>13</pointsize>
+                </font>
+               </property>
                <property name="styleSheet">
-                <string notr="true">border:hidden;</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>设置</string>
@@ -297,8 +301,13 @@ border:1px solid rgb(174,103,46);
                  <height>30</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>13</pointsize>
+                </font>
+               </property>
                <property name="styleSheet">
-                <string notr="true">border:hidden;</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>帮助</string>
@@ -324,13 +333,14 @@ border:1px solid rgb(174,103,46);
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">QToolButton#pBtnMin{
-border:hidden;
-image: url(:/pic/res/pic/minBtn.png);
-}</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../massgrid.qrc">
+                 <normaloff>:/pic/res/pic/minBtn.png</normaloff>:/pic/res/pic/minBtn.png</iconset>
                </property>
               </widget>
              </item>
@@ -349,13 +359,14 @@ image: url(:/pic/res/pic/minBtn.png);
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">QToolButton#pBtnMax{
-border:hidden;
-image: url(:/pic/res/pic/maxBtn.png);
-}</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../massgrid.qrc">
+                 <normaloff>:/pic/res/pic/maxBtn.png</normaloff>:/pic/res/pic/maxBtn.png</iconset>
                </property>
               </widget>
              </item>
@@ -374,18 +385,20 @@ image: url(:/pic/res/pic/maxBtn.png);
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">QToolButton#pBtnClose{
-border:hidden;
-image: url(:/pic/res/pic/closeBtn.png);
-}
-
-QPushButton::hover{
-border:hidden;
-image: url(:/pic/res/pic/closeBtn.png);
-}</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../massgrid.qrc">
+                 <normaloff>:/pic/res/pic/closeBtn.png</normaloff>:/pic/res/pic/closeBtn.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>17</width>
+                 <height>15</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -427,15 +440,14 @@ image: url(:/pic/res/pic/closeBtn.png);
              </property>
              <property name="font">
               <font>
-               <pointsize>12</pointsize>
+               <pointsize>16</pointsize>
                <weight>75</weight>
+               <italic>false</italic>
                <bold>true</bold>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">border:hidde;
-color: rgb(172, 99, 43);
-</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string>概况</string>
@@ -446,8 +458,8 @@ color: rgb(172, 99, 43);
              </property>
              <property name="iconSize">
               <size>
-               <width>35</width>
-               <height>35</height>
+               <width>29</width>
+               <height>34</height>
               </size>
              </property>
              <property name="popupMode">
@@ -477,14 +489,14 @@ color: rgb(172, 99, 43);
              </property>
              <property name="font">
               <font>
-               <pointsize>12</pointsize>
+               <pointsize>16</pointsize>
                <weight>75</weight>
+               <italic>false</italic>
                <bold>true</bold>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">border:hidde;
-color: rgb(172, 99, 43);</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string>发送</string>
@@ -495,8 +507,8 @@ color: rgb(172, 99, 43);</string>
              </property>
              <property name="iconSize">
               <size>
-               <width>35</width>
-               <height>35</height>
+               <width>30</width>
+               <height>30</height>
               </size>
              </property>
              <property name="popupMode">
@@ -526,14 +538,14 @@ color: rgb(172, 99, 43);</string>
              </property>
              <property name="font">
               <font>
-               <pointsize>12</pointsize>
+               <pointsize>18</pointsize>
                <weight>75</weight>
+               <italic>false</italic>
                <bold>true</bold>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">border:hidde;
-color: rgb(172, 99, 43);</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string>交易</string>
@@ -544,8 +556,8 @@ color: rgb(172, 99, 43);</string>
              </property>
              <property name="iconSize">
               <size>
-               <width>35</width>
-               <height>35</height>
+               <width>33</width>
+               <height>30</height>
               </size>
              </property>
              <property name="popupMode">
@@ -576,8 +588,7 @@ color: rgb(172, 99, 43);</string>
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">border:hidden;
-background-color: rgb(255, 255, 255);</string>
+            <string notr="true"/>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -704,14 +715,7 @@ background-color: rgb(255, 255, 255);</string>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QLabel{
-color: rgb(255, 255, 255);
-}
-QFrame{
-border:hidden;
-	background-color: rgb(172, 99, 43);
-}
-</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -738,7 +742,11 @@ border:hidden;
          <widget class="QLabel" name="label_unconfirmed">
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <family>.SF NS Text</family>
+            <pointsize>18</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
            </font>
           </property>
           <property name="text">
@@ -750,7 +758,7 @@ border:hidden;
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="label_balance_text">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -759,7 +767,11 @@ border:hidden;
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <family>.SF NS Text</family>
+            <pointsize>18</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
            </font>
           </property>
           <property name="text">
@@ -780,7 +792,11 @@ border:hidden;
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <family>.SF NS Text</family>
+            <pointsize>18</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
            </font>
           </property>
           <property name="text">
@@ -792,7 +808,7 @@ border:hidden;
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="label_unconfirmed_text">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -801,7 +817,11 @@ border:hidden;
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <family>.SF NS Text</family>
+            <pointsize>18</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
            </font>
           </property>
           <property name="text">
@@ -816,7 +836,11 @@ border:hidden;
          <widget class="QLabel" name="labelmmatureText">
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <family>.SF NS Text</family>
+            <pointsize>18</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
            </font>
           </property>
           <property name="text">
@@ -828,7 +852,11 @@ border:hidden;
          <widget class="QLabel" name="labelWatchImmature">
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <family>.SF NS Text</family>
+            <pointsize>18</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
            </font>
           </property>
           <property name="text">
@@ -859,7 +887,7 @@ border:hidden;
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="label_total_text">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -868,8 +896,10 @@ border:hidden;
             </property>
             <property name="font">
              <font>
-              <pointsize>12</pointsize>
+              <family>.SF NS Text</family>
+              <pointsize>18</pointsize>
               <weight>50</weight>
+              <italic>false</italic>
               <bold>false</bold>
              </font>
             </property>
@@ -888,11 +918,11 @@ border:hidden;
             </property>
             <property name="font">
              <font>
-              <family>Ubuntu</family>
-              <pointsize>24</pointsize>
-              <weight>75</weight>
+              <family>.SF NS Text</family>
+              <pointsize>30</pointsize>
+              <weight>50</weight>
               <italic>false</italic>
-              <bold>true</bold>
+              <bold>false</bold>
              </font>
             </property>
             <property name="text">
@@ -917,16 +947,18 @@ border:hidden;
             </property>
             <property name="font">
              <font>
-              <pointsize>12</pointsize>
+              <family>.SF NS Text</family>
+              <pointsize>18</pointsize>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
              </font>
             </property>
             <property name="toolTip">
              <string>Please set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</string>
             </property>
             <property name="styleSheet">
-             <string notr="true">border:hidden;
-background-color: rgba(255, 255, 255, 0);
-color: rgb(255, 0, 0);</string>
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>Set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</string>
@@ -957,8 +989,7 @@ color: rgb(255, 0, 0);</string>
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">border:hidden;
-border-image: url(:/pic/res/pic/sdCodeWhite.png);</string>
+             <string notr="true"/>
             </property>
             <property name="text">
              <string/>

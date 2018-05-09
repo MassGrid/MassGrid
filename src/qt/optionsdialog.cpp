@@ -34,6 +34,7 @@
 #include <QIntValidator>
 #include <QLocale>
 #include <QTimer>
+#include <QStyleFactory>
 
 OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     QDialog(parent),
@@ -125,8 +126,10 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
 
     ui->dataDirPath->setText(GetDataDir().string().c_str());
 
-    // QString version = QString(FormatFullVersion().c_str()).split("-").first();
-    // ui->versionLineEdit->setText(version);
+#ifdef Q_OS_MAC  
+    ui->lang->setStyle(QStyleFactory::create("Windows"));
+    ui->unit->setStyle(QStyleFactory::create("Windows"));
+#endif
 
 }
 

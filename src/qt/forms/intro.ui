@@ -6,12 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>624</width>
-    <height>448</height>
+    <width>617</width>
+    <height>463</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Welcome</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
@@ -32,61 +36,7 @@
    <item row="0" column="0">
     <widget class="QWidget" name="centerWin" native="true">
      <property name="styleSheet">
-      <string notr="true">QWidget#centerWin{
-border-image: url(:/pic/res/pic/dlgBackgroud.png);
-border:hidden;
-}
-QFrame#mainframe{
-border:hidden;
-}
-
-QCheckBox{  
-    spacing: 5px;  
-}  
-  
-QCheckBox::indicator{  
-	width:28px;
-	height:22px; 
-}  
-  
-QCheckBox::indicator:unchecked{  
-	image: url(:/pic/res/pic/kPic.png);
-}  
-  
-QCheckBox::indicator:checked{  
-	image: url(:/pic/res/pic/check-selected.png);
-}  
-  
-QCheckBox::indicator:checked:disabled{  
-    image:url(:/CheckBox/res/checkedDisabled.png);  
-}  
-
-QRadioButton{  
-    spacing: 5px;  
-}  
-  
-QRadioButton::indicator{  
-	width:20px;
-	height:20px; 
-}  
-  
-QRadioButton::indicator:unchecked{  
-	border-image: url(:/pic/res/pic/kPic.png);
-}  
-  
-QRadioButton::indicator:checked{  
-	border-image: url(:/pic/res/pic/selectPic.png);
-}  
-  
-QRadioButton::indicator:checked:disabled{  
-    image:url(:/CheckBox/res/checkedDisabled.png);  
-}  
-
-QFrame#frame{
-	border:1px solid rgb(186, 186, 186);
-}
-
-</string>
+      <string notr="true"/>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
@@ -139,7 +89,7 @@ QFrame#frame{
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">QLabel { font-style:italic; }</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string>Welcome to MassGrid Core.</string>
@@ -177,11 +127,7 @@ QFrame#frame{
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">QToolButton{
-border:hidden;
-image: url(:/pic/res/pic/closeBtn.png);
-}
-</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string/>
@@ -354,7 +300,7 @@ image: url(:/pic/res/pic/closeBtn.png);
                        </size>
                       </property>
                       <property name="styleSheet">
-                       <string notr="true">border:hidden;</string>
+                       <string notr="true"/>
                       </property>
                      </widget>
                     </item>
@@ -379,7 +325,7 @@ image: url(:/pic/res/pic/closeBtn.png);
                        </size>
                       </property>
                       <property name="styleSheet">
-                       <string notr="true">border:hidden;</string>
+                       <string notr="true"/>
                       </property>
                       <property name="text">
                        <string notr="true">…</string>

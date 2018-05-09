@@ -17,7 +17,8 @@
 boost::mutex _l;
  uint256 CBlockHeader::ComputePowHash(uint32_t Nonce)const
  {
-    boost::mutex::scoped_lock lock(_l);
+    // boost::mutex::scoped_lock lock(_l);
+    // boost::unique_lock<boost::mutex> lock(_l);
     CSHA256 sha256hasher,sha256hasher2;
     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
     ss << *this;

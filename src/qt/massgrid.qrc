@@ -143,5 +143,7 @@
     </qresource>
     <qresource prefix="/">
         <file>res/icons/unit_MGD.png</file>
+        <file>res/style/linuxStyle.qss</file>
+        <file>res/style/macStyle.qss</file>
     </qresource>
 </RCC>

@@ -9,6 +9,7 @@
 #include "walletmodel.h"
 
 #include <QUrl>
+#include "util.h"
 
 OpenURIDialog::OpenURIDialog(QWidget *parent) :
     QDialog(parent),
@@ -25,6 +26,7 @@ OpenURIDialog::OpenURIDialog(QWidget *parent) :
     ui->label_titleName->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
 
+    LogPrintStr("1111111");
 }
 
 OpenURIDialog::~OpenURIDialog()

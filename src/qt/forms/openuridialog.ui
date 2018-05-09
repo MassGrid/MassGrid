@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>557</width>
-    <height>210</height>
+    <height>224</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,15 +32,7 @@
    <item row="0" column="0">
     <widget class="QWidget" name="centerWin" native="true">
      <property name="styleSheet">
-      <string notr="true">QWidget#centerWin{
-border:hidden;
-border-image: url(:/pic/res/pic/dlgBackgroud.png);
-}
-
-QFrame#frame{
-	border:1px solid rgb(186, 186, 186);
-}
-</string>
+      <string notr="true"/>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">
@@ -58,10 +50,7 @@ QFrame#frame{
       <item row="0" column="0">
        <widget class="QFrame" name="mainframe">
         <property name="styleSheet">
-         <string notr="true">QFrame#mainframe{
-border:hidden;
-	background-color: rgb(255, 255, 255);
-}</string>
+         <string notr="true"/>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -122,11 +111,7 @@ border:hidden;
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">QToolButton{
-border:hidden;
-image: url(:/pic/res/pic/closeBtn.png);
-}
-</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string/>
@@ -193,6 +178,11 @@ image: url(:/pic/res/pic/closeBtn.png);
               </item>
               <item>
                <widget class="QToolButton" name="selectFileButton">
+                <property name="font">
+                 <font>
+                  <pointsize>13</pointsize>
+                 </font>
+                </property>
                 <property name="toolTip">
                  <string>Select payment request file</string>
                 </property>
