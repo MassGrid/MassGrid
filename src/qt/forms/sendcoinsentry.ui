@@ -19,6 +19,9 @@
   <property name="focusPolicy">
    <enum>Qt::TabFocus</enum>
   </property>
+  <property name="toolTipDuration">
+   <number>0</number>
+  </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
@@ -35,8 +38,9 @@ border:hidden;
     <string>This is a normal payment.</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">QWidget{
-	background-color: rgb(255, 255, 255);
+    <string notr="true">QMenu{
+    background-color: rgb(198,125,26);
+
 }
 QLineEdit{
 min-height:30;

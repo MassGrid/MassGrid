@@ -334,7 +334,7 @@ QSpinBox::down-button{
 
 QMenu{
 color:rgb(255,255,255);
-    background:rgb(198,125,26);
+    background-color: rgb(198,125,26);
     border:0px solid transparent;
 }
 QMenu::item{
@@ -519,7 +519,8 @@ color: rgb(255, 255, 255);
 font: 12pt;
 }
 
-QDialog#OptionsDialog QFrame#frame_2{
+QDialog#OptionsDialog QFrame#frame_2
+{
 border:hidden;
 background-color: rgb(165, 92, 39);
 }
@@ -556,7 +557,9 @@ background-color: rgb(255, 255, 255,0);
 QDialog#OptionsDialog QFrame#frame_9,
 QDialog#OptionsDialog QFrame#frame_10,
 QDialog#OptionsDialog QFrame#frame_11,
-QDialog#OptionsDialog QFrame#frame_12{
+QDialog#OptionsDialog QFrame#frame_12,
+QDialog#OptionsDialog QLineEdit#thirdPartyTxUrls,
+QDialog#OptionsDialog QLineEdit#dataDirPath{
     border-color: rgb(186, 186, 186);
     border:1px solid rgb(186, 186, 186);
 }

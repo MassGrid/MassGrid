@@ -323,7 +323,7 @@ QSpinBox::down-button{
 
 QMenu{
 color:rgb(255,255,255);
-    background:rgb(198,125,26);
+    background-color: rgb(198,125,26);
     border:0px solid transparent;
 }
 QMenu::item{

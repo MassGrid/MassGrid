@@ -40,9 +40,10 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
     QString font            = QApplication::font().toString();
 
     // load the bitmap for writing some text over it
-    pixmap     = networkStyle->getSplashImage();
+    pixmap = networkStyle->getSplashImage();
+    QPixmap pixmapTmp = pixmap.scaled(800,600,Qt::KeepAspectRatio);
 
-    QPainter pixPaint(&pixmap);
+    QPainter pixPaint(this);
     pixPaint.setPen(QColor(100,100,100));
 
     // check font size and drawing with
@@ -81,7 +82,7 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
         pixPaint.setFont(boldFont);
         fm = pixPaint.fontMetrics();
         int titleAddTextWidth  = fm.width(titleAddText);
-        pixPaint.drawText(pixmap.width()-titleAddTextWidth-10,15,titleAddText);
+        pixPaint.drawText(pixmapTmp.width()-titleAddTextWidth-10,15,titleAddText);
     }
 
     pixPaint.end();
@@ -90,15 +91,14 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
     setWindowTitle(titleText + " " + titleAddText); 
 
     // Resize window and move to center of desktop, disallow resizing
-    QRect r(QPoint(), pixmap.size());
+    QRect r(QPoint(), pixmapTmp.size());
     resize(r.size());
-    setFixedSize(r.size());
+    // setFixedSize(r.size());
     move(QApplication::desktop()->screenGeometry().center() - r.center());
 
     subscribeToCoreSignals();
     setWindowFlags(Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
-
 }
 
 SplashScreen::~SplashScreen()
@@ -165,8 +165,9 @@ void SplashScreen::showMessage(const QString &message, int alignment, const QCol
 void SplashScreen::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    painter.drawPixmap(0, 0, pixmap);
-    QRect r = rect().adjusted(25, 25, -25, -25);
+
+    painter.drawPixmap(0, 0,width(),height(), pixmap);
+    QRect r = rect().adjusted(25, 25, -35, -35);
     painter.setPen(curColor);
     painter.drawText(r, curAlignment, curMessage);
 }
