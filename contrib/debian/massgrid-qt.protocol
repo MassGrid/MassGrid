@@ -1,0 +1,11 @@
+[Protocol]
+exec=massgrid-qt '%u'
+protocol=massgrid
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false

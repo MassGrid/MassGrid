@@ -1,0 +1,761 @@
+QToolButton{
+    font: 14pt;
+}
+
+QToolButton#cancelButton{
+    min-width:20px;
+    min-height:20px;
+    max-width:20px;
+    max-height:20px;
+    border:7px solid rgb(255,255,255,0);
+    image: url(:/res/pic/closeBtn.png);
+}
+
+QWidget#centerWin{
+    border:hidden;
+    border-image: url(:/res/pic/dlgBackgroud.png);
+}
+
+QLineEdit{
+    border:hidden;
+    background-color:rgb(255,255,255,0);
+}
+
+QFrame#mainframe{
+    border:hidden;
+    background-color: rgb(255, 255, 255);
+}
+
+QTableView {
+    color: black;
+    gridline-color: white;
+    background-color: white;
+    outline: 0px;
+    alternate-background-color: rgb(247,242,238);
+    selection-color: white;
+    selection-background-color: rgb(239,169,4);
+    border:hidden;
+}
+
+QHeaderView {
+    color: black;
+    font: 16pt;
+    border: 0px solid rgb(144, 144, 144);
+    border:0px solid rgb(191,191,191);
+    border-left-color: red;
+    border-top-color: red;
+    border-radius:0px;
+    min-height:29px;
+}
+
+QHeaderView::section {
+    color: black;
+    background-color: rgb(234, 221, 210);
+    border: 0px solid #626262;
+    border-radius:0px;
+    border-color: white;
+}
+
+QTableView::item::selected
+{
+    border:hidden;
+    background-color: rgb(239, 169, 4);
+}
+
+QScrollArea{
+    border:hidden;
+}
+
+/*垂直滚动条整体*/
+QScrollBar:vertical
+{
+    width:8px;
+    background:rgb(0,0,0,0%);
+    margin:0px,0px,0px,0px;
+    padding-top:12px;   /*上预留位置*/
+    padding-bottom:12px;    /*下预留位置*/
+}
+
+/*滚动条中滑块的样式*/
+QScrollBar::handle:vertical
+{
+    width:8px;
+    background:rgb(0,0,0,15%);
+    border-radius:4px;
+    min-height:20px;
+}
+
+/*鼠标触及滑块样式*/
+QScrollBar::handle:vertical:hover
+{
+    width:9px;
+    background:rgb(0,0,0,30%);
+    border-radius:4px;
+    min-height:20;
+}
+
+/*设置下箭头*/
+QScrollBar::add-line:vertical
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/3.png);
+    subcontrol-position:bottom;
+}
+
+/*设置上箭头*/
+QScrollBar::sub-line:vertical
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/1.png);
+    subcontrol-position:top;
+}
+
+/*设置下箭头:悬浮状态*/
+QScrollBar::add-line:vertical:hover
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/4.png);
+    subcontrol-position:bottom;
+}
+
+/*设置上箭头：悬浮状态*/
+QScrollBar::sub-line:vertical:hover
+{
+    height:12px;
+    width:10px;
+    border-image:url(:/selectfile/scroll/2.png);
+    subcontrol-position:top;
+}
+
+/*当滚动条滚动的时候，上面的部分和下面的部分*/
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical
+{
+    background:rgb(0,0,0,10%);
+    border-radius:4px;
+}
+
+QScrollBar:horizontal{
+    height:10px;
+    background:transparent;
+    background-color:rgb(248, 248, 248);
+    margin:0px,0px,0px,0px;
+    padding-left:10px;padding-right:10px;
+}
+
+QScrollBar::handle:horizontal{
+    height:10px;
+    background:lightgray;
+    border-radius:5px;/*min-height:20;*/
+}
+QScrollBar::handle:horizontal:hover{
+    height:10px;
+    background:gray;
+    border-radius:5px;/*min-height:20;*/
+}
+QScrollBar::add-line:horizontal{
+    /*height:10px;width:10px;*/
+    border-image:url(:/button/images/button/right.png);
+    /*subcontrol-position:right;*/
+}
+QScrollBar::sub-line:horizontal{
+    /*height:10px;width:10px;*/
+    border-image:url(:/button/images/button/left.png);
+    /*subcontrol-position:left;*/
+}
+QScrollBar::add-line:horizontal:hover{
+    /*height:10px;width:10px;*/
+    border-image:url(:/button/images/button/right_mouseDown.png);
+    /*subcontrol-position:right;*/
+}
+QScrollBar::sub-line:horizontal:hover{
+    /*height:10px;width:10px;*/
+    border-image:url(:/button/images/button/left_mouseDown.png);
+    /*subcontrol-position:left;*/
+}
+QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{
+    background:transparent;
+    border-radius:5px;
+}
+
+QProgressBar
+{
+    border: none;
+    text-align: center;
+    color: white;
+    background-color: rgb(172, 99, 43);
+    background-repeat: repeat-x;
+    text-align: center;
+}
+
+QProgressBar::chunk
+{
+    border: none;
+    background-color: rgb(239, 169, 4);
+    background-repeat: repeat-x;
+}
+
+QCheckBox{
+    spacing: 5px;
+}
+
+QCheckBox::indicator{
+        width:28px;
+        height:22px;
+}
+
+QCheckBox::indicator:unchecked{
+        image: url(:/res/pic/kPic.png);
+}
+
+QCheckBox::indicator:checked{
+        image: url(:/res/pic/check-selected.png);
+}
+
+QCheckBox::indicator:checked:disabled{
+    image:url(:/CheckBox/res/checkedDisabled.png);
+}
+
+
+
+
+QTabBar::tab
+{
+color: rgb(172, 99, 43);
+border-bottom:1px solid rgb(174,103,46);
+border-left:0px solid rgb(174,103,46);
+border-right:0px solid rgb(174,103,46);
+border-top:0px solid rgb(174,103,46);
+    min-width: 90px;
+    min-height: 28px;
+}
+
+
+QTabBar::tab:selected, QTabBar::tab:hover
+{
+border-left:1px solid rgb(174,103,46);
+border-right:1px solid rgb(174,103,46);
+border-top:1px solid rgb(174,103,46);
+border-bottom:0px solid rgb(174,103,46);
+}
+
+
+QTabBar::tab:selected
+{
+border-left:1px solid rgb(174,103,46);
+border-right:1px solid rgb(174,103,46);
+border-top:1px solid rgb(174,103,46);
+border-bottom:0px solid rgb(174,103,46);
+}
+
+QTabBar::tab:!selected
+{
+color: rgb(172, 99, 43);
+border-bottom:1px solid rgb(174,103,46);
+border-left:0px solid rgb(174,103,46);
+border-right:0px solid rgb(174,103,46);
+border-top:0px solid rgb(174,103,46);
+}
+
+QTabWidget::pane{
+        border:none;
+}
+
+QCheckBox{
+    spacing: 5px;
+}
+
+QCheckBox::indicator{
+        width:28px;
+        height:22px;
+}
+
+QCheckBox::indicator:unchecked{
+        image: url(:/res/pic/kPic.png);
+}
+
+QCheckBox::indicator:checked{
+        image: url(:/res/pic/check-selected.png);
+}
+
+QCheckBox::indicator:checked:disabled{
+    image:url(:/CheckBox/res/checkedDisabled.png);
+}
+
+QRadioButton{
+    spacing: 5px;
+}
+
+QRadioButton::indicator{
+        width:22px;
+        height:22px;
+}
+
+QRadioButton::indicator:unchecked{
+    image: url(:/res/pic/kPic.png);
+}
+
+QRadioButton::indicator:checked{
+    image: url(:/res/pic/check-selected.png);
+}
+
+QRadioButton::indicator:checked:disabled{
+    image:url(:/CheckBox/res/checkedDisabled.png);
+}
+
+
+QSpinBox{
+    height:30px;
+    width:30px;
+    background-color: rgba(255, 255, 255, 0);
+    border:hidden;
+}
+QSpinBox::up-button
+{
+    background-color: rgba(255, 255, 255, 0);
+}
+QSpinBox::down-button{
+    background-color: rgba(255, 255, 255, 0);
+}
+
+
+QMenu{
+color:rgb(255,255,255);
+    background-color: rgb(198,125,26);
+    border:0px solid transparent;
+}
+QMenu::item{
+    padding:0px 20px 0px 20px;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    height:30px;
+}
+
+QMenu::item:selected:enabled{
+    background-color: rgb(239,169,4);
+    color: white;
+}
+
+QMenu::item:selected:!enabled{
+    background:transparent;
+}
+
+
+QDialog#CMessageBox QToolButton#okButton,
+QDialog#CMessageBox QToolButton#okButton2,
+QDialog#CMessageBox QToolButton#closeButton
+{
+    width:80;
+    height:30;
+    background-color: rgb(239, 169, 4);
+    color: rgb(255, 255, 255);
+    border:hidden;
+}
+
+QWidget#AddressBookPage QToolButton{
+    width:80;
+    height:30;
+    border:hidden;
+}
+
+QWidget#AddressBookPage QPushButton#cancelButton{
+min-width:20px;
+min-height:20px;
+max-width:20px;
+max-height:20px;
+border:7px solid rgb(255,255,255,0);
+    image: url(:/res/pic/closeBtn.png);
+}
+
+QDialog#AskPassphraseDialog{
+    border:hidden;
+}
+
+QWidget#AddressBookPage QToolButton#closeButton,
+QWidget#AddressBookPage QToolButton#okButton,
+QWidget#AddressBookPage QToolButton#exportButton{
+    width:80;
+    height:30;
+    background-color: rgb(239, 169, 4);
+    color: rgb(255, 255, 255);
+    border:hidden;
+}
+
+QDialog#AskPassphraseDialog QFrame#frame_10,
+QDialog#AskPassphraseDialog QFrame#frame_2,
+QDialog#AskPassphraseDialog QFrame#frame_3,
+QDialog#AskPassphraseDialog QFrame#frame{
+        border:1px solid rgb(186, 186, 186);
+}
+
+QDialog#EditAddressDialog QFrame#frame,
+QDialog#EditAddressDialog QFrame#frame_2{
+    border:1px solid rgb(186, 186, 186);
+}
+
+QDialog#Intro QPushButton#ellipsisButton,
+QDialog#Intro QLineEdit#dataDirectory{
+border:hidden;
+}
+
+QDialog#Intro QLabel#label_2{
+ font-style:italic;
+ }
+
+QDialog#Intro QFrame#frame{
+        border:1px solid rgb(186, 186, 186);
+}
+
+
+QWidget#MainwinTitle QLabel#label_total{
+font: 32pt;
+}
+QWidget#MainwinTitle QLabel#label_balance_text,
+QWidget#MainwinTitle QLabel#label_balance,
+QWidget#MainwinTitle QLabel#labelmmatureText,
+QWidget#MainwinTitle QLabel#labelWatchImmature,
+QWidget#MainwinTitle QLabel#label_unconfirmed_text,
+QWidget#MainwinTitle QLabel#label_unconfirmed,
+QWidget#MainwinTitle QLineEdit#addressEdit,
+QWidget#MainwinTitle QLabel#label_total_text{
+font: 17pt;
+}
+QWidget#MainwinTitle QToolButton#toolButton,
+QWidget#MainwinTitle QToolButton#toolButton_2,
+QWidget#MainwinTitle QToolButton#masternodeButton,
+QWidget#MainwinTitle QToolButton#transactionButton{
+border:hidde;
+color: rgb(172, 99, 43);
+font: 20pt;
+}
+
+QWidget#MainwinTitle QLabel{
+color: rgb(255,255,255);
+}
+
+QWidget#MainwinTitle QFrame#frame_6{
+border:hidden;
+background-color: rgb(255, 255, 255);
+}
+
+QWidget#MainwinTitle QToolButton#pBtnMin{
+border:hidden;
+/*
+image: url(:/res/pic/minBtn.png);
+*/
+}
+QWidget#MainwinTitle QToolButton#pBtnMax{
+border:hidden;
+/*
+image: url(:/res/pic/maxBtn.png);
+*/
+}
+
+QWidget#MainwinTitle QToolButton#pBtnClose{
+border:hidden;
+/*
+image: url(:/res/pic/closeBtn.png);
+*/
+}
+
+QWidget#MainwinTitle QWidget#MainwinTitle{
+border:hidden;
+}
+
+QWidget#MainwinTitle QToolButton{
+border:hidden;
+color: rgb(172, 99, 43);
+}
+
+QWidget#MainwinTitle QLabel#label{
+image: url(:/res/pic/logo.png);
+}
+
+QWidget#MainwinTitle QToolButton#openAddr{
+border:hidden;
+border-image: url(:/res/pic/sdCodeWhite.png);
+}
+
+QWidget#MainwinTitle QFrame#frame_3{
+border:hidden;
+background-color: rgb(172, 99, 43);
+color: rgb(255, 255, 255);
+}
+
+QWidget#MainwinTitle QLineEdit#addressEdit{
+color: rgb(255, 0, 0);
+border:hidden;
+background-color:transparent;
+}
+
+QDialog#OpenURIDialog QFrame#frame{
+    border:1px solid rgb(186, 186, 186);
+}
+
+QDialog#OptionsDialog QToolButton#okButton{
+font: 16pt;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+}
+
+QDialog#OptionsDialog QToolButton#resetButton{
+border:hidden;
+color: rgb(255, 255, 255);
+font: 12pt;
+}
+
+QDialog#OptionsDialog QFrame#frame_2{
+border:hidden;
+background-color: rgb(165, 92, 39);
+}
+QDialog#OptionsDialog QLabel#overriddenByCommandLineInfoLabel,
+QDialog#OptionsDialog QLabel#statusLabel{
+        color: rgb(255, 255, 255);
+}
+QDialog#OptionsDialog QLabel#label_8{
+border-image: url(:/res/pic/moreSelect.png);
+}
+
+QDialog#OptionsDialog QWidget#centerWin{
+border:hidden;
+border-image: url(:/res/pic/dlgBackgroud.png);
+}
+
+QDialog#OptionsDialog QFrame#mainframe{
+border:hidden;
+        background-color: rgb(255, 255, 255);
+}
+
+QDialog#OptionsDialog QFrame#mainaddressframe{
+        border-color: rgb(186, 186, 186);
+        border:1px solid rgb(186, 186, 186);
+}
+
+QDialog#OptionsDialog QLineEdit#proxyPort,
+QDialog#OptionsDialog QLineEdit#proxyIp,
+QDialog#OptionsDialog QLineEdit#mainaddress{
+border:hidden;
+background-color: rgb(255, 255, 255,0);
+}
+
+QDialog#OptionsDialog QFrame#frame_9,
+QDialog#OptionsDialog QFrame#frame_10,
+QDialog#OptionsDialog QFrame#frame_11,
+QDialog#OptionsDialog QFrame#frame_12,
+QDialog#OptionsDialog QFrame#frame_13,
+QDialog#OptionsDialog QFrame#frame_14,
+QDialog#OptionsDialog QLineEdit#thirdPartyTxUrls,
+QDialog#OptionsDialog QLineEdit#dataDirPath{
+    border-color: rgb(186, 186, 186);
+    border:1px solid rgb(186, 186, 186);
+}
+
+QDialog#OptionsDialog QFrame{
+border:hidden;
+}
+
+QWidget#OverviewPage{
+    border:hidden;
+    background-color: rgb(255, 255, 255);
+}
+
+QWidget#PrivKeyMgr QToolButton#cancelButton{
+border:7px solid rgb(255,255,255,0);
+image: url(:/pic/res/pic/closeBtn.png);
+color: rgb(0, 0, 0);
+}
+
+QWidget#PrivKeyMgr QWidget#centerWin{
+border-image: url(:/res/pic/dlgBackgroud.png);
+}
+QWidget#PrivKeyMgr QStackedWidget{
+border:hidden;
+background-color: rgb(255, 255, 255);
+}
+
+QWidget#PrivKeyMgr QToolButton#okButton{
+width:80;
+height:30;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+}
+
+QWidget#PrivKeyMgr QLineEdit{
+        border-color: rgb(186, 186, 186);
+        border:1px solid rgb(186, 186, 186);
+        min-height:35;
+        min-width:400;
+}
+
+QDialog#RPCConsole QFrame#frame_9,
+QDialog#RPCConsole QFrame#frame_10{
+        border-color: rgb(186, 186, 186);
+        border:1px solid rgb(186, 186, 186);
+}
+
+QWidget#RPCConsole QPushButton#openDebugLogfileButton,
+QWidget#RPCConsole QPushButton#btn_salvagewallet,
+QWidget#RPCConsole QPushButton#btn_rescan,
+QWidget#RPCConsole QPushButton#btn_zapwallettxes1,
+QWidget#RPCConsole QPushButton#btn_zapwallettxes2,
+QWidget#RPCConsole QPushButton#btn_upgradewallet,
+QWidget#RPCConsole QPushButton#btn_reindex
+{
+        background-color: rgb(239, 169, 4);
+        color: rgb(255, 255, 255);
+        border:hidden;
+		min-height:30px;
+}
+
+QWidget#RPCConsole QPushButton#btnClearTrafficGraph
+{
+        background-color: rgb(239, 169, 4);
+        color: rgb(255, 255, 255);
+        border:hidden;
+		min-height:30px;
+        min-width:60px;
+}
+
+QWidget#RPCConsole QLineEdit#lineEdit
+{
+    border-color: rgb(186, 186, 186);
+    border:1px solid rgb(186, 186, 186);
+	min-height:30px;
+}
+
+QSlider{
+    border-color: #bcbcbc;
+    min-height:35px;
+}
+
+QSlider::groove:horizontal {                                
+     border: 1px solid #999999;                             
+     height: 5px;                                           
+     margin: 0px 0;                                         
+     left: 12px; right: 12px; 
+ }
+QSlider::handle:horizontal {                               
+     border: 0px ;                           
+	 border-image: url(:/res/pic/sliderBtn.png);
+     width: 50px; 
+     height: 50px;   
+     margin: -20px -20px -20px -20px;                                                                                                                  
+} 
+QSlider::add-page:horizontal{
+    background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 #bcbcbc, stop:0.25 #bcbcbc, stop:0.5 #bcbcbc, stop:1 #bcbcbc); 
+}
+QSlider::sub-page:horizontal{                               
+	background-color: rgb(238, 169, 4);
+}
+
+QWidget#MasternodeList QPushButton#startAllButton,
+QWidget#MasternodeList QPushButton#startButton,
+QWidget#MasternodeList QPushButton#startMissingButton,
+QWidget#MasternodeList QPushButton#UpdateButton
+{
+        background-color: rgb(239, 169, 4);
+        color: rgb(255, 255, 255);
+        border:hidden;
+		min-height:30px;
+        min-width:120px;
+}
+QComboBox
+{
+    width: 120px;
+    height: 30px;
+    font:15pt;
+    border:1px solid rgb(174,103,46);
+    background-repeat: no-repeat;
+    background-position: center left;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    selection-color: black;
+    selection-background-color: darkgray;
+}
+
+QComboBox::drop-down
+{
+    width: 30px;
+    height:30px;
+    image: url(:/res/pic/xjt.png);
+}
+QComboBox QAbstractItemView
+{
+    height:100px;
+    border: 0px;
+    color: rgb(255, 255, 255);
+    selection-color: rgb(255, 255, 255);
+    selection-background-color: rgb(239, 169, 4);
+    background-color: rgb(198, 125, 26);
+}
+QComboBox QAbstractItemView::item
+{
+    font:15pt;
+    height: 60px;
+    background-color: rgb(198, 125, 26);
+    border:hidden;
+    color: rgb(255, 255, 255);
+}
+
+QDialog#SignVerifyMessageDialog QFrame#mainframe{
+        background-color: rgb(255, 255, 255);
+}
+
+QDialog#SignVerifyMessageDialog QFrame#frame_9,
+QDialog#SignVerifyMessageDialog QFrame#frame_10{
+        border-color: rgb(186, 186, 186);
+        border:1px solid rgb(186, 186, 186);
+}
+
+QDialog#SignVerifyMessageDialog QPlainTextEdit{
+border:1px solid rgb(174,103,46);
+}
+
+QDialog#SignVerifyMessageDialog QFrame#frame,
+QDialog#SignVerifyMessageDialog QFrame#frame_2,
+QDialog#SignVerifyMessageDialog QFrame#frame_3,
+QValidatedLineEdit#signatureIn_VM{
+        border-color: rgb(186, 186, 186);
+        border:1px solid rgb(186, 186, 186);
+}
+
+QDialog#SignVerifyMessageDialog QToolButton{
+min-height:30;
+color: rgb(172, 99, 43);
+border-bottom:1px solid rgb(174,103,46);
+border-left:0px solid rgb(174,103,46);
+border-right:0px solid rgb(174,103,46);
+border-top:0px solid rgb(174,103,46);
+}
+
+QDialog#SignVerifyMessageDialog QWidget#mainWin{
+border-image: url(:/res/pic/dlgBackgroud.png);
+border:hidden;
+}
+
+QDialog#SignVerifyMessageDialog QToolButton#addressBookButton_SM,
+QDialog#SignVerifyMessageDialog QToolButton#pasteButton_SM,
+QDialog#SignVerifyMessageDialog QToolButton#copySignatureButton_SM,
+QDialog#SignVerifyMessageDialog QToolButton#addressBookButton_VM
+{
+border:hidden;
+}
+
+QWidget#SendCoinsDialog QToolButton#backButton,
+QWidget#SendCoinsDialog QToolButton#moreButton,
+QWidget#SendCoinsDialog QToolButton#addButton{
+    border:hidden;
+    color: rgb(173, 100, 45);
+    font: 18pt;
+}
+
+QDialog#SendCoinsDialog QToolButton#sendButton
+{
+font: 18pt;
+}

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=MassGrid
+Comment=MassGrid P2P Cryptocurrency
+Comment[fr]=MassGrid, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=MassGrid, eşten eşe kriptografik sanal para birimi
+Exec=massgrid-qt %u
+Terminal=false
+Type=Application
+Icon=massgrid128
+MimeType=x-scheme-handler/massgrid;
+Categories=Office;Finance;

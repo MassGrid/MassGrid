@@ -1,0 +1,60 @@
+bin_PROGRAMS += qt/test/test_massgrid-qt
+TESTS += qt/test/test_massgrid-qt
+
+TEST_QT_MOC_CPP = \
+  qt/test/moc_compattests.cpp \
+  qt/test/moc_trafficgraphdatatests.cpp \
+  qt/test/moc_uritests.cpp 
+
+if ENABLE_WALLET
+TEST_QT_MOC_CPP += qt/test/moc_paymentservertests.cpp
+endif
+
+TEST_QT_H = \
+  qt/test/compattests.h \
+  qt/test/uritests.h \
+  qt/test/paymentrequestdata.h \
+  qt/test/paymentservertests.h \
+  qt/test/trafficgraphdatatests.h
+
+qt_test_test_massgrid_qt_CPPFLAGS = $(AM_CPPFLAGS) $(MASSGRID_INCLUDES) $(MASSGRID_QT_INCLUDES) \
+  $(QT_INCLUDES) $(QT_TEST_INCLUDES) $(PROTOBUF_CFLAGS)
+
+qt_test_test_massgrid_qt_SOURCES = \
+  qt/test/compattests.cpp \
+  qt/test/test_main.cpp \
+  qt/test/uritests.cpp \
+  qt/test/trafficgraphdatatests.cpp \
+  $(TEST_QT_H)
+if ENABLE_WALLET
+qt_test_test_massgrid_qt_SOURCES += \
+  qt/test/paymentservertests.cpp
+endif
+
+nodist_qt_test_test_massgrid_qt_SOURCES = $(TEST_QT_MOC_CPP)
+
+qt_test_test_massgrid_qt_LDADD = $(LIBMASSGRIDQT) $(LIBMASSGRID_SERVER)
+if ENABLE_WALLET
+qt_test_test_massgrid_qt_LDADD += $(LIBMASSGRID_WALLET)
+endif
+if ENABLE_ZMQ
+qt_test_test_massgrid_qt_LDADD += $(LIBMASSGRID_ZMQ) $(ZMQ_LIBS)
+endif
+qt_test_test_massgrid_qt_LDADD += $(LIBMASSGRID_CLI) $(LIBMASSGRID_COMMON) $(LIBMASSGRID_UTIL) $(LIBMASSGRID_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) \
+  $(LIBMEMENV) $(BOOST_LIBS) $(QT_DBUS_LIBS) $(QT_TEST_LIBS) $(QT_LIBS) \
+  $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
+  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+qt_test_test_massgrid_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+qt_test_test_massgrid_qt_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
+
+CLEAN_MASSGRID_QT_TEST = $(TEST_QT_MOC_CPP) qt/test/*.gcda qt/test/*.gcno
+
+CLEANFILES += $(CLEAN_MASSGRID_QT_TEST)
+
+test_massgrid_qt : qt/test/test_massgrid-qt$(EXEEXT)
+
+test_massgrid_qt_check : qt/test/test_massgrid-qt$(EXEEXT) FORCE
+	$(MAKE) check-TESTS TESTS=$^
+
+test_massgrid_qt_clean: FORCE
+	rm -f $(CLEAN_MASSGRID_QT_TEST) $(qt_test_test_massgrid_qt_OBJECTS)
