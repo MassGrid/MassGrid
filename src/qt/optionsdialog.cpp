@@ -94,13 +94,6 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
         ui->digits->addItem(digits, digits);
     }
     
-    /* Theme selector */
-    // ui->theme->addItem(QString("MGD-light"), QVariant("light"));
-    // ui->theme->addItem(QString("MGD-light-hires"), QVariant("light-hires"));
-    // ui->theme->addItem(QString("MGD-blue"), QVariant("drkblue"));
-    // ui->theme->addItem(QString("MGD-Crownium"), QVariant("crownium"));
-    // ui->theme->addItem(QString("MGD-traditional"), QVariant("trad"));
-    
     /* Language selector */
     QDir translations(":translations");
     ui->lang->addItem(QString("(") + tr("default") + QString(")"), QVariant(""));

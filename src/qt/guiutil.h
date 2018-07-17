@@ -196,12 +196,6 @@ namespace GUIUtil
     
     /** Restore window size and position */
     void restoreWindowGeometry(const QString& strSetting, const QSize &defaultSizeIn, QWidget *parent);
-
-    /** Load global CSS theme */
-    QString loadStyleSheet();
-
-    /** Return name of current CSS theme */
-    QString getThemeName();
     
     /* Convert QString to OS specific boost path through UTF-8 */
     boost::filesystem::path qstringToBoostPath(const QString &path);

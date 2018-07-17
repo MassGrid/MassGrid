@@ -40,17 +40,6 @@ SendCoinsDialog::SendCoinsDialog(const PlatformStyle *platformStyle, QWidget *pa
     platformStyle(platformStyle)
 {
     ui->setupUi(this);
-    QString theme = GUIUtil::getThemeName();
-
-    // if (!platformStyle->getImagesOnButtons()) {
-    //     // ui->addButton->setIcon(QIcon());
-    //     // ui->clearButton->setIcon(QIcon());
-    //     // ui->sendButton->setIcon(QIcon());
-    // } else {
-    //     // ui->addButton->setIcon(QIcon(":/icons/" + theme + "/add"));
-    //     // ui->clearButton->setIcon(QIcon(":/icons/" + theme + "/remove"));
-    //     // ui->sendButton->setIcon(QIcon(":/icons/" + theme + "/send"));
-    // }
 
     GUIUtil::setupAddressWidget(ui->lineEditCoinControlChange, this);
 

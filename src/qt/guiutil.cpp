@@ -909,45 +909,6 @@ void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, 
     }
 }
 
-// Return name of current UI-theme or default theme if no theme was found
-QString getThemeName()
-{
-    QSettings settings;
-    // QString theme = settings.value("theme", "").toString();
-
-    // if(!theme.isEmpty()){
-    //     return theme;
-    // }
-    // return QString("light");  
-
-    QString theme = "crownium";
-    return theme;
-}
-
-// Open CSS when configured
-QString loadStyleSheet()
-{
-    QString styleSheet;
-    QSettings settings;
-    QString cssName;
-    QString theme = settings.value("theme", "").toString();
-
-    if(!theme.isEmpty()){
-        cssName = QString(":/css/") + theme; 
-    }
-    else {
-        cssName = QString(":/css/light");  
-        settings.setValue("theme", "light");
-    }
-    
-    QFile qFile(cssName);      
-    if (qFile.open(QFile::ReadOnly)) {
-        styleSheet = QLatin1String(qFile.readAll());
-    }
-        
-    return styleSheet;
-}
-
 void setClipboard(const QString& str)
 {
     QApplication::clipboard()->setText(str, QClipboard::Clipboard);

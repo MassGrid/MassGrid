@@ -19,9 +19,6 @@ TransactionDescDialog::TransactionDescDialog(const QModelIndex &idx, QWidget *pa
 {
     ui->setupUi(this);
 
-    /* Open CSS when configured */
-    this->setStyleSheet(GUIUtil::loadStyleSheet());
-
     QString desc = idx.data(TransactionTableModel::LongDescriptionRole).toString();
     ui->detailText->setHtml(desc);
     setWindowFlags(Qt::FramelessWindowHint);

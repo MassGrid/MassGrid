@@ -145,9 +145,6 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     m_updateClientThread(0),
     platformStyle(platformStyle)
 {
-    /* Open CSS when configured */
-    this->setStyleSheet(GUIUtil::loadStyleSheet());
-
     QString windowTitle = tr("MassGrid Core") + " - ";
 #ifdef ENABLE_WALLET
     /* if compiled with wallet support, -disablewallet can still disable the wallet */
@@ -357,8 +354,7 @@ void MassGridGUI::createActions()
 {
     QActionGroup *tabGroup = new QActionGroup(this);
 
-    QString theme = GUIUtil::getThemeName();
-    overviewAction = new QAction(QIcon(":/icons/" + theme + "/overview"), tr("&Overview"), this);
+    overviewAction = new QAction(QIcon(":/icons/overview"), tr("&Overview"), this);
     overviewAction->setStatusTip(tr("Show general overview of wallet"));
     overviewAction->setToolTip(overviewAction->statusTip());
     overviewAction->setCheckable(true);
@@ -369,7 +365,7 @@ void MassGridGUI::createActions()
 #endif
     tabGroup->addAction(overviewAction);
 
-    sendCoinsAction = new QAction(QIcon(":/icons/" + theme + "/send"), tr("&Send"), this);
+    sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send"), this);
     sendCoinsAction->setStatusTip(tr("Send coins to a MassGrid address"));
     sendCoinsAction->setToolTip(sendCoinsAction->statusTip());
     sendCoinsAction->setCheckable(true);
@@ -380,11 +376,11 @@ void MassGridGUI::createActions()
 #endif
     tabGroup->addAction(sendCoinsAction);
 
-    sendCoinsMenuAction = new QAction(QIcon(":/icons/" + theme + "/send"), sendCoinsAction->text(), this);
+    sendCoinsMenuAction = new QAction(QIcon(":/icons/send"), sendCoinsAction->text(), this);
     sendCoinsMenuAction->setStatusTip(sendCoinsAction->statusTip());
     sendCoinsMenuAction->setToolTip(sendCoinsMenuAction->statusTip());
 
-    receiveCoinsAction = new QAction(QIcon(":/icons/" + theme + "/receiving_addresses"), tr("&Receive"), this);
+    receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Receive"), this);
     receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and massgrid: URIs)"));
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
     receiveCoinsAction->setCheckable(true);
@@ -395,11 +391,11 @@ void MassGridGUI::createActions()
 #endif
     tabGroup->addAction(receiveCoinsAction);
 
-    receiveCoinsMenuAction = new QAction(QIcon(":/icons/" + theme + "/receiving_addresses"), receiveCoinsAction->text(), this);
+    receiveCoinsMenuAction = new QAction(QIcon(":/icons/receiving_addresses"), receiveCoinsAction->text(), this);
     receiveCoinsMenuAction->setStatusTip(receiveCoinsAction->statusTip());
     receiveCoinsMenuAction->setToolTip(receiveCoinsMenuAction->statusTip());
 
-    historyAction = new QAction(QIcon(":/icons/" + theme + "/history"), tr("&Transactions"), this);
+    historyAction = new QAction(QIcon(":/icons/history"), tr("&Transactions"), this);
     historyAction->setStatusTip(tr("Browse transaction history"));
     historyAction->setToolTip(historyAction->statusTip());
     historyAction->setCheckable(true);
@@ -413,7 +409,7 @@ void MassGridGUI::createActions()
 #ifdef ENABLE_WALLET
     QSettings settings;
     if (settings.value("fShowMasternodesTab").toBool()) {
-        masternodeAction = new QAction(QIcon(":/icons/" + theme + "/masternodes"), tr("&Masternodes"), this);
+        masternodeAction = new QAction(QIcon(":/icons/masternodes"), tr("&Masternodes"), this);
         masternodeAction->setStatusTip(tr("Browse masternodes"));
         masternodeAction->setToolTip(masternodeAction->statusTip());
         masternodeAction->setCheckable(true);
@@ -1275,21 +1271,20 @@ void MassGridGUI::updateNetworkState()
 {
     int count = clientModel->getNumConnections();
     QString icon;
-    QString theme = "crownium";
     switch(count)
     {
-    case 0: icon = ":/icons/" + theme + "/connect_0"; break;
-    case 1: case 2: case 3: icon = ":/icons/" + theme + "/connect_1"; break;
-    case 4: case 5: case 6: icon = ":/icons/" + theme + "/connect_2"; break;
-    case 7: case 8: case 9: icon = ":/icons/" + theme + "/connect_3"; break;
-    default: icon = ":/icons/" + theme + "/connect_4"; break;
+    case 0: icon = ":/icons/connect_0"; break;
+    case 1: case 2: case 3: icon = ":/icons/connect_1"; break;
+    case 4: case 5: case 6: icon = ":/icons/connect_2"; break;
+    case 7: case 8: case 9: icon = ":/icons/connect_3"; break;
+    default: icon = ":/icons/connect_4"; break;
     }
 
     if (clientModel->getNetworkActive()) {
         labelConnectionsIcon->setToolTip(tr("%n active connection(s) to MassGrid network", "", count));
     } else {
         labelConnectionsIcon->setToolTip(tr("Network activity disabled"));
-        icon = ":/icons/" + theme + "/network_disabled";
+        icon = ":/icons/network_disabled";
     }
 
     labelConnectionsIcon->setPixmap(platformStyle->SingleColorIcon(icon).pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
@@ -1365,9 +1360,6 @@ void MassGridGUI::setNumBlocks(int count, const QDateTime& blockDate, double nVe
 
     tooltip = tr("Processed %n block(s) of transaction history.", "", count);
 
-    // Set icon state: spinning if catching up, tick otherwise
-    QString theme = GUIUtil::getThemeName();
-
 #ifdef ENABLE_WALLET
     if (walletFrame)
     {
@@ -1439,16 +1431,13 @@ void MassGridGUI::setAdditionalDataSyncProgress(double nSyncProgress)
 
     QString tooltip;
 
-    // Set icon state: spinning if catching up, tick otherwise
-    QString theme = GUIUtil::getThemeName();
-
     QString strSyncStatus;
     tooltip = tr("Up to date") + QString(".<br>") + tooltip;
 
     if(masternodeSync.IsSynced()) {
         progressBarLabel->setVisible(false);
         progressBar->setVisible(false);
-        labelBlocksIcon->setPixmap(QIcon(":/icons/" + theme + "/synced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelBlocksIcon->setPixmap(QIcon(":/icons/synced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
     } else {
 
         labelBlocksIcon->setPixmap(platformStyle->SingleColorIcon(QString(
@@ -1647,9 +1636,7 @@ bool MassGridGUI::handlePaymentRequest(const SendCoinsRecipient& recipient)
 
 void MassGridGUI::setHDStatus(int hdEnabled)
 {
-    QString theme = GUIUtil::getThemeName();
-
-    labelWalletHDStatusIcon->setPixmap(platformStyle->SingleColorIcon(hdEnabled ? ":/icons/" + theme + "/hd_enabled" : ":/icons/" + theme + "/hd_disabled").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+    labelWalletHDStatusIcon->setPixmap(platformStyle->SingleColorIcon(hdEnabled ? ":/icons/res/icons/hd_enabled" : ":/icons/res/icons/hd_disabled").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
     labelWalletHDStatusIcon->setToolTip(hdEnabled ? tr("HD key generation is <b>enabled</b>") : tr("HD key generation is <b>disabled</b>"));
 
     // eventually disable the QLabel to set its opacity to 50%
@@ -1658,7 +1645,6 @@ void MassGridGUI::setHDStatus(int hdEnabled)
 
 void MassGridGUI::setEncryptionStatus(int status)
 {
-    QString theme = GUIUtil::getThemeName();
     switch(status)
     {
     case WalletModel::Unencrypted:
@@ -1671,7 +1657,7 @@ void MassGridGUI::setEncryptionStatus(int status)
         break;
     case WalletModel::Unlocked:
         labelEncryptionIcon->show();
-        labelEncryptionIcon->setPixmap(QIcon(":/icons/crownium/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+        labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
         encryptWalletAction->setChecked(true);
         changePassphraseAction->setEnabled(true);
@@ -1681,7 +1667,7 @@ void MassGridGUI::setEncryptionStatus(int status)
         break;
     case WalletModel::UnlockedForMixingOnly:
         labelEncryptionIcon->show();
-        labelEncryptionIcon->setPixmap(QIcon(":/icons/crownium/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+        labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b> for mixing only"));
         encryptWalletAction->setChecked(true);
         changePassphraseAction->setEnabled(true);
@@ -1691,7 +1677,7 @@ void MassGridGUI::setEncryptionStatus(int status)
         break;
     case WalletModel::Locked:
         labelEncryptionIcon->show();
-        labelEncryptionIcon->setPixmap(QIcon(":/icons/crownium/lock_closed").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+        labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_closed").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
         encryptWalletAction->setChecked(true);
         changePassphraseAction->setEnabled(true);

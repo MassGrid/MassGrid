@@ -172,11 +172,9 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     timer(nullptr)
 {
     ui->setupUi(this);
-    QString theme = GUIUtil::getThemeName();
 
     // Recent transactions
     ui->listTransactions->setItemDelegate(txdelegate);
-    LogPrintf("----------------->ui->listTransactions->width:%d\n",ui->listTransactions->width());
     ui->listTransactions->setIconSize(QSize(DECORATION_SIZE, DECORATION_SIZE));
     // Note: minimum height of listTransactions will be set later in updateAdvancedPSUI() to reflect actual settings
     ui->listTransactions->setAttribute(Qt::WA_MacShowFocusRect, false);

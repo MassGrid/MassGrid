@@ -155,7 +155,7 @@
               <enum>Qt::NoFocus</enum>
              </property>
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="tabSignMessage">
               <attribute name="title">
@@ -221,8 +221,8 @@
                      <string>Choose</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../massgrid.qrc">
-                      <normaloff>:/icons/crownium/address-book</normaloff>:/icons/crownium/address-book</iconset>
+                     <iconset>
+                      <normaloff>:/icons/res/icons/address-book</normaloff>:/icons/res/icons/address-book</iconset>
                     </property>
                     <property name="shortcut">
                      <string>Alt+A</string>
@@ -244,8 +244,8 @@
                      <string>Paste</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../massgrid.qrc">
-                      <normaloff>:/icons/crownium/editpaste</normaloff>:/icons/crownium/editpaste</iconset>
+                     <iconset>
+                      <normaloff>:/icons/res/icons/editpaste</normaloff>:/icons/res/icons/editpaste</iconset>
                     </property>
                     <property name="shortcut">
                      <string>Alt+P</string>
@@ -329,8 +329,8 @@
                      <string>Copy</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../massgrid.qrc">
-                      <normaloff>:/icons/crownium/editcopy</normaloff>:/icons/crownium/editcopy</iconset>
+                     <iconset>
+                      <normaloff>:/icons/res/icons/editcopy</normaloff>:/icons/res/icons/editcopy</iconset>
                     </property>
                     <property name="toolButtonStyle">
                      <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -501,8 +501,8 @@
                      <string>Choose</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../massgrid.qrc">
-                      <normaloff>:/icons/crownium/address-book</normaloff>:/icons/crownium/address-book</iconset>
+                     <iconset>
+                      <normaloff>:/icons/res/icons/address-book</normaloff>:/icons/res/icons/address-book</iconset>
                     </property>
                     <property name="shortcut">
                      <string>Alt+A</string>
@@ -545,8 +545,8 @@
                     <string>Verify &amp;Message</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../massgrid.qrc">
-                     <normaloff>:/icons/crownium/edit</normaloff>:/icons/crownium/edit</iconset>
+                    <iconset>
+                     <normaloff>:/icons/res/icons/edit</normaloff>:/icons/res/icons/edit</iconset>
                    </property>
                    <property name="toolButtonStyle">
                     <enum>Qt::ToolButtonTextBesideIcon</enum>
