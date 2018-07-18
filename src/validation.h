@@ -163,9 +163,6 @@ extern bool fLargeWorkInvalidChainFound;
 
 extern std::map<uint256, int64_t> mapRejectedBlocks;
 
-//extern std::atomic<bool> fDIP0001WasLockedIn;
-//extern std::atomic<bool> fDIP0001ActiveAtTip;
-
 /** Block hash whose ancestors we will assume to have valid scripts without checking them. */
 extern uint256 hashAssumeValid;
 
@@ -304,9 +301,6 @@ int GetUTXOConfirmations(const COutPoint& outpoint);
 
 /** Convert CValidationState to a human-readable message for logging */
 std::string FormatStateMessage(const CValidationState &state);
-
-/** Get the BIP9 state for a given deployment at the current tip. */
-// ThresholdState VersionBitsTipState(const Consensus::Params& params, Consensus::DeploymentPos pos);
 
 /**
  * Count ECDSA signature operations the old-fashioned (pre-0.6) way

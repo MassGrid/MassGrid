@@ -84,10 +84,7 @@ size_t nCoinCacheUsage = 5000 * 300;
 uint64_t nPruneTarget = 0;
 bool fAlerts = DEFAULT_ALERTS;
 bool fEnableReplacement = DEFAULT_ENABLE_REPLACEMENT;
-/*
-std::atomic<bool> fDIP0001WasLockedIn{false};
-std::atomic<bool> fDIP0001ActiveAtTip{false};
-*/
+
 uint256 hashAssumeValid;
 
 /** Fees smaller than this (in nMGD) are considered zero fee (for relaying, mining and transaction creation) */
@@ -519,18 +516,6 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state)
 
     return true;
 }
-/*
-bool ContextualCheckTransaction(const CTransaction& tx, CValidationState &state, CBlockIndex * const pindexPrev)
-{
-    bool fDIP0001Active_context = (VersionBitsState(pindexPrev, Params().GetConsensus(), Consensus::DEPLOYMENT_DIP0001, versionbitscache) == THRESHOLD_ACTIVE);
-
-    // Size limits
-    if (fDIP0001Active_context && ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION) > MAX_STANDARD_TX_SIZE)
-        return state.DoS(100, false, REJECT_INVALID, "bad-txns-oversize");
-
-    return true;
-}
-*/
 
 void LimitMempoolSize(CTxMemPool& pool, size_t limit, unsigned long age) {
     int expired = pool.Expire(GetTime() - age);
@@ -576,8 +561,8 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
     // sure that such transactions will be mined (unless we're on
     // -testnet/-regtest).
     // const CChainParams& chainparams = Params();
-    // if (fRequireStandard && tx.nVersion >= 2 && VersionBitsTipState(chainparams.GetConsensus(), Consensus::DEPLOYMENT_CSV) != THRESHOLD_ACTIVE) {
-    //     return state.DoS(0, false, REJECT_NONSTANDARD, "premature-version2-tx");
+    // if (fRequireStandard && tx.nVersion >= 2 && !IsSuperMajority(5, pindex->pprev, chainparams.GetConsensus().nMajorityEnforceBlockUpgrade, chainparams.GetConsensus())) {
+    //     return state.DoS(0, false, REJECT_NONSTANDARD, "premature-version2-tx"); //no prindex
     // }
 
     // Only accept nLockTime-using transactions that can be mined in the next
@@ -1834,37 +1819,9 @@ void ThreadScriptCheck() {
     scriptcheckqueue.Thread();
 }
 
-// Protected by cs_main
-// VersionBitsCache versionbitscache;
-
 int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Params& params)
 {
-    return CURRENT_VERSION;    
-    // LOCK(cs_main);
-    // int32_t nVersion = VERSIONBITS_TOP_BITS;
-
-    // for (int i = 0; i < (int)Consensus::MAX_VERSION_BITS_DEPLOYMENTS; i++) {
-    //     Consensus::DeploymentPos pos = Consensus::DeploymentPos(i);
-    //     ThresholdState state = VersionBitsState(pindexPrev, params, pos, versionbitscache);
-    //     const struct BIP9DeploymentInfo& vbinfo = VersionBitsDeploymentInfo[pos];
-    //     if (state == THRESHOLD_STARTED) {
-    //         CScript payee;
-    //         masternode_info_t mnInfo;
-    //         if (!mnpayments.GetBlockPayee(pindexPrev->nHeight + 1, payee)) {
-    //             // no votes for this block
-    //             continue;
-    //         }
-    //         if (!mnodeman.GetMasternodeInfo(payee, mnInfo)) {
-    //             // unknown masternode
-    //             continue;
-    //         }
-    //     }
-    //     if (state == THRESHOLD_LOCKED_IN || state == THRESHOLD_STARTED) {
-    //         nVersion |= VersionBitsMask(params, (Consensus::DeploymentPos)i);
-    //     }
-    // }
-    // nVersion=UnionBlockVersion(nVersion);
-    // return nVersion;
+    return CURRENT_VERSION;
 }
 
 bool GetBlockHash(uint256& hashRet, int nBlockHeight)
@@ -1876,33 +1833,6 @@ bool GetBlockHash(uint256& hashRet, int nBlockHeight)
     hashRet = chainActive[nBlockHeight]->GetBlockHash();
     return true;
 }
-
-/**
- * Threshold condition checker that triggers when unknown versionbits are seen on the network.
- */
-// class WarningBitsConditionChecker : public AbstractThresholdConditionChecker
-// {
-// private:
-//     int bit;
-
-// public:
-//     WarningBitsConditionChecker(int bitIn) : bit(bitIn) {}
-
-//     int64_t BeginTime(const Consensus::Params& params) const { return 0; }
-//     int64_t EndTime(const Consensus::Params& params) const { return std::numeric_limits<int64_t>::max(); }
-//     int Period(const Consensus::Params& params) const { return params.nMinerConfirmationWindow; }
-//     int Threshold(const Consensus::Params& params) const { return params.nRuleChangeActivationThreshold; }
-
-//     bool Condition(const CBlockIndex* pindex, const Consensus::Params& params) const
-//     {
-//         return ((pindex->nVersion & VERSIONBITS_TOP_MASK) == VERSIONBITS_TOP_BITS) &&
-//                ((pindex->nVersion >> bit) & 1) != 0 &&
-//                ((ComputeBlockVersion(pindex->pprev, params) >> bit) & 1) == 0;
-//     }
-// };
-
-// // Protected by cs_main
-// static ThresholdConditionCache warningcache[VERSIONBITS_NUM_BITS];
 
 static int64_t nTimeCheck = 0;
 static int64_t nTimeForks = 0;
@@ -2048,10 +1978,7 @@ static bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockInd
 
     // Start enforcing BIP68 (sequence locks) and BIP112 (CHECKSEQUENCEVERIFY) using versionbits logic.
     int nLockTimeFlags = 0;
-    // if (VersionBitsState(pindex->pprev, chainparams.GetConsensus(), Consensus::DEPLOYMENT_CSV, versionbitscache) == THRESHOLD_ACTIVE) {
-    //     flags |= SCRIPT_VERIFY_CHECKSEQUENCEVERIFY;
-    //     nLockTimeFlags |= LOCKTIME_VERIFY_SEQUENCE;
-    // }
+
     if (block.nVersion >= 5 && IsSuperMajority(5, pindex->pprev, chainparams.GetConsensus().nMajorityEnforceBlockUpgrade, chainparams.GetConsensus())){
         flags |= SCRIPT_VERIFY_CHECKSEQUENCEVERIFY;
         nLockTimeFlags |= LOCKTIME_VERIFY_SEQUENCE;
@@ -2074,9 +2001,6 @@ static bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockInd
     std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
     std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > addressUnspentIndex;
     std::vector<std::pair<CSpentIndexKey, CSpentIndexValue> > spentIndex;
-
-  //  bool fDIP0001Active_context = (VersionBitsState(pindex->pprev, chainparams.GetConsensus(), Consensus::DEPLOYMENT_DIP0001, versionbitscache) == THRESHOLD_ACTIVE);
-
     for (unsigned int i = 0; i < block.vtx.size(); i++)
     {
         const CTransaction &tx = block.vtx[i];
@@ -2425,46 +2349,6 @@ void static UpdateTip(CBlockIndex *pindexNew) {
 
     cvBlockChange.notify_all();
 
-    // Check the version of the last 100 blocks to see if we need to upgrade:
-    // static bool fWarned = false;
-    // if (!IsInitialBlockDownload())
-    // {
-    //     int nUpgraded = 0;
-    //     const CBlockIndex* pindex = chainActive.Tip();
-    //     for (int bit = 0; bit < VERSIONBITS_NUM_BITS; bit++) {
-    //         WarningBitsConditionChecker checker(bit);
-    //         ThresholdState state = checker.GetStateFor(pindex, chainParams.GetConsensus(), warningcache[bit]);
-    //         if (state == THRESHOLD_ACTIVE || state == THRESHOLD_LOCKED_IN) {
-    //             if (state == THRESHOLD_ACTIVE) {
-    //                 strMiscWarning = strprintf(_("Warning: unknown new rules activated (versionbit %i)"), bit);
-    //                 if (!fWarned) {
-    //                     CAlert::Notify(strMiscWarning, true);
-    //                     fWarned = true;
-    //                 }
-    //             } else {
-    //                 LogPrintf("%s: unknown new rules are about to activate (versionbit %i)\n", __func__, bit);
-    //             }
-    //         }
-    //     }
-    //     for (int i = 0; i < 100 && pindex != NULL; i++)
-    //     {
-    //         int32_t nExpectedVersion = ComputeBlockVersion(pindex->pprev, chainParams.GetConsensus());
-    //         if (pindex->nVersion > VERSIONBITS_LAST_OLD_BLOCK_VERSION && (pindex->nVersion & ~nExpectedVersion) != 0)
-    //             ++nUpgraded;
-    //         pindex = pindex->pprev;
-    //     }
-    //     if (nUpgraded > 0)
-    //         LogPrintf("%s: %d of last 100 blocks have unexpected version\n", __func__, nUpgraded);
-    //     if (nUpgraded > 100/2)
-    //     {
-    //         // strMiscWarning is read by GetWarnings(), called by Qt and the JSON-RPC code to warn the user:
-    //         strMiscWarning = _("Warning: Unknown block versions being mined! It's possible unknown rules are in effect");
-    //         if (!fWarned) {
-    //             CAlert::Notify(strMiscWarning, true);
-    //             fWarned = true;
-    //         }
-    //     }
-    // }
 }
 
 /** Disconnect chainActive's tip. You probably want to call mempool.removeForReorg and manually re-limit mempool size after this, with cs_main held. */
@@ -3277,7 +3161,6 @@ bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIn
 
     // Start enforcing BIP113 (Median Time Past) using versionbits logic.
     int nLockTimeFlags = 0;
-    // if (VersionBitsState(pindexPrev, consensusParams, Consensus::DEPLOYMENT_CSV, versionbitscache) == THRESHOLD_ACTIVE) {
     if (block.nVersion >= 5 && IsSuperMajority(5, pindexPrev, consensusParams.nMajorityEnforceBlockUpgrade, consensusParams)){
         nLockTimeFlags |= LOCKTIME_MEDIAN_TIME_PAST;
     }
@@ -3286,34 +3169,12 @@ bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIn
                               ? pindexPrev->GetMedianTimePast()
                               : block.GetBlockTime();
 
-   /* bool fDIP0001Active_context = (VersionBitsState(pindexPrev, consensusParams, Consensus::DEPLOYMENT_DIP0001, versionbitscache) == THRESHOLD_ACTIVE);
-
-    // Size limits
-    unsigned int nMaxBlockSize = MaxBlockSize(fDIP0001Active_context);
-    if (block.vtx.empty() || block.vtx.size() > nMaxBlockSize || ::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION) > nMaxBlockSize)
-        return state.DoS(100, error("%s: size limits failed", __func__),
-                         REJECT_INVALID, "bad-blk-length");
-
-    // Check that all transactions are finalized and not over-sized
-    // Also count sigops
-    unsigned int nSigOps = 0;
-    */
+  
     BOOST_FOREACH(const CTransaction& tx, block.vtx) {
         if (!IsFinalTx(tx, nHeight, nLockTimeCutoff)) {
             return state.DoS(10, error("%s: contains a non-final transaction", __func__), REJECT_INVALID, "bad-txns-nonfinal");
         }
-     /*   if (fDIP0001Active_context && ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION) > MAX_STANDARD_TX_SIZE) {
-            return state.DoS(100, error("%s: contains an over-sized transaction", __func__), REJECT_INVALID, "bad-txns-oversized");
-        }
-        nSigOps += GetLegacySigOpCount(tx);
-        */
     }
-/*
-    // Check sigops
-    if (nSigOps > MaxBlockSigOps(fDIP0001Active_context))
-        return state.DoS(100, error("%s: out-of-bounds SigOpCount", __func__),
-                         REJECT_INVALID, "bad-blk-sigops");
-*/
     // Enforce block.nVersion=2 rule that the coinbase starts with serialized block height
     // if 750 of the last 1,000 blocks are version 2 or greater (51/100 if testnet):
     if (block.nVersion >= 2 && IsSuperMajority(2, pindexPrev, consensusParams.nMajorityEnforceBlockUpgrade, consensusParams))
@@ -3936,10 +3797,6 @@ void UnloadBlockIndex()
     nBlockSequenceId = 1;
     setDirtyBlockIndex.clear();
     setDirtyFileInfo.clear();
-    // versionbitscache.Clear();
-    // for (int b = 0; b < VERSIONBITS_NUM_BITS; b++) {
-    //     warningcache[b].clear();
-    // }
 
     BOOST_FOREACH(BlockMap::value_type& entry, mapBlockIndex) {
         delete entry.second;
@@ -4374,12 +4231,6 @@ std::string GetWarnings(const std::string& strFor)
  std::string CBlockFileInfo::ToString() const {
      return strprintf("CBlockFileInfo(blocks=%u, size=%u, heights=%u...%u, time=%s...%s)", nBlocks, nSize, nHeightFirst, nHeightLast, DateTimeStrFormat("%Y-%m-%d", nTimeFirst), DateTimeStrFormat("%Y-%m-%d", nTimeLast));
  }
-
-// ThresholdState VersionBitsTipState(const Consensus::Params& params, Consensus::DeploymentPos pos)
-// {
-//     AssertLockHeld(cs_main);
-//     return VersionBitsState(chainActive.Tip(), params, pos, versionbitscache);
-// }
 
 class CMainCleanup
 {

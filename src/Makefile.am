@@ -259,7 +259,6 @@ libmassgrid_server_a_SOURCES = \
   txmempool.cpp \
   validation.cpp \
   validationinterface.cpp \
-  versionbits.cpp \
   $(MASSGRID_CORE_H)
 
 if ENABLE_ZMQ
