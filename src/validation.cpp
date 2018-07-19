@@ -1232,18 +1232,18 @@ CAmount GetBlockSubsidy(int nPrevBits, int nPrevHeight, const Consensus::Params&
 
 CAmount GetMasternodePayment(int nHeight, CAmount blockValue)
 {
-    CAmount ret = blockValue/5; // start at 20%
+    CAmount ret = blockValue/10; // start at 10%
 
     int nMNPIBlock = Params().GetConsensus().nMasternodePaymentsStartBlock;
     int nMNPIPeriod = Params().GetConsensus().nMasternodePaymentsIncreaseBlock;
 
                                                                       // mainnet:
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 1)) ret += blockValue / 20; // 17568 - 25.0%
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 2)) ret += blockValue / 20; // 17568 - 30.0%
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 3)) ret += blockValue / 20; // 17568 - 35.0%
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 4)) ret += blockValue / 20; // 17568 - 40.0%
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 6)) ret += blockValue / 20; // 35136 - 45.0%
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 8)) ret += blockValue / 20; // 35136 - 50.0%
+    if(nHeight > nMNPIBlock+(nMNPIPeriod* 1)) ret += blockValue / 20; // 17568 - 15.0%
+    if(nHeight > nMNPIBlock+(nMNPIPeriod* 2)) ret += blockValue / 20; // 17568 - 20.0%
+    if(nHeight > nMNPIBlock+(nMNPIPeriod* 3)) ret += blockValue / 20; // 17568 - 25.0%
+    if(nHeight > nMNPIBlock+(nMNPIPeriod* 4)) ret += blockValue / 20; // 17568 - 30.0%
+    if(nHeight > nMNPIBlock+(nMNPIPeriod* 6)) ret += blockValue / 20; // 35136 - 35.0%
+    if(nHeight > nMNPIBlock+(nMNPIPeriod* 8)) ret += blockValue / 20; // 35136 - 40.0%
     return ret;
 }
 
@@ -3109,7 +3109,7 @@ static bool CheckIndexAgainstCheckpoint(const CBlockIndex* pindexPrev, CValidati
 
 bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& state, CBlockIndex * const pindexPrev)
 {
-    LogPrintf("block.version: %d\n",block.nVersion);
+    //LogPrintf("block.version: %d\n",block.nVersion);
     const Consensus::Params& consensusParams = Params().GetConsensus();
     int nHeight = pindexPrev->nHeight + 1;
     // Check proof of work

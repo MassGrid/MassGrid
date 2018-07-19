@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/src/qt/massgrid-qt",
-            "args": ["-testnet=0"],//-sporkkey=cPX6uUE3yXTB4oKLH5nBtuPNt5Z2siZHkixf3EqrpD4uNQiCw1eu"],
+            "args": ["-testnet=0"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
