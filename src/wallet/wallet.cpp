@@ -3797,10 +3797,17 @@ void CWallet::GetScriptForMining(boost::shared_ptr<CReserveScript> &script)
     boost::shared_ptr<CReserveKey> rKey(new CReserveKey(this));
     CPubKey pubkey;
     CMassGridAddress addr;
+    std::string mainAddress = DefaultReceiveAddress();
+    if(mainAddress.size()>0){
+        addr.SetString(mainAddress);
+        script = rKey;
+        script->reserveScript = GetScriptForDestination(addr.Get());
+        return;
+    }
     BOOST_FOREACH(const PAIRTYPE(CMassGridAddress, CAddressBookData)& item, mapAddressBook){
         if(item.second.purpose == "receive"){
-        addr = item.first;
-        break;
+            addr = item.first;
+            break;
         }
     }
     LogPrintf("mineraddress %s\n",addr.ToString());
