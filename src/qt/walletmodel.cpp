@@ -310,7 +310,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
         }
 
         bool fCreated = wallet->CreateTransaction(vecSend, *newTx, *keyChange, nFeeRequired, nChangePosRet, strFailReason, coinControl, true, recipients[0].inputType, recipients[0].fUseInstantSend);
-        LogPrintf("----------------->WalletModel::prepareTransaction nFeeRequired:%d\n",nFeeRequired);
+        // LogPrintf("----------------->WalletModel::prepareTransaction nFeeRequired:%d\n",nFeeRequired);
         transaction.setTransactionFee(nFeeRequired);
         if (fSubtractFeeFromAmount && fCreated)
             transaction.reassignAmounts(nChangePosRet);

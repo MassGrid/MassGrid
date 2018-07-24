@@ -6519,11 +6519,6 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Synchronizing governance objects...</source>
-        <translation>Synchronizing governance objects...</translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Synchronizing masternode payments...</source>
         <translation>Synchronizing masternode payments...</translation>
     </message>

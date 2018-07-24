@@ -207,7 +207,7 @@
     </message>
     <message>
         <source>MassGrid will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your massgrids from being stolen by malware infecting your computer.</source>
-        <translation>MGD软体现在要关闭，以完成加密过程。请注意，加密钱包不能完全防止恶意软件入侵你的电脑盗取你的MGD。</translation>
+        <translation>MGD现在要关闭，以完成加密过程。请注意，加密钱包不能完全防止恶意软件入侵你的电脑盗取你的MGD。</translation>
     </message>
     <message>
         <source>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. For security reasons, previous backups of the unencrypted wallet file will become useless as soon as you start using the new, encrypted wallet.</source>
@@ -6185,10 +6185,6 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>Synchroning blockchain...</source>
         <translation>同步区块</translation>
-    </message>
-    <message>
-        <source>Synchronizing governance objects...</source>
-        <translation>同步治理对象</translation>
     </message>
     <message>
         <source>Synchronizing masternode payments...</source>
