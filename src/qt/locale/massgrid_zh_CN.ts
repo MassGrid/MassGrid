@@ -6188,7 +6188,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Synchronizing masternode payments...</source>
-        <translation type="unfinished"></translation>
+        <translation>同步主节点支付...</translation>
     </message>
     <message>
         <source>The transaction amount is too small to pay the fee</source>
