@@ -1,7 +1,7 @@
 
 # **MassGrid-Core (MGD) v1.2.0.1**
 
-[![Build Status](https://travis-ci.org/MassGrid/ion.svg?branch=master)](https://travis-ci.org/MassGrid/ion)
+[![Build Status](https://travis-ci.org/MassGrid/MassGrid.svg?branch=masternode)](https://travis-ci.org/MassGrid/Massgrid)
 
 MassGrid Integration/Staging Tree
 ================================
@@ -175,15 +175,15 @@ sudo make install
 
 Boost
 -----
-If you need to build Boost yourself:   
+If you need to build Boost yourself:
 
-	wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz   
+	wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
 
-	tar -xvf boost*.tar.gz   
+	tar -xvf boost*.tar.gz
 
-	sudo chmod a+x bootstrap.sh   
+	sudo chmod a+x bootstrap.sh
 
-    sudo ./bootstrap.sh    
+    sudo ./bootstrap.sh
 
     sudo ./bjam install
 
