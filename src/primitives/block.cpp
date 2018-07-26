@@ -44,11 +44,11 @@
         uint256 base,powHash;
         uint8_t output0[64],output1[64];
         sha256hasher.Write((uint8_t*)&ss[0], 76).Finalize((uint8_t*)&base);
-        int id=(((uint16_t *)&this->hashPrevBlock)[0])%13;
-        Hex2Str((uint8_t*)&base,output0,32);
+        int id=(((uint16_t *)&this->hashPrevBlock)[0])%13;      
+        Bin2Hex((uint8_t*)&base,output0,32);
         ((uint32_t *)output0)[14]^=((uint32_t *)output0)[15];
         ((uint32_t *)output0)[15]=Nonce;
-        jump[id](output0,output1);
+        jump13[id](output0,output1);
         sha256hasher2.Write(output1, 64).Finalize((uint8_t*)&powHash);
         return powHash;
     }else if(nVersion==6){
@@ -56,10 +56,10 @@
         uint8_t output0[64],output1[64];
         sha256hasher.Write((uint8_t*)&ss[0], 76).Finalize((uint8_t*)&base);
         int id=(((uint16_t *)&this->hashPrevBlock)[0])%18;
-        Hex2Str((uint8_t*)&base,output0,32);
+        Bin2Hex((uint8_t*)&base,output0,32);
         ((uint32_t *)output0)[14]^=((uint32_t *)output0)[15];
         ((uint32_t *)output0)[15]=Nonce;
-        jump2[id](output0,output1);
+        jump18[id](output0,output1);
         sha256hasher2.Write(output1, 64).Finalize((uint8_t*)&powHash);
         return powHash;
 

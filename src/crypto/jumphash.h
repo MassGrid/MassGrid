@@ -21,19 +21,19 @@
 
 #include "stdlib.h"
 static const int hashcount=18;
-static void (*jump[])(unsigned char* input, unsigned char* output)={
+static void (*jump13[])(unsigned char* input, unsigned char* output)={
     blake_scanHash_post,bmw_scanHash_post,groestl_scanHash_post,skein_scanHash_post,
     jh_scanHash_post,keccak_scanHash_post,luffa_scanHash_post,cubehash_scanHash_post,
     shavite_scanHash_post, simd_scanHash_post, echo_scanHash_post, hamsi_scanHash_post,fugue_scanHash_post
 };
-static void (*jump2[])(unsigned char* input, unsigned char* output)={
+static void (*jump18[])(unsigned char* input, unsigned char* output)={
     blake_scanHash_post,bmw_scanHash_post,groestl_scanHash_post,skein_scanHash_post,
     jh_scanHash_post,keccak_scanHash_post,luffa_scanHash_post,cubehash_scanHash_post,
     shavite_scanHash_post, simd_scanHash_post, echo_scanHash_post, hamsi_scanHash_post,
 	shabal_scanHash_post,sha2big_scanHash_post,haval_scanHash_post,panama_scanHash_post,
 	blake256_scanHash_post,skein256_scanHash_post
 };
-static void Hex2Str(unsigned char *sSrc, unsigned char *sDest, int nSrcLen)
+static void Bin2Hex(unsigned char *sSrc, unsigned char *sDest, int nSrcLen)
 {
 	int  i;
 	 char szTmp[3];
