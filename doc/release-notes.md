@@ -1,9 +1,9 @@
-MassGrid version 0.12.2.3
+MassGrid version 1.2.0.1
 ==========================
 
 Release is now available from:
 
-  <https://www.massgrid.org/downloads/#wallets>
+  <https://www.massgrid.com/downloads.html>
 
 This is a new minor version release, bringing various bugfixes and other
 improvements.

@@ -21,7 +21,7 @@ use the autogen script to prepare the build environment.
     make
 
 Precompiled binaries are available at github, see
-https://github.com/massgrid/massgrid-binaries
+https://github.com/MassGrid/MassGrid/releases
 
 Always verify the signatures and checksums.
 

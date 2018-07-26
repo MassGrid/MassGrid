@@ -1,7 +1,7 @@
 MassGrid 0.12.1
 =====================
 
-This is the official reference wallet for MassGrid digital currency and comprises the backbone of the MassGrid peer-to-peer network. You can [download MassGrid](https://www.massgrid.org/downloads/) or [build it yourself](#building) using the guides below.
+This is the official reference wallet for MassGrid digital currency and comprises the backbone of the MassGrid peer-to-peer network. You can [download MassGrid](https://www.massgrid.com/downloads.html/) or [build it yourself](#building) using the guides below.
 
 Running
 ---------------------
@@ -21,13 +21,6 @@ Unpack the files into a directory, and then run massgrid-qt.exe.
 ### OS X
 
 Drag MassGrid-Qt to your applications folder, and then run MassGrid-Qt.
-
-### Need Help?
-
-* See the [MassGrid documentation](https://massgrid.atlassian.net/wiki/display/DOC)
-for help and more information.
-* Ask for help on [#massgrid](http://webchat.freenode.net?channels=massgrid) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net?channels=massgrid).
-* Ask for help on the [MassGridTalk](https://massgridtalk.org/) forums.
 
 Building
 ---------------------
@@ -56,9 +49,6 @@ The MassGrid repo's [root README](/README.md) contains relevant information on t
 - [BIPS](bips.md)
 - [Dnsseed Policy](dnsseed-policy.md)
 
-### Resources
-* Discuss on the [MassGridTalk](https://massgridtalk.org/) forums, in the Development & Technical Discussion board.
-* Discuss on [#massgrid](http://webchat.freenode.net/?channels=massgrid) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=massgrid).
 
 ### Miscellaneous
 - [Assets Attribution](assets-attribution.md)

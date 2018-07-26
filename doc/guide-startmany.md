@@ -53,8 +53,6 @@ Issue the following:
 Make note of the hash (which is your collateral_output) and index.
 
 ### Enter your Masternode details into your masternode.conf file
-[From the massgrid github repo](https://github.com/massgrid/massgrid/blob/master/doc/masternode_conf.md)
-
 `masternode.conf` format is a space seperated text file. Each line consisting of an alias, IP address followed by port, masternode private key, collateral output transaction id and collateral output index.
 
 ```
@@ -89,7 +87,7 @@ You can confirm that remote server is on the correct block by issuing
 
 ```massgrid-cli getinfo```
 
-and comparing with the official explorer at https://explorer.massgrid.org/chain/MassGrid
+and comparing with the official explorer at http://explorer.massgrid.com/
 
 ### Local
 
@@ -128,6 +126,5 @@ Command output should have "_Masternode successfully started_" in its `status` f
 
 ### Local
 
-Search your Masternodes on https://massgridninja.pl/masternodes.html
 
 _Hint: Bookmark it, you definitely will be using this site a lot._
