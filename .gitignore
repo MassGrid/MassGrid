@@ -117,7 +117,7 @@ cache/
 share/MassGriddComparisonTool.jar
 
 !src/leveldb*/Makefile
-
+!depends/Makefile
 .cproject
 .project
 .autotools
