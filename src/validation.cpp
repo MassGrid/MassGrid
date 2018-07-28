@@ -1899,15 +1899,15 @@ static bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockInd
 
 
     if(Params().NetworkIDString()=="main"){
-        bool fChecksMIP20 = pindex->nHeight>=85000 && block.nVersion==6;
-        bool fChecksMIP10 = pindex->nHeight>=16000 && pindex->nHeight<85000 && block.nVersion==5;
+        bool fChecksMIP20 = pindex->nHeight>=850000 && block.nVersion==6;
+        bool fChecksMIP10 = pindex->nHeight>=16000 && pindex->nHeight<850000 && block.nVersion==5;
         if(!fChecksMIP20){
-            if(pindex->nHeight>=85000)
+            if(pindex->nHeight>=850000)
                 return state.DoS(100, error("ConnectBlock() : tried to overwrite transaction"),
             REJECT_INVALID, "bad-version-MIP20");
         }
         if(!fChecksMIP10){
-            if(pindex->nHeight>=16000 && pindex->nHeight<85000)
+            if(pindex->nHeight>=16000 && pindex->nHeight<850000)
                 return state.DoS(100, error("ConnectBlock() : tried to overwrite transaction"),
             REJECT_INVALID, "bad-version-MIP10");
         }

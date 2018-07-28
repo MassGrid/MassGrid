@@ -62,7 +62,7 @@ public:
     CMainParams() {
         strNetworkID = "main";
         consensus.nSubsidyHalvingInterval = 420768;   //4 years
-        consensus.nMasternodePaymentsStartBlock = 86000; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
+        consensus.nMasternodePaymentsStartBlock = 860000; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 17568; // actual historical value 2 month 288*61
         consensus.nInstantSendKeepLock = 24;
         consensus.nGovernanceMinQuorum = 10;
