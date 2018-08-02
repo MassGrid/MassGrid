@@ -62,7 +62,7 @@ public:
     CMainParams() {
         strNetworkID = "main";
         consensus.nSubsidyHalvingInterval = 420768;   //4 years
-        consensus.nMasternodePaymentsStartBlock = 860000; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
+        consensus.nMasternodePaymentsStartBlock = 111000; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 17568; // actual historical value 2 month 288*61
         consensus.nInstantSendKeepLock = 24;
         consensus.nGovernanceMinQuorum = 10;
@@ -76,14 +76,14 @@ public:
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 24 * 60 * 60; // MassGrid: 1 day
         consensus.nPowTargetSpacing = 5 * 60; // MassGrid: 5 minutes
-        consensus.fPowAllowMinDifficultyBlocks = false; 
+        consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false; // Retargeting
 
         // The best chain should have at least this much work.
         consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000013ceafdd3e7344d8"); // 77922  // total POW
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x0000000000019144f85ab6fb476b11bea0c87f4bf2915873e04d7c9ad8736ff5"); // 77922 
+        consensus.defaultAssumeValid = uint256S("0x0000000000019144f85ab6fb476b11bea0c87f4bf2915873e04d7c9ad8736ff5"); // 77922
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -174,7 +174,7 @@ public:
         consensus.nPowTargetSpacing = 1 * 60;    //a minutes
         consensus.fPowAllowMinDifficultyBlocks = true; // AllowMinDifficultyBlocks
         consensus.fPowNoRetargeting = false; // // Retargeting
-        consensus.nMinimumChainWork = uint256S("0x00"); // 00 
+        consensus.nMinimumChainWork = uint256S("0x00"); // 00
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x00"); // 0
@@ -245,7 +245,7 @@ public:
     CRegTestParams() {
         strNetworkID = "regtest";
         consensus.nSubsidyHalvingInterval = 150;
-        consensus.nMasternodePaymentsStartBlock = 240;   
+        consensus.nMasternodePaymentsStartBlock = 240;
         consensus.nMasternodePaymentsIncreaseBlock = 87840;
         consensus.nInstantSendKeepLock = 6;
         consensus.nGovernanceMinQuorum = 1;
@@ -287,7 +287,7 @@ public:
         fRequireStandard = false;
         fMineBlocksOnDemand = true;
         fTestnetToBeDeprecatedFieldRPC = false;
-        
+
         checkpointData = (CCheckpointData){
             boost::assign::map_list_of
             ( 0, uint256S("0x001")),

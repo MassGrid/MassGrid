@@ -1899,15 +1899,15 @@ static bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockInd
 
 
     if(Params().NetworkIDString()=="main"){
-        bool fChecksMIP20 = pindex->nHeight>=850000 && block.nVersion==6;
-        bool fChecksMIP10 = pindex->nHeight>=16000 && pindex->nHeight<850000 && block.nVersion==5;
+        bool fChecksMIP20 = pindex->nHeight>=105000 && block.nVersion==6;
+        bool fChecksMIP10 = pindex->nHeight>=16000 && pindex->nHeight<105000 && block.nVersion==5;
         if(!fChecksMIP20){
-            if(pindex->nHeight>=850000)
+            if(pindex->nHeight>=105000)
                 return state.DoS(100, error("ConnectBlock() : tried to overwrite transaction"),
             REJECT_INVALID, "bad-version-MIP20");
         }
         if(!fChecksMIP10){
-            if(pindex->nHeight>=16000 && pindex->nHeight<850000)
+            if(pindex->nHeight>=16000 && pindex->nHeight<105000)
                 return state.DoS(100, error("ConnectBlock() : tried to overwrite transaction"),
             REJECT_INVALID, "bad-version-MIP10");
         }
@@ -3147,7 +3147,7 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
     if (block.nVersion < 4 && IsSuperMajority(4, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
         return state.Invalid(error("%s : rejected nVersion=3 block", __func__),
                              REJECT_OBSOLETE, "bad-version");
-    // Reject block.nVersion=4 blocks when 95% (75% on testnet) of the network has upgrade                   
+    // Reject block.nVersion=4 blocks when 95% (75% on testnet) of the network has upgrade
     if (block.nVersion < 5 && IsSuperMajority(5, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
         return state.Invalid(error("%s : rejected nVersion=4 block", __func__),
                              REJECT_OBSOLETE, "bad-version");
@@ -3169,7 +3169,7 @@ bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIn
                               ? pindexPrev->GetMedianTimePast()
                               : block.GetBlockTime();
 
-  
+
     BOOST_FOREACH(const CTransaction& tx, block.vtx) {
         if (!IsFinalTx(tx, nHeight, nLockTimeCutoff)) {
             return state.DoS(10, error("%s: contains a non-final transaction", __func__), REJECT_INVALID, "bad-txns-nonfinal");
@@ -3813,7 +3813,7 @@ bool LoadBlockIndex()
     return true;
 }
 
-bool InitBlockIndex(const CChainParams& chainparams) 
+bool InitBlockIndex(const CChainParams& chainparams)
 {
     LOCK(cs_main);
 

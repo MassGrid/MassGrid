@@ -34,6 +34,9 @@ void ThreadCheckInstantSend(CConnman& connman)
 
     unsigned int nTick = 0;
 
+    if(chainActive.Height() < 105000)
+      fMasterNode = 0;
+
     while (true)
     {
         MilliSleep(1000);
@@ -264,7 +267,7 @@ void CMasternode::Check(bool fForce)
             }
             return;
         }
-        
+
     //LogPrintf("masternode: %d, %d, %d,  %d\n",GetAdjustedTime(),CMasternodePing().sigTime,MASTERNODE_EXPIRATION_SECONDS,lastPing == CMasternodePing());
         if(!IsPingedWithin(MASTERNODE_EXPIRATION_SECONDS)) {
             nActiveState = MASTERNODE_EXPIRED;

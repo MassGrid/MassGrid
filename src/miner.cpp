@@ -138,7 +138,7 @@ CBlockTemplate* CreateNewBlock(const CChainParams& chainparams, const CScript& s
         pblocktemplate->vTxSigOps.push_back(-1); // updated at end
         pblock->nVersion = ComputeBlockVersion(pindexPrev, chainparams.GetConsensus());
 
-        if(pindexPrev->nHeight<849999 && Params().NetworkIDString()=="main")
+        if(pindexPrev->nHeight<104999 && Params().NetworkIDString()=="main")
                 pblock->nVersion=5;
         if(pindexPrev->nHeight<599 && Params().NetworkIDString()=="test")
                 pblock->nVersion=5;
@@ -458,7 +458,7 @@ void static MassGridMiner(const CChainParams& chainparams, CConnman& connman)
                 return;
             }
             CBlock *pblock = &pblocktemplate->block;
-      
+
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
             LogPrintf("MassGridMiner -- Running miner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
