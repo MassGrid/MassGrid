@@ -31,7 +31,7 @@ def parse_po(text):
                 in_msgstr = False
             # message start
             in_msgid = True
-
+            
             msgid = [line[6:]]
         elif line.startswith('msgstr '):
             in_msgid = False
@@ -55,7 +55,7 @@ XGETTEXT=os.getenv('XGETTEXT', 'xgettext')
 child = Popen([XGETTEXT,'--output=-','-n','--keyword=_'] + files, stdout=PIPE)
 (out, err) = child.communicate()
 
-messages = parse_po(out)
+messages = parse_po(out) 
 
 f = open(OUT_CPP, 'w')
 f.write("""

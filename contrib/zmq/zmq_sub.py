@@ -1,11 +1,13 @@
 #!/usr/bin/env python
+# Copyright (c) 2014-2016 The Bitcoin Core developers
+# Distributed under the MIT software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-import array
 import binascii
 import zmq
 import struct
 
-port = 29442
+port = 28332
 
 zmqContext = zmq.Context()
 zmqSubSocket = zmqContext.socket(zmq.SUB)
@@ -22,7 +24,7 @@ try:
         msg = zmqSubSocket.recv_multipart()
         topic = str(msg[0].decode("utf-8"))
         body = msg[1]
-        sequence = "Unknown";
+        sequence = "Unknown"
 
         if len(msg[-1]) == 4:
           msgSequence = struct.unpack('<I', msg[-1])[-1]

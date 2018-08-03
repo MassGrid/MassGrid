@@ -1,5 +1,5 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2017 The MassGrid Core developers
+// Copyright (c) 2014-2017 The MassGrid developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -145,7 +145,7 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     m_updateClientThread(0),
     platformStyle(platformStyle)
 {
-    QString windowTitle = tr("MassGrid Core") + " - ";
+    QString windowTitle = tr("MassGrid") + " - ";
 #ifdef ENABLE_WALLET
     /* if compiled with wallet support, -disablewallet can still disable the wallet */
     enableWallet = !GetBoolArg("-disablewallet", false);
@@ -443,15 +443,15 @@ void MassGridGUI::createActions()
     quitAction->setStatusTip(tr("Quit application"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
-    aboutAction = new QAction(QIcon(":/res/pic/menuicon/about"), tr("&About MassGrid Core"), this);
-    aboutAction->setStatusTip(tr("Show information about MassGrid Core"));
+    aboutAction = new QAction(QIcon(":/res/pic/menuicon/about"), tr("&About MassGrid"), this);
+    aboutAction->setStatusTip(tr("Show information about MassGrid"));
     aboutAction->setMenuRole(QAction::AboutRole);
     aboutAction->setEnabled(false);
     aboutQtAction = new QAction(QIcon(":/res/pic/menuicon/about_qt"), tr("About &Qt"), this);
     aboutQtAction->setStatusTip(tr("Show information about Qt"));
     aboutQtAction->setMenuRole(QAction::AboutQtRole);
     optionsAction = new QAction(QIcon(":/res/pic/menuicon/options"), tr("&Options..."), this);
-    optionsAction->setStatusTip(tr("Modify configuration options for MassGrid Core"));
+    optionsAction->setStatusTip(tr("Modify configuration options for MassGrid"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
     optionsAction->setEnabled(false);
     toggleHideAction = new QAction(QIcon(":/res/pic/menuicon/about"), tr("&Show / Hide"), this);
@@ -507,7 +507,7 @@ void MassGridGUI::createActions()
 
     showHelpMessageAction = new QAction(QIcon(":/res/pic/menuicon/command"), tr("&Command-line options"), this);
     showHelpMessageAction->setMenuRole(QAction::NoRole);
-    showHelpMessageAction->setStatusTip(tr("Show the MassGrid Core help message to get a list with possible MassGrid Core command-line options"));
+    showHelpMessageAction->setStatusTip(tr("Show the MassGrid help message to get a list with possible MassGrid command-line options"));
 
     importPrivKeyAction = new QAction(QIcon(":/res/pic/menuicon/importprivkey.png"), tr("&Import privkey"), this);
     importPrivKeyAction->setStatusTip(tr("import the private key."));
@@ -1003,7 +1003,7 @@ void MassGridGUI::setWalletActionsEnabled(bool enabled)
 void MassGridGUI::createTrayIcon(const NetworkStyle *networkStyle)
 {
     trayIcon = new QSystemTrayIcon(this);
-    QString toolTip = tr("MassGrid Core client") + " " + networkStyle->getTitleAddText();
+    QString toolTip = tr("MassGrid client") + " " + networkStyle->getTitleAddText();
     trayIcon->setToolTip(toolTip);
     trayIcon->setIcon(networkStyle->getTrayAndWindowIcon());
     trayIcon->hide();
@@ -1884,7 +1884,12 @@ void MassGridGUI::openWebUrl(const QString& version,bool stopMinerFlag)
     QString clientversion = QString::fromStdString(FormatFullVersion()).split("-").first();
     LogPrintf("MassGridGUI::openWebUrl clientversion:%s\n",clientversion.toStdString().c_str());
     // QString leftversion = 
-    if(version == clientversion)
+     
+    QString curVersion = clientversion.mid(1).replace(".","");
+    QString netVersion = version.mid(1).replace(".","");
+    LogPrintf("MassGridGUI::openWebUrl curVersion:%s\n",curVersion.toStdString().c_str());
+    LogPrintf("MassGridGUI::openWebUrl netVersion:%s\n",netVersion.toStdString().c_str());
+    if(curVersion >= netVersion)
         return ;
 
     QString stopMinerStr = "";

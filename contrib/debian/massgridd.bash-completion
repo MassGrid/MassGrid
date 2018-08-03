@@ -1,1 +1,2 @@
 contrib/massgridd.bash-completion	massgridd
+contrib/massgrid-cli.bash-completion    massgrid-cli

@@ -936,15 +936,15 @@
         <translation>(需要 %1 GB的空间)</translation>
     </message>
     <message>
-        <source>Welcome to MassGrid Core.</source>
+        <source>Welcome to MassGrid.</source>
         <translation>欢迎使用 MGD核心 程序。</translation>
     </message>
     <message>
-        <source>As this is the first time the program is launched, you can choose where MassGrid Core will store its data.</source>
+        <source>As this is the first time the program is launched, you can choose where MassGrid will store its data.</source>
         <translation>由于这是第一次运行 MGD核心 程序，您可以选择数据存储目录。</translation>
     </message>
     <message>
-        <source>MassGrid Core will download and store a copy of the MassGrid block chain. At least %1GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <source>MassGrid will download and store a copy of the MassGrid block chain. At least %1GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
         <translation>MGD核心 程序会下载储存一份数据块链(blockchain)。至少需要 %1 GB的存储空间，随着时间推移会需要更多的存储空间。钱包文件也储存在该目录。</translation>
     </message>
 </context>
@@ -1406,11 +1406,11 @@ Address: %4
         <translation>钱包已被&lt;b&gt;加密&lt;/b&gt;，当前为&lt;b&gt;锁定&lt;/b&gt;状态</translation>
     </message>
     <message>
-        <source>A fatal error occurred. MassGrid Core can no longer continue safely and will quit.</source>
+        <source>A fatal error occurred. MassGrid can no longer continue safely and will quit.</source>
         <translation>一个致命的错误发生，MassGrid无法继续安全执行，即将关闭客户端</translation>
     </message>
     <message>
-        <source>MassGrid Core</source>
+        <source>MassGrid</source>
         <translation>MGD核心</translation>
     </message>
     <message>
@@ -1422,15 +1422,15 @@ Address: %4
         <translation>主节点浏览器</translation>
     </message>
     <message>
-        <source>&amp;About MassGrid Core</source>
+        <source>&amp;About MassGrid</source>
         <translation>关于MGD核心</translation>
     </message>
     <message>
-        <source>Show information about MassGrid Core</source>
+        <source>Show information about MassGrid</source>
         <translation>显示 MGD 相关信息</translation>
     </message>
     <message>
-        <source>Modify configuration options for MassGrid Core</source>
+        <source>Modify configuration options for MassGrid</source>
         <translation>设置选项</translation>
     </message>
     <message>
@@ -1454,7 +1454,7 @@ Address: %4
         <translation>打开主节点配置文件</translation>
     </message>
     <message>
-        <source>Show the MassGrid Core help message to get a list with possible MassGrid Core command-line options</source>
+        <source>Show the MassGrid help message to get a list with possible MassGrid command-line options</source>
         <translation>显示MGD核心 程序帮助信息，获取可用的命令行选项</translation>
     </message>
     <message>
@@ -1490,7 +1490,7 @@ Address: %4
         <translation>软件更新</translation>
     </message>
     <message>
-        <source>MassGrid Core client</source>
+        <source>MassGrid client</source>
         <translation>MGD客户端</translation>
     </message>
     <message>
@@ -2968,7 +2968,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
         <translation>内存使用情况</translation>
     </message>
     <message>
-        <source>Open the MassGrid Core debug log file from the current data directory. This can take a few seconds for large log files.</source>
+        <source>Open the MassGrid debug log file from the current data directory. This can take a few seconds for large log files.</source>
         <translation>从当前数据目录打开MassGrid核心调试日志文件。对于大型日志文件，这可能需要几秒钟的时间。</translation>
     </message>
     <message>
@@ -3029,19 +3029,19 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>1 &amp;hour</source>
-        <translation>小时</translation>
+        <translation>1小时</translation>
     </message>
     <message>
         <source>1 &amp;day</source>
-        <translation>天</translation>
+        <translation>1天</translation>
     </message>
     <message>
         <source>1 &amp;week</source>
-        <translation>周</translation>
+        <translation>1周</translation>
     </message>
     <message>
         <source>1 &amp;year</source>
-        <translation>年</translation>
+        <translation>1年</translation>
     </message>
     <message>
         <source>&amp;Unban</source>

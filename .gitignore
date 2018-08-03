@@ -49,7 +49,7 @@ src/qt/forms/ui_*.h
 
 src/qt/test/moc*.cpp
 libconftest.dylib*
-
+.vscode
 .deps
 .dirstamp
 .libs
@@ -62,7 +62,6 @@ libconftest.dylib*
 *.o
 *.o-*
 *.patch
-.massgrid
 *.a
 *.pb.cc
 *.pb.h
@@ -108,22 +107,18 @@ coverage_percent.txt
 linux-coverage-build
 linux-build
 win32-build
-qa/pull-tester/run-massgridd-for-test.sh
 qa/pull-tester/tests_config.py
-qa/pull-tester/cache/*
-qa/pull-tester/test.*/*
-qa/tmp
-cache/
-share/MassGriddComparisonTool.jar
+qa/cache/*
 
 !src/leveldb*/Makefile
-!depends/Makefile
+
 .cproject
 .project
 .autotools
 /doc/doxygen/
 
 libmassgridconsensus.pc
+contrib/devtools/split-debug.sh
 src/qt/massgrid-qt.bash
 qa/pull-tester/tests-config.sh
 
@@ -132,4 +127,9 @@ massgrid-cli
 massgridd
 massgrid-qt
 make
-.vscode/settings.json
+
+/docker/bin
+
+# CLion
+.idea
+cmake-build-debug

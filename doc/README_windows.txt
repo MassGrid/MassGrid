@@ -1,4 +1,4 @@
-MassGrid 1.2.0.1
+MassGrid 0.12.1
 =====================
 
 Intro
@@ -18,3 +18,6 @@ However, it downloads and stores the entire history of MassGrid transactions;
 depending on the speed of your computer and network connection, the synchronization
 process can take anywhere from a few hours to a day or more.
 
+See the massgrid wiki at:
+  https://massgridpay.atlassian.net/wiki/
+for more help and information.

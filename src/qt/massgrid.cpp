@@ -544,7 +544,7 @@ void MassGridApplication::shutdownResult(int retval)
 
 void MassGridApplication::handleRunawayException(const QString &message)
 {
-    CMessageBox::critical(0, "Runaway exception", MassGridGUI::tr("A fatal error occurred. MassGrid Core can no longer continue safely and will quit.") + QString("\n\n") + message);
+    CMessageBox::critical(0, "Runaway exception", MassGridGUI::tr("A fatal error occurred. MassGrid can no longer continue safely and will quit.") + QString("\n\n") + message);
     ::exit(EXIT_FAILURE);
 }
 

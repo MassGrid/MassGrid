@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=MassGrid
 Comment=MassGrid P2P Cryptocurrency
+Comment[de]=Verbinde mit dem MassGrid peer-to-peer Netzwerk
 Comment[fr]=MassGrid, monnaie virtuelle cryptographique pair à pair
 Comment[tr]=MassGrid, eşten eşe kriptografik sanal para birimi
 Exec=massgrid-qt %u

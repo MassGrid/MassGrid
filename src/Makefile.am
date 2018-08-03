@@ -68,7 +68,7 @@ if BUILD_MASSGRID_UTILS
 endif
 
 .PHONY: FORCE check-symbols check-security
-# massgrid core #
+# MassGrid #
 MASSGRID_CORE_H = \
   addrdb.h \
   activemasternode.h \
