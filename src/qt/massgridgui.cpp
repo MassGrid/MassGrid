@@ -286,11 +286,14 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     statusFrameLayout->setContentsMargins(9,0,0,0);
     statusFrameLayout->setSpacing(0);
 
-    QSpacerItem* spacerItem = new QSpacerItem(850,20);
+    QSpacerItem* spacerItem = new QSpacerItem(1200,20);
 
+    QLabel * tmpSpacer = new QLabel(this);
+    // tmpSpacer->setStyleSheet("background-color:rgb(0,0,0);");
     statusFrameLayout->addWidget(progressBarLabel);
     statusFrameLayout->addWidget(progressBar);
-    statusFrameLayout->addSpacerItem(spacerItem);
+    // statusFrameLayout->addSpacerItem(spacerItem);
+    statusFrameLayout->addWidget(tmpSpacer);
     statusFrameLayout->addWidget(frameBlocks);
 
     // statusBar()->addWidget(progressBarLabel);
@@ -1438,7 +1441,7 @@ void MassGridGUI::setAdditionalDataSyncProgress(double nSyncProgress)
         progressBarLabel->setVisible(false);
         progressBar->setVisible(false);
         
-        labelBlocksIcon->setPixmap(QIcon(":/icons/res/icons/transaction2").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelBlocksIcon->setPixmap(QIcon(":/icons/transaction_confirmed").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
     } else {
 
         labelBlocksIcon->setPixmap(platformStyle->SingleColorIcon(QString(
