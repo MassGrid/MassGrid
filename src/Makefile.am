@@ -321,6 +321,9 @@ crypto_libmassgrid_crypto_a_SOURCES += \
   crypto/shavite.c \
   crypto/simd.c \
   crypto/skein.c \
+  crypto/fugue.c \
+  crypto/hamsi.c \
+  crypto/hamsi_helper.c \
   crypto/sph_blake.h \
   crypto/sph_bmw.h \
   crypto/sph_cubehash.h \
@@ -333,24 +336,14 @@ crypto_libmassgrid_crypto_a_SOURCES += \
   crypto/sph_simd.h \
   crypto/sph_skein.h \
   crypto/sph_types.h \
+  crypto/sph_hamsi.h \
+  crypto/sha256.h \
+  crypto/keccak256.h \
+  crypto/scrypt.h  \
   crypto/sha1.cpp \
   crypto/sha256.cpp \
   crypto/keccak256.cpp \
   crypto/scrypt.cpp  \
-  crypto/blake.c \
-  crypto/bmw.c \
-  crypto/cubehash.c \
-  crypto/echo.c \
-  crypto/fugue.c \
-  crypto/groestl.c \
-  crypto/hamsi.c \
-  crypto/hamsi_helper.c \
-  crypto/jh.c \
-  crypto/keccak.c \
-  crypto/luffa.c \
-  crypto/shavite.c \
-  crypto/simd.c \
-  crypto/skein.c \
   crypto/w_blake.c \
   crypto/w_bmw.c \
   crypto/w_cubehash.c \
@@ -378,23 +371,6 @@ crypto_libmassgrid_crypto_a_SOURCES += \
   crypto/hmac_sha512.cpp \
   crypto/ripemd160.cpp \
   crypto/common.h \
-  crypto/sha256.h \
-  crypto/keccak256.h \
-  crypto/scrypt.h  \
-  crypto/blake.h \
-  crypto/bmw.h \
-  crypto/cubehash.h \
-  crypto/echo.h \
-  crypto/fugue.h \
-  crypto/groestl.h \
-  crypto/hamsi.h \
-  crypto/hamsi_helper.h \
-  crypto/jh.h \
-  crypto/keccak.h \
-  crypto/luffa.h \
-  crypto/shavite.h \
-  crypto/simd.h \
-  crypto/skein.h \
   crypto/w_blake.h \
   crypto/w_bmw.h \
   crypto/w_cubehash.h \
