@@ -92,16 +92,17 @@ script:
     - depends/$HOST/native/bin/ccache --max-size=$CCACHE_SIZE
     - test -n "$USE_SHELL" && eval '"$USE_SHELL" -c "./autogen.sh"' || ./autogen.sh
     - mkdir build && cd build
-    - ../configure --cache-file=config.cache $MASSGRID_CONFIG_ALL $MASSGRID_CONFIG || ( cat config.log && false)
+    - ../configure --cache-file=config.cache $MASSGRID_CONFIG_ALL $MASSGRID_CONFIG CFLAGS=-std=c99 || ( cat config.log && false)
     - make distdir VERSION=$HOST
-    - cd MassGrid-$HOST
-    - ./configure --cache-file=../config.cache $MASSGRID_CONFIG_ALL $MASSGRID_CONFIG || ( cat config.log && false)
+    - ls -l
+    - cd massgrid-$HOST
+    - ./configure --cache-file=../config.cache $MASSGRID_CONFIG_ALL $MASSGRID_CONFIG CFLAGS=-std=c99 || ( cat config.log && false)
     - make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && make $GOAL V=1 ; false )
     - export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/depends/$HOST/lib
     - if [ "$RUN_TESTS" = "true" ]; then travis_wait 30 make $MAKEJOBS check VERBOSE=1; fi
     - if [ "$RUN_TESTS" = "true" ]; then qa/pull-tester/rpc-tests.py --coverage; fi
     - cd ../..
-    - if [ "$DOCKER_BUILD" = "true" ]; then BUILD_DIR=build/MassGrid-$HOST ./docker/build-docker.sh; fi
+    - if [ "$DOCKER_BUILD" = "true" ]; then BUILD_DIR=build/massgrid-$HOST ./docker/build-docker.sh; fi
 after_script:
     - echo $TRAVIS_COMMIT_RANGE
     - echo $TRAVIS_COMMIT_LOG
