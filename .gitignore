@@ -82,7 +82,8 @@ libconftest.dylib*
 Makefile
 massgrid-qt
 MassGrid-Qt.app
-
+!/src/test/Makefile
+!/src/qt/test/Makefile
 # Unit-tests
 Makefile.test
 massgrid-qt_test

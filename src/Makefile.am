@@ -337,6 +337,7 @@ crypto_libmassgrid_crypto_a_SOURCES += \
   crypto/sph_skein.h \
   crypto/sph_types.h \
   crypto/sph_hamsi.h \
+  crypto/sph_fugue.h \
   crypto/sha256.h \
   crypto/keccak256.h \
   crypto/scrypt.h  \
