@@ -7,7 +7,7 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "https://github.com/MassGrid/MassGrid-detached-sigs.git"
+- "url": "https://github.com/dashpay/dash-detached-sigs.git"
   "dir": "signature"
 files:
 - "massgrid-osx-unsigned.tar.gz"

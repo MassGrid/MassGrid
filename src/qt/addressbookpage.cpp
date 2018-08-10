@@ -104,7 +104,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(editAction, SIGNAL(triggered()), this, SLOT(onEditAction()));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteAddress_clicked()));
 
-    connect(setMianAddrAction, SIGNAL(triggered()), this, SLOT(setMainAddress()));
+    connect(setMianAddrAction, SIGNAL(triggered()), this, SLOT(setDefaultReceiveAddress()));
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
 
     connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(accept()));
@@ -233,7 +233,7 @@ void AddressBookPage::on_deleteAddress_clicked()
         table->model()->removeRow(indexes.at(0).row());
     }
 }
-void AddressBookPage::setMainAddress()
+void AddressBookPage::setDefaultReceiveAddress()
 {
     QTableView *table = ui->tableView;
     int curRow = table->currentIndex().row();
@@ -252,12 +252,11 @@ void AddressBookPage::setMainAddress()
     QString address = ui->tableView->model()->index(curRow,1).data().toString();
     // ui->label_mainAddress->setText(tr("(Main address:%1)").arg(address));
 
-
     WalletModel* walletModel=this->model->getWalletModel();
 
     if(walletModel != 0){
         OptionsModel* optionsModel = walletModel->getOptionsModel();
-        optionsModel->setMainAddress(address);
+        optionsModel->setDefaultReceiveAddress(address);
     }
 }
 
@@ -349,7 +348,7 @@ void AddressBookPage::on_okButton_clicked()
     QTableView *table = ui->tableView;
     int curRow = table->currentIndex().row();
     if(curRow>=0){
-        setMainAddress();
+        setDefaultReceiveAddress();
         accept();
     }
 }
