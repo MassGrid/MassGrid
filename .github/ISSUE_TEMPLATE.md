@@ -2,7 +2,7 @@
 
 This issue tracker is only for technical issues related to MassGrid.
 
-General MassGrid questions and/or support requests and are best directed to the [MassGridpay Reddit](https://www.reddit.com/r/massgridpay/).
+General MassGrid questions and/or support requests and are best directed to the [MassGrid Reddit](https://www.reddit.com/r/Mass_Grid/).
 
 To report critical security issues, email infosec@massgrid.org instead of creating Github issues.
 

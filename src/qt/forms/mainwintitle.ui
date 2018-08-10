@@ -1023,28 +1023,7 @@ border:hidden;
              <string>Please set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</string>
             </property>
             <property name="styleSheet">
-             <string notr="true">QMenu{
-color:rgb(255,255,255);
-    background-color: rgb(198,125,26);
-    border:0px solid transparent;
-}
-QMenu::item{
-    padding:0px 20px 0px 20px;
-    margin-left: 2px;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    height:30px;
-}
-
-QMenu::item:selected:enabled{
-    background-color: rgb(239,169,4);
-    color: white;
-}
-
-QMenu::item:selected:!enabled{
-    background:transparent;
-}</string>
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>Set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</string>

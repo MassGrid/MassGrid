@@ -343,7 +343,10 @@ QMenu::item:selected:enabled{
 QMenu::item:selected:!enabled{
     background:transparent;
 }
-
+QMenu::item:!enabled{
+    background:transparent;
+	color:rgb(125,125,125);
+}
 
 QDialog#CMessageBox QToolButton#okButton,
 QDialog#CMessageBox QToolButton#okButton2,
@@ -613,6 +616,18 @@ QWidget#RPCConsole QPushButton#btn_reindex
 		min-height:30px;
 }
 
+QWidget#RPCConsole QPushButton::!enabled#openDebugLogfileButton,
+QWidget#RPCConsole QPushButton::!enabled#btn_salvagewallet,
+QWidget#RPCConsole QPushButton::!enabled#btn_rescan,
+QWidget#RPCConsole QPushButton::!enabled#btn_zapwallettxes1,
+QWidget#RPCConsole QPushButton::!enabled#btn_zapwallettxes2,
+QWidget#RPCConsole QPushButton::!enabled#btn_upgradewallet,
+QWidget#RPCConsole QPushButton::!enabled#btn_reindex
+{
+    background-color: rgb(125, 125, 125);
+}
+
+
 QWidget#RPCConsole QPushButton#btnClearTrafficGraph
 {
         background-color: rgb(239, 169, 4);
@@ -620,6 +635,11 @@ QWidget#RPCConsole QPushButton#btnClearTrafficGraph
         border:hidden;
 		min-height:30px;
         min-width:60px;
+}
+
+QWidget#RPCConsole QPushButton::!enabled#btnClearTrafficGraph
+{
+    background-color: rgb(125, 125, 125);
 }
 
 QWidget#RPCConsole QLineEdit#lineEdit
@@ -665,6 +685,15 @@ QWidget#MasternodeList QPushButton#UpdateButton
 		min-height:30px;
         min-width:120px;
 }
+
+QWidget#MasternodeList QPushButton::!enabled#startAllButton,
+QWidget#MasternodeList QPushButton::!enabled#startButton,
+QWidget#MasternodeList QPushButton::!enabled#startMissingButton,
+QWidget#MasternodeList QPushButton::!enabled#UpdateButton
+{
+    background-color: rgb(125, 125, 125);
+}
+
 QComboBox
 {
     width: 120px;

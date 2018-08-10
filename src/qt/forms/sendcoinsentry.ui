@@ -51,6 +51,10 @@ QMenu::item:selected:enabled{
 
 QMenu::item:selected:!enabled{
     background:transparent;
+}
+QMenu::item:!enabled{
+    background:transparent;
+	color:rgb(125,125,125);
 }</string>
   </property>
   <property name="currentIndex">
@@ -179,28 +183,7 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
           <string>The MassGrid address to send the payment to</string>
          </property>
          <property name="styleSheet">
-          <string notr="true">QMenu{
-color:rgb(255,255,255);
-    background-color: rgb(198,125,26);
-    border:0px solid transparent;
-}
-QMenu::item{
-    padding:0px 20px 0px 20px;
-    margin-left: 2px;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    height:30px;
-}
-
-QMenu::item:selected:enabled{
-    background-color: rgb(239,169,4);
-    color: white;
-}
-
-QMenu::item:selected:!enabled{
-    background:transparent;
-}</string>
+          <string notr="true"/>
          </property>
         </widget>
        </item>
