@@ -515,7 +515,7 @@ bool OptionsModel::isRestartRequired()
     QSettings settings;
     return settings.value("fRestartRequired", false).toBool();
 }
-void OptionsModel::setMainAddress(const QString& address)
+void OptionsModel::setDefaultReceiveAddress(const QString& address)
 {
     strMainAddress = address;
     QSettings settings;

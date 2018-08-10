@@ -72,7 +72,7 @@ public:
     int getDisplayUnit() { return nDisplayUnit; }
     QString getThirdPartyTxUrls() { return strThirdPartyTxUrls; }
     QString getMainAddress() { return strMainAddress; }
-    void setMainAddress(const QString& address);
+    void setDefaultReceiveAddress(const QString& address);
     bool getProxySettings(QNetworkProxy& proxy) const;
     bool getCoinControlFeatures() { return fCoinControlFeatures; }
     bool getShowAdvancedPSUI() { return fShowAdvancedPSUI; }

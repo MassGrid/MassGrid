@@ -207,25 +207,26 @@ void MainwinTitle::setModel(WalletModel *model)
 
     OptionsModel* optionsmodel = walletModel->getOptionsModel();
     QString mainAddress = optionsmodel->getMainAddress();
+    QString defaultAddressStr;
 
     if(!mainAddress.isEmpty()){
-
         int rowCount = proxyModel->rowCount();
-
         for(int i=0;i<rowCount;i++){
             QString address = proxyModel->index(i,1).data().toString();
 
-            LogPrintf("mainAddress:%s , address:%s\n",mainAddress.toStdString().c_str(),mainAddress.toStdString().c_str());
-
             if(mainAddress.contains(address)){
-                ui->addressEdit->setText(mainAddress);
-                ui->addressEdit->setStyleSheet("border:hidden;\nbackground-color: rgba(255, 255, 255, 0);\ncolor: rgb(255, 255, 255);");
-                return ;
+                defaultAddressStr = mainAddress;
+                break;
             }
         }
     }
-    optionsmodel->setMainAddress("");
-    ui->openAddr->setEnabled(false);
+    else{
+        defaultAddressStr = proxyModel->index(0,1).data().toString();
+    }
+    ui->addressEdit->setText(defaultAddressStr);
+    ui->addressEdit->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background-color: rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item:!enabled{\n    background:transparent;\n	color:rgb(125,125,125);\n}QMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n    margin-right: 2px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    height:30px;\n}\n\nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4);\n    color: white;\n}\n\nQMenu::item:selected:!enabled{\n    background:transparent;\n}\nQLineEdit{\nborder:hidden;\nbackground-color: rgba(255, 255, 255, 0);\ncolor: rgb(255, 255, 255);\n}");
+
+    optionsmodel->setDefaultReceiveAddress(defaultAddressStr);
 }
 
 void MainwinTitle::open2DCodePage()
@@ -234,8 +235,6 @@ void MainwinTitle::open2DCodePage()
 	QString reqMessage = "";
 	CAmount mount = 0;
     SendCoinsRecipient info(ui->addressEdit->text(), label,mount,reqMessage);
-    // ReceiveRequestDialog *dialog = new ReceiveRequestDialog(0);
-    // dialog->setAttribute(Qt::WA_DeleteOnClose);
     ReceiveRequestDialog dialog;
     dialog.setModel(walletModel->getOptionsModel());
     dialog.setInfo(info);

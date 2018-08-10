@@ -86,7 +86,7 @@ private Q_SLOTS:
     /** New entry/entries were added to address table */
     void selectNewAddress(const QModelIndex &parent, int begin, int /*end*/);
 
-    void setMainAddress();
+    void setDefaultReceiveAddress();
 Q_SIGNALS:
     void sendCoins(QString addr);
 protected:
