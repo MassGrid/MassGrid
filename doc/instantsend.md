@@ -11,10 +11,6 @@ When a "Transaction Lock" occurs the hash of the related transaction is broadcas
 * `zmqpubrawtxlock`: publishes the raw transaction when locked via InstantSend
 * `zmqpubhashtxlock`: publishes the transaction hash when locked via InstantSend
 
-This mechanism has been integrated into Bitcore-Node-MassGrid which allows for notification to be broadcast through Insight API in one of two ways:
-* WebSocket: [https://github.com/massgridpay/insight-api-massgrid#web-socket-api](https://github.com/massgridpay/insight-api-massgrid#web-socket-api)
-* API: [https://github.com/massgridpay/insight-api-massgrid#instantsend-transactions](https://github.com/massgridpay/insight-api-massgrid#instantsend-transactions)
-
 #### Command line option
 
 When a wallet InstantSend transaction is successfully locked a shell command provided in this option is executed (`%s` in `<cmd>` is replaced by TxID):

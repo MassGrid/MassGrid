@@ -22,13 +22,6 @@ Unpack the files into a directory, and then run massgrid-qt.exe.
 
 Drag MassGrid-Qt to your applications folder, and then run MassGrid-Qt.
 
-### Need Help?
-
-* See the [MassGrid documentation](https://massgridpay.atlassian.net/wiki/display/DOC)
-for help and more information.
-* Ask for help on [MassGrid Nation Discord](http://massgridchat.org)
-* Ask for help on the [MassGrid Forum](https://massgrid.org/forum)
-
 Building
 ---------------------
 The following are developer notes on how to build MassGrid on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
