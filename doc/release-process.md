@@ -29,10 +29,10 @@ If you're using the automated script (found in [contrib/gitian-build.sh](/contri
 Check out the source code in the following directory hierarchy.
 
 	cd /path/to/your/toplevel/build
-	git clone https://github.com/massgridpay/gitian.sigs.git
-	git clone https://github.com/MassGrid/MassGrid-detached-sigs.git
+	git clone https://github.com/dashpay/gitian.sigs.git
+	git clone https://github.com/Dash/MassGrid-detached-sigs.git
 	git clone https://github.com/devrandom/gitian-builder.git
-	git clone https://github.com/MassGrid/MassGrid.git
+	git clone https://github.com/Dash/MassGrid.git
 
 ### MassGrid maintainers/release engineers, update (commit) version in sources
 
@@ -244,11 +244,8 @@ Note: check that SHA256SUMS itself doesn't end up in SHA256SUMS, which is a spur
 
 - Announce the release:
 
-  - Release on MassGrid forum: https://www.massgrid.org/forum/topic/official-announcements.54/
 
-  - Optionally Discord, twitter, reddit /r/MassGridpay, ... but this will usually sort out itself
-
-  - Notify flare so that he can start building [the PPAs](https://launchpad.net/~massgrid.org/+archive/ubuntu/massgrid)
+  - Optionally Discord, twitter, reddit /r/MassGrid, ... but this will usually sort out itself
 
   - Archive release notes for the new version to `doc/release-notes/` (branch `master` and branch of the release)
 
