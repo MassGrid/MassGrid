@@ -125,8 +125,8 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     // Connect actions
     connect(mapperThirdPartyTxUrls, SIGNAL(mapped(QString)), this, SLOT(openThirdPartyTxUrl(QString)));
 
-    connect(dateWidget, SIGNAL(activated(int)), this, SLOT(chooseDate(int)));
-    connect(typeWidget, SIGNAL(activated(int)), this, SLOT(chooseType(int)));
+    // connect(dateWidget, SIGNAL(activated(int)), this, SLOT(chooseDate(int)));
+    // connect(typeWidget, SIGNAL(activated(int)), this, SLOT(chooseType(int)));
     connect(watchOnlyWidget, SIGNAL(activated(int)), this, SLOT(chooseWatchonly(int)));
     // connect(addressWidget, SIGNAL(textChanged(QString)), this, SLOT(changedPrefix(QString)));
     // connect(amountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedAmount(QString)));
