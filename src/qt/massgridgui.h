@@ -127,7 +127,6 @@ private:
     QAction *toggleHideAction;
     QAction *encryptWalletAction;
     QAction *backupWalletAction;
-    QAction *inputWalletAction;
     QAction *softUpdateAction;
     QAction *changePassphraseAction;
     QAction *unlockWalletAction;
@@ -261,8 +260,6 @@ private Q_SLOTS:
     void importPrivkey();
 
     void dumpPrivkey();
-
-    void inputWalletFile();
 
     void checkoutUpdateClient();
     void openWebUrl(const QString& version,bool stopMinerFlag);

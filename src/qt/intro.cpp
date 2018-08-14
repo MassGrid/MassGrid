@@ -173,19 +173,17 @@ void Intro::pickDataDirectory()
     if(!GetArg("-datadir", "").empty())
         return;
     /* 1) Default data directory for operating system */
-    QString dataDirDefaultCurrent = getDefaultDataDirectory();
+    QString dataDir = getDefaultDataDirectory();
     /* 2) Allow QSettings to override default dir */
-    QString dataDir = settings.value("strDataDir", dataDirDefaultCurrent).toString();
-	dataDir = settings.value("strDataDir2", dataDir).toString();
+    dataDir = settings.value("strDataDir2", dataDir).toString();
 
-    /* 3) Check to see if default datadir is the one we expect */
-    QString dataDirDefaultSettings = settings.value("strDataDirDefault").toString();
+    LogPrintf("Intro::pickDataDirectory dataDir:%s\n",dataDir.toStdString().c_str());
 
-    if(!fs::exists(GUIUtil::qstringToBoostPath(dataDir)) || GetBoolArg("-choosedatadir", DEFAULT_CHOOSE_DATADIR) || dataDirDefaultCurrent != dataDirDefaultSettings)
+    if(!fs::exists(GUIUtil::qstringToBoostPath(dataDir)) || GetBoolArg("-choosedatadir", false))
     {
-        /* Let the user choose one */
+        /* If current default data directory does not exist, let the user choose one */
         Intro intro;
-        intro.setDataDirectory(dataDirDefaultCurrent);
+        intro.setDataDirectory(dataDir);
         intro.setWindowIcon(QIcon(":icons/massgrid"));
 
         while(true)
@@ -193,27 +191,26 @@ void Intro::pickDataDirectory()
             if(!intro.exec())
             {
                 /* Cancel clicked */
-                exit(EXIT_SUCCESS);
+                exit(0);
             }
             dataDir = intro.getDataDirectory();
             try {
                 TryCreateDirectory(GUIUtil::qstringToBoostPath(dataDir));
                 break;
-            } catch (const fs::filesystem_error&) {
-                CMessageBox::critical(0, tr("MassGrid"),
+            } catch(fs::filesystem_error &e) {
+                CMessageBox::critical(0, tr("MassGrid Core"),
                     tr("Error: Specified data directory \"%1\" cannot be created.").arg(dataDir));
                 /* fall through, back to choosing screen */
             }
         }
 
-        settings.setValue("strDataDir", dataDir);
-        settings.setValue("strDataDirDefault", dataDirDefaultCurrent);
+        settings.setValue("strDataDir2", dataDir);
     }
     /* Only override -datadir if different from the default, to make it possible to
      * override -datadir in the massgrid.conf file in the default data directory
      * (to be consistent with massgridd behavior)
      */
-    if(dataDir != dataDirDefaultCurrent)
+    if(dataDir != getDefaultDataDirectory())
         SoftSetArg("-datadir", GUIUtil::qstringToBoostPath(dataDir).string()); // use OS locale for path setting
 }
 

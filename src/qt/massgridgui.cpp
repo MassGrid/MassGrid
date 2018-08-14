@@ -71,6 +71,7 @@
 #include <QTimer>
 #include <QEventLoop>
 #include <QSortFilterProxyModel>
+#include <QSettings>
 
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
@@ -465,8 +466,6 @@ void MassGridGUI::createActions()
     encryptWalletAction->setCheckable(true);
     backupWalletAction = new QAction(QIcon(":/res/pic/menuicon/filesave"), tr("&Backup Wallet..."), this);
     backupWalletAction->setStatusTip(tr("Backup wallet to another location"));
-    inputWalletAction = new QAction(QIcon(":/res/pic/menuicon/importwallet.png"), tr("&Import Wallet..."), this);
-    inputWalletAction->setStatusTip(tr("Import wallet file"));
     changePassphraseAction = new QAction(QIcon(":/res/pic/menuicon/key"), tr("&Change Passphrase..."), this);
     changePassphraseAction->setStatusTip(tr("Change the passphrase used for wallet encryption"));
     unlockWalletAction = new QAction(tr("&Unlock Wallet..."), this);
@@ -555,7 +554,6 @@ void MassGridGUI::createActions()
     {
         connect(encryptWalletAction, SIGNAL(triggered(bool)), walletFrame, SLOT(encryptWallet(bool)));
         connect(backupWalletAction, SIGNAL(triggered()), walletFrame, SLOT(backupWallet()));
-        connect(inputWalletAction, SIGNAL(triggered()), this, SLOT(inputWalletFile()));
         connect(softUpdateAction, SIGNAL(triggered()), this, SLOT(checkoutUpdateClient()));
         connect(changePassphraseAction, SIGNAL(triggered()), walletFrame, SLOT(changePassphrase()));
         connect(unlockWalletAction, SIGNAL(triggered()), walletFrame, SLOT(unlockWallet()));
@@ -655,7 +653,6 @@ void MassGridGUI::createMenuBar()
     {
         file->addAction(openAction);
         file->addAction(backupWalletAction);
-        file->addAction(inputWalletAction);
         file->addAction(signMessageAction);
         file->addAction(verifyMessageAction);
         file->addSeparator();
@@ -1837,45 +1834,6 @@ void MassGridGUI::unsubscribeFromCoreSignals()
     // Disconnect signals from client
     uiInterface.ThreadSafeMessageBox.disconnect(boost::bind(ThreadSafeMessageBox, this, _1, _2, _3));
     uiInterface.ThreadSafeQuestion.disconnect(boost::bind(ThreadSafeMessageBox, this, _1, _3, _4));
-}
-
-void MassGridGUI::inputWalletFile()
-{
-    CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Import Wallet"),
-            tr("Import wallet file will cover the old one,please back up your old wallet."),
-            CMessageBox::Ok_Cancel, CMessageBox::Cancel);
-
-    if(btnRetVal == CMessageBox::Cancel)
-        return;
-
-    QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),
-                                                      "/home",
-                                                      tr("Wallat (*.dat)"));
-
-    if(fileName.isEmpty())
-        return ;
-
-    QString curdir = GetDataDir().string().c_str();
-    // curdir+="/wallet.dat";
-
-    // LogPrintf("MassGridGUI::inputWalletFile curdir:%s\n",curdir.toStdString().c_str());
-
-    // copyFileToPath(fileName,curdir,true);
-    if(copyFileToPath(fileName,curdir,true)){
-        // qDebug() << "copy file sucess!";
-        CMessageBox::warning(this, tr("Import Wallet"),
-             "<qt>" +
-             tr("MassGrid will close now to update the Wallet,Please restart your wallet later.")
-             +"</qt>");
-        QApplication::quit();
-    }
-    else{
-        // qDebug() << "copy file fail!";
-        CMessageBox::warning(this, tr("Import Error"),
-             "<qt>" +
-             tr("Import wallet error,please checkout the wallet file is exists.")
-             +"</qt>");
-    }
 }
 
 // QString::fromStdString(FormatFullVersion());
