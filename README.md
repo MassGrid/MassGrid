@@ -54,7 +54,11 @@ To Build
 ---------------------
 
 ```bash
-qmake
+git clone --recursive https://github.com/MassGrid/MassGrid.git
+cd MassGrid
+git submodule update --init --recursive
+./autogen.sh
+./configure
 make
 make install # optional
 ```
