@@ -1913,9 +1913,9 @@ static bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockInd
         }
     }
     else{
-        bool fChecksTMIP20 =pindex->nHeight>=700 && block.nVersion==6;
+        bool fChecksTMIP20 =pindex->nHeight>=200 && block.nVersion==6;
         if(!fChecksTMIP20){
-            if(pindex->nHeight>=700)
+            if(pindex->nHeight>=200)
                 return state.DoS(100, error("ConnectBlock() : tried to overwrite transaction"),
             REJECT_INVALID, "bad-version-TMIP20");
         }

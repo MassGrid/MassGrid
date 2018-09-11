@@ -158,7 +158,7 @@ public:
     CTestNetParams() {
         strNetworkID = "test";
         consensus.nSubsidyHalvingInterval = 420768;
-        consensus.nMasternodePaymentsStartBlock = 800; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
+        consensus.nMasternodePaymentsStartBlock = 300; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 87840; // actual historical value 2 month 1440*61
         consensus.nInstantSendKeepLock = 6;
         consensus.nGovernanceMinQuorum = 1;
@@ -184,7 +184,7 @@ public:
         pchMessageStart[2] = 0x35;
         pchMessageStart[3] = 0x25;
         vAlertPubKey = ParseHex("03E85467AF94A912DB61CABB54D6CBB08A5148A97D69024657665744AB8EA559C5");
-        nDefaultPort = 19443;
+        nDefaultPort = 19442;
         nMaxTipAge = 0x7fffffff;
         nMaxTipAge = 0x7fffffff;
         nPruneAfterHeight = 1000;
