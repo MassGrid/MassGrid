@@ -52,8 +52,8 @@ reachable from the Tor network. Add these lines to your /etc/tor/torrc (or equiv
 config file):
 
 	HiddenServiceDir /var/lib/tor/massgrid-service/
-	HiddenServicePort 9442 127.0.0.1:9999
-	HiddenServicePort 19442 127.0.0.1:19999
+	HiddenServicePort 9443 127.0.0.1:8333
+	HiddenServicePort 19443 127.0.0.1:18333
 
 The directory can be different of course, but (both) port numbers should be equal to
 your massgridd's P2P listen port (9442 by default).
