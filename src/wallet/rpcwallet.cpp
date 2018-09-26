@@ -2537,7 +2537,7 @@ UniValue listunspent(const UniValue& params, bool fHelp)
             "{txid, vout, scriptPubKey, amount, confirmations}\n"
             "\nArguments:\n"
             "1. minconf          (numeric, optional, default=1) The minimum confirmations to filter\n"
-            "2. maxconf          (numeric, optional, default=9442999) The maximum confirmations to filter\n"
+            "2. maxconf          (numeric, optional, default=9999999) The maximum confirmations to filter\n"
             "3. \"addresses\"      (string) A json array of massgrid addresses to filter\n"
             "    [\n"
             "      \"address\"     (string) massgrid address\n"
@@ -2561,8 +2561,8 @@ UniValue listunspent(const UniValue& params, bool fHelp)
 
             "\nExamples\n"
             + HelpExampleCli("listunspent", "")
-            + HelpExampleCli("listunspent", "6 9442999 \"[\\\"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\\\",\\\"mpg2Ki3bacC2F34yR3Q9zBmD8jToeTrGLL\\\"]\"")
-            + HelpExampleRpc("listunspent", "6, 9442999 \"[\\\"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\\\",\\\"mpg2Ki3bacC2F34yR3Q9zBmD8jToeTrGLL\\\"]\"")
+            + HelpExampleCli("listunspent", "6 9999999 \"[\\\"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\\\",\\\"mpg2Ki3bacC2F34yR3Q9zBmD8jToeTrGLL\\\"]\"")
+            + HelpExampleRpc("listunspent", "6, 9999999 \"[\\\"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\\\",\\\"mpg2Ki3bacC2F34yR3Q9zBmD8jToeTrGLL\\\"]\"")
         );
 
     RPCTypeCheck(params, boost::assign::list_of(UniValue::VNUM)(UniValue::VNUM)(UniValue::VARR));
@@ -2571,7 +2571,7 @@ UniValue listunspent(const UniValue& params, bool fHelp)
     if (params.size() > 0)
         nMinDepth = params[0].get_int();
 
-    int nMaxDepth = 9442999;
+    int nMaxDepth = 9999999;
     if (params.size() > 1)
         nMaxDepth = params[1].get_int();
 

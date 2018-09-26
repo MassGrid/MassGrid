@@ -1047,7 +1047,7 @@ bool CMasternodeMan::SendVerifyRequest(const CAddress& addr, const std::vector<C
 
     netfulfilledman.AddFulfilledRequest(addr, strprintf("%s", NetMsgType::MNVERIFY)+"-request");
     // use random nonce, store it and require node to reply with correct one later
-    CMasternodeVerification mnv(addr, GetRandInt(944299), nCachedBlockHeight - 1);
+    CMasternodeVerification mnv(addr, GetRandInt(999999), nCachedBlockHeight - 1);
     mWeAskedForVerification[addr] = mnv;
     LogPrintf("CMasternodeMan::SendVerifyRequest -- verifying node using nonce %d addr=%s\n", mnv.nonce, addr.ToString());
     connman.PushMessage(pnode, NetMsgType::MNVERIFY, mnv);
