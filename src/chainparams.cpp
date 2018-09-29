@@ -158,7 +158,7 @@ public:
     CTestNetParams() {
         strNetworkID = "test";
         consensus.nSubsidyHalvingInterval = 420768;
-        consensus.nMasternodePaymentsStartBlock = 300; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
+        consensus.nMasternodePaymentsStartBlock = 1600; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 87840; // actual historical value 2 month 1440*61
         consensus.nInstantSendKeepLock = 6;
         consensus.nGovernanceMinQuorum = 1;
@@ -189,9 +189,9 @@ public:
         nMaxTipAge = 0x7fffffff;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1506050827, 17367, 0x1e0ffff0, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1538215708, 6224, 0x1e0ffff0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x0000029a36746cc135f8ef8ae452a79b7f5d18a25e6f1fcd59cb39bf9a3bd08b"));
+        assert(consensus.hashGenesisBlock == uint256S("0x000007834c1b97b086f4e60b6352964a25b1cccda1dd7c5361c9f02d80a06c2f"));
 		assert(genesis.hashMerkleRoot == uint256S("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
         vFixedSeeds.clear();
         vSeeds.clear();

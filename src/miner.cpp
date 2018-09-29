@@ -140,7 +140,7 @@ CBlockTemplate* CreateNewBlock(const CChainParams& chainparams, const CScript& s
 
         if(pindexPrev->nHeight<104999 && Params().NetworkIDString()=="main")
                 pblock->nVersion=5;
-        if(pindexPrev->nHeight<199 && Params().NetworkIDString()=="test")
+        if(pindexPrev->nHeight<1499 && Params().NetworkIDString()=="test")
                 pblock->nVersion=5;
         // -regtest only: allow overriding block.nVersion with
         // -blockversion=N to test forking scenarios
