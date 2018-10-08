@@ -1815,8 +1815,6 @@ void CConnman::ThreadOpenAddedConnections()
 {
     {
         LOCK(cs_vAddedNodes);
-        mapMultiArgs["-addnode"].push_back("47.92.33.28");
-        mapMultiArgs["-addnode"].push_back("47.92.28.127");
         vAddedNodes = mapMultiArgs["-addnode"];
     }
 

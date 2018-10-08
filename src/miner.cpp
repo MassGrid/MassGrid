@@ -138,8 +138,8 @@ CBlockTemplate* CreateNewBlock(const CChainParams& chainparams, const CScript& s
         pblocktemplate->vTxSigOps.push_back(-1); // updated at end
         pblock->nVersion = ComputeBlockVersion(pindexPrev, chainparams.GetConsensus());
 
-        if(pindexPrev->nHeight<104999 && Params().NetworkIDString()=="main")
-                pblock->nVersion=5;
+        // if(pindexPrev->nHeight<104999 && Params().NetworkIDString()=="main")
+        //         pblock->nVersion=5;
         if(pindexPrev->nHeight<199 && Params().NetworkIDString()=="test")
                 pblock->nVersion=5;
         // -regtest only: allow overriding block.nVersion with
