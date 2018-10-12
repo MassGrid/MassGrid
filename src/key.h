@@ -67,7 +67,19 @@ public:
     {
         UnlockObject(vch);
     }
-
+    std::string toString()
+    {
+        int  i;
+        char szTmp[3];
+        std::string str;
+        for (i = 0; i < 32; i++)
+        {
+            sprintf(szTmp, "%02X", vch[i]);
+            str.push_back(szTmp[0]);
+            str.push_back(szTmp[1]);
+        }
+        return str;
+    }
     friend bool operator==(const CKey& a, const CKey& b)
     {
         return a.fCompressed == b.fCompressed && a.size() == b.size() &&

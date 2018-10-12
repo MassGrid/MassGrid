@@ -105,6 +105,7 @@ MASSGRID_CORE_H = \
   core_io.h \
   core_memusage.h \
   dsnotificationinterface.h \
+  genkey.h \
   governance.h \
   governance-classes.h \
   governance-exceptions.h \
@@ -122,6 +123,7 @@ MASSGRID_CORE_H = \
   key.h \
   keepass.h \
   keystore.h \
+  keyagreement.h \
   dbwrapper.h \
   limitedmap.h \
   masternode.h \
@@ -133,6 +135,8 @@ MASSGRID_CORE_H = \
   merkleblock.h \
   messagesigner.h \
   miner.h \
+  msghandler.h \
+  msghelper.h \
   net.h \
   net_processing.h \
   netaddress.h \
@@ -220,12 +224,14 @@ libmassgrid_server_a_SOURCES = \
   init.cpp \
   instantx.cpp \
   dbwrapper.cpp \
+  genkey.cpp \
   governance.cpp \
   governance-classes.cpp \
   governance-object.cpp \
   governance-validators.cpp \
   governance-vote.cpp \
   governance-votedb.cpp \
+  keyagreement.cpp \
   masternode.cpp \
   masternode-payments.cpp \
   masternode-sync.cpp \
@@ -233,6 +239,8 @@ libmassgrid_server_a_SOURCES = \
   masternodeman.cpp \
   merkleblock.cpp \
   messagesigner.cpp \
+  msghandler.cpp \
+  msghelper.cpp \
   miner.cpp \
   net.cpp \
   netfulfilledman.cpp \

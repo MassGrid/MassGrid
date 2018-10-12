@@ -33,7 +33,7 @@ void ThreadCheckInstantSend(CConnman& connman)
     RenameThread("massgrid-is");
 
     unsigned int nTick = 0;
-
+    
     if(chainActive.Height() < 105000 &&Params().NetworkIDString() == CBaseChainParams::MAIN)
       fMasterNode = 0;
 

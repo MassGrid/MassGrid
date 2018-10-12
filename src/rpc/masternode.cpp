@@ -256,7 +256,7 @@ UniValue masternode(const UniValue& params, bool fHelp)
     {
         CKey secret;
         secret.MakeNewKey(false);
-
+        
         return CMassGridSecret(secret).ToString();
     }
 
