@@ -2935,49 +2935,49 @@ bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wt
                     CScript scriptChange;
 
                     // coin control: send change to custom address
-                    // if (coinControl && !boost::get<CNoDestination>(&coinControl->destChange))
-                    //     scriptChange = GetScriptForDestination(coinControl->destChange);
+                    if (coinControl && !boost::get<CNoDestination>(&coinControl->destChange))
+                        scriptChange = GetScriptForDestination(coinControl->destChange);
 
-                    // // no coin control: send change to newly generated address
-                    // else
-                    // {
-                    //     // Note: We use a new key here to keep it from being obvious which side is the change.
-                    //     //  The drawback is that by not reusing a previous key, the change may be lost if a
-                    //     //  backup is restored, if the backup doesn't have the new private key for the change.
-                    //     //  If we reused the old key, it would be possible to add code to look for and
-                    //     //  rediscover unknown transactions that were written with keys of ours to recover
-                    //     //  post-backup change.
+                    // no coin control: send change to newly generated address
+                    else
+                    {
+                        // Note: We use a new key here to keep it from being obvious which side is the change.
+                        //  The drawback is that by not reusing a previous key, the change may be lost if a
+                        //  backup is restored, if the backup doesn't have the new private key for the change.
+                        //  If we reused the old key, it would be possible to add code to look for and
+                        //  rediscover unknown transactions that were written with keys of ours to recover
+                        //  post-backup change.
 
-                    //     // Reserve a new key pair from key pool
-                    //     CPubKey vchPubKey;
-                    //     if (!reservekey.GetReservedKey(vchPubKey, true))
-                    //     {
-                    //         strFailReason = _("Keypool ran out, please call keypoolrefill first");
-                    //         return false;
+                        // Reserve a new key pair from key pool
+                        CPubKey vchPubKey;
+                        if (!reservekey.GetReservedKey(vchPubKey, true))
+                        {
+                            strFailReason = _("Keypool ran out, please call keypoolrefill first");
+                            return false;
+                        }
+                        scriptChange = GetScriptForDestination(vchPubKey.GetID());
+                    }
+
+                    // std::string mainAddress = DefaultReceiveAddress();
+
+                    // LogPrintf("wallet CreateTransaction mainAddress:%s\n",mainAddress);
+
+                    // CMassGridAddress addr;
+                    // if(mainAddress.size()>0){
+                    //     addr.SetString(mainAddress);
+                    // }
+                    // else{
+                    //     BOOST_FOREACH(const PAIRTYPE(CMassGridAddress, CAddressBookData)& item, this->mapAddressBook){
+                    //         if(item.second.purpose == "receive"){
+                    //             addr = item.first;
+                    //             break;
+                    //         }
                     //     }
-                    //     scriptChange = GetScriptForDestination(vchPubKey.GetID());
                     // }
 
-                    std::string mainAddress = DefaultReceiveAddress();
-
-                    LogPrintf("wallet CreateTransaction mainAddress:%s\n",mainAddress);
-
-                    CMassGridAddress addr;
-                    if(mainAddress.size()>0){
-                        addr.SetString(mainAddress);
-                    }
-                    else{
-                        BOOST_FOREACH(const PAIRTYPE(CMassGridAddress, CAddressBookData)& item, this->mapAddressBook){
-                            if(item.second.purpose == "receive"){
-                                addr = item.first;
-                                break;
-                            }
-                        }
-                    }
-
-                    CKeyID keyid;
-                    addr.GetKeyID(keyid);
-                    scriptChange = GetScriptForDestination(keyid);
+                    // CKeyID keyid;
+                    // addr.GetKeyID(keyid);
+                    // scriptChange = GetScriptForDestination(keyid);
 
                     newTxOut = CTxOut(nChange, scriptChange);
 

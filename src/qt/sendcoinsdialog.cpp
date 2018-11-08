@@ -130,6 +130,7 @@ SendCoinsDialog::SendCoinsDialog(const PlatformStyle *platformStyle, QWidget *pa
     ui->stackedWidget->setCurrentIndex(1);
 
     on_backButton_clicked();
+    coinControlChangeEdited(GUIUtil::getDefaultReceiveAddr());
 }
 
 void SendCoinsDialog::setClientModel(ClientModel *clientModel)

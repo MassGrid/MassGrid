@@ -51,7 +51,6 @@ SendCoinsEntry::SendCoinsEntry(const PlatformStyle *platformStyle, QWidget *pare
     connect(ui->deleteButton_is, SIGNAL(clicked()), this, SLOT(deleteClicked()));
     connect(ui->deleteButton_s, SIGNAL(clicked()), this, SLOT(deleteClicked()));
     ui->addressBookButton->hide();
-    ui->deleteButton->hide();
     ui->pasteButton->hide();
 }
 

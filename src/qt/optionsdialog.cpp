@@ -147,6 +147,7 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
 
     ui->dataDirPath->setText(GetDataDir().string().c_str());
     ui->frame_ip->hide();
+    ui->coinControlFeatures->hide();
 
 // #ifdef os_w  
 //     ui->lang->setStyle(QStyleFactory::create("Windows"));
