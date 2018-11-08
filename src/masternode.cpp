@@ -34,8 +34,8 @@ void ThreadCheckInstantSend(CConnman& connman)
 
     unsigned int nTick = 0;
 
-    if(chainActive.Height() < 105000 &&Params().NetworkIDString() == CBaseChainParams::MAIN)
-      fMasterNode = 0;
+    // if(chainActive.Height() < 105000 &&Params().NetworkIDString() == CBaseChainParams::MAIN)
+    //   fMasterNode = 0;
 
     while (true)
     {
