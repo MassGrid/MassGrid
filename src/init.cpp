@@ -544,7 +544,7 @@ std::string HelpMessage(HelpMessageMode mode)
         strUsage += HelpMessageOpt("-limitdescendantsize=<n>", strprintf("Do not accept transactions if any ancestor would have more than <n> kilobytes of in-mempool descendants (default: %u).", DEFAULT_DESCENDANT_SIZE_LIMIT));
     }
     string debugCategories = "addrman, alert, bench, coindb, db, http, leveldb, libevent, lock, mempool, mempoolrej, net, proxy, prune, rand, reindex, rpc, selectcoins, tor, zmq, "
-                             "massgrid (or specifically: gobject, instantsend, keepass, masternode, mnpayments, mnsync, spork)"; // Don't translate these and qt below
+                             "massgrid (or specifically: gobject, instantsend, keepass, masternode, mnpayments, mnsync, spork, docker)"; // Don't translate these and qt below
     if (mode == HMM_MASSGRID_QT)
         debugCategories += ", qt";
     strUsage += HelpMessageOpt("-debug=<category>", strprintf(_("Output debugging information (default: %u, supplying <category> is optional)"), 0) + ". " +

@@ -1,0 +1,430 @@
+#include "dockerservice.h"
+
+void dockerservice(const string& serviceData,std::vector<Service> &services)
+{
+    std::cout<<"docker json service"<<std::endl;
+     try{
+        UniValue dataArry(UniValue::VARR);
+        if(!dataArry.read(serviceData)){
+            std::cout<<"json error\n";
+            return;
+        }
+        for(size_t i=0;i<dataArry.size();i++){
+            UniValue data(dataArry[i]);
+            Service *service=DcokerServiceJson(data);
+            services.push_back(*service);
+            // break;
+        }
+    }catch(std::exception& e){
+        std::cout<<string(e.what())<<std::endl;
+    }catch(...){
+        std::cout<<"unkonw exception"<<std::endl;
+    }
+}
+Service *DcokerServiceJson(const UniValue& data)
+{
+    std::string id;
+    int idx;
+    uint64_t createdTime;
+    uint64_t updateTime;
+    Config::ServiceSpec spc;
+    Config::ServiceSpec previousSpec;
+    Config::Endpoint endpoint;
+    Config::SerivceUpdateStatus updateStatus;
+    int version=DEFAULT_CTASK_API_VERSION;
+
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(tdata.isStr()){
+            if(vKeys[i]=="ID") id=tdata.get_str();
+            else if(vKeys[i]=="CreatedAt") createdTime=getDockerTime(tdata.get_str());
+            else if(vKeys[i]=="UpdatedAt") updateTime=getDockerTime(tdata.get_str());
+        }
+        if(tdata.isObject()){
+            if(vKeys[i]=="Version"){
+                idx=find_value(tdata,"Index").get_int();
+            }else if(vKeys[i]=="Spec"){
+                ParseSpec(tdata,spc);
+            }else if(vKeys[i]=="PreviousSpec"){
+                ParseSpec(tdata,previousSpec);
+            }else if(vKeys[i]=="Endpoint"){
+                ParseEndpoint(tdata,endpoint);
+            }else if(vKeys[i]=="UpdateStatus"){
+                ParseUpdateStatus(tdata,updateStatus);
+            }
+        }
+    }
+    return new Service(id,idx,createdTime,updateTime,spc,previousSpec,endpoint,updateStatus,version);
+}
+
+void ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Name") 
+                spc.name=tdata.get_str();
+        }
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Labels"){
+                ParseLabels(tdata,spc.labels);
+            }else if(vKeys[i]=="TaskTemplate"){
+                ParseTaskTemplate(tdata,spc.taskTemplate);
+            }else if(vKeys[i]=="Mode"){
+                ParseMode(tdata,spc.mode);
+            }else if(vKeys[i]=="EndpointSpec"){
+                ParseEndpointSpec(tdata,spc.endpointSpec);
+            }
+        }
+    }
+}
+void ParseLabels(const UniValue& data,vector<std::string> &labels)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        labels.push_back(data[vKeys[i]].get_str());
+    }
+}
+void ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate)
+{  
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(tdata.isStr()){
+            if(vKeys[i]=="Runtime") 
+                taskTemplate.runtime=tdata.get_str();
+        }
+        if(tdata.isNum()){
+            if(vKeys[i]=="ForceUpdate") taskTemplate.forceUpdate=tdata.get_int();
+        }
+        if(tdata.isObject()){
+            if(vKeys[i]=="ContainerSpec"){
+                ParseContainerTemplate(tdata,taskTemplate.containerTemplate);
+            }else if(vKeys[i]=="Resources"){
+                ParseResource(tdata,taskTemplate.resources);
+            }else if(vKeys[i] =="RestartPolicy"){
+                ParseRestartPolicy(tdata,taskTemplate.restartPolicy);
+            }else if(vKeys[i] =="Placement"){
+                ParsePlacement(tdata,taskTemplate.placement);
+            }
+        }
+        if(tdata.isArray()){
+            if(vKeys[i] =="Networks"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::NetWork network;
+                    ParseNetwork(tdata[j],network);
+                    taskTemplate.netWorks.push_back(network);
+                }
+            }
+        }
+    }
+}
+void ParseContainerTemplate(const UniValue& data,Config::ContainerTemplate &contTemp)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Isolation") 
+                contTemp.isolation=tdata.get_str();
+            if(vKeys[i]=="Image") 
+                contTemp.image=tdata.get_str();
+        }
+        if(tdata.isObject()){
+            if(vKeys[i]=="Labels"){
+                ParseLabels(tdata,contTemp.labels);
+            }
+        }
+        if(data[vKeys[i]].isArray()){
+            if(vKeys[i]=="Env"){
+                ParseArray(tdata,contTemp.env);
+            }else if(vKeys[i]=="Mounts"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::Mount mount;
+                    ParseMount(tdata[j],mount);
+                    contTemp.mounts.push_back(mount);
+                }
+            }
+        }
+    }
+}
+void ParseMount(const UniValue& data,Config::Mount &mount)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Type") mount.type=tdata.get_str();
+            else if(vKeys[i]=="Source") mount.source=tdata.get_str();
+            else if(vKeys[i]=="Target") mount.target=tdata.get_str();
+        }
+    }
+}
+void ParseArray(const UniValue& data,vector<std::string> &array)
+{
+    for(size_t i=0;i<data.size();i++){
+        array.push_back(data[i].get_str());
+    }
+    return;
+} 
+void ParseResource(const UniValue& data,Config::Resource &resources)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Limits"){
+                ParseLimits(tdata,resources.limits);
+            }else if(vKeys[i]=="Reservations"){
+                ParseReservation(tdata,resources.reservations);
+            }
+        }
+    }
+}
+void ParseLimits(const UniValue& data,Config::Limits &limits)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="NanoCPUs"){
+               limits.nanoCPUs=tdata.get_int64();
+            }else if(vKeys[i]=="MemoryBytes"){
+                limits.memoryBytes=tdata.get_int64();
+            }
+        }
+    }
+}
+void ParseReservation(const UniValue& data,Config::Reservation &reservations)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="GenericResources"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::DiscreteResourceSpec disres;
+                    ParseDirReservation(tdata[j],disres);
+                    reservations.Reservations.push_back(disres);
+                }
+            }
+        }
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="NanoCPUs"){
+                reservations.nanoCPUs=tdata.get_int64();
+            }else if(vKeys[i]=="MemoryBytes"){
+                reservations.memoryBytes=tdata.get_int64();
+            }
+        }
+    }
+}
+void ParseDirReservation(const UniValue& data,Config::DiscreteResourceSpec &disres)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Kind"){
+               disres.kind=tdata.get_str();
+            }
+        }
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="Value"){
+                disres.value=tdata.get_int();
+            }
+        }
+    }
+}
+void ParseRestartPolicy(const UniValue& data,Config::RestartPolicy &repoly)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Condition"){
+               repoly.condition=tdata.get_str();
+            }
+        }
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="MaxAttempts"){
+                repoly.MmaxAttempts=tdata.get_int();
+            }
+        }
+    }
+}
+void ParsePlacement(const UniValue& data,Config::Placement &placement)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isArray()){
+            if(vKeys[i]=="Constraints"){
+                ParseArray(tdata,placement.constraints);
+            }else if(vKeys[i]=="Platforms"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::Platform platform;
+                    ParsePlatforms(tdata[j],platform);
+                    placement.platforms.push_back(platform);
+                }
+            }
+        }
+    }
+}
+void ParsePlatforms(const UniValue& data,Config::Platform &platform)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Architecture") platform.architecture=tdata.get_str();
+            else if(vKeys[i]=="OS") platform.OS=tdata.get_str();
+        }
+    }
+}
+void ParseNetwork(const UniValue& data,Config::NetWork &network)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Target") 
+                network.target=tdata.get_str();
+        }
+        if(data[vKeys[i]].isArray()){
+            if(vKeys[i]=="Aliases"){
+                ParseArray(tdata,network.aliases);
+            }
+        }
+    }
+}
+void ParseMode(const UniValue& data,Config::SerivceMode &mode)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Replicated"){
+                // Config::Replicated rep;
+                ParseReplicated(tdata,mode.replicated);
+            }
+        }
+    }
+}
+void ParseReplicated(const UniValue& data,Config::Replicated &rep)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="Replicas"){
+                rep.replicas=tdata.get_int();
+            }
+        }
+    }
+}
+void ParseEndpointSpec(const UniValue& data,Config::EndpointSpec &endpointSpec)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isArray()){
+            if(vKeys[i]=="Ports"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::Port port;
+                    ParseEndSpecPort(tdata[j],port);
+                    endpointSpec.ports.push_back(port);
+                }
+            }
+        }
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Mode"){
+                endpointSpec.mode=tdata.get_str();
+            }
+        }
+    }
+}
+void ParseEndSpecPort(const UniValue& data,Config::Port &port)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Protocol"){
+                port.protocol=tdata.get_str();
+            }else if(vKeys[i]=="PublishMode"){
+                port.publishMode=tdata.get_str();
+            }
+        }
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="TargetPort"){
+                port.targetPort=tdata.get_int();
+            }else if(vKeys[i]=="PublishedPort"){
+                port.publishedPort=tdata.get_int();
+            }
+        }
+    }
+}
+void ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Spec"){
+                ParseEndpointSpec(tdata,endpoint.spec);
+            }
+        }
+        if(data[vKeys[i]].isArray()){
+            if(vKeys[i]=="Ports"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::Port port;
+                    ParseEndSpecPort(tdata[j],port);
+                    endpoint.ports.push_back(port);
+                }
+            }else if(vKeys[i]=="VirtualIPs"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::VirtualIP virtualip;
+                    ParseVirtualIPs(tdata[j],virtualip);
+                    endpoint.virtualIPs.push_back(virtualip);
+                }
+            }
+        }
+    }
+}
+void ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="NetworkID"){
+                virtualip.networkID=tdata.get_str();
+            }else if(vKeys[i]=="Addr"){
+                virtualip.addr=tdata.get_str();
+            }
+        }
+    }
+}
+void ParseUpdateStatus(const UniValue& data,Config::SerivceUpdateStatus &updateStatus)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="State"){
+                updateStatus.state =tdata.get_str();
+            }else if(vKeys[i]=="Message"){
+                updateStatus.message =tdata.get_str();
+            }
+        }
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="StartedAt"){
+                updateStatus.startedAt=tdata.get_int64();
+            }else if(vKeys[i]=="CompletedAt"){
+                updateStatus.completedAt =tdata.get_int64();
+            }
+        }
+    }
+}

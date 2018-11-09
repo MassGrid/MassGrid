@@ -669,6 +669,18 @@ UniValue masternodebroadcast(const UniValue& params, bool fHelp)
                 resultObj.push_back(Pair("sigTime", mnb.sigTime));
                 resultObj.push_back(Pair("protocolVersion", mnb.nProtocolVersion));
                 resultObj.push_back(Pair("nLastDsq", mnb.nLastDsq));
+                
+                
+                UniValue nodeArr(UniValue::VARR);
+                for(auto iter = mnb.mapDockerNodeLists.begin(); iter != mnb.mapDockerNodeLists.end(); iter++) {
+                    UniValue nodeObj(UniValue::VOBJ);
+                    nodeObj.push_back(Pair("nodeid",iter->second.ID));
+                    nodeObj.push_back(Pair("index",iter->second.index));
+                    nodeObj.push_back(Pair("createdTime",iter->second.createdAt));
+                    nodeObj.push_back(Pair("updateTime",iter->second.updatedAt));
+                    nodeArr.push_back(nodeObj);
+                } 
+                resultObj.push_back(Pair("nodeList",nodeArr));
 
                 UniValue lastPingObj(UniValue::VOBJ);
                 lastPingObj.push_back(Pair("outpoint", mnb.lastPing.vin.prevout.ToStringShort()));

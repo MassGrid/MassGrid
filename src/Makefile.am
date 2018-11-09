@@ -129,11 +129,17 @@ MASSGRID_CORE_H = \
   masternode-sync.h \
   masternodeman.h \
   masternodeconfig.h \
+  dockerbase.h \
+  dockernode.h \
+  dockerservice.h \
+  dockerswarm.h \
+  dockertask.h \
   memusage.h \
   merkleblock.h \
   messagesigner.h \
   miner.h \
   net.h \
+  http.h \
   net_processing.h \
   netaddress.h \
   netbase.h \
@@ -231,10 +237,16 @@ libmassgrid_server_a_SOURCES = \
   masternode-sync.cpp \
   masternodeconfig.cpp \
   masternodeman.cpp \
+  dockerbase.cpp \
+  dockernode.cpp \
+  dockerservice.cpp \
+  dockerswarm.cpp \
+  dockertask.cpp \
   merkleblock.cpp \
   messagesigner.cpp \
   miner.cpp \
   net.cpp \
+  http.cpp \
   netfulfilledman.cpp \
   net_processing.cpp \
   noui.cpp \

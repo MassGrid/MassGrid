@@ -53,6 +53,8 @@ public:
     COutPoint outpoint;
     CService service;
 
+
+    
     int nState; // should be one of ACTIVE_MASTERNODE_XXXX
     std::string strNotCapableReason;
 

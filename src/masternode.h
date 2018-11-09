@@ -8,7 +8,12 @@
 #include "key.h"
 #include "validation.h"
 #include "spork.h"
+#include "dockernode.h"
+#include "dockerservice.h"
+#include "dockertask.h"
+#include "dockerswarm.h"
 
+using namespace std;
 class CMasternode;
 class CMasternodeBroadcast;
 class CConnman;
@@ -26,7 +31,7 @@ static const int MASTERNODE_POSE_BAN_MAX_SCORE          = 5;
 // The Masternode Ping Class : Contains a different serialize method for sending pings from masternodes throughout the network
 //
 
-// sentinel version before sentinel ping implementation
+// sentinel version before sentinel ping implementation 
 #define DEFAULT_SENTINEL_VERSION 0x010001
 
 class CMasternodePing
@@ -163,6 +168,11 @@ public:
     bool fAllowMixingTx{};
     bool fUnitTest = false;
 
+
+    std::map<std::string,Node> mapDockerNodeLists;
+    std::map<std::string,Service> mapDockerServiceLists;
+    std::map<std::string,Task> mapDockerTaskLists;
+
     // KEEP TRACK OF GOVERNANCE ITEMS EACH MASTERNODE HAS VOTE UPON FOR RECALCULATION
     std::map<uint256, int> mapGovernanceObjectsVotedOn;
 
@@ -196,6 +206,9 @@ public:
         READWRITE(fAllowMixingTx);
         READWRITE(fUnitTest);
         READWRITE(mapGovernanceObjectsVotedOn);
+        READWRITE(mapDockerNodeLists);
+        READWRITE(mapDockerServiceLists);
+        READWRITE(mapDockerTaskLists);
     }
 
     // CALCULATE A RANK AGAINST OF GIVEN BLOCK
@@ -313,7 +326,7 @@ inline bool operator!=(const CMasternode& a, const CMasternode& b)
 class CMasternodeBroadcast : public CMasternode
 {
 public:
-
+    
     bool fRecovery;
 
     CMasternodeBroadcast() : CMasternode(), fRecovery(false) {}
@@ -333,6 +346,9 @@ public:
         READWRITE(sigTime);
         READWRITE(nProtocolVersion);
         READWRITE(lastPing);
+        READWRITE(mapDockerNodeLists);
+        READWRITE(mapDockerServiceLists);
+        READWRITE(mapDockerTaskLists);
     }
 
     uint256 GetHash() const
