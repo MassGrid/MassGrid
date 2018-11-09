@@ -2,34 +2,6 @@
 #define __DOCKERTASK__
 #include "dockerbase.h"
 class Task :public DockerBase{
-    void dockertask(const string& taskData, std::vector<Task> &tasks);
-    Task *DcokerTaskJson(const UniValue& data);
-    void ParseTaskStatus(const UniValue& data,Config::TaskStatus &taskstaus);
-    void ParseTaskContainerStatus(const UniValue& data, Config::ContainerStatus &contstatus);
-    void ParseTaskNetworkTemplate(const UniValue& data,Config::NetworkTemplate &networktemp);
-    void ParseTaskNetwork(const UniValue& data,Config::NetworkTemplate &networktemp);
-    void ParseTaskNetWorkSpec(const UniValue& data, Config::NetWorkSpec &Spec);
-    void ParseTaskLabels(const UniValue& data,vector<std::string> &array);
-    void ParseTaskIPAMOptions(const UniValue& data,Config::IPAMOption &ipamoption);
-    void ParseTaskIPMOPDriver(const UniValue& data,Config::Driver &driver);
-    void ParseTaskIPMOPConfigs(const UniValue& data,Config::ConfigIP &configip);
-    void ParseTaskDriverState(const UniValue& data,Config::DriverState &drivstat);
-    void ParseTaskGenericResources(const UniValue& data, Config::NamedResourceSpec &namerespec);
-    void ParseTaskGenericResourcesName(const UniValue& data, Config::NamedResourceSpec &namerespec);
-    void ParseTaskSpec(const UniValue& data, Config::TaskSpec &taskspec);
-    void ParseTaskSpecContainer(const UniValue& data,  Config::ContainerTemplate &conttemp);
-    void ParseTaseSpecMount(const UniValue& data,Config::Mount &mount);
-    void ParseTaskSpecResources(const UniValue& data,Config::Resource &resources);
-    void ParseTaskSpecLimits(const UniValue& data,Config::Limits &limits);
-    void ParseTaskSpecReserv(const UniValue& data,Config::Reservation &reserv);
-    void ParseTaseSpecGenericRe(const UniValue& data, Config::DiscreteResourceSpec &disreserv);
-    void ParseTaseSpecDisGenericRe(const UniValue& data, Config::DiscreteResourceSpec &disreserv);
-    void ParseTaskSpecRestartPolicy(const UniValue& data,Config::RestartPolicy &repolicy);
-    void ParseTaskSpecPlacement(const UniValue& data,Config::Placement &placement);
-    void ParseTaseSpecPlatforms(const UniValue& data,Config::Platform &platform);
-    void ParseTaskSpecNetWorks(const UniValue& data,Config::NetWork &network);
-    void ParseTaskArray(const UniValue& data,vector<std::string> &array);
-    int getTaskStatus(const std::string& status);
 public:
     std::vector<std::pair<std::string, std::string> > labels;
     
@@ -110,6 +82,43 @@ public:
     void Update();
     std::string ToString();
 };
+class dockertaskfilter:public filterbase{
+public:
 
-
+    bool DesiredState_running=true;
+    bool DesiredState_shutdown=true;
+    bool DesiredState_accepted=true;
+    vector<std::string> nodeid;
+    vector<std::string> serviceid;
+    std::string ToJsonString();
+    std::string ToString();
+};
+void dockertask(const string& taskData, std::vector<Task> &tasks);
+Task *DcokerTaskJson(const UniValue& data);
+void ParseTaskStatus(const UniValue& data,Config::TaskStatus &taskstaus);
+void ParseTaskContainerStatus(const UniValue& data, Config::ContainerStatus &contstatus);
+void ParseTaskNetworkTemplate(const UniValue& data,Config::NetworkTemplate &networktemp);
+void ParseTaskNetwork(const UniValue& data,Config::NetworkTemplate &networktemp);
+void ParseTaskNetWorkSpec(const UniValue& data, Config::NetWorkSpec &Spec);
+void ParseTaskLabels(const UniValue& data,vector<std::string> &array);
+void ParseTaskIPAMOptions(const UniValue& data,Config::IPAMOption &ipamoption);
+void ParseTaskIPMOPDriver(const UniValue& data,Config::Driver &driver);
+void ParseTaskIPMOPConfigs(const UniValue& data,Config::ConfigIP &configip);
+void ParseTaskDriverState(const UniValue& data,Config::DriverState &drivstat);
+void ParseTaskGenericResources(const UniValue& data, Config::NamedResourceSpec &namerespec);
+void ParseTaskGenericResourcesName(const UniValue& data, Config::NamedResourceSpec &namerespec);
+void ParseTaskSpec(const UniValue& data, Config::TaskSpec &taskspec);
+void ParseTaskSpecContainer(const UniValue& data,  Config::ContainerTemplate &conttemp);
+void ParseTaseSpecMount(const UniValue& data,Config::Mount &mount);
+void ParseTaskSpecResources(const UniValue& data,Config::Resource &resources);
+void ParseTaskSpecLimits(const UniValue& data,Config::Limits &limits);
+void ParseTaskSpecReserv(const UniValue& data,Config::Reservation &reserv);
+void ParseTaseSpecGenericRe(const UniValue& data, Config::DiscreteResourceSpec &disreserv);
+void ParseTaseSpecDisGenericRe(const UniValue& data, Config::DiscreteResourceSpec &disreserv);
+void ParseTaskSpecRestartPolicy(const UniValue& data,Config::RestartPolicy &repolicy);
+void ParseTaskSpecPlacement(const UniValue& data,Config::Placement &placement);
+void ParseTaseSpecPlatforms(const UniValue& data,Config::Platform &platform);
+void ParseTaskSpecNetWorks(const UniValue& data,Config::NetWork &network);
+void ParseTaskArray(const UniValue& data,vector<std::string> &array);
+int getTaskStatus(const std::string& status);
 #endif //__DOCKERSERVICE__

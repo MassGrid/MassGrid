@@ -252,6 +252,16 @@ public:
 
     std::string ToString();
 };
+
+class filterbase{
+
+public:
+    vector<std::string> id;
+    vector<std::string> label;
+    vector<std::string> name;
+    virtual std::string ToJsonString()= 0;
+    virtual std::string ToString()= 0;
+};
 uint64_t getDockerTime(const std::string& timeStr);
 uint64_t TimeestampStr(const char *nTimeStr);
 std::string unixTime2Str(uint64_t unixtime);

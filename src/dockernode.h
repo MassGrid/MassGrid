@@ -74,6 +74,16 @@ public:
     std::string ToString();
 
 };
+
+class dockernodefilter:public filterbase{
+public:
+    bool Membership_accepted=true;
+    bool Membership_pending=true;
+    bool Role_manager=true;
+    bool Role_worker=true;
+    std::string ToJsonString();
+    std::string ToString();
+};
 void dockernode(const string& nodeData,std::vector<Node> &nodes);
 Node *DockerNodeJson(const UniValue& data);
 void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec);

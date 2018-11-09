@@ -1,5 +1,39 @@
 #include "dockerservice.h"
+#include "univalue.h"
+std::string dockerservicefilter::ToJsonString(){
+    UniValue data(UniValue::VOBJ);
+    if(!id.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=id.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("id",arr));
+    }   
+    if(!label.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=label.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("label",arr));
+    }
+    if(!name.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=name.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("name",arr));
+    }
 
+    {
+        UniValue arr(UniValue::VARR);
+        if(!Mode_replicated){
+            arr.push_back("replicated"); 
+        }
+        if(!Mode_global){
+            arr.push_back("global"); 
+        }
+        data.push_back(Pair("mode",arr));
+    }
+
+    return data.write();
+}
 void dockerservice(const string& serviceData,std::vector<Service> &services)
 {
     std::cout<<"docker json service"<<std::endl;

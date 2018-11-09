@@ -1,5 +1,53 @@
 #include "dockertask.h"
+#include "univalue.h"
+std::string dockertaskfilter::ToJsonString(){
+    UniValue data(UniValue::VOBJ);
+    if(!id.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=id.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("id",arr));
+    }   
+    if(!label.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=label.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("label",arr));
+    }
+    if(!name.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=name.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("name",arr));
+    }
+    if(!nodeid.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=nodeid.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("node",arr));
+    }
+    if(!serviceid.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=serviceid.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("service",arr));
+    }
+    {
+        UniValue arr(UniValue::VARR);
+        if(!DesiredState_accepted){
+            arr.push_back("accepted"); 
+        }
+        if(!DesiredState_running){
+            arr.push_back("running"); 
+        }
+        if(!DesiredState_shutdown){
+            arr.push_back("shutdown"); 
+        }
+        data.push_back(Pair("desired-state",arr));
+    }
 
+    return data.write();
+}
 void dockertask(const string& taskData, std::vector<Task> &tasks)
 {
     std::cout<<"docker json task"<<std::endl;

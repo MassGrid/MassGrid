@@ -60,6 +60,14 @@ public:
     std::string ToString();
 };
 
+class dockerservicefilter:public filterbase{
+public:
+    bool Mode_replicated=true;
+    bool Mode_global=true;
+
+    std::string ToJsonString();
+    std::string ToString();
+};
 void dockerservice(const string& serviceData,std::vector<Service> &services);
 Service *DcokerServiceJson(const UniValue& data);
 void ParseSpec(const UniValue& data,Config::ServiceSpec &spc);

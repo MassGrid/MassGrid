@@ -1,5 +1,49 @@
 #include "dockernode.h"
+#include "univalue.h"
+std::string dockernodefilter::ToJsonString(){
+    UniValue data(UniValue::VOBJ);
+    if(!id.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=id.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("id",arr));
+    }   
+    if(!label.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=label.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("label",arr));
+    }
+    if(!name.empty()){
+        UniValue arr(UniValue::VARR);
+        for(vector<std::string>::iterator iter;iter!=name.end();++iter)
+            arr.push_back(*iter);
+        data.push_back(Pair("name",arr));
+    }
 
+    {
+        UniValue arr(UniValue::VARR);
+        if(!Membership_accepted){
+            arr.push_back("accepted"); 
+        }
+        if(!Membership_pending){
+            arr.push_back("pending"); 
+        }
+        data.push_back(Pair("membership",arr));
+    }
+
+    {
+        UniValue arr(UniValue::VARR);
+        if(!Role_manager){
+            arr.push_back("manager"); 
+        }
+        if(!Role_worker){
+            arr.push_back("worker"); 
+        }
+        data.push_back(Pair("role",arr));
+    }
+    return data.write();
+}
 void dockernode(const string& nodeData,std::vector<Node> &nodes)
 {
     std::cout<<"docker json node"<<std::endl;
