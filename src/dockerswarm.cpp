@@ -1,23 +1,24 @@
 #include "dockerswarm.h"
-void dockerswarm(const string& swarmData,std::vector<Swarm> &swarms)
+void DockerSwarm(const string& swarmData,std::vector<Swarm> &swarms)
 {
-    std::cout<<"docker json swarm"<<std::endl;
+    LogPrintf("docker json node\n");
     try{
-
-        UniValue data(UniValue::VOBJ);
+        UniValue data(UniValue::VARR);
         if(!data.read(swarmData)){
-            std::cout<<"json error\n";
+            LogPrintf("docker json error\n");
             return;
         }
-        Swarm *swarm=DockerSwarmJson(data);
-        swarms.push_back(*swarm);
+        Swarm swarm;
+        bool fSuccess = Swarm::DockerSwarmJson(data,swarm);
+        if(fSuccess)
+            swarms.push_back(swarm);
     }catch(std::exception& e){
-        std::cout<<string(e.what())<<std::endl;
+        LogPrintf("JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        std::cout<<"unkonw exception"<<std::endl;
+        LogPrintf("unkonw exception\n");
     }
 }
-Swarm *DockerSwarmJson(const UniValue& data)
+bool Swarm::DockerSwarmJson(const UniValue& data, Swarm& swarm)
 {
     std::string id;
     int idx;
@@ -43,5 +44,6 @@ Swarm *DockerSwarmJson(const UniValue& data)
             }
         }
     }
-    return new Swarm(id,idx,createdTime,updateTime,mjoinWorkerTokens,mjoinManagerTokens,version);
+    swarm=Swarm(id,idx,createdTime,updateTime,mjoinWorkerTokens,mjoinManagerTokens,version);
+    return true;
 }

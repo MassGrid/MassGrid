@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "key.h"
 #include "sync.h"
+#include "util.h"
 #include <univalue.h>
 using namespace std;
 

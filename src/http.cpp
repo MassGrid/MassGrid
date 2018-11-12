@@ -1,48 +1,45 @@
 #include "http.h"
 #include <cstdio>
-
-int HttpRequest::HttpGet(const string& strUrl,const string& page,const string &strData)  
+#include "util.h"
+int HttpRequest::HttpGet(const string &ip,const int &port,const string &page,const string &strData)  
 {  
-    return HttpRequestExec("GET", strUrl, page, strData);  
+    return HttpRequestExec("GET", ip, port, page, strData);  
 }  
   
-int HttpRequest::HttpPost(const string &strUrl, const string &page,const string &strData)  
+int HttpRequest::HttpPost(const string &ip,const int &port,const string &page,const string &strData)  
 {  
-    return HttpRequestExec("POST", strUrl, page, strData);  
+    return HttpRequestExec("POST", ip, port, page, strData);  
 }  
 int HttpRequest::HttpGet()  
 {  
-    return HttpRequestExec("GET", host_ip, url, str_data);  
+    return HttpRequestExec("GET", ip, port, url, strData);  
 }  
   
 int HttpRequest::HttpPost()  
 {  
-    return HttpRequestExec("POST", host_ip, url, str_data);
+    return HttpRequestExec("POST", ip, port, url, strData);
 } 
   
 //Execute http request  
-int HttpRequest::HttpRequestExec(const string &strMethod, const string &strUrl, const string &page, const string &strData)
+int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, const int &port,const string &page, const string &strData)
 {
     //Determine whether the URL is valid 
-    if(strUrl.empty()||strUrl.size()==0){  
-        std::cerr <<"URL is NULL"<<std::endl;   
+    if(ip.empty()||ip.size()==0){  
+        LogPrintf("URL is NULL\n");   
         return -5;  
     }
       
     //Limit URL length  
-    if(URLSIZE < strUrl.size()) {  
-         std::cerr <<"Url cannot exceed "<<URLSIZE<<std::endl;   
+    if(URLSIZE < page.size()) {  
+         LogPrintf("Url cannot exceed %d\n",URLSIZE);   
         return -6;  
     }
-    string host,port;
-    if(chekoutPortFromUrl(strUrl,host,port)!=0){
-        return -7;
-    }
-    string hostUrl=host+":"+port;
+    string host=ip,ports=std::to_string(port);
+    string hostUrl=host+":"+ports;
     boost::asio::streambuf strHttpHead;
     //Create an HTTP protocol header  
     if(HttpHeadCreate(strMethod, hostUrl, page, strData,strHttpHead)!=0){
-        std::cerr<<"Header is ULL"<<std::endl;
+        LogPrintf("Header is ULL");
         
         return -8;
     }
@@ -55,7 +52,7 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &strUrl, 
 
         // Listen to all ip
         tcp::resolver resolver(io_service);
-        tcp::resolver::query query(host, port);
+        tcp::resolver::query query(host, ports);
         tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
         
         // Try to connect to one of the ips until it succeeds 
@@ -157,38 +154,6 @@ int HttpRequest::HttpHeadCreate(const string &strMethod, const string &strHostPo
     request_stream << "\r\n\r\n";  
       
     return 0;   
-}  
-  
-//Get the host address from the HTTP request URL  
-string HttpRequest::GetHostAddrFromUrl(const string &strUrl)  
-{
-    string strHostAddr=strUrl;
-    string::size_type index = strHostAddr.find("http://");//Remove http://  
-    if(index != string::npos) {  
-        strHostAddr = strHostAddr.substr(7);
-    } else {
-        index = strHostAddr.find("https://");//Remove https:// 
-        if(index != string::npos) {  
-            strHostAddr = strHostAddr.substr(8);  
-        }  
-    }
-    return strHostAddr;  
-}
-  
-//Get the port number from the HTTP request URL  
-int HttpRequest::chekoutPortFromUrl(const string &strUrl,string &host,string &port)
-{  
-    string strHostPort = GetHostAddrFromUrl(strUrl);
-    string::size_type index=strHostPort.rfind(":");
-    if(index == string::npos){
-        return -1;
-    }
-    host=strHostPort.substr(0,index);
-    port=strUrl.substr(index+1);
-    if(host.empty() || port.empty()) {  
-        return -1;  
-    }
-    return 0;  
 }
 std::string getJson(std::string str)
 {

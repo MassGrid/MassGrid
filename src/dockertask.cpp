@@ -48,28 +48,30 @@ std::string dockertaskfilter::ToJsonString(){
 
     return data.write();
 }
-void dockertask(const string& taskData, std::vector<Task> &tasks)
+void DockerTask(const string& taskData, std::vector<Task> &tasks)
 {
-    std::cout<<"docker json task"<<std::endl;
+    LogPrintf("docker json node\n");
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(taskData)){
-            std::cout<<"json error\n";
+            LogPrintf("docker json error\n");
             return;
         }
+
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
-            Task *task=DcokerTaskJson(data);
-            tasks.push_back(*task);
-            // break;
+            Task task;
+            bool fSuccess = Task::DcokerTaskJson(data,task);
+            if(fSuccess)
+                tasks.push_back(task);
         }
-     }catch(std::exception& e){
-        std::cout<<string(e.what())<<std::endl;
+    }catch(std::exception& e){
+        LogPrintf("JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        std::cout<<"unkonw exception"<<std::endl;
+        LogPrintf("unkonw exception\n");
     }
 }
-Task *DcokerTaskJson(const UniValue& data)
+bool Task::DcokerTaskJson(const UniValue& data,Task& task)
 {
     std::string id;
     int idx;
@@ -133,9 +135,10 @@ Task *DcokerTaskJson(const UniValue& data)
             }
         }
     }
-    return new Task(id,idx,createdTime,updateTime,lab,spec,serviceid,slot,nodeid,taskstatus,desiredstate,networksattachments,genericresources,version);
+    task=Task(id,idx,createdTime,updateTime,lab,spec,serviceid,slot,nodeid,taskstatus,desiredstate,networksattachments,genericresources,version);
+    return true;
 }
-void ParseTaskStatus(const UniValue& data,Config::TaskStatus &taskstaus)
+void Task::ParseTaskStatus(const UniValue& data,Config::TaskStatus &taskstaus)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -147,7 +150,7 @@ void ParseTaskStatus(const UniValue& data,Config::TaskStatus &taskstaus)
         }
     }
 }
-void ParseTaskContainerStatus(const UniValue& data, Config::ContainerStatus &contstatus)
+void Task::ParseTaskContainerStatus(const UniValue& data, Config::ContainerStatus &contstatus)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -166,7 +169,7 @@ void ParseTaskContainerStatus(const UniValue& data, Config::ContainerStatus &con
         }
     }
 }
-void ParseTaskNetworkTemplate(const UniValue& data,Config::NetworkTemplate &networktemp)
+void Task::ParseTaskNetworkTemplate(const UniValue& data,Config::NetworkTemplate &networktemp)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -183,7 +186,7 @@ void ParseTaskNetworkTemplate(const UniValue& data,Config::NetworkTemplate &netw
         }
     }
 }
-void ParseTaskNetwork(const UniValue& data,Config::NetworkTemplate &networktemp)
+void Task::ParseTaskNetwork(const UniValue& data,Config::NetworkTemplate &networktemp)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -206,7 +209,7 @@ void ParseTaskNetwork(const UniValue& data,Config::NetworkTemplate &networktemp)
         }
     }
 }
-void ParseTaskNetWorkSpec(const UniValue& data, Config::NetWorkSpec &Spec)
+void Task::ParseTaskNetWorkSpec(const UniValue& data, Config::NetWorkSpec &Spec)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -234,14 +237,14 @@ void ParseTaskNetWorkSpec(const UniValue& data, Config::NetWorkSpec &Spec)
         }
     }
 }
-void ParseTaskLabels(const UniValue& data,vector<std::string> &array)
+void Task::ParseTaskLabels(const UniValue& data,vector<std::string> &array)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         array.push_back(data[vKeys[i]].get_str());
     }
 }
-void ParseTaskIPAMOptions(const UniValue& data,Config::IPAMOption &ipamoption)
+void Task::ParseTaskIPAMOptions(const UniValue& data,Config::IPAMOption &ipamoption)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -262,7 +265,7 @@ void ParseTaskIPAMOptions(const UniValue& data,Config::IPAMOption &ipamoption)
         }
     }
 }
-void ParseTaskIPMOPDriver(const UniValue& data,Config::Driver &driver)
+void Task::ParseTaskIPMOPDriver(const UniValue& data,Config::Driver &driver)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -274,7 +277,7 @@ void ParseTaskIPMOPDriver(const UniValue& data,Config::Driver &driver)
         }
     }
 }
-void ParseTaskIPMOPConfigs(const UniValue& data,Config::ConfigIP &configip)
+void Task::ParseTaskIPMOPConfigs(const UniValue& data,Config::ConfigIP &configip)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -288,7 +291,7 @@ void ParseTaskIPMOPConfigs(const UniValue& data,Config::ConfigIP &configip)
         }
     }
 }
-void ParseTaskDriverState(const UniValue& data,Config::DriverState &drivstat)
+void Task::ParseTaskDriverState(const UniValue& data,Config::DriverState &drivstat)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -300,7 +303,7 @@ void ParseTaskDriverState(const UniValue& data,Config::DriverState &drivstat)
         }
     }
 }
-void ParseTaskGenericResources(const UniValue& data, Config::NamedResourceSpec &namerespec)
+void Task::ParseTaskGenericResources(const UniValue& data, Config::NamedResourceSpec &namerespec)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -312,7 +315,7 @@ void ParseTaskGenericResources(const UniValue& data, Config::NamedResourceSpec &
         }
     }
 }
-void ParseTaskGenericResourcesName(const UniValue& data, Config::NamedResourceSpec &namerespec)
+void Task::ParseTaskGenericResourcesName(const UniValue& data, Config::NamedResourceSpec &namerespec)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -326,7 +329,7 @@ void ParseTaskGenericResourcesName(const UniValue& data, Config::NamedResourceSp
         }
     }
 }
-void ParseTaskSpec(const UniValue& data, Config::TaskSpec &taskspec)
+void Task::ParseTaskSpec(const UniValue& data, Config::TaskSpec &taskspec)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -358,7 +361,7 @@ void ParseTaskSpec(const UniValue& data, Config::TaskSpec &taskspec)
         }
     } 
 }
-void ParseTaskSpecContainer(const UniValue& data,  Config::ContainerTemplate &conttemp)
+void Task::ParseTaskSpecContainer(const UniValue& data,  Config::ContainerTemplate &conttemp)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -388,7 +391,7 @@ void ParseTaskSpecContainer(const UniValue& data,  Config::ContainerTemplate &co
         }
     }
 }
-void ParseTaseSpecMount(const UniValue& data,Config::Mount &mount)
+void Task::ParseTaseSpecMount(const UniValue& data,Config::Mount &mount)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -404,7 +407,7 @@ void ParseTaseSpecMount(const UniValue& data,Config::Mount &mount)
         }
     }   
 }
-void ParseTaskSpecResources(const UniValue& data,Config::Resource &resources)
+void Task::ParseTaskSpecResources(const UniValue& data,Config::Resource &resources)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -418,7 +421,7 @@ void ParseTaskSpecResources(const UniValue& data,Config::Resource &resources)
         }
     }    
 }
-void ParseTaskSpecLimits(const UniValue& data,Config::Limits &limits)
+void Task::ParseTaskSpecLimits(const UniValue& data,Config::Limits &limits)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -432,7 +435,7 @@ void ParseTaskSpecLimits(const UniValue& data,Config::Limits &limits)
         }
     }
 }
-void ParseTaskSpecReserv(const UniValue& data,Config::Reservation &reserv)
+void Task::ParseTaskSpecReserv(const UniValue& data,Config::Reservation &reserv)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -455,7 +458,7 @@ void ParseTaskSpecReserv(const UniValue& data,Config::Reservation &reserv)
         }
     }
 }
-void ParseTaseSpecGenericRe(const UniValue& data, Config::DiscreteResourceSpec &disreserv)
+void Task::ParseTaseSpecGenericRe(const UniValue& data, Config::DiscreteResourceSpec &disreserv)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -467,7 +470,7 @@ void ParseTaseSpecGenericRe(const UniValue& data, Config::DiscreteResourceSpec &
         }
     }
 }
-void ParseTaseSpecDisGenericRe(const UniValue& data, Config::DiscreteResourceSpec &disreserv)
+void Task::ParseTaseSpecDisGenericRe(const UniValue& data, Config::DiscreteResourceSpec &disreserv)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -484,7 +487,7 @@ void ParseTaseSpecDisGenericRe(const UniValue& data, Config::DiscreteResourceSpe
         }
     }
 }
-void ParseTaskSpecRestartPolicy(const UniValue& data,Config::RestartPolicy &repolicy)
+void Task::ParseTaskSpecRestartPolicy(const UniValue& data,Config::RestartPolicy &repolicy)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -501,7 +504,7 @@ void ParseTaskSpecRestartPolicy(const UniValue& data,Config::RestartPolicy &repo
         }
     }
 }
-void ParseTaskSpecPlacement(const UniValue& data,Config::Placement &placement)
+void Task::ParseTaskSpecPlacement(const UniValue& data,Config::Placement &placement)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -519,7 +522,7 @@ void ParseTaskSpecPlacement(const UniValue& data,Config::Placement &placement)
         }
     }
 }
-void ParseTaseSpecPlatforms(const UniValue& data,Config::Platform &platform)
+void Task::ParseTaseSpecPlatforms(const UniValue& data,Config::Platform &platform)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -533,7 +536,7 @@ void ParseTaseSpecPlatforms(const UniValue& data,Config::Platform &platform)
         }
     }
 }
-void ParseTaskSpecNetWorks(const UniValue& data,Config::NetWork &network)
+void Task::ParseTaskSpecNetWorks(const UniValue& data,Config::NetWork &network)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -549,14 +552,14 @@ void ParseTaskSpecNetWorks(const UniValue& data,Config::NetWork &network)
         }
     }
 }
-void ParseTaskArray(const UniValue& data,vector<std::string> &array)
+void Task::ParseTaskArray(const UniValue& data,vector<std::string> &array)
 {
     for(size_t i=0;i<data.size();i++){
         array.push_back(data[i].get_str());
     }
     return;
 } 
-int getTaskStatus(const std::string& status)
+int Task::getTaskStatus(const std::string& status)
 {
     size_t j=7;
     for(size_t i=0;i<j;i++){

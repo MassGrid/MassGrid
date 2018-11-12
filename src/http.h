@@ -15,24 +15,22 @@ class HttpRequest
 {  
     public:
         HttpRequest(){};
-        HttpRequest(std::string _host_ip,std::string _url,std::string _strdata):
-        host_ip(_host_ip),url(_url),str_data(_strdata){}
+        HttpRequest(std::string _ip,int _port,std::string _url,std::string _strdata):
+        ip(_ip),port(_port),url(_url),strData(_strdata){}
         ~HttpRequest(){};
         int HttpGet();          
-        int HttpGet(const string& strUrl,const string& page,const string &strData);
+        int HttpGet(const string &ip,const int &port,const string &page,const string &strData);
         int HttpPost();
-        int HttpPost(const string &strUrl, const string &page,const string &strData);
+        int HttpPost(const string &ip,const int &port,const string &page,const string &strData);
         std::string getReponseData(){return strResponse;}
     private:  
-        int HttpRequestExec(const string &strMethod, const string &strUrl, const string &page, const string &strData);
+        int HttpRequestExec(const string &strMethod, const string &ip, const int &port,const string &page, const string &strData);
         int HttpHeadCreate(const string &strMethod, const string &strHostPort, const string &page, const string &strData, boost::asio::streambuf &request); 
-        string HttpDataTransmit(char *strHttpHead, const int iSockFd);
-        string GetHostAddrFromUrl(const string &strUrl);
-        int chekoutPortFromUrl(const string &strUrl,string &host,string &port);
     public:
-        std::string host_ip;
+        std::string ip;
+        int port;
         std::string url;
-        std::string str_data;
+        std::string strData;
     private:
         std::string strResponse;
 

@@ -3,6 +3,8 @@
 #include "dockerbase.h"
 class Swarm :public DockerBase{
 public:
+    static bool DockerSwarmJson(const UniValue& data, Swarm& swarm);
+public:
     // spec
     std::string joinWorkerTokens;
     std::string joinManagerTokens;
@@ -26,7 +28,6 @@ public:
         READWRITE(updatedAt);
         READWRITE(nProtocolVersion);
     }
-
     Swarm(const Swarm& from){
         ID=from.ID;
         index=from.index;
@@ -52,6 +53,5 @@ public:
     std::string ToString();
 };
 
-void dockerswarm(const string& swarmData,std::vector<Swarm> &swarms);
-Swarm *DockerSwarmJson(const UniValue& data);
+void DockerSwarm(const string& swarmData,std::vector<Swarm> &swarms);
 #endif //__DOCKERSERVICE__

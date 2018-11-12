@@ -3,6 +3,16 @@
 #include "dockerbase.h"
 class Node:public DockerBase{
 public:
+    static bool DockerNodeJson(const UniValue& data, Node& node);
+    static void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec);
+    static void ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp);
+    static void ParseNodePlatform(const UniValue& data,Config::Platform &platform);
+    static void ParseNodeResource(const UniValue& data, Config::Limits &limits);
+    static void ParseNodeEngine(const UniValue& data, Config::Engine &engine);
+    static void ParseNodeSPlugins(const UniValue& data, Config::SPlugins &splugin);
+    static void ParseNodeStatus(const UniValue& data, Config::NodeStatus &status);
+    static void ParseNodeManageStatus(const UniValue& data, Config::NodeManagerStatus &managerStatus);
+public:
     typedef std::string NodeState;
     typedef std::string RoleState;
     const RoleState RoleStateWorker = "worker";
@@ -24,7 +34,7 @@ public:
 // function]
 public:
 
-    Node(){};
+    Node() =default;
     Node(std::string id,int idx ,uint64_t createdTime ,uint64_t updateTime,
     Config::NodeSpec spec,
     Config::NodeDescription description,
@@ -84,14 +94,5 @@ public:
     std::string ToJsonString();
     std::string ToString();
 };
-void dockernode(const string& nodeData,std::vector<Node> &nodes);
-Node *DockerNodeJson(const UniValue& data);
-void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec);
-void ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp);
-void ParseNodePlatform(const UniValue& data,Config::Platform &platform);
-void ParseNodeResource(const UniValue& data, Config::Limits &limits);
-void ParseNodeEngine(const UniValue& data, Config::Engine &engine);
-void ParseNodeSPlugins(const UniValue& data, Config::SPlugins &splugin);
-void ParseNodeStatus(const UniValue& data, Config::NodeStatus &status);
-void ParseNodeManageStatus(const UniValue& data, Config::NodeManagerStatus &managerStatus);
+void DockerNode(const string& nodeData,std::vector<Node> &nodes);
 #endif //__DOCKERSERVICE__

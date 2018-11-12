@@ -44,29 +44,30 @@ std::string dockernodefilter::ToJsonString(){
     }
     return data.write();
 }
-void dockernode(const string& nodeData,std::vector<Node> &nodes)
+void DockerNode(const string& nodeData,std::vector<Node> &nodes)
 {
-    std::cout<<"docker json node"<<std::endl;
+    LogPrintf("docker json node\n");
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(nodeData)){
-            std::cout<<"json error\n";
+            LogPrintf("docker json error\n");
             return;
         }
 
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
-            Node *node=DockerNodeJson(data);
-            nodes.push_back(*node);
-            // break;
+            Node node;
+            bool fSuccess = Node::DockerNodeJson(data,node);
+            if(fSuccess)
+                nodes.push_back(node);
         }
     }catch(std::exception& e){
-        std::cout<<string(e.what())<<std::endl;
+        LogPrintf("JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        std::cout<<"unkonw exception"<<std::endl;
+        LogPrintf("unkonw exception\n");
     }
 }
-Node *DockerNodeJson(const UniValue& data)
+bool Node::DockerNodeJson(const UniValue& data, Node& node)
 {
     std::string id;
     int idx;
@@ -100,9 +101,10 @@ Node *DockerNodeJson(const UniValue& data)
             }
         }
     }
-    return new Node(id,idx,createdTime,updateTime,spec,description,status,managerStatus,version);
+    node=Node(id,idx,createdTime,updateTime,spec,description,status,managerStatus,version);
+    return true;
 }
-void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec)
+void Node::ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -121,7 +123,7 @@ void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec)
         }
     }
 }
-void ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp)
+void Node::ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -142,7 +144,7 @@ void ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp)
         }
     }
 }
-void ParseNodePlatform(const UniValue& data,Config::Platform &platform)
+void Node::ParseNodePlatform(const UniValue& data,Config::Platform &platform)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -153,7 +155,7 @@ void ParseNodePlatform(const UniValue& data,Config::Platform &platform)
         }
     }
 }
-void ParseNodeResource(const UniValue& data, Config::Limits &limits)
+void Node::ParseNodeResource(const UniValue& data, Config::Limits &limits)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -167,7 +169,7 @@ void ParseNodeResource(const UniValue& data, Config::Limits &limits)
         }
     }
 }
-void ParseNodeEngine(const UniValue& data, Config::Engine &engine)
+void Node::ParseNodeEngine(const UniValue& data, Config::Engine &engine)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -188,7 +190,7 @@ void ParseNodeEngine(const UniValue& data, Config::Engine &engine)
         }
     }
 }
-void ParseNodeSPlugins(const UniValue& data, Config::SPlugins &splugin)
+void Node::ParseNodeSPlugins(const UniValue& data, Config::SPlugins &splugin)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -202,7 +204,7 @@ void ParseNodeSPlugins(const UniValue& data, Config::SPlugins &splugin)
         }
     }
 }
-void ParseNodeStatus(const UniValue& data, Config::NodeStatus &status)
+void Node::ParseNodeStatus(const UniValue& data, Config::NodeStatus &status)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -216,7 +218,7 @@ void ParseNodeStatus(const UniValue& data, Config::NodeStatus &status)
         }
     }
 }
-void ParseNodeManageStatus(const UniValue& data, Config::NodeManagerStatus &managerStatus)
+void Node::ParseNodeManageStatus(const UniValue& data, Config::NodeManagerStatus &managerStatus)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){

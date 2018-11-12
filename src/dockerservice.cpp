@@ -34,28 +34,31 @@ std::string dockerservicefilter::ToJsonString(){
 
     return data.write();
 }
-void dockerservice(const string& serviceData,std::vector<Service> &services)
+void DockerService(const string& serviceData,std::vector<Service> &services)
 {
-    std::cout<<"docker json service"<<std::endl;
-     try{
+    LogPrintf("docker json node\n");
+    try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(serviceData)){
-            std::cout<<"json error\n";
+            LogPrintf("docker json error\n");
             return;
         }
+
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
-            Service *service=DcokerServiceJson(data);
-            services.push_back(*service);
+            Service service;
+            bool fSuccess = Service::DcokerServiceJson(data,service);
+            if(fSuccess)
+                services.push_back(service);
             // break;
         }
     }catch(std::exception& e){
-        std::cout<<string(e.what())<<std::endl;
+        LogPrintf("JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        std::cout<<"unkonw exception"<<std::endl;
+        LogPrintf("unkonw exception\n");
     }
 }
-Service *DcokerServiceJson(const UniValue& data)
+bool Service::DcokerServiceJson(const UniValue& data, Service& service)
 {
     std::string id;
     int idx;
@@ -89,10 +92,11 @@ Service *DcokerServiceJson(const UniValue& data)
             }
         }
     }
-    return new Service(id,idx,createdTime,updateTime,spc,previousSpec,endpoint,updateStatus,version);
+    service=Service(id,idx,createdTime,updateTime,spc,previousSpec,endpoint,updateStatus,version);
+    return true;
 }
 
-void ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
+void Service::ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -114,14 +118,14 @@ void ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
         }
     }
 }
-void ParseLabels(const UniValue& data,vector<std::string> &labels)
+void Service::ParseLabels(const UniValue& data,vector<std::string> &labels)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         labels.push_back(data[vKeys[i]].get_str());
     }
 }
-void ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate)
+void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate)
 {  
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -155,7 +159,7 @@ void ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate)
         }
     }
 }
-void ParseContainerTemplate(const UniValue& data,Config::ContainerTemplate &contTemp)
+void Service::ParseContainerTemplate(const UniValue& data,Config::ContainerTemplate &contTemp)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -184,7 +188,7 @@ void ParseContainerTemplate(const UniValue& data,Config::ContainerTemplate &cont
         }
     }
 }
-void ParseMount(const UniValue& data,Config::Mount &mount)
+void Service::ParseMount(const UniValue& data,Config::Mount &mount)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -196,14 +200,14 @@ void ParseMount(const UniValue& data,Config::Mount &mount)
         }
     }
 }
-void ParseArray(const UniValue& data,vector<std::string> &array)
+void Service::ParseArray(const UniValue& data,vector<std::string> &array)
 {
     for(size_t i=0;i<data.size();i++){
         array.push_back(data[i].get_str());
     }
     return;
 } 
-void ParseResource(const UniValue& data,Config::Resource &resources)
+void Service::ParseResource(const UniValue& data,Config::Resource &resources)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -217,7 +221,7 @@ void ParseResource(const UniValue& data,Config::Resource &resources)
         }
     }
 }
-void ParseLimits(const UniValue& data,Config::Limits &limits)
+void Service::ParseLimits(const UniValue& data,Config::Limits &limits)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -231,7 +235,7 @@ void ParseLimits(const UniValue& data,Config::Limits &limits)
         }
     }
 }
-void ParseReservation(const UniValue& data,Config::Reservation &reservations)
+void Service::ParseReservation(const UniValue& data,Config::Reservation &reservations)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -254,7 +258,7 @@ void ParseReservation(const UniValue& data,Config::Reservation &reservations)
         }
     }
 }
-void ParseDirReservation(const UniValue& data,Config::DiscreteResourceSpec &disres)
+void Service::ParseDirReservation(const UniValue& data,Config::DiscreteResourceSpec &disres)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -271,7 +275,7 @@ void ParseDirReservation(const UniValue& data,Config::DiscreteResourceSpec &disr
         }
     }
 }
-void ParseRestartPolicy(const UniValue& data,Config::RestartPolicy &repoly)
+void Service::ParseRestartPolicy(const UniValue& data,Config::RestartPolicy &repoly)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -288,7 +292,7 @@ void ParseRestartPolicy(const UniValue& data,Config::RestartPolicy &repoly)
         }
     }
 }
-void ParsePlacement(const UniValue& data,Config::Placement &placement)
+void Service::ParsePlacement(const UniValue& data,Config::Placement &placement)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -306,7 +310,7 @@ void ParsePlacement(const UniValue& data,Config::Placement &placement)
         }
     }
 }
-void ParsePlatforms(const UniValue& data,Config::Platform &platform)
+void Service::ParsePlatforms(const UniValue& data,Config::Platform &platform)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -317,7 +321,7 @@ void ParsePlatforms(const UniValue& data,Config::Platform &platform)
         }
     }
 }
-void ParseNetwork(const UniValue& data,Config::NetWork &network)
+void Service::ParseNetwork(const UniValue& data,Config::NetWork &network)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -333,7 +337,7 @@ void ParseNetwork(const UniValue& data,Config::NetWork &network)
         }
     }
 }
-void ParseMode(const UniValue& data,Config::SerivceMode &mode)
+void Service::ParseMode(const UniValue& data,Config::SerivceMode &mode)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -346,7 +350,7 @@ void ParseMode(const UniValue& data,Config::SerivceMode &mode)
         }
     }
 }
-void ParseReplicated(const UniValue& data,Config::Replicated &rep)
+void Service::ParseReplicated(const UniValue& data,Config::Replicated &rep)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -358,7 +362,7 @@ void ParseReplicated(const UniValue& data,Config::Replicated &rep)
         }
     }
 }
-void ParseEndpointSpec(const UniValue& data,Config::EndpointSpec &endpointSpec)
+void Service::ParseEndpointSpec(const UniValue& data,Config::EndpointSpec &endpointSpec)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -379,7 +383,7 @@ void ParseEndpointSpec(const UniValue& data,Config::EndpointSpec &endpointSpec)
         }
     }
 }
-void ParseEndSpecPort(const UniValue& data,Config::Port &port)
+void Service::ParseEndSpecPort(const UniValue& data,Config::Port &port)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -400,7 +404,7 @@ void ParseEndSpecPort(const UniValue& data,Config::Port &port)
         }
     }
 }
-void ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint)
+void Service::ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -427,7 +431,7 @@ void ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint)
         }
     }
 }
-void ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip)
+void Service::ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -441,7 +445,7 @@ void ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip)
         }
     }
 }
-void ParseUpdateStatus(const UniValue& data,Config::SerivceUpdateStatus &updateStatus)
+void Service::ParseUpdateStatus(const UniValue& data,Config::SerivceUpdateStatus &updateStatus)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
