@@ -4,6 +4,11 @@
 int HttpRequest::HttpGet(const string &ip,const int &port,const string &page,const string &strData)  
 {  
     return HttpRequestExec("GET", ip, port, page, strData);  
+}
+
+int HttpRequest::HttpDelete(const string &ip,const int &port,const string &page,const string &strData)  
+{  
+    return HttpRequestExec("DELETE", ip, port, page, strData);  
 }  
   
 int HttpRequest::HttpPost(const string &ip,const int &port,const string &page,const string &strData)  
@@ -13,8 +18,13 @@ int HttpRequest::HttpPost(const string &ip,const int &port,const string &page,co
 int HttpRequest::HttpGet()  
 {  
     return HttpRequestExec("GET", ip, port, url, strData);  
+}
+
+int HttpRequest::HttpDelete()  
+{  
+    return HttpRequestExec("DELETE", ip, port, url, strData);  
 }  
-  
+
 int HttpRequest::HttpPost()  
 {  
     return HttpRequestExec("POST", ip, port, url, strData);
@@ -25,13 +35,13 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
 {
     //Determine whether the URL is valid 
     if(ip.empty()||ip.size()==0){  
-        LogPrintf("URL is NULL\n");   
+        LogPrint("dockerapi","HttpRequest::HttpRequestExec URL is NULL\n");   
         return -5;  
     }
       
     //Limit URL length  
     if(URLSIZE < page.size()) {  
-         LogPrintf("Url cannot exceed %d\n",URLSIZE);   
+         LogPrint("dockerapi","HttpRequest::HttpRequestExec Url cannot exceed %d\n",URLSIZE);   
         return -6;  
     }
     string host=ip,ports=std::to_string(port);
@@ -39,7 +49,7 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
     boost::asio::streambuf strHttpHead;
     //Create an HTTP protocol header  
     if(HttpHeadCreate(strMethod, hostUrl, page, strData,strHttpHead)!=0){
-        LogPrintf("Header is ULL");
+        LogPrint("dockerapi","HttpRequest::HttpRequestExec Header is ULL\n");
         
         return -8;
     }

@@ -7,7 +7,7 @@
 #include "masternode-sync.h"
 #include "masternodeman.h"
 #include "protocol.h"
-
+#include "dockerman.h"
 // Keep track of the active Masternode
 CActiveMasternode activeMasternode;
 
@@ -95,9 +95,18 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
     }
 
     CMasternodePing mnp(outpoint);
+    // 
     mnp.nSentinelVersion = nSentinelVersion;
     mnp.fSentinelIsCurrent =
             (abs(GetAdjustedTime() - nSentinelPingTime) < MASTERNODE_WATCHDOG_MAX_SECONDS);
+    
+    dockerman.Update();
+    mnp.mdocker.nodeCount=dockerman.GetDockerNodeCount();
+    mnp.mdocker.activeNodeCount=dockerman.GetDockerNodeActiveCount();
+    mnp.mdocker.dockerServiceCount=dockerman.GetDockerServiceCount();
+    mnp.mdocker.dockerTaskCount=dockerman.GetDoCkerTaskCount();
+    // mnp.mdocker.docker_version=dockerman.version;
+    LogPrint("docker","CActiveMasternode::SendMasternodePing %s\n",mnp.mdocker.ToString());
     if(!mnp.Sign(keyMasternode, pubKeyMasternode)) {
         LogPrintf("CActiveMasternode::SendMasternodePing -- ERROR: Couldn't sign Masternode Ping\n");
         return false;

@@ -1,8 +1,7 @@
-#ifndef __DOCKERTASK__
-#define __DOCKERTASK__
+#ifndef DOCKERTASK_H
+#define DOCKERTASK_H
 #include "dockerbase.h"
 class Task :public DockerBase{
-public:
     static bool DcokerTaskJson(const UniValue& data,Task& task);
     static void ParseTaskStatus(const UniValue& data,Config::TaskStatus &taskstaus);
     static void ParseTaskContainerStatus(const UniValue& data, Config::ContainerStatus &contstatus);
@@ -31,6 +30,9 @@ public:
     static void ParseTaskArray(const UniValue& data,vector<std::string> &array);
     static int getTaskStatus(const std::string& status);
 public:
+
+    static void DockerTaskList(const string& taskData, std::map<std::string,Task> &tasks);
+
     std::vector<std::pair<std::string, std::string> > labels;
     
     Config::TaskSpec spec;
@@ -113,13 +115,11 @@ public:
 class dockertaskfilter:public filterbase{
 public:
 
-    bool DesiredState_running=true;
-    bool DesiredState_shutdown=true;
-    bool DesiredState_accepted=true;
+    bool DesiredState_running = false;
+    bool DesiredState_shutdown = false;
+    bool DesiredState_accepted = false;
     vector<std::string> nodeid;
     vector<std::string> serviceid;
     std::string ToJsonString();
-    std::string ToString();
 };
-void DockerTask(const string& taskData, std::vector<Task> &tasks);
-#endif //__DOCKERSERVICE__
+#endif //DOCKERTASK_H

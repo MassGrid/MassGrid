@@ -129,6 +129,7 @@ MASSGRID_CORE_H = \
   masternode-sync.h \
   masternodeman.h \
   masternodeconfig.h \
+  dockerman.h \
   dockerbase.h \
   dockernode.h \
   dockerservice.h \
@@ -237,6 +238,7 @@ libmassgrid_server_a_SOURCES = \
   masternode-sync.cpp \
   masternodeconfig.cpp \
   masternodeman.cpp \
+  dockerman.cpp \
   dockerbase.cpp \
   dockernode.cpp \
   dockerservice.cpp \

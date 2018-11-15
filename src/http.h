@@ -1,5 +1,5 @@
-#ifndef __HTTP__  
-#define __HTTP__  
+#ifndef HTTP_H
+#define HTTP_H
   
 #include <iostream>
 #include <istream>
@@ -20,6 +20,8 @@ class HttpRequest
         ~HttpRequest(){};
         int HttpGet();          
         int HttpGet(const string &ip,const int &port,const string &page,const string &strData);
+        int HttpDelete();          
+        int HttpDelete(const string &ip,const int &port,const string &page,const string &strData);
         int HttpPost();
         int HttpPost(const string &ip,const int &port,const string &page,const string &strData);
         std::string getReponseData(){return strResponse;}

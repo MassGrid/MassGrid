@@ -1,10 +1,11 @@
-#ifndef __DOCKERSWARM__
-#define __DOCKERSWARM__
+#ifndef DOCKERSWARM_H
+#define DOCKERSWARM_H
 #include "dockerbase.h"
 class Swarm :public DockerBase{
-public:
     static bool DockerSwarmJson(const UniValue& data, Swarm& swarm);
 public:
+    static void DockerSwarm(const string& swarmData,std::map<std::string,Swarm> &swarms);
+
     // spec
     std::string joinWorkerTokens;
     std::string joinManagerTokens;
@@ -53,5 +54,4 @@ public:
     std::string ToString();
 };
 
-void DockerSwarm(const string& swarmData,std::vector<Swarm> &swarms);
 #endif //__DOCKERSERVICE__

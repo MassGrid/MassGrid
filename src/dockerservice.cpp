@@ -23,10 +23,10 @@ std::string dockerservicefilter::ToJsonString(){
 
     {
         UniValue arr(UniValue::VARR);
-        if(!Mode_replicated){
+        if(Mode_replicated){
             arr.push_back("replicated"); 
         }
-        if(!Mode_global){
+        if(Mode_global){
             arr.push_back("global"); 
         }
         data.push_back(Pair("mode",arr));
@@ -34,28 +34,28 @@ std::string dockerservicefilter::ToJsonString(){
 
     return data.write();
 }
-void DockerService(const string& serviceData,std::vector<Service> &services)
+void Service::DockerServiceList(const string& serviceData,std::map<std::string,Service> &services)
 {
-    LogPrintf("docker json node\n");
+    // LogPrint("docker","Service::DockerServiceList docker json node\n");
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(serviceData)){
-            LogPrintf("docker json error\n");
+            LogPrint("docker","Service::DockerServiceList docker json error\n");
             return;
         }
 
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
             Service service;
-            bool fSuccess = Service::DcokerServiceJson(data,service);
+            bool fSuccess = DcokerServiceJson(data,service);
             if(fSuccess)
-                services.push_back(service);
+                services[service.ID]=service;
             // break;
         }
     }catch(std::exception& e){
-        LogPrintf("JSON read error,%s\n",string(e.what()).c_str());
+        LogPrint("docker","Service::DockerServiceList JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        LogPrintf("unkonw exception\n");
+        LogPrint("docker","Service::DockerServiceList unkonw exception\n");
     }
 }
 bool Service::DcokerServiceJson(const UniValue& data, Service& service)

@@ -1,8 +1,7 @@
-#ifndef __DOCKERNODE__
-#define __DOCKERNODE__
+#ifndef DOCKERNODE_H
+#define DOCKERNODE_H
 #include "dockerbase.h"
 class Node:public DockerBase{
-public:
     static bool DockerNodeJson(const UniValue& data, Node& node);
     static void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec);
     static void ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp);
@@ -13,6 +12,8 @@ public:
     static void ParseNodeStatus(const UniValue& data, Config::NodeStatus &status);
     static void ParseNodeManageStatus(const UniValue& data, Config::NodeManagerStatus &managerStatus);
 public:
+
+    static void DockerNodeList(const string& nodeData,std::map<std::string,Node> &nodes);
     typedef std::string NodeState;
     typedef std::string RoleState;
     const RoleState RoleStateWorker = "worker";
@@ -80,6 +81,7 @@ public:
         READWRITE(updatedAt);
     }
     NodeState getNodeState(){return status.state;}
+    
     void Update();
     std::string ToString();
 
@@ -87,12 +89,10 @@ public:
 
 class dockernodefilter:public filterbase{
 public:
-    bool Membership_accepted=true;
-    bool Membership_pending=true;
-    bool Role_manager=true;
-    bool Role_worker=true;
+    bool Membership_accepted = false;
+    bool Membership_pending = false;
+    bool Role_manager = false;
+    bool Role_worker = false;
     std::string ToJsonString();
-    std::string ToString();
 };
-void DockerNode(const string& nodeData,std::vector<Node> &nodes);
 #endif //__DOCKERSERVICE__

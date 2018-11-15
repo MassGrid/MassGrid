@@ -23,10 +23,10 @@ std::string dockernodefilter::ToJsonString(){
 
     {
         UniValue arr(UniValue::VARR);
-        if(!Membership_accepted){
+        if(Membership_accepted){
             arr.push_back("accepted"); 
         }
-        if(!Membership_pending){
+        if(Membership_pending){
             arr.push_back("pending"); 
         }
         data.push_back(Pair("membership",arr));
@@ -34,37 +34,37 @@ std::string dockernodefilter::ToJsonString(){
 
     {
         UniValue arr(UniValue::VARR);
-        if(!Role_manager){
+        if(Role_manager){
             arr.push_back("manager"); 
         }
-        if(!Role_worker){
+        if(Role_worker){
             arr.push_back("worker"); 
         }
         data.push_back(Pair("role",arr));
     }
     return data.write();
 }
-void DockerNode(const string& nodeData,std::vector<Node> &nodes)
+void Node::DockerNodeList(const string& nodeData,std::map<std::string,Node> &nodes)
 {
-    LogPrintf("docker json node\n");
+    // LogPrint("docker","Node::DockerNodeList docker json node\n");
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(nodeData)){
-            LogPrintf("docker json error\n");
+            LogPrint("docker","Node::DockerNodeList docker json error\n");
             return;
         }
 
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
             Node node;
-            bool fSuccess = Node::DockerNodeJson(data,node);
+            bool fSuccess = DockerNodeJson(data,node);
             if(fSuccess)
-                nodes.push_back(node);
+                nodes[node.ID]=node;
         }
     }catch(std::exception& e){
-        LogPrintf("JSON read error,%s\n",string(e.what()).c_str());
+        LogPrint("docker","Node::DockerNodeList JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        LogPrintf("unkonw exception\n");
+        LogPrint("docker","Node::DockerNodeList unkonw exception\n");
     }
 }
 bool Node::DockerNodeJson(const UniValue& data, Node& node)

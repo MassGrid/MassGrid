@@ -87,9 +87,6 @@ CMasternode::CMasternode(const CMasternode& other) :
     nBlockLastPaid(other.nBlockLastPaid),
     nPoSeBanScore(other.nPoSeBanScore),
     nPoSeBanHeight(other.nPoSeBanHeight),
-    mapDockerNodeLists(other.mapDockerNodeLists),
-    mapDockerServiceLists(other.mapDockerServiceLists),
-    mapDockerTaskLists(other.mapDockerTaskLists),
     fAllowMixingTx(other.fAllowMixingTx),
     fUnitTest(other.fUnitTest)
 {}
@@ -99,9 +96,6 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb) :
                        mnb.vin.prevout, mnb.addr, mnb.pubKeyCollateralAddress, mnb.pubKeyMasternode,
                        mnb.sigTime /*nTimeLastWatchdogVote*/},
     lastPing(mnb.lastPing),
-    mapDockerNodeLists(mnb.mapDockerNodeLists),
-    mapDockerServiceLists(mnb.mapDockerServiceLists),
-    mapDockerTaskLists(mnb.mapDockerTaskLists),
     vchSig(mnb.vchSig),
     fAllowMixingTx(true)
 {}
@@ -118,9 +112,6 @@ bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb, CConnman& co
     vchSig = mnb.vchSig;
     nProtocolVersion = mnb.nProtocolVersion;
     addr = mnb.addr;
-    mapDockerNodeLists =mnb.mapDockerNodeLists;
-    mapDockerServiceLists = mnb.mapDockerServiceLists;
-    mapDockerTaskLists = mnb.mapDockerTaskLists;
     nPoSeBanScore = 0;
     nPoSeBanHeight = 0;
     nTimeLastChecked = 0;

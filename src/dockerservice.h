@@ -1,9 +1,8 @@
-#ifndef __DOCKERSERVICE__
-#define __DOCKERSERVICE__
+#ifndef DOCKERSERVICE_H
+#define DOCKERSERVICE_H
 #include "dockerbase.h"
 
 class Service:public DockerBase{
-public:
     static bool DcokerServiceJson(const UniValue& data, Service& service);
     static void ParseSpec(const UniValue& data,Config::ServiceSpec &spc);
     static void ParseLabels(const UniValue& data,vector<std::string> &labels);
@@ -29,6 +28,7 @@ public:
     static void ParseUpdateStatus(const UniValue& data,Config::SerivceUpdateStatus &updateStatus);
 public:
     
+    static void DockerServiceList(const string& serviceData,std::map<std::string,Service> &services);
     Config::ServiceSpec spec;
     Config::ServiceSpec previousSpec;
 
@@ -86,12 +86,10 @@ public:
 
 class dockerservicefilter:public filterbase{
 public:
-    bool Mode_replicated=true;
-    bool Mode_global=true;
+    bool Mode_replicated = false;
+    bool Mode_global = false;
 
     std::string ToJsonString();
-    std::string ToString();
 };
-void DockerService(const string& serviceData,std::vector<Service> &services);
 
 #endif //__DOCKERSERVICE__

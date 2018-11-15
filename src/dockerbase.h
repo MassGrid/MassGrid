@@ -1,7 +1,8 @@
-#ifndef __DOCKERBASE__  
-#define __DOCKERBASE__ 
+#ifndef DOCKERBASE_H  
+#define DOCKERBASE_H 
 #include <stdint.h>
 #include <vector>
+#include <map>
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -261,7 +262,6 @@ public:
     vector<std::string> label;
     vector<std::string> name;
     virtual std::string ToJsonString()= 0;
-    virtual std::string ToString()= 0;
 };
 uint64_t getDockerTime(const std::string& timeStr);
 uint64_t TimeestampStr(const char *nTimeStr);

@@ -12,6 +12,7 @@
 #include "dockerservice.h"
 #include "dockertask.h"
 #include "dockerswarm.h"
+#include <strstream> 
 
 using namespace std;
 class CMasternode;
@@ -34,6 +35,30 @@ static const int MASTERNODE_POSE_BAN_MAX_SCORE          = 5;
 // sentinel version before sentinel ping implementation 
 #define DEFAULT_SENTINEL_VERSION 0x010001
 
+struct masternode_dockerinfo_t{     //masternode docker info 
+    uint64_t nodeCount = 0;
+    uint64_t activeNodeCount = 0;
+    uint64_t dockerServiceCount = 0;
+    uint64_t dockerTaskCount = 0;
+    // std::string docker_version = "0";
+    ADD_SERIALIZE_METHODS;
+
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(nodeCount);
+        READWRITE(activeNodeCount);
+        READWRITE(dockerServiceCount);
+        READWRITE(dockerTaskCount);
+        // READWRITE(docker_version);
+    }
+    std::string ToString(){
+        ostrstream out;
+        out<<"nodeCount: "<<nodeCount<<" activeNodeCount: "<<activeNodeCount<<" dockerServiceCount: "<<dockerServiceCount<<
+        " dockerTaskCount: "<<dockerTaskCount<<endl;
+        return std::string(out.str());
+    }
+};
+
 class CMasternodePing
 {
 public:
@@ -44,7 +69,7 @@ public:
     bool fSentinelIsCurrent = false; // true if last sentinel ping was actual
     // MSB is always 0, other 3 bits corresponds to x.x.x version scheme
     uint32_t nSentinelVersion{DEFAULT_SENTINEL_VERSION};
-
+    masternode_dockerinfo_t mdocker{};
     CMasternodePing() = default;
 
     CMasternodePing(const COutPoint& outpoint);
@@ -65,6 +90,7 @@ public:
         }
         READWRITE(fSentinelIsCurrent);
         READWRITE(nSentinelVersion);
+        READWRITE(mdocker);
     }
 
     uint256 GetHash() const
@@ -167,12 +193,7 @@ public:
     int nPoSeBanHeight{};
     bool fAllowMixingTx{};
     bool fUnitTest = false;
-
-
-    std::map<std::string,Node> mapDockerNodeLists;
-    std::map<std::string,Service> mapDockerServiceLists;
-    std::map<std::string,Task> mapDockerTaskLists;
-
+    
     // KEEP TRACK OF GOVERNANCE ITEMS EACH MASTERNODE HAS VOTE UPON FOR RECALCULATION
     std::map<uint256, int> mapGovernanceObjectsVotedOn;
 
@@ -206,9 +227,6 @@ public:
         READWRITE(fAllowMixingTx);
         READWRITE(fUnitTest);
         READWRITE(mapGovernanceObjectsVotedOn);
-        READWRITE(mapDockerNodeLists);
-        READWRITE(mapDockerServiceLists);
-        READWRITE(mapDockerTaskLists);
     }
 
     // CALCULATE A RANK AGAINST OF GIVEN BLOCK
@@ -346,9 +364,6 @@ public:
         READWRITE(sigTime);
         READWRITE(nProtocolVersion);
         READWRITE(lastPing);
-        READWRITE(mapDockerNodeLists);
-        READWRITE(mapDockerServiceLists);
-        READWRITE(mapDockerTaskLists);
     }
 
     uint256 GetHash() const

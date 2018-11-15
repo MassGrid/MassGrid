@@ -1,21 +1,21 @@
 #include "dockerswarm.h"
-void DockerSwarm(const string& swarmData,std::vector<Swarm> &swarms)
+void Swarm::DockerSwarm(const string& swarmData,std::map<std::string ,Swarm> &swarms)
 {
-    LogPrintf("docker json node\n");
+    // LogPrint("docker","Swarm::DockerSwarm docker json node\n");
     try{
         UniValue data(UniValue::VARR);
         if(!data.read(swarmData)){
-            LogPrintf("docker json error\n");
+            LogPrint("docker","Swarm::DockerSwarm docker json error\n");
             return;
         }
         Swarm swarm;
-        bool fSuccess = Swarm::DockerSwarmJson(data,swarm);
+        bool fSuccess = DockerSwarmJson(data,swarm);
         if(fSuccess)
-            swarms.push_back(swarm);
+            swarms[swarm.ID]=swarm;
     }catch(std::exception& e){
-        LogPrintf("JSON read error,%s\n",string(e.what()).c_str());
+        LogPrint("docker","Swarm::DockerSwarm JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        LogPrintf("unkonw exception\n");
+        LogPrint("docker","Swarm::DockerSwarm unkonw exception\n");
     }
 }
 bool Swarm::DockerSwarmJson(const UniValue& data, Swarm& swarm)

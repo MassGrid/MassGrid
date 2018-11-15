@@ -440,7 +440,10 @@ UniValue masternodelist(const UniValue& params, bool fHelp)
                                (int64_t)(mn.lastPing.sigTime - mn.sigTime) << " " << std::setw(10) <<
                                mn.GetLastPaidTime() << " "  << std::setw(6) <<
                                mn.GetLastPaidBlock() << " " <<
-                               mn.addr.ToString();
+                               mn.addr.ToString() << " " << mn.lastPing.mdocker.nodeCount << " " <<
+                               mn.lastPing.mdocker.activeNodeCount << " " <<mn.lastPing.mdocker.dockerServiceCount << " "<<
+                               mn.lastPing.mdocker.dockerTaskCount;
+                                // << " " << mn.lastPing.mdocker.docker_version;
                 std::string strFull = streamFull.str();
                 if (strFilter !="" && strFull.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos) continue;
@@ -668,24 +671,19 @@ UniValue masternodebroadcast(const UniValue& params, bool fHelp)
                 resultObj.push_back(Pair("vchSig", EncodeBase64(&mnb.vchSig[0], mnb.vchSig.size())));
                 resultObj.push_back(Pair("sigTime", mnb.sigTime));
                 resultObj.push_back(Pair("protocolVersion", mnb.nProtocolVersion));
-                resultObj.push_back(Pair("nLastDsq", mnb.nLastDsq));
-                
-                
-                UniValue nodeArr(UniValue::VARR);
-                for(auto iter = mnb.mapDockerNodeLists.begin(); iter != mnb.mapDockerNodeLists.end(); iter++) {
-                    UniValue nodeObj(UniValue::VOBJ);
-                    nodeObj.push_back(Pair("nodeid",iter->second.ID));
-                    nodeObj.push_back(Pair("index",iter->second.index));
-                    nodeObj.push_back(Pair("createdTime",iter->second.createdAt));
-                    nodeObj.push_back(Pair("updateTime",iter->second.updatedAt));
-                    nodeArr.push_back(nodeObj);
-                } 
-                resultObj.push_back(Pair("nodeList",nodeArr));
+                resultObj.push_back(Pair("nLastDsq", mnb.nLastDsq)); 
 
                 UniValue lastPingObj(UniValue::VOBJ);
                 lastPingObj.push_back(Pair("outpoint", mnb.lastPing.vin.prevout.ToStringShort()));
                 lastPingObj.push_back(Pair("blockHash", mnb.lastPing.blockHash.ToString()));
                 lastPingObj.push_back(Pair("sigTime", mnb.lastPing.sigTime));
+                UniValue dockerObj(UniValue::VOBJ);
+                dockerObj.push_back(Pair("nodeCount",mnb.lastPing.mdocker.nodeCount));
+                dockerObj.push_back(Pair("activeNodeCount",mnb.lastPing.mdocker.activeNodeCount));
+                dockerObj.push_back(Pair("dockerServiceCount",mnb.lastPing.mdocker.dockerServiceCount));
+                dockerObj.push_back(Pair("dockerTaskCount",mnb.lastPing.mdocker.dockerTaskCount));
+                // dockerObj.push_back(Pair("dockerVersion",mnb.lastPing.mdocker.docker_version));
+                lastPingObj.push_back(Pair("dockerInfo",dockerObj));
                 lastPingObj.push_back(Pair("vchSig", EncodeBase64(&mnb.lastPing.vchSig[0], mnb.lastPing.vchSig.size())));
 
                 resultObj.push_back(Pair("lastPing", lastPingObj));

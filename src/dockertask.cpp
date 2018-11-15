@@ -34,13 +34,13 @@ std::string dockertaskfilter::ToJsonString(){
     }
     {
         UniValue arr(UniValue::VARR);
-        if(!DesiredState_accepted){
+        if(DesiredState_accepted){
             arr.push_back("accepted"); 
         }
-        if(!DesiredState_running){
+        if(DesiredState_running){
             arr.push_back("running"); 
         }
-        if(!DesiredState_shutdown){
+        if(DesiredState_shutdown){
             arr.push_back("shutdown"); 
         }
         data.push_back(Pair("desired-state",arr));
@@ -48,27 +48,27 @@ std::string dockertaskfilter::ToJsonString(){
 
     return data.write();
 }
-void DockerTask(const string& taskData, std::vector<Task> &tasks)
+void Task::DockerTaskList(const string& taskData, std::map<std::string,Task> &tasks)
 {
-    LogPrintf("docker json node\n");
+    // LogPrint("dockerapi","Task::DockerTaskList docker json node\n");
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(taskData)){
-            LogPrintf("docker json error\n");
+            LogPrint("docker","Task::DockerTaskList docker json error\n");
             return;
         }
 
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
             Task task;
-            bool fSuccess = Task::DcokerTaskJson(data,task);
+            bool fSuccess = DcokerTaskJson(data,task);
             if(fSuccess)
-                tasks.push_back(task);
+                tasks[task.ID]=task;
         }
     }catch(std::exception& e){
-        LogPrintf("JSON read error,%s\n",string(e.what()).c_str());
+        LogPrint("docker","Task::DockerTaskList JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        LogPrintf("unkonw exception\n");
+        LogPrint("docker","Task::DockerTaskList unkonw exception\n");
     }
 }
 bool Task::DcokerTaskJson(const UniValue& data,Task& task)

@@ -16,7 +16,7 @@
 #include <boost/assign/list_of.hpp>
 
 #include "chainparamsseeds.h"
-
+// #include "arith_uint256.h"
 static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
     CMutableTransaction txNew;
@@ -158,7 +158,7 @@ public:
     CTestNetParams() {
         strNetworkID = "test";
         consensus.nSubsidyHalvingInterval = 420768;
-        consensus.nMasternodePaymentsStartBlock = 1600; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
+        consensus.nMasternodePaymentsStartBlock = 100; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 87840; // actual historical value 2 month 1440*61
         consensus.nInstantSendKeepLock = 6;
         consensus.nGovernanceMinQuorum = 1;
@@ -189,18 +189,36 @@ public:
         nMaxTipAge = 0x7fffffff;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1538215708, 6224, 0x1e0ffff0, 1, 50 * COIN);
+        // /*get testnet genesis block*/
+        // uint32_t nonce=0;
+        // int64_t time=GetTime();
+        // for(;UintToArith256(genesis.GetHash()) > arith_uint256().SetCompact(0x1e0ffff0);++nonce){
+        //     genesis = CreateGenesisBlock(time, nonce, 0x1e0ffff0, 1, 50 * COIN);
+        //     if ((nonce& 0xffff) == 0)
+        //      {
+        //          std::cout<<"run out"<<std::endl;
+        //          time=GetTime();
+        //          nonce=0;
+        //      }
+        // }
+        //     --nonce;
+        //     std::cout<<"result : "<<genesis.GetHash().ToString()<<std::endl<<
+        //     "time : "<<time<<std::endl<<"nonce : "<<nonce<<std::endl<<
+        //     "target : "<<arith_uint256().SetCompact(0x1e0ffff0).GetHex()<<std::endl;
+        //  /*get testnet genesis block*/
+
+        genesis = CreateGenesisBlock(1542104476, 29907, 0x1e0ffff0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x000007834c1b97b086f4e60b6352964a25b1cccda1dd7c5361c9f02d80a06c2f"));
+        assert(consensus.hashGenesisBlock == uint256S("0x00000c3245874d4f55935d3763180b94dbe8b6f52e7d2f9af576fb93b14af068"));
 		assert(genesis.hashMerkleRoot == uint256S("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("testseed1.massgrid.net", "testseed1.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed2.massgrid.net", "testseed2.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed3.massgrid.net", "testseed3.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed4.massgrid.net", "testseed4.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed5.massgrid.net", "testseed5.massgrid.net"));
-        vSeeds.push_back(CDNSSeedData("testseed6.massgrid.net", "testseed6.massgrid.net"));
+        // vSeeds.push_back(CDNSSeedData("testseed1.massgrid.net", "testseed1.massgrid.net"));
+        // vSeeds.push_back(CDNSSeedData("testseed2.massgrid.net", "testseed2.massgrid.net"));
+        // vSeeds.push_back(CDNSSeedData("testseed3.massgrid.net", "testseed3.massgrid.net"));
+        // vSeeds.push_back(CDNSSeedData("testseed4.massgrid.net", "testseed4.massgrid.net"));
+        // vSeeds.push_back(CDNSSeedData("testseed5.massgrid.net", "testseed5.massgrid.net"));
+        // vSeeds.push_back(CDNSSeedData("testseed6.massgrid.net", "testseed6.massgrid.net"));
 
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,111);
