@@ -40,7 +40,8 @@ struct masternode_dockerinfo_t{     //masternode docker info
     uint64_t activeNodeCount = 0;
     uint64_t dockerServiceCount = 0;
     uint64_t dockerTaskCount = 0;
-    // std::string docker_version = "0";
+    int docker_version{};
+    std::string joinToken{};
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
@@ -49,12 +50,13 @@ struct masternode_dockerinfo_t{     //masternode docker info
         READWRITE(activeNodeCount);
         READWRITE(dockerServiceCount);
         READWRITE(dockerTaskCount);
-        // READWRITE(docker_version);
+        READWRITE(docker_version);
+        READWRITE(joinToken);
     }
     std::string ToString(){
         ostrstream out;
         out<<"nodeCount: "<<nodeCount<<" activeNodeCount: "<<activeNodeCount<<" dockerServiceCount: "<<dockerServiceCount<<
-        " dockerTaskCount: "<<dockerTaskCount<<endl;
+        " dockerTaskCount: "<<dockerTaskCount<<" docker_version: "<<docker_version<<" joinToken: "<<joinToken<<endl;
         return std::string(out.str());
     }
 };

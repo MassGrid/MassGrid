@@ -18,6 +18,18 @@ using namespace std;
 #define DEFAULT_CSERVICE_API_VERSION 34264
 #define DEFAULT_CSWARM_API_VERSION 34419
 #define DEFAULT_CNODE_API_VERSION 15590
+
+union docker_Version
+{
+    struct {
+    uint8_t Build;
+    uint8_t Revision;
+    uint8_t Minor;
+    uint8_t Major;
+    }part;
+    uint32_t ver{0};
+    uint8_t unv[4];
+};
 namespace Config{
     enum eStatus{
         created = 0,

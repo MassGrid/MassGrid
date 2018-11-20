@@ -3,9 +3,8 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "dockerman.h"
 #include "http.h"
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
-
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp> 
 CDockerMan dockerman;
 bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
     LogPrint("docker","CDockerMan::PushMessage Started Method: %s\n",strMethod[mtd]);
@@ -76,6 +75,10 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
             type=HttpType::HTTP_GET;
             pushdata.clear();
             break;
+        case Method::METHOD_SWARM_INSPECT:
+            url="/swarm";
+            type=HttpType::HTTP_GET;
+            break;
         case Method::METHOD_INFO:
              url="/info";
             type=HttpType::HTTP_GET;
@@ -88,7 +91,7 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
             LogPrint("docker","CDockerMan::PushMessage not support this methed");
             return false;
     }
-    HttpRequest http(address,port,url,pushdata);
+    HttpRequest http(address,apiPort,url,pushdata);
     LogPrint("docker","CDockerMan::RequestMessages methed %s\n send:%s\n",url,pushdata);
     int ret;
     if(type == HttpType::HTTP_GET){
@@ -185,6 +188,9 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,std::string responsed
         case Method::METHOD_TASKS_INSPECT:
             Task::DockerTaskList(responsedata,mapDockerTaskLists);
             break;
+        case Method::METHOD_SWARM_INSPECT:
+            Swarm::DockerSwarm(responsedata,swarm);
+            break;
         case Method::METHOD_INFO:   // not implemented yet
              url="/info";
             type=HttpType::HTTP_GET;
@@ -223,7 +229,12 @@ bool CDockerMan::Update(){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_TASKS_LISTS failed! \n");
         return false;
     }
+    if(!PushMessage(Method::METHOD_SWARM_INSPECT,"","")){
+        LogPrint("docker","CDockerMan::Update ERROR Get METHOD_SWARM_INSPECT failed! \n");
+        return false;
+    }
     GetVersion();
+    GetJoinToken();
     LogPrint("docker","CDockerMan::Update Succcessful\n");
     return true;
 }
@@ -247,9 +258,36 @@ uint64_t CDockerMan::GetDoCkerTaskCount(){
 void CDockerMan::GetVersion(){
     map<std::string,Node>::iterator it = mapDockerNodeLists.begin();
     for(;it!=mapDockerNodeLists.end();++it){
-        if(it->second.spec.role == "manager"){   
-            version = it->second.description.engine.engineVersion;
+        if(it->second.spec.role == "manager"){  //example 18.06.1-ce
+            vector<string> destination;
+            boost::split(destination,it->second.description.engine.engineVersion, boost::is_any_of( ".-" ), boost::token_compress_on );
+            for(int i = 0, j = 3;i < destination.size() && j >= 0;++i){
+                try
+                {
+                    version.unv[j] = boost::lexical_cast<uint>(destination[i]);
+                }
+                catch(const boost::bad_lexical_cast &)
+                {
+                    continue;
+                }
+                --j; 
+            }
             return;
         }
     }
+}
+void CDockerMan::GetJoinToken(){
+    map<std::string,Node>::iterator it = mapDockerNodeLists.begin();
+    std::string tokenAddress;
+    for(;it!=mapDockerNodeLists.end();++it){
+        if(it->second.spec.role == "manager"){   
+            tokenAddress =" "+it->second.managerStatus.Addr;
+            break;
+        }
+    }
+    if(!tokenAddress.empty()&&!swarm.joinWorkerTokens.empty()){
+        JoinToken=swarm.joinWorkerTokens+tokenAddress;
+    }
+    else
+        JoinToken.clear();
 }

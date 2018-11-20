@@ -57,14 +57,16 @@ private:
     mutable CCriticalSection cs;
 private:
     const char* address = "127.0.0.1";
-    uint32_t port = 2375;
+    uint32_t apiPort = 2375;
+    uint32_t swarmPort = 2377;
 
 public:
-    std::string version;
+    union docker_Version version;
     std::map<std::string,Node> mapDockerNodeLists;
     std::map<std::string,Service> mapDockerServiceLists;
     std::map<std::string,Task> mapDockerTaskLists;
     Swarm swarm;
+    std::string JoinToken;
 
 
     bool ProcessMessage(Method mtd,std::string url,std::string responsedata);
@@ -75,9 +77,10 @@ public:
     uint64_t GetDockerNodeActiveCount();
     uint64_t GetDockerServiceCount();
     uint64_t GetDoCkerTaskCount();    
-    void SetPort(uint32_t p){port = p;}
-    uint32_t GetPort(){return port;}
+    void SetPort(uint32_t p){apiPort = p;}
+    uint32_t GetPort(){return apiPort;}
     void GetVersion();
+    void GetJoinToken();
 };
 
 #endif //DOCKERMAN_H

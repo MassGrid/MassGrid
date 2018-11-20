@@ -105,7 +105,8 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
     mnp.mdocker.activeNodeCount=dockerman.GetDockerNodeActiveCount();
     mnp.mdocker.dockerServiceCount=dockerman.GetDockerServiceCount();
     mnp.mdocker.dockerTaskCount=dockerman.GetDoCkerTaskCount();
-    // mnp.mdocker.docker_version=dockerman.version;
+    mnp.mdocker.docker_version=dockerman.version.ver;
+    mnp.mdocker.joinToken=dockerman.JoinToken;
     LogPrint("docker","CActiveMasternode::SendMasternodePing %s\n",mnp.mdocker.ToString());
     if(!mnp.Sign(keyMasternode, pubKeyMasternode)) {
         LogPrintf("CActiveMasternode::SendMasternodePing -- ERROR: Couldn't sign Masternode Ping\n");

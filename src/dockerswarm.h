@@ -4,7 +4,7 @@
 class Swarm :public DockerBase{
     static bool DockerSwarmJson(const UniValue& data, Swarm& swarm);
 public:
-    static void DockerSwarm(const string& swarmData,std::map<std::string,Swarm> &swarms);
+    static void DockerSwarm(const string& swarmData,Swarm &swarms);
 
     // spec
     std::string joinWorkerTokens;
