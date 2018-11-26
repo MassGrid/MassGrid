@@ -4,6 +4,7 @@
 class Node:public DockerBase{
     static bool DockerNodeJson(const UniValue& data, Node& node);
     static void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec);
+    static void ParseNodeLabels(const UniValue& data,std::map<std::string,std::string> &labels);
     static void ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp);
     static void ParseNodePlatform(const UniValue& data,Config::Platform &platform);
     static void ParseNodeResource(const UniValue& data, Config::Limits &limits);

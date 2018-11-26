@@ -118,8 +118,18 @@ void Node::ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec)
         }
         if(data[vKeys[i]].isObject()){
             if(vKeys[i]=="Labels"){
-                // ParseNodeLabels(tdata);
+                ParseNodeLabels(tdata,spec.labels);
             }
+        }
+    }
+}
+void Node::ParseNodeLabels(const UniValue& data,std::map<std::string,std::string> &labels)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            labels.insert(std::make_pair("key",tdata.get_str()));
         }
     }
 }

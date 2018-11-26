@@ -5,9 +5,10 @@
 class Service:public DockerBase{
     static bool DcokerServiceJson(const UniValue& data, Service& service);
     static void ParseSpec(const UniValue& data,Config::ServiceSpec &spc);
-    static void ParseLabels(const UniValue& data,vector<std::string> &labels);
+    static void ParseSpecLabels(const UniValue& data,std::map<std::string,std::string> &labels);
     static void ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate);
     static void ParseContainerTemplate(const UniValue& data,Config::ContainerTemplate &contTemp);
+    static void ParseSpecContainerLabels(const UniValue& data,std::map<std::string,std::string> &labels);
     static void ParseMount(const UniValue& data,Config::Mount &mount);
     static void ParseArray(const UniValue& data,vector<std::string> &array);
     static void ParseContainerTemplate(const UniValue& data,Config::Resource &resources);

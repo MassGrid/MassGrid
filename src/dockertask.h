@@ -8,7 +8,8 @@ class Task :public DockerBase{
     static void ParseTaskNetworkTemplate(const UniValue& data,Config::NetworkTemplate &networktemp);
     static void ParseTaskNetwork(const UniValue& data,Config::NetworkTemplate &networktemp);
     static void ParseTaskNetWorkSpec(const UniValue& data, Config::NetWorkSpec &Spec);
-    static void ParseTaskLabels(const UniValue& data,vector<std::string> &array);
+    static void ParseTaskLabels(const UniValue& data,std::map<std::string,std::string> &labels);
+    static void ParseTaskDriverConf(const UniValue& data,vector<std::string> &array);
     static void ParseTaskIPAMOptions(const UniValue& data,Config::IPAMOption &ipamoption);
     static void ParseTaskIPMOPDriver(const UniValue& data,Config::Driver &driver);
     static void ParseTaskIPMOPConfigs(const UniValue& data,Config::ConfigIP &configip);

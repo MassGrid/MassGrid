@@ -172,7 +172,7 @@ namespace Config{
 
     struct ContainerTemplate{
         std::string image;
-        vector<std::string> labels;
+        std::map<std::string,std::string> labels;
         vector<std::string> env;
         // Privileges
         vector<struct Mount> mounts;
@@ -189,19 +189,19 @@ namespace Config{
     };
     struct ServiceSpec{
         std::string name;
-        vector<std::string> labels;
+        std::map<std::string,std::string> labels;
         TaskSpec taskTemplate;
         SerivceMode mode;
         EndpointSpec endpointSpec;
     };
     struct NodeSpec{
-        vector<pair<std::string, std::string> > labels;
+        std::map<std::string,std::string> labels;
         std::string role;
         std::string availability;
     };
     struct NetWorkSpec{
         std::string name;
-        vector<std::string> labels;
+        std::map<std::string,std::string> labels;
         vector<std::string> driverConfiguration;
         bool ingress;
         IPAMOption IPAMOptions;

@@ -107,7 +107,7 @@ void Service::ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
         }
         if(data[vKeys[i]].isObject()){
             if(vKeys[i]=="Labels"){
-                ParseLabels(tdata,spc.labels);
+                ParseSpecLabels(tdata,spc.labels);
             }else if(vKeys[i]=="TaskTemplate"){
                 ParseTaskTemplate(tdata,spc.taskTemplate);
             }else if(vKeys[i]=="Mode"){
@@ -118,11 +118,15 @@ void Service::ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
         }
     }
 }
-void Service::ParseLabels(const UniValue& data,vector<std::string> &labels)
+void Service::ParseSpecLabels(const UniValue& data,std::map<std::string,std::string> &labels)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
-        labels.push_back(data[vKeys[i]].get_str());
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
+            else if(vKeys[i]=="txid") labels.insert(std::make_pair("com.massgrid.txid",tdata.get_str()));
+        }
     }
 }
 void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate)
@@ -172,7 +176,7 @@ void Service::ParseContainerTemplate(const UniValue& data,Config::ContainerTempl
         }
         if(tdata.isObject()){
             if(vKeys[i]=="Labels"){
-                ParseLabels(tdata,contTemp.labels);
+                ParseSpecContainerLabels(tdata,contTemp.labels);
             }
         }
         if(data[vKeys[i]].isArray()){
@@ -185,6 +189,16 @@ void Service::ParseContainerTemplate(const UniValue& data,Config::ContainerTempl
                     contTemp.mounts.push_back(mount);
                 }
             }
+        }
+    }
+}
+void Service::ParseSpecContainerLabels(const UniValue& data,std::map<std::string,std::string> &labels)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
         }
     }
 }

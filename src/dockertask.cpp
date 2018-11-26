@@ -220,7 +220,7 @@ void Task::ParseTaskNetWorkSpec(const UniValue& data, Config::NetWorkSpec &Spec)
             }else if(vKeys[i]=="Labels"){
                 ParseTaskLabels(tdata,Spec.labels);
             }else if(vKeys[i]=="DriverConfiguration"){
-                ParseTaskLabels(tdata,Spec.driverConfiguration);
+                ParseTaskDriverConf(tdata,Spec.driverConfiguration);
             }else if(vKeys[i]=="Scope"){
                 Spec.IPAMOptions.scope=tdata.get_str();
             }
@@ -237,7 +237,18 @@ void Task::ParseTaskNetWorkSpec(const UniValue& data, Config::NetWorkSpec &Spec)
         }
     }
 }
-void Task::ParseTaskLabels(const UniValue& data,vector<std::string> &array)
+void Task::ParseTaskLabels(const UniValue& data,std::map<std::string,std::string> &labels)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
+            else if(vKeys[i]=="txid") labels.insert(std::make_pair("com.massgrid.txid",tdata.get_str()));
+        }
+    }
+}
+void Task::ParseTaskDriverConf(const UniValue& data,vector<std::string> &array)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
