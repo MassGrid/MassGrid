@@ -105,6 +105,9 @@ namespace boost {
 using namespace std;
 
 //MassGrid only features
+
+bool fDockerNode = false;
+
 bool fMasterNode = false;
 bool fLiteMode = false;
 /**

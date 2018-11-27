@@ -11,6 +11,9 @@
 #include "masternode-sync.h"
 #include "masternodeconfig.h"
 #include "masternodeman.h"
+#include "dockerman.h"
+#include "dockercluster.h"
+#include "messagesigner.h"
 #include "rpc/server.h"
 #include "util.h"
 #include "utilmoneystr.h"
@@ -46,7 +49,7 @@ UniValue masternode(const UniValue& params, bool fHelp)
 #endif // ENABLE_WALLET
          strCommand != "list" && strCommand != "list-conf" && strCommand != "count" &&
          strCommand != "debug" && strCommand != "current" && strCommand != "winner" && strCommand != "winners" && strCommand != "genkey" &&
-         strCommand != "connect" && strCommand != "status"))
+         strCommand != "connect" && strCommand != "status" && strCommand != "getdndata"))
             throw std::runtime_error(
                 "masternode \"command\"...\n"
                 "Set of commands to execute masternode related actions\n"
@@ -353,7 +356,29 @@ UniValue masternode(const UniValue& params, bool fHelp)
 
         return obj;
     }
+    if (strCommand == "getdndata"){
+        std::string strFilter,strPrivkey;
+        CKey key;
+        CPubKey pubkey;
+        if (params.size() >= 2) {
+            strFilter = params[1].get_str();
+        }
+        if (params.size() == 3) {
+            strPrivkey = params[2].get_str();
+        }
+        if(!CMessageSigner::GetKeysFromSecret(strPrivkey,key,pubkey)){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "privkey error");
+        }
+            dockerClusterman.selectDockernode=strFilter;
+            dockerClusterman.dndata.pubKeyClusterAddress=pubkey;
+            dockerClusterman.dndata.sigTime=GetAdjustedTime();
+            CNode *pto = dockerClusterman.ProcessDockernodeConnections(*g_connman);
+            if(!pto){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "pto error");
+            }
+            dockerClusterman.AskForDNData(pto,*g_connman);
 
+    }
     return NullUniValue;
 }
 

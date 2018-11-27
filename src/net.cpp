@@ -2758,7 +2758,7 @@ void CNode::AskFor(const CInv& inv)
         return;
 
     // We're using mapAskFor as a priority queue,
-    // the key is the earliest time the request can be sent
+// the key is the earliest time the request can be sent
     int64_t nRequestTime;
     limitedmap<uint256, int64_t>::const_iterator it = mapAlreadyAskedFor.find(inv.hash);
     if (it != mapAlreadyAskedFor.end())
@@ -2831,19 +2831,6 @@ void CConnman::PushMessage(CNode* pnode, CDataStream& strm, const std::string& s
 {
     if(strm.empty())
         return;
-        
-    // const char* mes[]={
-    //     "alert","block","merkleblock","tx","inv","reject","verack" ,"getaddr","getheaders","getdata","headers","pong","ping","addr","sendheaders"
-    // };
-    // if(pnode->nVersion<70012&&pnode->nVersion!=0){
-    //     std::set<std::string> invaildcommand;
-    //     for(int i=0;i<15;++i)
-    //         invaildcommand.insert(mes[i]);
-    //     if(!invaildcommand.count(sCommand)){
-    //         LogPrintf(" version %d command %s\n",pnode->nVersion,sCommand);
-    //         return;
-    //     }
-    // }
     unsigned int nSize = strm.size() - CMessageHeader::HEADER_SIZE;
     LogPrint("net", "sending %s (%d bytes) peer=%d\n",  SanitizeString(sCommand.c_str()), nSize, pnode->id);
 

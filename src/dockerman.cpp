@@ -206,6 +206,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,std::string responsed
     return true; 
 }
 bool CDockerMan::Update(){
+    LOCK(cs);
     LogPrint("docker","CDockerMan::Update start\n");
     mapDockerNodeLists.clear();
     mapDockerServiceLists.clear();

@@ -64,6 +64,12 @@ const char *MNGOVERNANCESYNC="govsync";
 const char *MNGOVERNANCEOBJECT="govobj";
 const char *MNGOVERNANCEOBJECTVOTE="govobjvote";
 const char *MNVERIFY="mnv";
+
+// MassGrid docker types
+const char *GETDNDATA="getdndata";   //get own docker data
+const char *DNDATA="dndata";    //respone docker data
+const char *CREATESERVICE="createservice";
+const char *UPDATASERVICE="updataservice";
 };
 
 static const char* ppszTypeName[] =
@@ -141,6 +147,10 @@ const static std::string allNetMessageTypes[] = {
     NetMsgType::MNGOVERNANCEOBJECT,
     NetMsgType::MNGOVERNANCEOBJECTVOTE,
     NetMsgType::MNVERIFY,
+    NetMsgType::GETDNDATA,
+    NetMsgType::DNDATA,
+    NetMsgType::CREATESERVICE,
+    NetMsgType::UPDATASERVICE,
 };
 const static std::vector<std::string> allNetMessageTypesVec(allNetMessageTypes, allNetMessageTypes+ARRAYLEN(allNetMessageTypes));
 
