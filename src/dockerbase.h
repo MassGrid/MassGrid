@@ -31,6 +31,7 @@ union docker_Version
     uint8_t unv[4];
 };
 namespace Config{
+    typedef map<std::string,std::string> Labels;
     enum eStatus{
         created = 0,
         restarting,
@@ -42,92 +43,106 @@ namespace Config{
     };
     static const char* strStatus[] = { "created", "restarting", "running", "removing", "paused", "exited", "dead" };
 
+    struct Version{
+        uint64_t index;
+        ADD_SERIALIZE_PROPERTIES(index);
+    };
     struct Status{
         enum eStatus state;
         uint64_t timestamp;
         std::string message;
         std::string err;
     };
-    struct Replicated{
-        uint replicas;
-    };
-    struct SerivceMode{
-        Replicated replicated;
-    };
-
-    struct Port{
-        std::string protocol;
-        uint targetPort;
-        uint publishedPort;
-        std::string publishMode;
+    struct HealthCheck{
+        vector<std::string> test;
+        int64_t interval;
+        int64_t timeout;
+        int64_t retries;
+        int64_t startPeriod;
     };
 
-    struct VirtualIP{
-        std::string networkID;
-        std::string addr;
+    struct BindOptions{
+        std::string propagation;
     };
 
-    struct EndpointSpec{
-        std::string mode;
-        vector<Port> ports;
-    };
-    
-    struct Endpoint{
-        EndpointSpec spec;
-        vector<Port> ports;
-        vector<VirtualIP> virtualIPs;
+    struct DriverConfig{
+        std::string name;
+        map<std::string,std::string> options;
     };
 
-    struct SerivceUpdateStatus{
-        std::string state;
-        uint64_t startedAt;
-        uint64_t completedAt;
-        std::string message;
-    };
-    struct ContainerStatus{
-            // uint256 containerID;
-            std::string containerID;
-            int PID;
-            int exitCode;
-    };
-    struct TaskStatus: Status {
-        ContainerStatus containerStatus;
-        // PortStatus
+    struct VolumeOptions{
+        bool nocopy{};
+        map<std::string,std::string> labels;
+        DriverConfig driverConfig;
     };
 
-    struct NodeStatus{
-        std::string state;
-        std::string Addr;
+    struct TmpfsOptions{
+        int64_t sizeBytes;
+        int mode;
     };
 
-    struct NodeManagerStatus{
-        bool Leader;
-        std::string Reachability;
-        std::string Addr;
-    }; 
     struct Mount{
         std::string type;
         std::string source;
         std::string target;
+        bool readOnly{};
+        std::string consistency;
+        BindOptions bindOptions;
+        VolumeOptions volumeOption;;
+        TmpfsOptions tmpfsOptions;
     };
 
     struct DiscreteResourceSpec{
         std::string kind;
-        uint value;
+        int64_t value;
     };
+
     struct NamedResourceSpec{
         std::string kind;
         std::string value;
     };
+
+    struct AssignedGenericResources{
+        vector<NamedResourceSpec> namedResourceSpec;
+        vector<DiscreteResourceSpec> discreteResourceSpec;
+    };
+
+    struct GenericResources{
+        NamedResourceSpec namedResourceSpec;
+        DiscreteResourceSpec discreateResourceSpec;
+    };
+
     struct Limits{
         uint64_t nanoCPUs;
         uint64_t memoryBytes;
+        GenericResources genericResources;
     };
 
     struct Reservation{
         uint64_t nanoCPUs;
         uint64_t memoryBytes;
-        vector<struct DiscreteResourceSpec> Reservations;
+        vector<struct GenericResources> genericResources;
+    };
+
+    struct RestartPolicy{
+        std::string condition;
+        int64_t delay{};
+        int64_t maxAttempts{};
+        int64_t window{};
+    };
+
+    struct Spread{
+        std::string spreadDescriptor;
+    };
+
+    struct Preferences{
+        Spread spread;
+    };
+
+    struct Placement{
+        std::string constraints;
+        vector<Preferences> preferences;
+        vector<Platform> platforms;
     };
 
     struct Resource{
@@ -135,23 +150,16 @@ namespace Config{
         struct Reservation reservations;
     };
 
-    struct RestartPolicy{
-        std::string condition;
-        uint MmaxAttempts;
-    };
-
     struct Platform{
         std::string architecture;
         std::string OS;
     };
-    struct Placement{
-        vector<std::string> constraints;
-        vector<Platform> platforms;
-    };
+
     struct NetWork{
         std::string target;
         vector<std::string> aliases;
     };
+
     struct Driver{
         std::string name;
     };
@@ -160,6 +168,7 @@ namespace Config{
         std::string name; 
         // Options
     };
+
     struct ConfigIP{
         std::string subnet;
         std::string gateway;
@@ -170,56 +179,32 @@ namespace Config{
         std::string scope;
     };
 
-    struct ContainerTemplate{
-        std::string image;
-        std::map<std::string,std::string> labels;
-        vector<std::string> env;
-        // Privileges
-        vector<struct Mount> mounts;
-        std::string isolation;
+    struct UpdateStatus{
+        std::string state;   //updating paused completed
+        uint64_t createdAt;
+        uint64_t completedAt;
+        std::string message;
     };
-    struct TaskSpec{
-        ContainerTemplate containerTemplate;
-        Resource resources;
-        RestartPolicy restartPolicy;
-        Placement placement;
-        vector<struct NetWork> netWorks;
-        uint forceUpdate;
-        std::string runtime;
-    };
-    struct ServiceSpec{
-        std::string name;
-        std::map<std::string,std::string> labels;
-        TaskSpec taskTemplate;
-        SerivceMode mode;
-        EndpointSpec endpointSpec;
-    };
-    struct NodeSpec{
-        std::map<std::string,std::string> labels;
-        std::string role;
-        std::string availability;
-    };
+
     struct NetWorkSpec{
         std::string name;
-        std::map<std::string,std::string> labels;
+        Labels labels;
         vector<std::string> driverConfiguration;
         bool ingress;
         IPAMOption IPAMOptions;
     };
-    struct SPlugins{
+
+    struct Plugins{
         std::string type;
         std::string name;
     };
-    struct Engine{
-        std::string engineVersion;
-        vector<SPlugins> plugin;
+
+    struct TLSInfo{
+        std::string trustRoot;
+        std::string certIssuerSubject;
+        std::string certIssuerPublicKey;
     };
-    struct NodeDescription{
-        std::string hostname;
-        Platform platform;
-        Limits resources;
-        Engine engine;
-    };
+
     struct NetworkTemplate{
         int nProtocolVersion = DEFAULT_CTASK_API_VERSION;
         int index;
@@ -231,14 +216,17 @@ namespace Config{
         IPAMOption IPAMOptions;
         vector<std::string> addresses;
     };
+
 };
+
+
 class DockerBase{
 protected:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 public:
     int nProtocolVersion = DEFAULT_CDOCKER_API_VERSION;
-    int index;
+    Config::Version version;
     std::string ID;
     uint64_t createdAt;
     uint64_t updatedAt;
@@ -246,8 +234,9 @@ public:
 public:
     DockerBase() =default;
 
-    DockerBase(std::string id,int idx ,uint64_t createdTime ,uint64_t updateTime,int version=DEFAULT_CDOCKER_API_VERSION):
-    nProtocolVersion(version),
+    DockerBase(std::string id,Config::Version version,uint64_t createdTime ,uint64_t updateTime,int protocolVersion=DEFAULT_CDOCKER_API_VERSION):
+    nProtocolVersion(protocolVersion),
+    version(version),
     ID(id),
     createdAt(createdTime),
     updatedAt(updateTime){}
@@ -258,7 +247,7 @@ public:
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(ID);
-        READWRITE(index);
+        READWRITE(version);
         READWRITE(createdAt);
         READWRITE(updatedAt);
         READWRITE(nProtocolVersion);

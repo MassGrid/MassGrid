@@ -53,7 +53,7 @@ void CDockerClusterman::ProcessMessage(CNode* pfrom, std::string& strCommand, CD
         mdndata.sigTime = GetAdjustedTime();
         
         LogPrintf("CDockerClusterman::ProcessMessage -- Sent DNDATA to peer %d\n", pfrom->id);
-        connman.PushMessage(pfrom, NetMsgType::DNDATA, dndata);
+        connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
 
     }else if(strCommand == NetMsgType::DNDATA){
 
@@ -81,6 +81,7 @@ void CDockerClusterman::AskForDNData(CNode* pnode, CConnman& connman)
     if(!pnode) return;
 
     LOCK(cs);
+    LogPrintf("AskForDNData pukey %s\n",dndata.pubKeyClusterAddress.ToString().substr(0,65));
     connman.PushMessage(pnode, NetMsgType::GETDNDATA, dndata);
 
     LogPrint("docker","CDockerClusterman::AskForDNData Pushed\n");

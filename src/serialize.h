@@ -196,6 +196,14 @@ enum
         SerializationOp(s, CSerActionUnserialize(), nType, nVersion);                \
     }
 
+#define ADD_SERIALIZE_PROPERTIES(...)   \
+    ADD_SERIALIZE_METHODS;     \
+    template <typename Stream, typename Operation>  \
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) { \
+        READWRITEMANY(__VA_ARGS__)  \
+    } 
+
+
 /*
  * Basic Types
  */

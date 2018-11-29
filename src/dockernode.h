@@ -1,10 +1,64 @@
 #ifndef DOCKERNODE_H
 #define DOCKERNODE_H
 #include "dockerbase.h"
+namespace Config{
+    enum Role{
+        ROLE_WORKER=0,
+        ROLE_MANAGER
+    };
+    enum NodeStatusState{
+        NODESTATUSSTATE_UNKNOWN=0,
+        NODESTATUSSTATE_DOWN,
+        NODESTATUSSTATE_READY,
+        NODESTATUSSTATE_DISCONNECTED
+    };
+    enum Availability{
+        AVAILABILITY_ACTIVE=0,
+        AVAILABILITY_PAUSE,
+        AVAILABILITY_DRAIN
+    };
+    enum reachability{
+        REACHABILITY_UNKNOWN=0,
+        REACHABILITY_UNREACHABLE,
+        REACHABILITY_REACHABLE
+    };
+    const char* strRole[]={"worker","manager"};
+    const char* strNodeStatusState[]={"unknown","down","ready","disconnected"};
+    const char* strAvailability[]={"active","pause","drain"};
+    const char* strRechability[]={"unknown","unreachable","rechable"};
+    struct EngineDescription{
+        std::string engineVersion;
+        Labels labels;
+        vector<Plugins> plugin;
+    };
+    struct NodeSpec{
+        std::string name;
+        Labels labels;
+        int role;   //worker manager
+        int availability;   //active pause drain
+    };
+    struct NodeDescription{
+        std::string hostname;
+        Platform platform;
+        Reservation resources;  //something?
+        EngineDescription engine;
+        TLSInfo tlsInfo;
+    };
+    struct NodeStatus{
+        int state;  //unknown down ready disconnected
+        std::string message;    
+        std::string addr;
+    };
+    struct ManagerStatus{
+        bool Leader{};
+        int reachability;   //unknown unreachable reachable
+        std::string addr;
+    }; 
+};
 class Node:public DockerBase{
     static bool DockerNodeJson(const UniValue& data, Node& node);
     static void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec);
-    static void ParseNodeLabels(const UniValue& data,std::map<std::string,std::string> &labels);
+    static void ParseNodeLabels(const UniValue& data,Config::Labels &labels);
     static void ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp);
     static void ParseNodePlatform(const UniValue& data,Config::Platform &platform);
     static void ParseNodeResource(const UniValue& data, Config::Limits &limits);
@@ -15,40 +69,28 @@ class Node:public DockerBase{
 public:
 
     static void DockerNodeList(const string& nodeData,std::map<std::string,Node> &nodes);
-    typedef std::string NodeState;
-    typedef std::string RoleState;
-    const RoleState RoleStateWorker = "worker";
-    const RoleState RoleStateManager = "Manager";
-
-    const NodeState NodeStateUnknown = "unknown";
-	// NodeStateDown DOWN
-	const NodeState NodeStateDown= "down";
-	// NodeStateReady READY
-	const NodeState NodeStateReady = "ready";
-	// NodeStateDisconnected DISCONNECTED
-	const NodeState NodeStateDisconnected = "disconnected";
 
     Config::NodeSpec spec;
     Config::NodeDescription description;
     Config::NodeStatus status;
-    Config::NodeManagerStatus managerStatus; 
+    Config::ManagerStatus managerStatus; 
 
 // function]
 public:
 
     Node() =default;
-    Node(std::string id,int idx ,uint64_t createdTime ,uint64_t updateTime,
+    Node(std::string id,Config::Version version ,uint64_t createdTime ,uint64_t updateTime,
     Config::NodeSpec spec,
     Config::NodeDescription description,
     Config::NodeStatus status,
     Config::NodeManagerStatus managerStatus, 
-    int version=DEFAULT_CNODE_API_VERSION):spec(spec),description(description),
+    int protocolVersion=DEFAULT_CNODE_API_VERSION):spec(spec),description(description),
     status(status),managerStatus(managerStatus),
-    DockerBase(id,idx,createdTime,updateTime,version){}
+    DockerBase(id,version,createdTime,updateTime,protocolVersion){}
 
     Node(const Node& from){
         ID=from.ID;
-        index=from.index;
+        version=from.version;
         createdAt=from.createdAt;
         updatedAt=from.updatedAt;
         nProtocolVersion=from.nProtocolVersion;
@@ -60,7 +102,7 @@ public:
 
     Node& operator=(Node const& from){
         ID=from.ID;
-        index=from.index;
+        version=from.version;
         createdAt=from.createdAt;
         updatedAt=from.updatedAt;
         nProtocolVersion=from.nProtocolVersion;
@@ -77,7 +119,7 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(nProtocolVersion);
         READWRITE(ID);
-        READWRITE(index);
+        READWRITE(version);
         READWRITE(createdAt);
         READWRITE(updatedAt);
     }

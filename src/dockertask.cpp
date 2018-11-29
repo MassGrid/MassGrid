@@ -237,7 +237,7 @@ void Task::ParseTaskNetWorkSpec(const UniValue& data, Config::NetWorkSpec &Spec)
         }
     }
 }
-void Task::ParseTaskLabels(const UniValue& data,std::map<std::string,std::string> &labels)
+void Task::ParseTaskLabels(const UniValue& data,Config::Labels &labels)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -352,7 +352,7 @@ void Task::ParseTaskSpec(const UniValue& data, Config::TaskSpec &taskspec)
         }
         if(data[vKeys[i]].isObject()){
             if(vKeys[i]=="ContainerSpec"){
-                ParseTaskSpecContainer(tdata,taskspec.containerTemplate);
+                ParseTaskSpecContainer(tdata,taskspec.containerSpec);
             }else if(vKeys[i]=="Resources"){
                 ParseTaskSpecResources(tdata,taskspec.resources);
             }else if(vKeys[i]=="RestartPolicy"){
@@ -372,7 +372,7 @@ void Task::ParseTaskSpec(const UniValue& data, Config::TaskSpec &taskspec)
         }
     } 
 }
-void Task::ParseTaskSpecContainer(const UniValue& data,  Config::ContainerTemplate &conttemp)
+void Task::ParseTaskSpecContainer(const UniValue& data,  Config::ContainerSpec &conttemp)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){

@@ -67,7 +67,7 @@ bool Service::DcokerServiceJson(const UniValue& data, Service& service)
     Config::ServiceSpec spc;
     Config::ServiceSpec previousSpec;
     Config::Endpoint endpoint;
-    Config::SerivceUpdateStatus updateStatus;
+    Config::UpdateStatus updateStatus;
     int version=DEFAULT_CTASK_API_VERSION;
 
     std::vector<std::string> vKeys=data.getKeys();
@@ -118,7 +118,7 @@ void Service::ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
         }
     }
 }
-void Service::ParseSpecLabels(const UniValue& data,std::map<std::string,std::string> &labels)
+void Service::ParseSpecLabels(const UniValue& data,Config::Labels &labels)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -143,7 +143,7 @@ void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTempl
         }
         if(tdata.isObject()){
             if(vKeys[i]=="ContainerSpec"){
-                ParseContainerTemplate(tdata,taskTemplate.containerTemplate);
+                ParseContainerSpec(tdata,taskTemplate.containerSpec);
             }else if(vKeys[i]=="Resources"){
                 ParseResource(tdata,taskTemplate.resources);
             }else if(vKeys[i] =="RestartPolicy"){
@@ -163,7 +163,7 @@ void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTempl
         }
     }
 }
-void Service::ParseContainerTemplate(const UniValue& data,Config::ContainerTemplate &contTemp)
+void Service::ParseContainerSpec(const UniValue& data,Config::ContainerSpec &contTemp)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -192,7 +192,7 @@ void Service::ParseContainerTemplate(const UniValue& data,Config::ContainerTempl
         }
     }
 }
-void Service::ParseSpecContainerLabels(const UniValue& data,std::map<std::string,std::string> &labels)
+void Service::ParseSpecContainerLabels(const UniValue& data,Config::Labels &labels)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -351,7 +351,7 @@ void Service::ParseNetwork(const UniValue& data,Config::NetWork &network)
         }
     }
 }
-void Service::ParseMode(const UniValue& data,Config::SerivceMode &mode)
+void Service::ParseMode(const UniValue& data,Config::Mode &mode)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -384,7 +384,7 @@ void Service::ParseEndpointSpec(const UniValue& data,Config::EndpointSpec &endpo
         if(data[vKeys[i]].isArray()){
             if(vKeys[i]=="Ports"){
                 for(size_t j=0;j<tdata.size();j++){
-                    Config::Port port;
+                    Config::EndpointPortConfig port;
                     ParseEndSpecPort(tdata[j],port);
                     endpointSpec.ports.push_back(port);
                 }
@@ -397,7 +397,7 @@ void Service::ParseEndpointSpec(const UniValue& data,Config::EndpointSpec &endpo
         }
     }
 }
-void Service::ParseEndSpecPort(const UniValue& data,Config::Port &port)
+void Service::ParseEndSpecPort(const UniValue& data,Config::EndpointPortConfig &port)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -431,7 +431,7 @@ void Service::ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint)
         if(data[vKeys[i]].isArray()){
             if(vKeys[i]=="Ports"){
                 for(size_t j=0;j<tdata.size();j++){
-                    Config::Port port;
+                    Config::EndpointPortConfig port;
                     ParseEndSpecPort(tdata[j],port);
                     endpoint.ports.push_back(port);
                 }
@@ -459,7 +459,7 @@ void Service::ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip)
         }
     }
 }
-void Service::ParseUpdateStatus(const UniValue& data,Config::SerivceUpdateStatus &updateStatus)
+void Service::ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updateStatus)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){

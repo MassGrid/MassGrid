@@ -363,7 +363,7 @@ UniValue masternode(const UniValue& params, bool fHelp)
         if (params.size() >= 2) {
             strFilter = params[1].get_str();
         }
-        if (params.size() == 3) {
+        if (params.size() >= 3) {
             strPrivkey = params[2].get_str();
         }
         if(!CMessageSigner::GetKeysFromSecret(strPrivkey,key,pubkey)){
@@ -377,6 +377,26 @@ UniValue masternode(const UniValue& params, bool fHelp)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "pto error");
             }
             dockerClusterman.AskForDNData(pto,*g_connman);
+
+        std::string straddress;
+        if (params.size() == 4) {
+            straddress = params[3].get_str();
+        }
+        CMassGridAddress address(straddress);
+        if (pwalletMain && address.IsValid())
+        {
+            CKeyID keyID;
+            if (!address.GetKeyID(keyID))
+                throw runtime_error(
+                    strprintf("%s does not refer to a key",straddress));
+            CPubKey vchPubKey;
+            if (!pwalletMain->GetPubKey(keyID, vchPubKey))
+                throw runtime_error(
+                    strprintf("no full public key for address %s",straddress));
+            if (!vchPubKey.IsFullyValid())
+                throw runtime_error(" Invalid public key: "+straddress);
+            LogPrintf("result pubkey %s\n",vchPubKey.ToString().substr(0,65));
+        }
 
     }
     return NullUniValue;

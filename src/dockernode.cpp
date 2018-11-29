@@ -123,7 +123,7 @@ void Node::ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec)
         }
     }
 }
-void Node::ParseNodeLabels(const UniValue& data,std::map<std::string,std::string> &labels)
+void Node::ParseNodeLabels(const UniValue& data,Config::Labels &labels)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
