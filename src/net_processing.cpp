@@ -35,7 +35,7 @@
 #include "masternode-payments.h"
 #include "masternode-sync.h"
 #include "masternodeman.h"
-#include "dockercluster.h"
+#include "dockerserver.h"
 
 #include <boost/thread.hpp>
 
@@ -2112,7 +2112,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         if (found)
         {
             //probably one the extensions
-            dockerClusterman.ProcessMessage(pfrom, strCommand, vRecv, connman);
+            dockerServerman.ProcessMessage(pfrom, strCommand, vRecv, connman);
             mnodeman.ProcessMessage(pfrom, strCommand, vRecv, connman);
             mnpayments.ProcessMessage(pfrom, strCommand, vRecv, connman);
             instantsend.ProcessMessage(pfrom, strCommand, vRecv, connman);

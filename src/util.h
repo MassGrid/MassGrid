@@ -163,6 +163,8 @@ void runCommand(const std::string& strCommand);
 void SetDefaultReceiveAddress(const std::string& address);
 std::string DefaultReceiveAddress();
 
+CPubKey DefaultPubkey();
+
 inline bool IsSwitchChar(char c)
 {
 #ifdef WIN32

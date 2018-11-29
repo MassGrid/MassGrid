@@ -12,7 +12,7 @@
 #include "masternodeconfig.h"
 #include "masternodeman.h"
 #include "dockerman.h"
-#include "dockercluster.h"
+#include "dockerserver.h"
 #include "messagesigner.h"
 #include "rpc/server.h"
 #include "util.h"
@@ -369,14 +369,14 @@ UniValue masternode(const UniValue& params, bool fHelp)
         if(!CMessageSigner::GetKeysFromSecret(strPrivkey,key,pubkey)){
             throw JSONRPCError(RPC_INVALID_PARAMETER, "privkey error");
         }
-            dockerClusterman.selectDockernode=strFilter;
-            dockerClusterman.dndata.pubKeyClusterAddress=pubkey;
-            dockerClusterman.dndata.sigTime=GetAdjustedTime();
-            CNode *pto = dockerClusterman.ProcessDockernodeConnections(*g_connman);
+            dockerServerman.selectDockernode=strFilter;
+            dockerServerman.dndata.pubKeyClusterAddress=pubkey;
+            dockerServerman.dndata.sigTime=GetAdjustedTime();
+            CNode *pto = dockerServerman.ProcessDockernodeConnections(*g_connman);
             if(!pto){
             throw JSONRPCError(RPC_INVALID_PARAMETER, "pto error");
             }
-            dockerClusterman.AskForDNData(pto,*g_connman);
+            dockerServerman.AskForDNData(pto,*g_connman);
 
         std::string straddress;
         if (params.size() == 4) {

@@ -4,7 +4,6 @@
 #include "dockertask.h"
 namespace Config{
 
-    
     struct Replicated{
         uint64_t replicas{};
     };
@@ -90,13 +89,14 @@ class Service:public DockerBase{
     static void ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updateStatus);
 public:
     
-    static void DockerServiceList(const string& serviceData,std::map<std::string,Service> &services);
     Config::ServiceSpec spec;
     Config::ServiceSpec previousSpec;   //?
 
     Config::Endpoint endpoint;
     Config::UpdateStatus updateStatus;
 
+    map<std::string,Task> mapDockerTasklists;
+    static void DockerServiceList(const string& serviceData,std::map<std::string,Service> &services);
 public:    
     Service() = default;
     
@@ -154,4 +154,64 @@ public:
     std::string ToJsonString();
 };
 
+class DockerGetData{
+public:
+    uint64_t version = DOCKERREQUEST_API_VERSION;
+    CPubKey pubKeyClusterAddress{};
+    CTxIn cin{};
+    int64_t sigTime{}; //dkct message times
+    std::map<std::string,Service> mapDockerServiceLists;
+
+    ADD_SERIALIZE_METHODS;
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(cin);
+        READWRITE(version);
+        READWRITE(pubKeyClusterAddress);
+        READWRITE(sigTime);
+        READWRITE(mapDockerServiceLists);
+    }
+    uint256 GetHash() const
+    {
+        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
+        ss << cin;
+        ss << version;
+        ss << pubKeyClusterAddress;
+        return ss.GetHash();
+    }
+};
+class DockerCreateService{
+public:
+
+    uint64_t version = DOCKERREQUEST_API_VERSION;
+    std::vector<unsigned char> vchSig{};
+    CPubKey pubKeyClusterAddress{};
+    CTxIn vin{};
+    int64_t sigTime{}; //dkct message times
+    Config::ServiceSpec sspec{};
+
+
+    ADD_SERIALIZE_METHODS;
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(vchSig);
+        READWRITE(vin);
+        READWRITE(version);
+        READWRITE(pubKeyClusterAddress);
+        READWRITE(sigTime);
+        READWRITE(sspec);
+    }
+    uint256 GetHash() const
+    {
+        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
+        ss << vin;
+        ss << version;
+        ss << pubKeyClusterAddress;
+        ss << sspec;
+        return ss.GetHash();
+    }
+    bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
+    bool CheckSignature(CPubKey& pubKeyMasternode);
+};
+typedef DockerCreateService DockerUpdateService;
 #endif //__DOCKERSERVICE__

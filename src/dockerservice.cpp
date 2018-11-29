@@ -1,5 +1,43 @@
 #include "dockerservice.h"
 #include "univalue.h"
+#include "timedata.h"
+#include "primitives/transaction.h"
+#include <boost/lexical_cast.hpp>
+#include "messagesigner.h"
+bool DockerCreateService::Sign(const CKey& keyClusterAddress, const CPubKey& pubKeyClusterAddress)
+{
+    std::string strError;
+
+    // TODO: add sentinel data
+    sigTime = GetAdjustedTime();
+    std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(version) + sspec.ToString() + boost::lexical_cast<std::string>(sigTime);
+
+    if(!CMessageSigner::SignMessage(strMessage, vchSig, keyClusterAddress)) {
+        LogPrintf("DockerCreateService::Sign -- SignMessage() failed\n");
+        return false;
+    }
+
+    if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
+        LogPrintf("DockerCreateService::Sign -- VerifyMessage() failed, error: %s\n", strError);
+        return false;
+    }
+
+    return true;
+}
+
+bool DockerCreateService::CheckSignature(CPubKey& pubKeyClusterAddress)
+{
+    // TODO: add sentinel data
+    std::string strMessage = vin.ToString() + pubKeyClusterAddress.ToString() + boost::lexical_cast<std::string>(version) + sspec.ToString() + boost::lexical_cast<std::string>(sigTime);
+    std::string strError = "";
+
+    if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
+        LogPrintf("DockerCreateService::CheckSignature -- Got bad signature, error: %s\n", strError);
+        return false;
+    }
+    return true;
+}
+
 std::string dockerservicefilter::ToJsonString(){
     UniValue data(UniValue::VOBJ);
     if(!id.empty()){

@@ -6,78 +6,35 @@
 #include <vector>
 #include <dockerservice.h>
 #include <dockertask.h>
-
+#include "base58.h"
 #include "primitives/transaction.h"
-class CDockerClusterman;
-extern CDockerClusterman dockerClusterman;
-
-#define DNDATAVERSION 10030
-#define DNCREATEVERSION 10030
-class DockerGetData{
-public:
-    uint64_t version = DNDATAVERSION;
-    CPubKey pubKeyClusterAddress{};
-    CTxIn cin{};
-    int64_t sigTime{}; //dkct message times
-    std::map<std::string,Service> mapDockerServiceLists;
-
-    ADD_SERIALIZE_METHODS;
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(cin);
-        READWRITE(version);
-        READWRITE(pubKeyClusterAddress);
-        READWRITE(sigTime);
-        READWRITE(mapDockerServiceLists);
-    }
-    uint256 GetHash() const
-    {
-        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-        ss << cin;
-        ss << version;
-        ss << pubKeyClusterAddress;
-        return ss.GetHash();
-    }
-};
-
-class DockerDeploydata{
-    uint64_t version = DNCREATEVERSION;
-    CPubKey pubKeyClusterAddress{};
-    CTxIn cin{};
-    int64_t sigTime{};
-    Service service{};
-
-    ADD_SERIALIZE_METHODS;
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(cin);
-        READWRITE(version);
-        READWRITE(pubKeyClusterAddress);
-        READWRITE(sigTime);
-        READWRITE(service);
-    }
-    uint256 GetHash() const
-    {
-        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-        ss << cin;
-        ss << version;
-        ss << pubKeyClusterAddress;
-        return ss.GetHash();
-    }
-};
-class CDockerClusterman{
+class Cluster;
+extern Cluster dockercluster;
+class Cluster{
 private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 public:
-    uint64_t version{};
-    std::string selectDockernode{};
-    DockerGetData dndata;
+        std::map<std::string,Service> mapDockerServiceLists;
+        int64_t sigTime{};  //update time
+
+        CService connectDockerAddr{};
+        CNode* connectNode = nullptr;
+        // CTxIn masternodeId{};
+
+        CPubKey DefaultPubkey{};
+        CMassGridAddress DefaultAddress{};
 
 
-    CNode* ProcessDockernodeConnections(CConnman& connman);
+        bool SetConnectDockerAddress(std::string address_port);
+        bool ProcessDockernodeConnections();
 
-    void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
-    void AskForDNData(CNode* pnode, CConnman& connman);
+
+        void AskForDNData();
+        bool Check();   //send to server must be check;
+        bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
+        bool UpdateAndSendSeriveSpec(DockerUpdateService sspec);    //send message
+        bool CheckAndUpdate();      //update infomation after check from receive
+
 };
 #endif  //DOCKERCLUSTER_H
