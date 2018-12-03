@@ -99,7 +99,7 @@ QTabWidget::pane{
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
@@ -304,6 +304,16 @@ QTabWidget::pane{
            <column>
             <property name="text">
              <string>Payee</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>NodeCount/activeNodeCount</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>joinToken</string>
             </property>
            </column>
           </widget>

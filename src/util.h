@@ -77,6 +77,7 @@ extern CTranslationInterface translationInterface;
 extern const char * const MASSGRID_CONF_FILENAME;
 extern const char * const MASSGRID_PID_FILENAME;
 
+class CPubKey;
 /**
  * Translation function: Call Translate signal on UI interface, which returns a boost::optional result.
  * If no translation slot is registered, nothing is returned, and simply return the input.
@@ -163,7 +164,8 @@ void runCommand(const std::string& strCommand);
 void SetDefaultReceiveAddress(const std::string& address);
 std::string DefaultReceiveAddress();
 
-// CPubKey DefaultPubkey();
+CPubKey DefaultPubkey();
+void SetDefaultPubkey(CPubKey pubkey);
 
 inline bool IsSwitchChar(char c)
 {

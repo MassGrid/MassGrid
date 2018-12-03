@@ -87,7 +87,6 @@ void OptionsModel::Init(bool resetSettings)
         settings.setValue("strMainAddress", "");
     strMainAddress = settings.value("strMainAddress", "").toString();
 
-
 #ifdef ENABLE_WALLET
     // if (!settings.contains("fCoinControlFeatures"))
         settings.setValue("fCoinControlFeatures", true);
@@ -419,6 +418,7 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
                 setRestartRequired(true);
             }
             break;
+            
 #ifdef ENABLE_WALLET
         case Digits:
             if (settings.value("digits") != value) {

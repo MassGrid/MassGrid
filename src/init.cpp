@@ -62,6 +62,7 @@
 #include "netfulfilledman.h"
 
 #include "spork.h"
+#include "util.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -403,6 +404,7 @@ std::string HelpMessage(HelpMessageMode mode)
 #endif
     }
     strUsage += HelpMessageOpt("-datadir=<dir>", _("Specify data directory"));
+    strUsage += HelpMessageOpt("-defaultAddr=<addr>", _("Default Address to create pubkey"));
     strUsage += HelpMessageOpt("-dbcache=<n>", strprintf(_("Set database cache size in megabytes (%d to %d, default: %d)"), nMinDbCache, nMaxDbCache, nDefaultDbCache));
     strUsage += HelpMessageOpt("-loadblock=<file>", _("Imports blocks from external blk000??.dat file on startup"));
     strUsage += HelpMessageOpt("-maxorphantx=<n>", strprintf(_("Keep at most <n> unconnectable transactions in memory (default: %u)"), DEFAULT_MAX_ORPHAN_TRANSACTIONS));
@@ -487,6 +489,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-txconfirmtarget=<n>", strprintf(_("If paytxfee is not set, include enough fee so transactions begin confirmation on average within n blocks (default: %u)"), DEFAULT_TX_CONFIRM_TARGET));
     strUsage += HelpMessageOpt("-maxtxfee=<amt>", strprintf(_("Maximum total fees (in %s) to use in a single wallet transaction; setting this too low may abort large transactions (default: %s)"),
         CURRENCY_UNIT, FormatMoney(DEFAULT_TRANSACTION_MAXFEE)));
+
     strUsage += HelpMessageOpt("-usehd", _("Use hierarchical deterministic key generation (HD) after bip39/bip44. Only has effect during wallet creation/first start") + " " + strprintf(_("(default: %u)"), DEFAULT_USE_HD_WALLET));
     strUsage += HelpMessageOpt("-mnemonic", _("User defined mnemonic for HD wallet (bip39). Only has effect during wallet creation/first start (default: randomly generated)"));
     strUsage += HelpMessageOpt("-mnemonicpassphrase", _("User defined mnemonic passphrase for HD wallet (bip39). Only has effect during wallet creation/first start (default: empty string)"));
@@ -1166,6 +1169,12 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
                                        mapArgs["-maxtxfee"], ::minRelayTxFee.ToString()));
         }
     }
+    if (mapArgs.count("-defaultAddr"))
+    {
+        std::string defaultAddr = GetArg("-defaultAddr", "");
+        SetDefaultReceiveAddress(defaultAddr);
+    }
+
     nTxConfirmTarget = GetArg("-txconfirmtarget", DEFAULT_TX_CONFIRM_TARGET);
     bSpendZeroConfChange = GetBoolArg("-spendzeroconfchange", DEFAULT_SPEND_ZEROCONF_CHANGE);
     fSendFreeTransactions = GetBoolArg("-sendfreetransactions", DEFAULT_SEND_FREE_TRANSACTIONS);
@@ -1680,6 +1689,43 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         bool fFirstRun = true;
         pwalletMain = new CWallet(strWalletFile);
         DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
+
+        //TODO: 判断DefaultReceiveAddress是否存在keypool中，不在就擦除
+
+        LogPrintf("=====>init old pubkey id:%s\n",pwalletMain->vchDefaultKey.GetID().ToString());
+        LogPrintf("=====>init old pubkey string:%s\n",pwalletMain->vchDefaultKey.ToString());
+
+        // std::string defaultAddr = DefaultReceiveAddress();
+        // if(defaultAddr.size()){
+        //     CTxDestination newAddress = CMassGridAddress(defaultAddr).Get();
+        //     if(!pwalletMain->mapAddressBook.count(newAddress)){
+        //         SetDefaultReceiveAddress("");
+        //     }
+        //     else{
+        //         LogPrintf("=====>init default addr:%s\n",defaultAddr);            
+        //         CPubKey pubkey = pwalletMain->CreatePubKey(defaultAddr);
+
+        //         SetDefaultPubkey(pubkey);
+        //         pwalletMain->vchDefaultKey = pubkey;
+
+        //         // pwalletMain->SetDefaultKey(pubkey);
+        //         LogPrintf("=====>init new pubkey id:%s\n",pubkey.GetID().ToString());
+        //         LogPrintf("=====>init old pubkey string:%s\n",pubkey.ToString());
+
+        //         // // MQjbUz2m9sBsn1MxyCQo87DgMHdwBD8kLG
+        //         // // MPYLg7tdgkvzj2uacoou3ZnmZ8dodDDwyE
+        //         // CPubKey pubkey2 = pwalletMain->CreatePubKey("MQjbUz2m9sBsn1MxyCQo87DgMHdwBD8kLG");
+        //         // LogPrintf("=====>MQjbUz2m9sBsn1MxyCQo87DgMHdwBD8kLG:%s\n",pubkey2.GetID().ToString());
+        //         // LogPrintf("=====>MQjbUz2m9sBsn1MxyCQo87DgMHdwBD8kLG:%s\n",pubkey2.ToString());
+        //         // CPubKey pubkey3 = pwalletMain->CreatePubKey("MPYLg7tdgkvzj2uacoou3ZnmZ8dodDDwyE");
+        //         // LogPrintf("=====>MPYLg7tdgkvzj2uacoou3ZnmZ8dodDDwyE:%s\n",pubkey3.GetID().ToString());
+        //         // LogPrintf("=====>MPYLg7tdgkvzj2uacoou3ZnmZ8dodDDwyE:%s\n",pubkey3.ToString());
+        //         // // pwallet->vchDefaultKey
+        //     }
+        // }
+
+        // pwallet->vchDefaultKey
+
         if (nLoadWalletRet != DB_LOAD_OK)
         {
             if (nLoadWalletRet == DB_CORRUPT)
@@ -1750,7 +1796,6 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
                 if (!strBackupError.empty())
                     return InitError(strBackupError);
             }
-
         }
         else if (mapArgs.count("-usehd")) {
             bool useHD = GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET);
@@ -1759,6 +1804,8 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
             if (!pwalletMain->IsHDEnabled() && useHD)
                 return InitError(strprintf(_("Error loading %s: You can't enable HD on a already existing non-HD wallet"), strWalletFile));
         }
+
+
 
         // Warn user every time he starts non-encrypted HD wallet
         if (GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET) && !pwalletMain->IsLocked()) {

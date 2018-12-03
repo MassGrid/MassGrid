@@ -17,6 +17,7 @@
 #include "sync.h"
 #include "utilstrencodings.h"
 #include "utiltime.h"
+#include "pubkey.h"
 
 #include <stdarg.h>
 
@@ -24,7 +25,6 @@
 #include <pthread.h>
 #include <pthread_np.h>
 #endif
-
 
 #ifndef WIN32
 // for posix_fallocate
@@ -137,6 +137,8 @@ bool fLogIPs = DEFAULT_LOGIPS;
 volatile bool fReopenDebugLog = false;
 CTranslationInterface translationInterface;
 std::string defaultReceiveAddress = "";
+std::string strDefaultPubkey = "";
+CPubKey defaultPubkey;
 
 /** Init OpenSSL library multithreading support */
 static CCriticalSection** ppmutexOpenSSL;
@@ -839,6 +841,16 @@ void SetDefaultReceiveAddress(const std::string& address)
 std::string DefaultReceiveAddress()
 {
     return defaultReceiveAddress;
+}
+
+CPubKey DefaultPubkey()
+{
+    return defaultPubkey;
+}
+
+void SetDefaultPubkey(CPubKey pubkey)
+{
+    defaultPubkey = pubkey;
 }
 
 #ifdef WIN32

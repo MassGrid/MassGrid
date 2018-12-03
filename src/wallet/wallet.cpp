@@ -3989,6 +3989,26 @@ bool CWallet::GetDestData(const CTxDestination &dest, const std::string &key, st
     }
     return false;
 }
+CPubKey CWallet::CreatePubKey(const std::string& addr)
+{
+    const std::string& ks = addr;
+    // Case 1: MassGrid address and we have full public key:
+    CMassGridAddress address(ks);
+    if (/*pwalletMain &&*/ address.IsValid())
+    {
+        CKeyID keyID;
+        if (!address.GetKeyID(keyID))
+            throw runtime_error(
+                strprintf("%s does not refer to a key",ks));
+        CPubKey vchPubKey;
+        if (!/*pwalletMain->*/GetPubKey(keyID, vchPubKey))
+            throw runtime_error(
+                strprintf("no full public key for address %s",ks));
+        if (!vchPubKey.IsFullyValid())
+            throw runtime_error(" Invalid public key: "+ks);
+        // pubkeys[i] = vchPubKey;
+    }
+}
 
 CKeyPool::CKeyPool()
 {

@@ -22,6 +22,7 @@
 #include "addressbookpage.h"
 #include "walletmodel.h"
 #include "massgridgui.h"
+#include "askpassphrasedialog.h"
 
 #include "wallet/wallet.h" // for CWallet::GetRequiredFee()
 
@@ -33,6 +34,7 @@
 #include <QLocale>
 #include "cmessagebox.h"
 #include <QTimer>
+// #include <stdexcept>
 
 #ifdef ENABLE_WALLET
 extern CWallet* pwalletMain;
@@ -149,10 +151,9 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     ui->frame_ip->hide();
     ui->coinControlFeatures->hide();
 
-// #ifdef os_w  
-//     ui->lang->setStyle(QStyleFactory::create("Windows"));
-//     ui->unit->setStyle(QStyleFactory::create("Windows"));
-// #endif
+
+
+
 }
 
 OptionsDialog::~OptionsDialog()
@@ -180,6 +181,8 @@ void OptionsDialog::setModel(OptionsModel *model)
         mapper->toFirst();
 
         updateDefaultProxyNets();
+
+        ui->MainAddress->setText(model->getMainAddress());
     }
 
     /* warn when one of the following settings changes by user action (placed here so init via mapper doesn't trigger them) */
@@ -240,7 +243,6 @@ void OptionsDialog::setMapper()
     mapper->addMapping(ui->unit, OptionsModel::DisplayUnit);
     mapper->addMapping(ui->thirdPartyTxUrls, OptionsModel::ThirdPartyTxUrls);
     mapper->addMapping(ui->MainAddress, OptionsModel::MainAddress);
-
 }
 
 void OptionsDialog::setOkButtonState(bool fState)
@@ -312,10 +314,10 @@ void OptionsDialog::on_openAddressBookButton_clicked()
     dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
 
     if(dlg.exec() == QDialog::Accepted){
-
         ui->MainAddress->setText(model->getMainAddress());
-    }
-    
+        //TODO open lock wallet
+        GUIUtil::setDefaultReceiveAddr(model->getMainAddress());
+    }    
 }
 
 void OptionsDialog::showRestartWarning(bool fPersistent)

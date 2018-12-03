@@ -52,8 +52,7 @@ public:
         LowKeysWarning,         // bool
         Listen,                 // bool
         OptionIDRowCount,
-		MainAddress,       // QString
-
+		MainAddress,            // QString
     };
 
     void Init(bool resetSettings = false);
@@ -73,6 +72,7 @@ public:
     QString getThirdPartyTxUrls() { return strThirdPartyTxUrls; }
     QString getMainAddress() { return strMainAddress; }
     void setDefaultReceiveAddress(const QString& address);
+    
     bool getProxySettings(QNetworkProxy& proxy) const;
     bool getCoinControlFeatures() { return fCoinControlFeatures; }
     bool getShowAdvancedPSUI() { return fShowAdvancedPSUI; }

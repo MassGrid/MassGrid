@@ -118,6 +118,24 @@ QString getDefaultReceiveAddr()
 void setDefaultReceiveAddr(const QString& addr)
 {
     DefaultReceiveAddr = addr;
+    SetDefaultReceiveAddress(addr.toStdString().c_str());
+    createPubkey(addr.toStdString().c_str());
+}
+
+void createPubkey(const std::string &addr)
+{
+    //TODO: 判断DefaultReceiveAddress是否存在keypool中，不在就擦除
+    if(addr.size()){
+        CTxDestination newAddress = CMassGridAddress(addr).Get();
+        if(!pwalletMain->mapAddressBook.count(newAddress)){
+            return ;
+        }
+        else{
+            CPubKey pubkey = pwalletMain->CreatePubKey(addr);
+            SetDefaultPubkey(pubkey);
+            pwalletMain->SetDefaultKey(pubkey);
+        }
+    }
 }
 
 void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)

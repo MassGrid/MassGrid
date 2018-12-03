@@ -548,14 +548,16 @@ border:hidden;
         background-color: rgb(255, 255, 255);
 }
 
-QDialog#OptionsDialog QFrame#mainaddressframe{
+QDialog#OptionsDialog QFrame#mainaddressframe,
+QDialog#OptionsDialog QFrame#pubkeyframe{
         border-color: rgb(186, 186, 186);
         border:1px solid rgb(186, 186, 186);
 }
 
 QDialog#OptionsDialog QLineEdit#proxyPort,
 QDialog#OptionsDialog QLineEdit#proxyIp,
-QDialog#OptionsDialog QLineEdit#mainaddress{
+QDialog#OptionsDialog QLineEdit#mainaddress,
+QDialog#OptionsDialog QLineEdit#PublicKeyLineedit{
 border:hidden;
 background-color: rgb(255, 255, 255,0);
 }
