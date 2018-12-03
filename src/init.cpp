@@ -1690,41 +1690,19 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         pwalletMain = new CWallet(strWalletFile);
         DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
 
-        //TODO: 判断DefaultReceiveAddress是否存在keypool中，不在就擦除
-
-        LogPrintf("=====>init old pubkey id:%s\n",pwalletMain->vchDefaultKey.GetID().ToString());
-        LogPrintf("=====>init old pubkey string:%s\n",pwalletMain->vchDefaultKey.ToString());
-
-        // std::string defaultAddr = DefaultReceiveAddress();
-        // if(defaultAddr.size()){
-        //     CTxDestination newAddress = CMassGridAddress(defaultAddr).Get();
-        //     if(!pwalletMain->mapAddressBook.count(newAddress)){
-        //         SetDefaultReceiveAddress("");
-        //     }
-        //     else{
-        //         LogPrintf("=====>init default addr:%s\n",defaultAddr);            
-        //         CPubKey pubkey = pwalletMain->CreatePubKey(defaultAddr);
-
-        //         SetDefaultPubkey(pubkey);
-        //         pwalletMain->vchDefaultKey = pubkey;
-
-        //         // pwalletMain->SetDefaultKey(pubkey);
-        //         LogPrintf("=====>init new pubkey id:%s\n",pubkey.GetID().ToString());
-        //         LogPrintf("=====>init old pubkey string:%s\n",pubkey.ToString());
-
-        //         // // MQjbUz2m9sBsn1MxyCQo87DgMHdwBD8kLG
-        //         // // MPYLg7tdgkvzj2uacoou3ZnmZ8dodDDwyE
-        //         // CPubKey pubkey2 = pwalletMain->CreatePubKey("MQjbUz2m9sBsn1MxyCQo87DgMHdwBD8kLG");
-        //         // LogPrintf("=====>MQjbUz2m9sBsn1MxyCQo87DgMHdwBD8kLG:%s\n",pubkey2.GetID().ToString());
-        //         // LogPrintf("=====>MQjbUz2m9sBsn1MxyCQo87DgMHdwBD8kLG:%s\n",pubkey2.ToString());
-        //         // CPubKey pubkey3 = pwalletMain->CreatePubKey("MPYLg7tdgkvzj2uacoou3ZnmZ8dodDDwyE");
-        //         // LogPrintf("=====>MPYLg7tdgkvzj2uacoou3ZnmZ8dodDDwyE:%s\n",pubkey3.GetID().ToString());
-        //         // LogPrintf("=====>MPYLg7tdgkvzj2uacoou3ZnmZ8dodDDwyE:%s\n",pubkey3.ToString());
-        //         // // pwallet->vchDefaultKey
-        //     }
-        // }
-
-        // pwallet->vchDefaultKey
+        //if address not null ,change the default pubkey
+        std::string defaultAddr = DefaultReceiveAddress();
+        if(defaultAddr.size()){
+            CTxDestination newAddress = CMassGridAddress(defaultAddr).Get();
+            if(!pwalletMain->mapAddressBook.count(newAddress)){
+                SetDefaultReceiveAddress("");
+            }
+            else{
+                CPubKey pubkey = pwalletMain->CreatePubKey(defaultAddr);
+                SetDefaultPubkey(pubkey);
+                pwalletMain->vchDefaultKey = pubkey;
+            }
+        }
 
         if (nLoadWalletRet != DB_LOAD_OK)
         {
