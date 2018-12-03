@@ -1,8 +1,7 @@
 #ifndef DOCKERSERVICE_H
 #define DOCKERSERVICE_H
-#include "dockerbase.h"
 #include "dockertask.h"
-#include "dockercontainer.h"
+#include "primitives/transaction.h"
 namespace Config{
 
     struct Replicated{
@@ -55,6 +54,11 @@ namespace Config{
         vector<NetWork> networks;
         EndpointSpec endpointSpec;
         ADD_SERIALIZE_PROPERTIES(name);
+
+        std::string ToString(){
+            return "{}";
+        }
+        
     };
 };
 class Service:public DockerBase{
@@ -156,14 +160,14 @@ class DockerGetData{
 public:
     uint64_t version = DOCKERREQUEST_API_VERSION;
     CPubKey pubKeyClusterAddress{};
-    CTxIn cin{};
+    CTxIn vin{};
     int64_t sigTime{}; //dkct message times
     std::map<std::string,Service> mapDockerServiceLists;
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(cin);
+        READWRITE(vin);
         READWRITE(version);
         READWRITE(pubKeyClusterAddress);
         READWRITE(sigTime);
@@ -172,7 +176,7 @@ public:
     uint256 GetHash() const
     {
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-        ss << cin;
+        ss << vin;
         ss << version;
         ss << pubKeyClusterAddress;
         return ss.GetHash();
@@ -210,6 +214,9 @@ public:
     }
     bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
     bool CheckSignature(CPubKey& pubKeyMasternode);
+    std::string ToJsonString(){
+            return "{}";
+        }
 };
 typedef DockerCreateService DockerUpdateService;
 #endif //__DOCKERSERVICE__

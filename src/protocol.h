@@ -247,7 +247,7 @@ extern const char *MNVERIFY;
 extern const char *GETDNDATA;
 extern const char *DNDATA;
 extern const char *CREATESERVICE;
-extern const char *UPDATASERVICE;
+extern const char *UPDATESERVICE;
 };
 
 /* Get a vector of all valid message types (see above) */

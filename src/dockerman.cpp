@@ -6,6 +6,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp> 
 CDockerMan dockerman;
+std::map<std::string,Node> mapNodeLists;    //temp
+std::map<std::string,Service> mapServiceLists;
+std::map<std::string,Task> mapTaskLists;
 bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
     LogPrint("docker","CDockerMan::PushMessage Started Method: %s\n",strMethod[mtd]);
     std::string url;
@@ -106,50 +109,64 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
     else{
         // err
     }
-    if(ret != 0) {
+    if(ret < 0) {
             LogPrint("docker","CDockerMan::RequestMessages Http_Error error_code: %d\n",ret);
             return false;
     }
-    std::string strRet=http.getReponseData();
-    return ProcessMessage(mtd,http.url,strRet);
+    std::string reponseData=http.getReponseData();
+    return ProcessMessage(mtd,http.url,ret,reponseData);
 }
 
-bool CDockerMan::ProcessMessage(Method mtd,std::string url,std::string responsedata){
+bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata){
     LogPrint("docker","CDockerMan::ProcessMessage Started Method: %s\n",strMethod[mtd]);
     std::string strMessage;
     std::string id;
     HttpType type;
-    UniValue data(UniValue::VOBJ);
-    data.read(responsedata);
-    if(data.exists("message")){
-        strMessage=data["message"].get_str();
-        LogPrint("docker","CDockerMan::ProcessMessage ERROR ProcessMessage: %s\n",strMessage);
-        return false;
+    if(ret != 0){
+        LogPrint("docker","CDockerMan::ProcessMessage ERROR ProcessMessage: %d\n",ret);
     }
+    UniValue jsondata(UniValue::VOBJ);
+    jsondata.read(responsedata);
     LOCK(cs);
     switch (mtd)
     {
         case Method::METHOD_NODES_LISTS:
-            mapDockerNodeLists.clear();
+        {
+            mapNodeLists.clear();
+            Node::DockerNodeList(responsedata,mapNodeLists);
+            this->mapDockerNodeLists=mapNodeLists;
+            break;
+        }
+        case Method::METHOD_NODES_INSPECT:  // not use
+        {
             Node::DockerNodeList(responsedata,mapDockerNodeLists);
             break;
-        case Method::METHOD_NODES_INSPECT:
-            Node::DockerNodeList(responsedata,mapDockerNodeLists);
-            break;
-        case Method::METHOD_NODES_DELETE:
+        }
+        case Method::METHOD_NODES_DELETE:   // not implemented yet
+        {
             id=url.substr(url.find_last_of("/")+1);
             mapDockerNodeLists.erase(mapDockerNodeLists.find(id));
             break;
+        }
         case Method::METHOD_NODES_UPDATE:   // not implemented yet
             break;
         case Method::METHOD_SERVICES_LISTS:
-            mapDockerServiceLists.clear();
-            Service::DockerServiceList(responsedata,mapDockerServiceLists);
+        {
+            mapServiceLists.clear();
+            Service::DockerServiceList(responsedata,mapServiceLists);
+            dockertaskfilter taskfilter;
+            taskfilter.DesiredState_running=true;
+            
+            bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
+            this->mapDockerServiceLists=mapServiceLists;
+            if(!ret)
+                return false;
             break;
+        }
         case Method::METHOD_SERVICES_CREATE:
-            if(data.exists("ID")){
-                id=data["ID"].get_str();
-                std::string strret;
+        {
+            if(jsondata.exists("ID")){
+                id=jsondata["ID"].get_str();
                 PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
             }
             else{
@@ -157,64 +174,106 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,std::string responsed
                 return false;
             }
             break;
+        }
         case Method::METHOD_SERVICES_INSPECT:
-            Service::DockerServiceList(responsedata,mapDockerServiceLists);
-            break;
-        case Method::METHOD_SERVICES_DELETE:
-            id=url.substr(url.find_last_of("/")+1);
-            mapDockerServiceLists.erase(mapDockerServiceLists.find(id));
-            break;
-        case Method::METHOD_SERVICES_UPDATE:
-            if(data.exists("ID")){
-                id=data["ID"].get_str();
-                std::string strret;
-                PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
+        {
+            Service::DockerServiceList(responsedata,mapServiceLists);
+            if(jsondata.exists("ID")){
+                dockertaskfilter taskfilter;
+                taskfilter.serviceid.push_back(jsondata["ID"].get_str());
+                taskfilter.DesiredState_running=true;
+                bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
+                this->mapDockerServiceLists=mapServiceLists;
+                if(!ret)
+                    return false;
             }
             else{
                 LogPrint("docker","CDockerMan::ProcessMessage Not exist this ID\n");
                 return false;
+            }    
+            break;
+        }
+        case Method::METHOD_SERVICES_DELETE:
+        {
+            id=url.substr(url.find_last_of("/")+1);
+            auto it = mapServiceLists.begin();
+            if((it = mapServiceLists.find(id)) != mapServiceLists.end()){
+                mapServiceLists.erase(it);
+                LogPrint("docker","CDockerMan::ProcessMessage erase id %s\n",id);
+            }
+            else{
+                LogPrint("docker","CDockerMan::ProcessMessage not find id %s\n",id);
+                return false;
             }
             break;
+        }
+        case Method::METHOD_SERVICES_UPDATE:
+        {
+            id=url.substr(url.find_last_of("/")+1);
+            bool ret = PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
+            if(!ret){
+                return false;
+                LogPrint("docker","CDockerMan::ProcessMessage update failed id %s\n",id);
+            }
+            LogPrint("docker","CDockerMan::ProcessMessage update successful id %s\n",id);
+            break;
+        }
         case Method::METHOD_SERVICES_LOGS:  // not implemented yet
+        {
             url="/services/";
             url.append(id);
             url.append("logs");
             type=HttpType::HTTP_GET;
             break;
+        }
         case Method::METHOD_TASKS_LISTS:
-            mapDockerTaskLists.clear();
-            Task::DockerTaskList(responsedata,mapDockerTaskLists);
+        {
+            mapTaskLists.clear();
+            Task::DockerTaskList(responsedata,mapTaskLists);
+            for(auto it = mapTaskLists.begin();it != mapTaskLists.end();++it){
+                if(mapServiceLists.find(it->second.serviceID)!= mapServiceLists.end()){
+                    mapServiceLists[it->second.serviceID].mapDockerTasklists.clear();
+                    mapServiceLists[it->second.serviceID].mapDockerTasklists[it->first]=it->second;
+                    LogPrint("docker","CDockerMan::ProcessMessage update successful id %s\n",id);
+                }
+            }
             break;
-        case Method::METHOD_TASKS_INSPECT:
-            Task::DockerTaskList(responsedata,mapDockerTaskLists);
+        }
+        case Method::METHOD_TASKS_INSPECT:  //not implemented yet
+        {
+            Task::DockerTaskList(responsedata,mapTaskLists);
             break;
+        }
         case Method::METHOD_SWARM_INSPECT:
+        {
             Swarm::DockerSwarm(responsedata,swarm);
             break;
+        }
         case Method::METHOD_INFO:   // not implemented yet
-             url="/info";
+        {
+            url="/info";
             type=HttpType::HTTP_GET;
             break;
+        }
         case Method::METHOD_VERSION:    // not implemented yet
+        {
             url="/version";
             type=HttpType::HTTP_GET;
-            break;      
+            break;   
+        }   
         default:
+        {
             LogPrint("docker","CDockerMan::PushMessage not support this methed");
             return false;
+        }
     }
     return true; 
 }
 bool CDockerMan::Update(){
     LOCK(cs);
     LogPrint("docker","CDockerMan::Update start\n");
-    mapDockerNodeLists.clear();
-    mapDockerServiceLists.clear();
-    mapDockerTaskLists.clear();
-    LogPrint("docker","CDockerMan::Update ndfilter1 \n");
     dockernodefilter ndfilter;
 
-    LogPrint("docker","CDockerMan::Update ndfilter2 : %s \n",ndfilter.ToJsonString());
     if(!PushMessage(Method::METHOD_NODES_LISTS,"",ndfilter.ToJsonString())){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_NODES_LISTS failed! \n");
         return false;
@@ -224,19 +283,54 @@ bool CDockerMan::Update(){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_SERVICES_LISTS failed! \n");
         return false;
     }
-    dockertaskfilter taskfilter;
-    taskfilter.DesiredState_running=true;
-    if(!PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString())){
-        LogPrint("docker","CDockerMan::Update ERROR Get METHOD_TASKS_LISTS failed! \n");
-        return false;
-    }
     if(!PushMessage(Method::METHOD_SWARM_INSPECT,"","")){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_SWARM_INSPECT failed! \n");
         return false;
     }
-    GetVersion();
-    GetJoinToken();
+    GetVersionAndJoinToken();
     LogPrint("docker","CDockerMan::Update Succcessful\n");
+    return true;
+}
+bool CDockerMan::UpdateSwarmAndNodeList(){
+    LOCK(cs);
+    LogPrint("docker","CDockerMan::UpdateSwarmAndNodeList start\n");
+    mapDockerNodeLists.clear();
+    dockernodefilter ndfilter;
+
+    if(!PushMessage(Method::METHOD_SWARM_INSPECT,"","")){
+        LogPrint("docker","CDockerMan::UpdateSwarmAndNodeList ERROR Get METHOD_SWARM_INSPECT failed! \n");
+        return false;
+    }
+
+    if(!PushMessage(Method::METHOD_NODES_LISTS,"",ndfilter.ToJsonString())){
+        LogPrint("docker","CDockerMan::UpdateSwarmAndNodeList ERROR Get METHOD_NODES_LISTS failed! \n");
+        return false;
+    }
+    GetVersionAndJoinToken();
+    LogPrint("docker","CDockerMan::UpdateSwarmAndNodeList Succcessful\n");
+    return true;
+}
+bool CDockerMan::UpdateServicesList(){
+    LOCK(cs);
+    LogPrint("docker","CDockerMan::UpdateServicesList start\n");
+    mapDockerServiceLists.clear();
+    dockerservicefilter serfilter;
+    if(!PushMessage(Method::METHOD_SERVICES_LISTS,"",serfilter.ToJsonString())){
+        LogPrint("docker","CDockerMan::UpdateServicesList ERROR Get METHOD_SERVICES_LISTS failed! \n");
+        return false;
+    }
+    LogPrint("docker","CDockerMan::UpdateServicesList Succcessful\n");
+    return true;
+}
+bool CDockerMan::UpdateService(std::string serviceid){
+    LOCK(cs);
+    dockerservicefilter serfilter;
+    LogPrint("docker","CDockerMan::UpdateService start\n");
+    if(!PushMessage(Method::METHOD_SERVICES_INSPECT,serviceid,serfilter.ToJsonString())){
+        LogPrint("docker","CDockerMan::UpdateService ERROR Get METHOD_SERVICES_LISTS failed! \n");
+        return false;
+    }
+    LogPrint("docker","CDockerMan::UpdateService Succcessful\n");
     return true;
 }
 uint64_t CDockerMan::GetDockerNodeCount(){
@@ -245,7 +339,7 @@ uint64_t CDockerMan::GetDockerNodeCount(){
 uint64_t CDockerMan::GetDockerNodeActiveCount(){
     uint64_t count = 0;
     for(map<std::string,Node>::iterator it=mapDockerNodeLists.begin();it!=mapDockerNodeLists.end();++it){
-        if(it->second.status.state == "ready")
+        if(it->second.status.state == Config::NodeStatusState::NODESTATUSSTATE_READY)
             ++count;
     }
     return count;
@@ -253,13 +347,17 @@ uint64_t CDockerMan::GetDockerNodeActiveCount(){
 uint64_t CDockerMan::GetDockerServiceCount(){
     return mapDockerServiceLists.size();
 }
-uint64_t CDockerMan::GetDoCkerTaskCount(){
-    return mapDockerTaskLists.size();
+uint64_t CDockerMan::GetDockerTaskCount(){
+    int size=0;
+    for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it ){
+        size += it->second.mapDockerTasklists.size();
+    }
+    return size;
 }
-void CDockerMan::GetVersion(){
+void CDockerMan::GetVersionAndJoinToken(){
     map<std::string,Node>::iterator it = mapDockerNodeLists.begin();
     for(;it!=mapDockerNodeLists.end();++it){
-        if(it->second.spec.role == "manager"){  //example 18.06.1-ce
+        if(it->second.spec.role == Config::Role::ROLE_MANAGER){  //example 18.06.1-ce
             vector<string> destination;
             boost::split(destination,it->second.description.engine.engineVersion, boost::is_any_of( ".-" ), boost::token_compress_on );
             for(int i = 0, j = 3;i < destination.size() && j >= 0;++i){
@@ -273,22 +371,9 @@ void CDockerMan::GetVersion(){
                 }
                 --j; 
             }
+
+            JoinToken = swarm.joinWorkerTokens+" "+it->second.managerStatus.addr;   //set JoinToken
             return;
         }
     }
-}
-void CDockerMan::GetJoinToken(){
-    map<std::string,Node>::iterator it = mapDockerNodeLists.begin();
-    std::string tokenAddress;
-    for(;it!=mapDockerNodeLists.end();++it){
-        if(it->second.spec.role == "manager"){   
-            tokenAddress =" "+it->second.managerStatus.Addr;
-            break;
-        }
-    }
-    if(!tokenAddress.empty()&&!swarm.joinWorkerTokens.empty()){
-        JoinToken=swarm.joinWorkerTokens+tokenAddress;
-    }
-    else
-        JoinToken.clear();
 }

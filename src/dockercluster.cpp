@@ -8,7 +8,7 @@
 #include "messagesigner.h"
 #include "validation.h"
 #include "init.h"
-#include "wallet.h"
+#include "wallet/wallet.h"
 Cluster dockercluster;
 bool Cluster::SetConnectDockerAddress(std::string address_port){
     LogPrint("docker","Cluster::SetConnectDockerAddress Started\n");
@@ -59,20 +59,20 @@ bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
         LogPrintf("Cluster::CreateAndSendSeriveSpec Sign need to unlock wallet first !\n");
         return false;
     }
-    if (!pwalletMain->GetKey(pubKeyClusterAddress.GetID(), vchSecret)){
+    if (!pwalletMain->GetKey(DefaultPubkey.GetID(), vchSecret)){
         LogPrintf("Cluster::CreateAndSendSeriveSpec GetPrivkey Error\n");
         return false;
     }
-    if(!sspec.Sign(vchSecret,pubKeyClusterAddress)){
+    if(!sspec.Sign(vchSecret,DefaultPubkey)){
         LogPrintf("Cluster::CreateAndSendSeriveSpec Sign Error\n");
         return false;
     }
     
-    g_connman.PushMessage(connectNode, NetMsgType::CREATESERVICE, sspec);
+    g_connman->PushMessage(connectNode, NetMsgType::CREATESERVICE, sspec);
     return true;
 }
 
-void Cluster::UpdateAndSendSeriveSpec(DockerUpdateService sspec){
+bool Cluster::UpdateAndSendSeriveSpec(DockerUpdateService sspec){
     
     LogPrint("docker","Cluster::UpdateAndSendSeriveSpec Started\n");
 
@@ -89,45 +89,45 @@ void Cluster::UpdateAndSendSeriveSpec(DockerUpdateService sspec){
         LogPrintf("Cluster::UpdateAndSendSeriveSpec Sign need to unlock wallet first !\n");
         return false;
     }
-    if (!pwalletMain->GetKey(pubKeyClusterAddress.GetID(), vchSecret)){
+    if (!pwalletMain->GetKey(DefaultPubkey.GetID(), vchSecret)){
         LogPrintf("Cluster::UpdateAndSendSeriveSpec GetPrivkey Error\n");
         return false;
     }
-    if(!sspec.Sign(vchSecret,pubKeyClusterAddress)){
+    if(!sspec.Sign(vchSecret,DefaultPubkey)){
         LogPrintf("Cluster::UpdateAndSendSeriveSpec Sign Error\n");
         return false;
     }
     
-    g_connman.PushMessage(connectNode, NetMsgType::UPDATESERVICE, sspec);
+    g_connman->PushMessage(connectNode, NetMsgType::UPDATESERVICE, sspec);
     return true;
 }
 
 
 bool Cluster::Check(){
     // 1.first check time
-    if(sigTime > GetAdjustedTime() + 60 * 5 && sigTime < GetAdjustedTime() - 60 * 5){
-        LogPrintf("Cluster::Check sigTime is invaild\n");
-        return false;
-    }
+    // if(sigTime > GetAdjustedTime() + 60 * 5 && sigTime < GetAdjustedTime() - 60 * 5){
+    //     LogPrintf("Cluster::Check sigTime is invaild\n");
+    //     return false;
+    // }
     
-    //  2.check infomation
-    if(vin != CTxIn()){
-        LogPrintf("Cluster::Check vin is invaild\n");
-        return false;
-    }
+    // //  2.check infomation
+    // if(vin != CTxIn()){
+    //     LogPrintf("Cluster::Check vin is invaild\n");
+    //     return false;
+    // }
 
-    //  3. checkSignature
-    if(!CheckSignature(pubKeyClusterAddress)){
-        LogPrintf("Cluster::Check -- CheckSignature() failed\n");
-        return false;
-    }
+    // //  3. checkSignature
+    // if(!CheckSignature(DefaultPubkey)){
+    //     LogPrintf("Cluster::Check -- CheckSignature() failed\n");
+    //     return false;
+    // }
     
     return true;
 }
 bool Cluster::CheckAndUpdate(){
-    if(!Check())
-        return false;
+    // if(!Check())
+    //     return false;
     
-    //docker server update the infomation to sspec
-    return true;
+    // //docker server update the infomation to sspec
+    // return true;
 }

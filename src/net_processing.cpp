@@ -35,7 +35,7 @@
 #include "masternode-payments.h"
 #include "masternode-sync.h"
 #include "masternodeman.h"
-#include "dockerserver.h"
+#include "dockerserverman.h"
 
 #include <boost/thread.hpp>
 

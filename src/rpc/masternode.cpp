@@ -12,7 +12,8 @@
 #include "masternodeconfig.h"
 #include "masternodeman.h"
 #include "dockerman.h"
-#include "dockerserver.h"
+#include "dockerserverman.h"
+#include "dockercluster.h"
 #include "messagesigner.h"
 #include "rpc/server.h"
 #include "util.h"
@@ -369,14 +370,16 @@ UniValue masternode(const UniValue& params, bool fHelp)
         if(!CMessageSigner::GetKeysFromSecret(strPrivkey,key,pubkey)){
             throw JSONRPCError(RPC_INVALID_PARAMETER, "privkey error");
         }
-            dockerServerman.selectDockernode=strFilter;
-            dockerServerman.dndata.pubKeyClusterAddress=pubkey;
-            dockerServerman.dndata.sigTime=GetAdjustedTime();
-            CNode *pto = dockerServerman.ProcessDockernodeConnections(*g_connman);
-            if(!pto){
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "pto error");
+            
+            dockercluster.DefaultPubkey=pubkey;
+            dockercluster.sigTime=GetAdjustedTime();
+            if(!dockercluster.SetConnectDockerAddress(strFilter)){
+                throw JSONRPCError(RPC_INVALID_PARAMETER, "SetConnectDockerAddress error");
             }
-            dockerServerman.AskForDNData(pto,*g_connman);
+            if(!dockercluster.ProcessDockernodeConnections()){
+                throw JSONRPCError(RPC_INVALID_PARAMETER, "ProcessDockernodeConnections error");
+            }
+            dockercluster.AskForDNData();
 
         std::string straddress;
         if (params.size() == 4) {

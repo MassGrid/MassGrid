@@ -64,23 +64,25 @@ public:
     union docker_Version version;
     std::map<std::string,Node> mapDockerNodeLists;
     std::map<std::string,Service> mapDockerServiceLists;
-    std::map<std::string,Task> mapDockerTaskLists;
     Swarm swarm;
     std::string JoinToken;
 
 
-    bool ProcessMessage(Method mtd,std::string url,std::string responsedata);
+    bool ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata);
     bool PushMessage(Method mtd,std::string id,std::string pushdata);
     bool Update(); //update all data;
+
+    bool UpdateSwarmAndNodeList();
+    bool UpdateServicesList();
+    bool UpdateService(std::string serviceid);
 
     uint64_t GetDockerNodeCount();
     uint64_t GetDockerNodeActiveCount();
     uint64_t GetDockerServiceCount();
-    uint64_t GetDoCkerTaskCount();    
+    uint64_t GetDockerTaskCount();    
     void SetPort(uint32_t p){apiPort = p;}
     uint32_t GetPort(){return apiPort;}
-    void GetVersion();
-    void GetJoinToken();
+    void GetVersionAndJoinToken();
 };
 
 #endif //DOCKERMAN_H

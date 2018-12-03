@@ -69,7 +69,7 @@ const char *MNVERIFY="mnv";
 const char *GETDNDATA="getdndata";   //get own docker data
 const char *DNDATA="dndata";    //respone docker data
 const char *CREATESERVICE="createservice";
-const char *UPDATASERVICE="updataservice";
+const char *UPDATESERVICE="updateservice";
 };
 
 static const char* ppszTypeName[] =
@@ -150,7 +150,7 @@ const static std::string allNetMessageTypes[] = {
     NetMsgType::GETDNDATA,
     NetMsgType::DNDATA,
     NetMsgType::CREATESERVICE,
-    NetMsgType::UPDATASERVICE,
+    NetMsgType::UPDATESERVICE,
 };
 const static std::vector<std::string> allNetMessageTypesVec(allNetMessageTypes, allNetMessageTypes+ARRAYLEN(allNetMessageTypes));
 

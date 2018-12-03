@@ -11,6 +11,7 @@
 #include "sync.h"
 #include "util.h"
 #include <univalue.h>
+#include "utilstrencodings.h"
 using namespace std;
 
 #define DEFAULT_CDOCKER_API_VERSION 10038

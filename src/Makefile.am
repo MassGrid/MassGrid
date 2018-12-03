@@ -135,6 +135,7 @@ MASSGRID_CORE_H = \
   dockerbase.h \
   dockernode.h \
   dockerservice.h \
+  dockercontainer.h \
   dockerswarm.h \
   dockertask.h \
   memusage.h \
@@ -246,6 +247,7 @@ libmassgrid_server_a_SOURCES = \
   dockerbase.cpp \
   dockernode.cpp \
   dockerservice.cpp \
+  dockercontainer.cpp \
   dockerswarm.cpp \
   dockertask.cpp \
   merkleblock.cpp \

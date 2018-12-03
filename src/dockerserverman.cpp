@@ -1,10 +1,11 @@
 #include <algorithm>
-#include "dockerserver.h"
+#include "dockerserverman.h"
 #include "netbase.h"
 #include "masternode-sync.h"
 #include "dockerman.h"
 #include "net.h"
-#include "wallet.h"
+#include "wallet/wallet.h"
+#include "dockercluster.h"
 CDockerServerman dockerServerman;
 
 void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman){
@@ -56,10 +57,20 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         DockerCreateService sspec;
         vRecv >> sspec;
         if(sspec.version < DOCKERREQUEST_API_MINSUPPORT_VERSION){
-            LogPrintf("CDockerServerman::ProcessMessage --sspec version %d is too old %d\n", mdndata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
+            LogPrintf("CDockerServerman::ProcessMessage --sspec version %d is too old %d\n", sspec.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
             return;
         }
         CheckAndCreateServerSpec(sspec);
+    }else if(strCommand == NetMsgType::UPDATESERVICE){
+        LogPrint("docker","CDockerServerman::ProcessMessage UPDATESERVICE Started\n");
+        if (!fMasterNode) return;
+        DockerCreateService sspec;
+        vRecv >> sspec;
+        if(sspec.version < DOCKERREQUEST_API_MINSUPPORT_VERSION){
+            LogPrintf("CDockerServerman::ProcessMessage --sspec version %d is too old %d\n", sspec.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
+            return;
+        }
+        CheckAndUpdateServerSpec(sspec);
     }
 
 }
