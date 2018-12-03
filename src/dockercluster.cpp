@@ -103,31 +103,26 @@ bool Cluster::UpdateAndSendSeriveSpec(DockerUpdateService sspec){
 }
 
 
-bool Cluster::Check(){
+bool Cluster::Check(DockerUpdateService upspec){
     // 1.first check time
-    // if(sigTime > GetAdjustedTime() + 60 * 5 && sigTime < GetAdjustedTime() - 60 * 5){
-    //     LogPrintf("Cluster::Check sigTime is invaild\n");
-    //     return false;
-    // }
+    if(upspec.sigTime > GetAdjustedTime() + 60 * 5 && upspec.sigTime < GetAdjustedTime() - 60 * 5){
+        LogPrintf("Cluster::Check sigTime is invaild\n");
+        return false;
+    }
     
-    // //  2.check infomation
-    // if(vin != CTxIn()){
-    //     LogPrintf("Cluster::Check vin is invaild\n");
-    //     return false;
-    // }
+    //  2.check infomation
+    if(upspec.vin != CTxIn()){
+        LogPrintf("Cluster::Check vin is invaild\n");
+        return false;
+    }
 
-    // //  3. checkSignature
-    // if(!CheckSignature(DefaultPubkey)){
-    //     LogPrintf("Cluster::Check -- CheckSignature() failed\n");
-    //     return false;
-    // }
     
     return true;
 }
-bool Cluster::CheckAndUpdate(){
-    // if(!Check())
-    //     return false;
+bool Cluster::CheckAndUpdate(DockerUpdateService sspec){
+    if(!Check(sspec))
+        return false;
     
-    // //docker server update the infomation to sspec
-    // return true;
+    //docker server update the infomation to sspec
+    return true;
 }

@@ -58,30 +58,35 @@ namespace Config{
     };
     struct HealthCheck{
         std::vector<std::string> test;
-        int64_t interval;
+        int64_t intervals;
         int64_t timeout;
         int64_t retries;
         int64_t startPeriod;
+        ADD_SERIALIZE_PROPERTIES(test,intervals,timeout,retries,startPeriod);
     };
 
     struct BindOptions{
         std::string propagation;
+        ADD_SERIALIZE_PROPERTIES(propagation);
     };
 
     struct DriverConfig{
         std::string name;
         Labels options;
+        ADD_SERIALIZE_PROPERTIES(name,options);
     };
 
     struct VolumeOptions{
         bool nocopy{};
         Labels labels;
         DriverConfig driverConfig;
+        ADD_SERIALIZE_PROPERTIES(nocopy,labels,driverConfig);
     };
 
     struct TmpfsOptions{
         int64_t sizeBytes;
         int mode;
+        ADD_SERIALIZE_PROPERTIES(sizeBytes,mode);
     };
 
     struct Mount{
@@ -91,29 +96,34 @@ namespace Config{
         bool readOnly{};
         std::string consistency;
         BindOptions bindOptions;
-        VolumeOptions volumeOption;;
+        VolumeOptions volumeOption;
         TmpfsOptions tmpfsOptions;
+        ADD_SERIALIZE_PROPERTIES(type,source,target,readOnly,consistency,volumeOption,tmpfsOptions);
     };
 
     struct DiscreteResourceSpec{
         std::string kind;
         int64_t value;
+        ADD_SERIALIZE_PROPERTIES(kind,value);
     };
 
     struct NamedResourceSpec{
         std::string kind;
         std::string value;
+        ADD_SERIALIZE_PROPERTIES(kind,value);
     };
 
     struct GenericResources{
         NamedResourceSpec namedResourceSpec;
         DiscreteResourceSpec discreateResourceSpec;
+        ADD_SERIALIZE_PROPERTIES(namedResourceSpec,discreateResourceSpec);
     };
 
     struct ResourceObj{
         uint64_t nanoCPUs;
         uint64_t memoryBytes;
         vector<struct GenericResources> genericResources;
+        ADD_SERIALIZE_PROPERTIES(nanoCPUs,memoryBytes,genericResources);
     };
 
     struct RestartPolicy{
@@ -121,54 +131,67 @@ namespace Config{
         int64_t delay{};
         int64_t maxAttempts{};
         int64_t window{};
+        ADD_SERIALIZE_PROPERTIES(condition,delay,maxAttempts,window);
     };
 
     struct Spread{
         std::string spreadDescriptor;
+        ADD_SERIALIZE_PROPERTIES(spreadDescriptor);
     };
 
     struct Preferences{
         Spread spread;
+        ADD_SERIALIZE_PROPERTIES(spread);
     };
 
 
     struct Resource{
         struct ResourceObj limits;
         struct ResourceObj reservations;
+        ADD_SERIALIZE_PROPERTIES(limits,reservations);
     };
 
     struct Platform{
         std::string architecture;
         std::string OS;
+        ADD_SERIALIZE_PROPERTIES(architecture,OS);
     };
 
     struct Placement{
         vector<std::string> constraints;
         vector<Preferences> preferences;
         vector<Platform> platforms;
+        ADD_SERIALIZE_PROPERTIES(constraints,preferences,platforms);
     };
     struct NetWork{
         std::string target;
         vector<std::string> aliases;
+        ADD_SERIALIZE_PROPERTIES(target,aliases);
     };
 
     struct Driver{
         std::string name;
+        ADD_SERIALIZE_PROPERTIES(name);
     };
 
     struct DriverState{
         std::string name; 
         // Options
+
+        ADD_SERIALIZE_PROPERTIES(name);
     };
 
     struct ConfigIP{
         std::string subnet;
         std::string gateway;
+
+        ADD_SERIALIZE_PROPERTIES(subnet,gateway);
     };
     struct IPAMOption{
         Driver driver;
         vector<ConfigIP> configip;
         std::string scope;
+        ADD_SERIALIZE_PROPERTIES(driver,configip);
     };
 
     struct UpdateStatus{
@@ -176,6 +199,7 @@ namespace Config{
         uint64_t createdAt;
         uint64_t completedAt;
         std::string message;
+        ADD_SERIALIZE_PROPERTIES(state,createdAt,completedAt,message);
     };
 
     struct NetWorkSpec{
@@ -184,17 +208,20 @@ namespace Config{
         vector<std::string> driverConfiguration;
         bool ingress;
         IPAMOption IPAMOptions;
+        ADD_SERIALIZE_PROPERTIES(name,labels,driverConfiguration,ingress,IPAMOptions);
     };
 
     struct Plugins{
         std::string type;
         std::string name;
+        ADD_SERIALIZE_PROPERTIES(type,name);
     };
 
     struct TLSInfo{
         std::string trustRoot;
         std::string certIssuerSubject;
         std::string certIssuerPublicKey;
+        ADD_SERIALIZE_PROPERTIES(trustRoot,certIssuerSubject,certIssuerPublicKey);
     };
 
     struct NetworkTemplate{
@@ -207,6 +234,7 @@ namespace Config{
         DriverState driverState;
         IPAMOption IPAMOptions;
         vector<std::string> addresses;
+        ADD_SERIALIZE_PROPERTIES(nProtocolVersion,index,ID,createdAt,updatedAt,Spec,driverState,IPAMOptions,addresses);
     };
 
 };

@@ -6,12 +6,14 @@ namespace Config{
 
     struct Replicated{
         uint64_t replicas{};
+        ADD_SERIALIZE_PROPERTIES(replicas);
     };
     struct Global{
     };
     struct Mode{
         Replicated replicated;
         bool global{};      //pick one  if global is false,use the replicated
+        ADD_SERIALIZE_PROPERTIES(replicated,global);
     };
     struct EndpointPortConfig{
         std::string name;
@@ -19,21 +21,25 @@ namespace Config{
         int64_t targetPort;
         int64_t publishedPort;
         std::string publishMode;    //default ingress ,host
+        ADD_SERIALIZE_PROPERTIES(name,protocol,targetPort,publishedPort,publishMode);
     };
     struct VirtualIP{
         std::string networkID;
         std::string addr;
+        ADD_SERIALIZE_PROPERTIES(networkID,addr);
     };
 
     struct EndpointSpec{
         std::string mode; //default vip ,vip dnsrr
         vector<EndpointPortConfig> ports;
+        ADD_SERIALIZE_PROPERTIES(mode,ports);
     };
     
     struct Endpoint{
         EndpointSpec spec;
         vector<EndpointPortConfig> ports;
         vector<VirtualIP> virtualIPs;
+        ADD_SERIALIZE_PROPERTIES(spec,ports,virtualIPs);
     };
     struct UpdateConfig{
         int64_t parallelism{};
@@ -42,6 +48,7 @@ namespace Config{
         int64_t monitor{};
         double maxFailureRatio{};   //default 0
         std::string order;          // stop-first start-first
+        ADD_SERIALIZE_PROPERTIES(parallelism,delay,failureAction,monitor,maxFailureRatio,order);
     };
 
     struct ServiceSpec{     //create template
@@ -53,8 +60,22 @@ namespace Config{
         UpdateConfig rollbackConfig;
         vector<NetWork> networks;
         EndpointSpec endpointSpec;
-        ADD_SERIALIZE_PROPERTIES(name);
+        ADD_SERIALIZE_PROPERTIES(name,labels,taskTemplate,mode,updateConfig,rollbackConfig,networks,endpointSpec);
 
+
+        uint256 GetHash() const
+        {
+            CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
+            ss << name;
+            ss << labels;
+            ss << taskTemplate;
+            Mode mode;
+            ss << updateConfig;
+            ss << rollbackConfig;
+            ss << networks;
+            ss << endpointSpec;
+            return ss.GetHash();
+        }
         std::string ToString(){
             return "{}";
         }
@@ -201,7 +222,7 @@ public:
         READWRITE(version);
         READWRITE(pubKeyClusterAddress);
         READWRITE(sigTime);
-        // READWRITE(sspec);
+        READWRITE(sspec);
     }
     uint256 GetHash() const
     {
@@ -209,7 +230,7 @@ public:
         ss << vin;
         ss << version;
         ss << pubKeyClusterAddress;
-        // ss << sspec;
+        ss << sspec;
         return ss.GetHash();
     }
     bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
@@ -217,6 +238,9 @@ public:
     std::string ToJsonString(){
             return "{}";
         }
+    std::string ToString(){
+        return sspec.GetHash().ToString();
+    }
 };
 typedef DockerCreateService DockerUpdateService;
 #endif //__DOCKERSERVICE__

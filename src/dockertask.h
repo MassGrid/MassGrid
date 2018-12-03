@@ -19,6 +19,7 @@ namespace Config{
         std::string message;
         std::string err;
         ContainerStatus containerStatus;
+        ADD_SERIALIZE_PROPERTIES(timeStamp,state,message,err,containerStatus);
     };
     struct TaskSpec{    
         // pluginSpec
@@ -30,11 +31,8 @@ namespace Config{
         std::string runtime;
         vector<struct NetWork> netWorks;
         LogDriver logdriver;
+        ADD_SERIALIZE_PROPERTIES(containerSpec,resources,restartPolicy,placement,forceUpdate,runtime,netWorks,logdriver);
     };
-    //     struct TaskStatus: Status {
-    //     ContainerStatus containerStatus;
-    //     // PortStatus
-    // };
 };
 class Task :public DockerBase{
     static bool DcokerTaskJson(const UniValue& data,Task& task);

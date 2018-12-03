@@ -31,10 +31,10 @@ public:
 
 
         void AskForDNData();
-        bool Check();   //send to server must be check;
+        bool Check(DockerUpdateService sspec);   //send to server must be check;
         bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
         bool UpdateAndSendSeriveSpec(DockerUpdateService sspec);    //send message
-        bool CheckAndUpdate();      //update infomation after check from receive
+        bool CheckAndUpdate(DockerUpdateService sspec);      //update infomation after check from receive
 
 };
 #endif  //DOCKERCLUSTER_H

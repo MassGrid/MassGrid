@@ -205,7 +205,7 @@ void ParseContainerSpecHealt(const UniValue& data,Config::HealthCheck &heltCheck
         }
         if(data[vKeys[i]].isNum()){
             if(vKeys[i]=="Interval"){
-                heltCheck.interval=tdata.get_int64();
+                heltCheck.intervals=tdata.get_int64();
             }else if(vKeys[i]=="Timeout"){
                 heltCheck.timeout=tdata.get_int64();
             }else if(vKeys[i]=="Retries"){

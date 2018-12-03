@@ -26,6 +26,7 @@ namespace Config{
         std::string engineVersion;
         Labels labels; //map<std::string,std::string>
         vector<Plugins> plugin;
+        
     };
     struct NodeSpec{
         std::string name;

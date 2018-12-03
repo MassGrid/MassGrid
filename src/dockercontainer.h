@@ -7,6 +7,7 @@ namespace Config{
         vector<std::string> nameservers;
         vector<std::string> search;
         vector<std::string> options;
+        ADD_SERIALIZE_PROPERTIES(nameservers,search,options);
     };
 
     struct File{
@@ -14,29 +15,34 @@ namespace Config{
         std::string uid;
         std::string gid;
         uint32_t mode;
+        ADD_SERIALIZE_PROPERTIES(name,uid,gid,mode);
     };
 
     struct Secret{
         File file;
         std::string secretID;
         std::string secretName;
+        ADD_SERIALIZE_PROPERTIES(file,secretID,secretName);
     };
 
     struct Config{
         File file;
         std::string configID;
         std::string configName;
+        ADD_SERIALIZE_PROPERTIES(file,configID,configName);
     };
         
     struct LogDriver{
         std::string name;
         map<std::string,std::string> options;
+        ADD_SERIALIZE_PROPERTIES(name,options);
     };
 
     struct ContainerStatus{
         std::string containerID;
         int PID;
         int exitCode;
+        ADD_SERIALIZE_PROPERTIES(containerID,PID,exitCode);
     };
     
     struct ContainerSpec{
@@ -62,6 +68,11 @@ namespace Config{
         vector<Secret> secrets;
         vector<Config> configs;
         std::string isolation;
+
+
+        ADD_SERIALIZE_PROPERTIES(image,labels,command,args,hostname,
+        env,dir,user,groups,tty,openstdin,readOnly,mounts,stopSignal,
+        stopGracePeriod,healthCheck,hosts,dnsConfig,secrets,configs,isolation);
     };
 };
 void ParseContainerSpec(const UniValue& data,Config::ContainerSpec &containerSpec);
