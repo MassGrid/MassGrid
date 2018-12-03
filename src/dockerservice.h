@@ -2,6 +2,7 @@
 #define DOCKERSERVICE_H
 #include "dockerbase.h"
 #include "dockertask.h"
+#include "dockercontainer.h"
 namespace Config{
 
     struct Replicated{
@@ -43,23 +44,17 @@ namespace Config{
         double maxFailureRatio{};   //default 0
         std::string order;          // stop-first start-first
     };
-    struct RollbackConfig{
-        int64_t parallelism{};
-        int64_t delay{};
-        std::string failureAction;  //continue pause
-        int64_t monitor{};
-        double maxFailureRatio{};   //default 0
-        std::string order;          // stop-first start-first
-    };
+
     struct ServiceSpec{     //create template
         std::string name;
         Labels labels;
         TaskSpec taskTemplate;
         Mode mode;
         UpdateConfig updateConfig;
-        RollbackConfig rollbackConfig;
+        UpdateConfig rollbackConfig;
         vector<NetWork> networks;
         EndpointSpec endpointSpec;
+        ADD_SERIALIZE_PROPERTIES(name);
     };
 };
 class Service:public DockerBase{
@@ -67,26 +62,29 @@ class Service:public DockerBase{
     static void ParseSpec(const UniValue& data,Config::ServiceSpec &spc);
     static void ParseSpecLabels(const UniValue& data,Config::Labels &labels);
     static void ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate);
-    static void ParseContainerSpec(const UniValue& data,Config::ContainerSpec &contTemp);
-    static void ParseSpecContainerLabels(const UniValue& data,Config::Labels &labels);
-    static void ParseMount(const UniValue& data,Config::Mount &mount);
-    static void ParseArray(const UniValue& data,vector<std::string> &array);
-    static void ParseContainerSpec(const UniValue& data,Config::Resource &resources);
-    static void ParseLimits(const UniValue& data,Config::Limits &limits);
-    static void ParseResource(const UniValue& data,Config::Resource &resources);
-    static void ParseReservation(const UniValue& data,Config::Reservation &reservations);
-    static void ParseDirReservation(const UniValue& data,Config::DiscreteResourceSpec &disres);
+    static void ParseResource(const UniValue& data,Config::Resource &resource);
+    static void ParseResourceObj(const UniValue& data, Config::ResourceObj &resources);
+    static void ParseResGenRes(const UniValue& data, Config::GenericResources &genResources);
+    static void ParseResGenNameSpec(const UniValue& data, Config::NamedResourceSpec &namedResourceSpec);
+    static void ParseResGenDiscSpec(const UniValue& data, Config::DiscreteResourceSpec &discResourceSpec);
     static void ParseRestartPolicy(const UniValue& data,Config::RestartPolicy &repoly);
+    static void ParseUpdateConfig(const UniValue& data,Config::UpdateConfig &upconfig);
     static void ParsePlacement(const UniValue& data,Config::Placement &placement);
+    static void ParsePreferences(const UniValue& data,Config::Preferences &preference);
+    static void ParsePreferencesSpread(const UniValue& data,Config::Spread &spread);
     static void ParsePlatforms(const UniValue& data,Config::Platform &platform);
     static void ParseNetwork(const UniValue& data,Config::NetWork &network);
+    static void ParseLogDriver(const UniValue& data,Config::LogDriver &logdriver);
+    static void ParseLogDriverOpt(const UniValue& data,Config::Labels &labels);
     static void ParseMode(const UniValue& data,Config::Mode &mode);
-    static void ParseReplicated(const UniValue& data,Config::Replicated &rep);
+    static void ParseModeReplicated(const UniValue& data,Config::Replicated &rep);
     static void ParseEndpointSpec(const UniValue& data,Config::EndpointSpec &endpointSpec);
     static void ParseEndSpecPort(const UniValue& data,Config::EndpointPortConfig &port);
     static void ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint);
     static void ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip);
     static void ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updateStatus);
+    static void ParseArray(const UniValue& data,vector<std::string> &array);
+
 public:
     
     Config::ServiceSpec spec;
@@ -199,7 +197,7 @@ public:
         READWRITE(version);
         READWRITE(pubKeyClusterAddress);
         READWRITE(sigTime);
-        READWRITE(sspec);
+        // READWRITE(sspec);
     }
     uint256 GetHash() const
     {
@@ -207,7 +205,7 @@ public:
         ss << vin;
         ss << version;
         ss << pubKeyClusterAddress;
-        ss << sspec;
+        // ss << sspec;
         return ss.GetHash();
     }
     bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);

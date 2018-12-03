@@ -99,14 +99,14 @@ void Service::DockerServiceList(const string& serviceData,std::map<std::string,S
 bool Service::DcokerServiceJson(const UniValue& data, Service& service)
 {
     std::string id;
-    int idx;
+    Config::Version version;
     uint64_t createdTime;
     uint64_t updateTime;
-    Config::ServiceSpec spc;
+    Config::ServiceSpec spec;
     Config::ServiceSpec previousSpec;
     Config::Endpoint endpoint;
     Config::UpdateStatus updateStatus;
-    int version=DEFAULT_CTASK_API_VERSION;
+    int protocolVersion=DEFAULT_CSERVICE_API_VERSION;
 
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -118,9 +118,9 @@ bool Service::DcokerServiceJson(const UniValue& data, Service& service)
         }
         if(tdata.isObject()){
             if(vKeys[i]=="Version"){
-                idx=find_value(tdata,"Index").get_int();
+                version.index=find_value(tdata,"Index").get_int();
             }else if(vKeys[i]=="Spec"){
-                ParseSpec(tdata,spc);
+                ParseSpec(tdata,spec);
             }else if(vKeys[i]=="PreviousSpec"){
                 ParseSpec(tdata,previousSpec);
             }else if(vKeys[i]=="Endpoint"){
@@ -130,7 +130,7 @@ bool Service::DcokerServiceJson(const UniValue& data, Service& service)
             }
         }
     }
-    service=Service(id,idx,createdTime,updateTime,spc,previousSpec,endpoint,updateStatus,version);
+    service=Service(id,version,createdTime,updateTime,spec,previousSpec,endpoint,updateStatus,protocolVersion);
     return true;
 }
 
@@ -150,6 +150,16 @@ void Service::ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
                 ParseTaskTemplate(tdata,spc.taskTemplate);
             }else if(vKeys[i]=="Mode"){
                 ParseMode(tdata,spc.mode);
+            }else if(vKeys[i]=="UpdateConfig"){
+                ParseUpdateConfig(tdata,spc.updateConfig);
+            }else if(vKeys[i]=="RollbackConfig"){
+                ParseUpdateConfig(tdata,spc.rollbackConfig);
+            }else if(vKeys[i]=="Networks"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::NetWork network;
+                    ParseNetwork(tdata[j],network);
+                    spc.networks.push_back(network);
+                }
             }else if(vKeys[i]=="EndpointSpec"){
                 ParseEndpointSpec(tdata,spc.endpointSpec);
             }
@@ -177,7 +187,7 @@ void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTempl
                 taskTemplate.runtime=tdata.get_str();
         }
         if(tdata.isNum()){
-            if(vKeys[i]=="ForceUpdate") taskTemplate.forceUpdate=tdata.get_int();
+            if(vKeys[i]=="ForceUpdate") taskTemplate.forceUpdate=tdata.get_int64();
         }
         if(tdata.isObject()){
             if(vKeys[i]=="ContainerSpec"){
@@ -188,6 +198,8 @@ void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTempl
                 ParseRestartPolicy(tdata,taskTemplate.restartPolicy);
             }else if(vKeys[i] =="Placement"){
                 ParsePlacement(tdata,taskTemplate.placement);
+            }else if(vKeys[i]=="LogDriver"){
+                ParseLogDriver(tdata,taskTemplate.logdriver);
             }
         }
         if(tdata.isArray()){
@@ -201,128 +213,85 @@ void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTempl
         }
     }
 }
-void Service::ParseContainerSpec(const UniValue& data,Config::ContainerSpec &contTemp)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="Isolation") 
-                contTemp.isolation=tdata.get_str();
-            if(vKeys[i]=="Image") 
-                contTemp.image=tdata.get_str();
-        }
-        if(tdata.isObject()){
-            if(vKeys[i]=="Labels"){
-                ParseSpecContainerLabels(tdata,contTemp.labels);
-            }
-        }
-        if(data[vKeys[i]].isArray()){
-            if(vKeys[i]=="Env"){
-                ParseArray(tdata,contTemp.env);
-            }else if(vKeys[i]=="Mounts"){
-                for(size_t j=0;j<tdata.size();j++){
-                    Config::Mount mount;
-                    ParseMount(tdata[j],mount);
-                    contTemp.mounts.push_back(mount);
-                }
-            }
-        }
-    }
-}
-void Service::ParseSpecContainerLabels(const UniValue& data,Config::Labels &labels)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
-        }
-    }
-}
-void Service::ParseMount(const UniValue& data,Config::Mount &mount)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="Type") mount.type=tdata.get_str();
-            else if(vKeys[i]=="Source") mount.source=tdata.get_str();
-            else if(vKeys[i]=="Target") mount.target=tdata.get_str();
-        }
-    }
-}
-void Service::ParseArray(const UniValue& data,vector<std::string> &array)
-{
-    for(size_t i=0;i<data.size();i++){
-        array.push_back(data[i].get_str());
-    }
-    return;
-} 
-void Service::ParseResource(const UniValue& data,Config::Resource &resources)
+
+void Service::ParseResource(const UniValue& data,Config::Resource &resource)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isObject()){
             if(vKeys[i]=="Limits"){
-                ParseLimits(tdata,resources.limits);
-            }else if(vKeys[i]=="Reservations"){
-                ParseReservation(tdata,resources.reservations);
+                ParseResourceObj(tdata,resource.limits);
+            }else if(vKeys[i]=="Reservation"){
+                ParseResourceObj(tdata,resource.reservations);
             }
         }
     }
 }
-void Service::ParseLimits(const UniValue& data,Config::Limits &limits)
+void Service::ParseResourceObj(const UniValue& data, Config::ResourceObj &resources)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isNum()){
             if(vKeys[i]=="NanoCPUs"){
-               limits.nanoCPUs=tdata.get_int64();
+                resources.nanoCPUs=tdata.get_int64();
             }else if(vKeys[i]=="MemoryBytes"){
-                limits.memoryBytes=tdata.get_int64();
+                resources.memoryBytes=tdata.get_int64();
+            }
+        }
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="GenericResources"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::GenericResources genResources;
+                    ParseResGenRes(tdata[j],genResources);
+                    resources.genericResources.push_back(genResources);
+                }
             }
         }
     }
 }
-void Service::ParseReservation(const UniValue& data,Config::Reservation &reservations)
+void Service::ParseResGenRes(const UniValue& data, Config::GenericResources &genResources)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isObject()){
-            if(vKeys[i]=="GenericResources"){
-                for(size_t j=0;j<tdata.size();j++){
-                    Config::DiscreteResourceSpec disres;
-                    ParseDirReservation(tdata[j],disres);
-                    reservations.Reservations.push_back(disres);
-                }
-            }
-        }
-        if(data[vKeys[i]].isNum()){
-            if(vKeys[i]=="NanoCPUs"){
-                reservations.nanoCPUs=tdata.get_int64();
-            }else if(vKeys[i]=="MemoryBytes"){
-                reservations.memoryBytes=tdata.get_int64();
+            if(vKeys[i]=="NamedResourceSpec"){
+                ParseResGenNameSpec(tdata,genResources.namedResourceSpec);
+            }else if(vKeys[i]=="DiscreteResourceSpec"){
+                ParseResGenDiscSpec(tdata,genResources.discreateResourceSpec);
             }
         }
     }
 }
-void Service::ParseDirReservation(const UniValue& data,Config::DiscreteResourceSpec &disres)
+void Service::ParseResGenNameSpec(const UniValue& data, Config::NamedResourceSpec &namedResourceSpec)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="Kind"){
-               disres.kind=tdata.get_str();
+                namedResourceSpec.kind=tdata.get_str();
+            }else if(vKeys[i]=="Vaule"){
+                namedResourceSpec.value=tdata.get_str();
+            }
+        }
+    }
+}
+void Service::ParseResGenDiscSpec(const UniValue& data, Config::DiscreteResourceSpec &discResourceSpec)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Kind"){
+                discResourceSpec.kind=tdata.get_str();
             }
         }
         if(data[vKeys[i]].isNum()){
-            if(vKeys[i]=="Value"){
-                disres.value=tdata.get_int();
+            if(vKeys[i]=="Vaule"){
+                discResourceSpec.value=tdata.get_int64();
             }
         }
     }
@@ -334,12 +303,41 @@ void Service::ParseRestartPolicy(const UniValue& data,Config::RestartPolicy &rep
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="Condition"){
-               repoly.condition=tdata.get_str();
+                repoly.condition=tdata.get_str();
             }
         }
         if(data[vKeys[i]].isNum()){
             if(vKeys[i]=="MaxAttempts"){
-                repoly.MmaxAttempts=tdata.get_int();
+                repoly.maxAttempts=tdata.get_int64();
+            }else if(vKeys[i]=="Delay"){
+                repoly.delay=tdata.get_int64();
+            }else if(vKeys[i]=="Window"){
+                repoly.window=tdata.get_int64();
+            }
+        }
+    }
+}
+void Service::ParseUpdateConfig(const UniValue& data,Config::UpdateConfig &upconfig)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="Parallelism"){
+                upconfig.parallelism=tdata.get_int64();
+            }else if(vKeys[i]=="Delay"){
+                upconfig.delay=tdata.get_int64();
+            }else if(vKeys[i]=="Monitor"){
+                upconfig.monitor=tdata.get_int64();
+            }else if(vKeys[i]=="MaxFailureRatio"){
+                upconfig.maxFailureRatio=tdata.get_real();
+            }
+        }
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="FailureAction"){
+                upconfig.failureAction=tdata.get_str();
+            }else if(vKeys[i]=="Order"){
+                upconfig.order=tdata.get_str();
             }
         }
     }
@@ -352,12 +350,42 @@ void Service::ParsePlacement(const UniValue& data,Config::Placement &placement)
         if(data[vKeys[i]].isArray()){
             if(vKeys[i]=="Constraints"){
                 ParseArray(tdata,placement.constraints);
+            }else if(vKeys[i]=="Preferences"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::Preferences preference;
+                    ParsePreferences(tdata[j],preference);
+                    placement.preferences.push_back(preference);
+                }
             }else if(vKeys[i]=="Platforms"){
                 for(size_t j=0;j<tdata.size();j++){
                     Config::Platform platform;
                     ParsePlatforms(tdata[j],platform);
                     placement.platforms.push_back(platform);
                 }
+            }
+        }
+    }
+}
+void Service::ParsePreferences(const UniValue& data,Config::Preferences &preference)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Spread"){
+                ParsePreferencesSpread(tdata,preference.spread);
+            }
+        }
+    }
+}
+void Service::ParsePreferencesSpread(const UniValue& data,Config::Spread &spread)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="SpreadDescriptor"){
+                spread.spreadDescriptor=tdata.get_str();
             }
         }
     }
@@ -389,27 +417,59 @@ void Service::ParseNetwork(const UniValue& data,Config::NetWork &network)
         }
     }
 }
-void Service::ParseMode(const UniValue& data,Config::Mode &mode)
+void Service::ParseLogDriver(const UniValue& data,Config::LogDriver &logdriver)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="Replicated"){
-                // Config::Replicated rep;
-                ParseReplicated(tdata,mode.replicated);
+            if(vKeys[i]=="Name"){
+                logdriver.name=tdata.get_str();
+            }
+        }
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Options"){//key?
+                ParseLogDriverOpt(tdata,logdriver.options);
             }
         }
     }
 }
-void Service::ParseReplicated(const UniValue& data,Config::Replicated &rep)
+void Service::ParseLogDriverOpt(const UniValue& data,Config::Labels &labels)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
+        }
+    }
+}
+
+void Service::ParseMode(const UniValue& data,Config::Mode &mode)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Replicated"){
+                ParseModeReplicated(tdata,mode.replicated);
+            }
+        }
+        if(data[vKeys[i]].isBool()){
+            if(vKeys[i]=="Global"){
+                mode.global=tdata.get_bool();
+            }
+        }
+    }
+}
+void Service::ParseModeReplicated(const UniValue& data,Config::Replicated &rep)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isNum()){
             if(vKeys[i]=="Replicas"){
-                rep.replicas=tdata.get_int();
+                rep.replicas=tdata.get_int64();
             }
         }
     }
@@ -441,7 +501,9 @@ void Service::ParseEndSpecPort(const UniValue& data,Config::EndpointPortConfig &
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="Protocol"){
+            if(vKeys[i]=="Name"){
+                port.name=tdata.get_str();
+            }else if(vKeys[i]=="Protocol"){
                 port.protocol=tdata.get_str();
             }else if(vKeys[i]=="PublishMode"){
                 port.publishMode=tdata.get_str();
@@ -449,13 +511,16 @@ void Service::ParseEndSpecPort(const UniValue& data,Config::EndpointPortConfig &
         }
         if(data[vKeys[i]].isNum()){
             if(vKeys[i]=="TargetPort"){
-                port.targetPort=tdata.get_int();
+                port.targetPort=tdata.get_int64();
             }else if(vKeys[i]=="PublishedPort"){
-                port.publishedPort=tdata.get_int();
+                port.publishedPort=tdata.get_int64();
             }
         }
     }
 }
+
+
+
 void Service::ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint)
 {
     std::vector<std::string> vKeys=data.getKeys();
@@ -507,14 +572,18 @@ void Service::ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updat
                 updateStatus.state =tdata.get_str();
             }else if(vKeys[i]=="Message"){
                 updateStatus.message =tdata.get_str();
-            }
-        }
-        if(data[vKeys[i]].isNum()){
-            if(vKeys[i]=="StartedAt"){
-                updateStatus.startedAt=tdata.get_int64();
+            }else if(vKeys[i]=="StartedAt"){
+                updateStatus.createdAt=getDockerTime(tdata.get_str());
             }else if(vKeys[i]=="CompletedAt"){
-                updateStatus.completedAt =tdata.get_int64();
+                updateStatus.completedAt =getDockerTime(tdata.get_str());
             }
         }
+    }
+}
+void Service::ParseArray(const UniValue& data,vector<std::string> &array)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        array.push_back(data[vKeys[i]].get_str());
     }
 }

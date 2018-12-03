@@ -11,8 +11,8 @@ namespace Config{
 
     struct File{
         std::string name;
-        std::string UID;
-        std::string GID;
+        std::string uid;
+        std::string gid;
         uint32_t mode;
     };
 
@@ -45,14 +45,14 @@ namespace Config{
         vector<std::string> command;
         vector<std::string> args;
         std::string hostname;
-        Labels env;
+         vector<std::string> env;
         std::string dir;
         std::string user;
         vector<std::string> groups;
         // Privileges
         bool tty{};
         bool openstdin{};
-        bool ReadOnly{};
+        bool readOnly{};
         vector<struct Mount> mounts;
         std::string stopSignal;
         int64_t stopGracePeriod;
@@ -61,7 +61,22 @@ namespace Config{
         DNSConfig dnsConfig;
         vector<Secret> secrets;
         vector<Config> configs;
-        // std::string isolation;
+        std::string isolation;
     };
 };
+void ParseContainerSpec(const UniValue& data,Config::ContainerSpec &containerSpec);
+void ParseContainerSpecLabels(const UniValue& data,Config::Labels &labels);
+void ParseContainerSpecMount(const UniValue& data,Config::Mount &mount);
+void ParseContSpecMountBind(const UniValue& data,Config::BindOptions &bindOption);
+void ParseContSpecMountVol(const UniValue& data,Config::VolumeOptions &voloption);
+void ParseContSpecMountVolLabel(const UniValue& data,Config::Labels &labels);
+void ParseContSpecMountVolDriv(const UniValue& data,Config::DriverConfig &drivConfig);
+void ParseContSpecMountVolLabelOP(const UniValue& data,Config::Labels &labels);
+void ParseContSpecMountTfs(const UniValue& data,Config::TmpfsOptions &tmpfsOption);
+void ParseContainerSpecHealt(const UniValue& data,Config::HealthCheck &heltCheck);
+void ParseContainerSpecDNS(const UniValue& data,Config::DNSConfig &dnsConfig);
+void ParseContainerSpecSec(const UniValue& data,Config::Secret &secret);
+void ParseContSpecSecFile(const UniValue& data,Config::File &file);
+void ParseContainerSpeConf(const UniValue& data,Config::Config &config);
+void ParseArray(const UniValue& data,vector<std::string> &array);
 #endif //DOCKERCONTAINER_H

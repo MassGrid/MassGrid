@@ -12,11 +12,11 @@ public:
 
 public:
     Swarm() = default;
-    Swarm(std::string id,int idx ,uint64_t createdTime ,uint64_t updateTime,
+    Swarm(std::string id,Config::Version version ,uint64_t createdTime ,uint64_t updateTime,
     std::string mjoinWorkerTokens,
     std::string mjoinManagerTokens,
-    int version=DEFAULT_CTASK_API_VERSION):joinWorkerTokens(mjoinWorkerTokens),
-    joinManagerTokens(mjoinManagerTokens),DockerBase(id,idx,createdTime,updateTime,version)
+    int protocolVersion=DEFAULT_CTASK_API_VERSION):joinWorkerTokens(mjoinWorkerTokens),
+    joinManagerTokens(mjoinManagerTokens),DockerBase(id,version,createdTime,updateTime,protocolVersion)
     {}
 
     ADD_SERIALIZE_METHODS;
@@ -24,14 +24,14 @@ public:
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(ID);
-        READWRITE(index);
+        READWRITE(version);
         READWRITE(createdAt);
         READWRITE(updatedAt);
         READWRITE(nProtocolVersion);
     }
     Swarm(const Swarm& from){
         ID=from.ID;
-        index=from.index;
+        version=from.version;
         createdAt=from.createdAt;
         updatedAt=from.updatedAt;
         nProtocolVersion=from.nProtocolVersion;
@@ -41,7 +41,7 @@ public:
 
     Swarm& operator = (Swarm const& from){
         ID=from.ID;
-        index=from.index;
+        version=from.version;
         createdAt=from.createdAt;
         updatedAt=from.updatedAt;
         nProtocolVersion=from.nProtocolVersion;
@@ -54,4 +54,4 @@ public:
     std::string ToString();
 };
 
-#endif //__DOCKERSERVICE__
+#endif //__DOCKERSWARM__

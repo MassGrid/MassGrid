@@ -19,7 +19,7 @@
 #include "tinyformat.h"
 #include "utiltime.h"
 #include "amount.h"
-
+#include "pubkey.h"
 #include <exception>
 #include <map>
 #include <stdint.h>
@@ -163,7 +163,7 @@ void runCommand(const std::string& strCommand);
 void SetDefaultReceiveAddress(const std::string& address);
 std::string DefaultReceiveAddress();
 
-CPubKey DefaultPubkey();
+// CPubKey DefaultPubkey();
 
 inline bool IsSwitchChar(char c)
 {

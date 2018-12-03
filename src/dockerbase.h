@@ -1,5 +1,5 @@
-#ifndef DOCKERBASE_H  
-#define DOCKERBASE_H 
+#ifndef DOCKERBASE_H
+#define DOCKERBASE_H
 #include <stdint.h>
 #include <vector>
 #include <map>
@@ -24,16 +24,16 @@ using namespace std;
 union docker_Version
 {
     struct {
-    uint8_t Build;
-    uint8_t Revision;
-    uint8_t Minor;
-    uint8_t Major;
+        uint8_t Build;
+        uint8_t Revision;
+        uint8_t Minor;
+        uint8_t Major;
     }part;
     uint32_t ver{0};
     uint8_t unv[4];
 };
 namespace Config{
-    typedef map<std::string,std::string> Labels;
+    typedef std::map<std::string,std::string> Labels;
     enum eStatus{
         created = 0,
         restarting,
@@ -56,7 +56,7 @@ namespace Config{
         std::string err;
     };
     struct HealthCheck{
-        vector<std::string> test;
+        std::vector<std::string> test;
         int64_t interval;
         int64_t timeout;
         int64_t retries;
@@ -69,12 +69,12 @@ namespace Config{
 
     struct DriverConfig{
         std::string name;
-        map<std::string,std::string> options;
+        Labels options;
     };
 
     struct VolumeOptions{
         bool nocopy{};
-        map<std::string,std::string> labels;
+        Labels labels;
         DriverConfig driverConfig;
     };
 
@@ -104,23 +104,12 @@ namespace Config{
         std::string value;
     };
 
-    struct AssignedGenericResources{
-        vector<NamedResourceSpec> namedResourceSpec;
-        vector<DiscreteResourceSpec> discreteResourceSpec;
-    };
-
     struct GenericResources{
         NamedResourceSpec namedResourceSpec;
         DiscreteResourceSpec discreateResourceSpec;
     };
 
-    struct Limits{
-        uint64_t nanoCPUs;
-        uint64_t memoryBytes;
-        GenericResources genericResources;
-    };
-
-    struct Reservation{
+    struct ResourceObj{
         uint64_t nanoCPUs;
         uint64_t memoryBytes;
         vector<struct GenericResources> genericResources;
@@ -141,15 +130,10 @@ namespace Config{
         Spread spread;
     };
 
-    struct Placement{
-        std::string constraints;
-        vector<Preferences> preferences;
-        vector<Platform> platforms;
-    };
 
     struct Resource{
-        struct Limits limits;
-        struct Reservation reservations;
+        struct ResourceObj limits;
+        struct ResourceObj reservations;
     };
 
     struct Platform{
@@ -157,6 +141,11 @@ namespace Config{
         std::string OS;
     };
 
+    struct Placement{
+        vector<std::string> constraints;
+        vector<Preferences> preferences;
+        vector<Platform> platforms;
+    };
     struct NetWork{
         std::string target;
         vector<std::string> aliases;

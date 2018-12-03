@@ -1,5 +1,11 @@
 #include "dockernode.h"
 #include "univalue.h"
+namespace Config{
+    const char* strRole[]={"worker","manager"};
+    const char* strNodeStatusState[]={"unknown","down","ready","disconnected"};
+    const char* strAvailability[]={"active","pause","drain"};
+    const char* strRechability[]={"unknown","unreachable","rechable"};
+};
 std::string dockernodefilter::ToJsonString(){
     UniValue data(UniValue::VOBJ);
     if(!id.empty()){
@@ -70,14 +76,14 @@ void Node::DockerNodeList(const string& nodeData,std::map<std::string,Node> &nod
 bool Node::DockerNodeJson(const UniValue& data, Node& node)
 {
     std::string id;
-    int idx;
+    Config::Version version;
     uint64_t createdTime;
     uint64_t updateTime;
     Config::NodeSpec spec;
     Config::NodeDescription description;
     Config::NodeStatus status;
-    Config::NodeManagerStatus managerStatus;
-    int version=DEFAULT_CNODE_API_VERSION;
+    Config::ManagerStatus managerStatus;
+    int protocolVersion=DEFAULT_CNODE_API_VERSION;
 
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -89,7 +95,7 @@ bool Node::DockerNodeJson(const UniValue& data, Node& node)
         }
         if(data[vKeys[i]].isObject()){
             if(vKeys[i]=="Version"){
-                idx=find_value(tdata,"Index").get_int();
+                version.index=find_value(tdata,"Index").get_int();
             }else if(vKeys[i]=="Spec"){
                 ParseNodeSpec(tdata,spec);
             }else if(vKeys[i]=="Description"){
@@ -101,7 +107,7 @@ bool Node::DockerNodeJson(const UniValue& data, Node& node)
             }
         }
     }
-    node=Node(id,idx,createdTime,updateTime,spec,description,status,managerStatus,version);
+    node=Node(id,version,createdTime,updateTime,spec,description,status,managerStatus,protocolVersion);
     return true;
 }
 void Node::ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec)
@@ -111,9 +117,11 @@ void Node::ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec)
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="Role"){
-                spec.role=tdata.get_str();
+                spec.role=GetRoleType(tdata.get_str());
             }else if(vKeys[i]=="Availability"){
-                spec.availability=tdata.get_str();
+                spec.availability=GetAvailabilityType(tdata.get_str());
+            }else if(vKeys[i]=="Name"){
+                spec.name=tdata.get_str();
             }
         }
         if(data[vKeys[i]].isObject()){
@@ -123,13 +131,13 @@ void Node::ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec)
         }
     }
 }
-void Node::ParseNodeLabels(const UniValue& data,Config::Labels &labels)
+void Node::ParseNodeLabels(const UniValue& data,std::map<std::string,std::string> &labels)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){
-            labels.insert(std::make_pair("key",tdata.get_str()));
+        if(data[vKeys[i]].isStr()){//additional
+            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
         }
     }
 }
@@ -150,6 +158,8 @@ void Node::ParseNodeDescription(const UniValue& data,Config::NodeDescription &de
                 ParseNodeResource(tdata,decp.resources);
             }else if(vKeys[i]=="Engine"){
                 ParseNodeEngine(tdata,decp.engine);
+            }else if(vKeys[i]=="TLSInfo"){
+                ParseNodeTLSInfo(tdata,decp.tlsInfo);
             }
         }
     }
@@ -165,21 +175,75 @@ void Node::ParseNodePlatform(const UniValue& data,Config::Platform &platform)
         }
     }
 }
-void Node::ParseNodeResource(const UniValue& data, Config::Limits &limits)
+void Node::ParseNodeResource(const UniValue& data, Config::ResourceObj &resources)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isNum()){
             if(vKeys[i]=="NanoCPUs"){
-                limits.nanoCPUs=tdata.get_int64();
+                resources.nanoCPUs=tdata.get_int64();
             }else if(vKeys[i]=="MemoryBytes"){
-                limits.memoryBytes=tdata.get_int64();
+                resources.memoryBytes=tdata.get_int64();
+            }
+        }
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="GenericResources"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::GenericResources genResources;
+                    ParseNodeGenResources(tdata[j],genResources);
+                    resources.genericResources.push_back(genResources);
+                }
             }
         }
     }
 }
-void Node::ParseNodeEngine(const UniValue& data, Config::Engine &engine)
+void Node::ParseNodeGenResources(const UniValue& data, Config::GenericResources &genResources)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="NamedResourceSpec"){
+                ParseNodeGenResNameSpec(tdata,genResources.namedResourceSpec);
+            }else if(vKeys[i]=="DiscreteResourceSpec"){
+                ParseNodeGenResDiscSpec(tdata,genResources.discreateResourceSpec);
+            }
+        }
+    }
+}
+void Node::ParseNodeGenResNameSpec(const UniValue& data, Config::NamedResourceSpec &namedResourceSpec)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Kind"){
+                namedResourceSpec.kind=tdata.get_str();
+            }else if(vKeys[i]=="Vaule"){
+                namedResourceSpec.value=tdata.get_str();
+            }
+        }
+    }
+}
+void Node::ParseNodeGenResDiscSpec(const UniValue& data, Config::DiscreteResourceSpec &discResourceSpec)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Kind"){
+                discResourceSpec.kind=tdata.get_str();
+            }
+        }
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="Vaule"){
+                discResourceSpec.value=tdata.get_int64();
+            }
+        }
+    }
+}
+void Node::ParseNodeEngine(const UniValue& data, Config::EngineDescription &engine)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -189,18 +253,34 @@ void Node::ParseNodeEngine(const UniValue& data, Config::Engine &engine)
                 engine.engineVersion=tdata.get_str();
             }
         }
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Labels"){
+                ParseNodeEngineLabels(tdata,engine.labels);//no key
+            }
+        }
         if(data[vKeys[i]].isArray()){
             if(vKeys[i]=="Plugins"){
                 for(size_t j=0;j<tdata.size();j++){
-                    Config::SPlugins splugins;
-                    ParseNodeSPlugins(tdata[j],splugins);
-                    engine.plugin.push_back(splugins);
+                    Config::Plugins engineplugins;
+                    ParseNodeEnginePlugins(tdata[j],engineplugins);
+                    engine.plugin.push_back(engineplugins);
                 }
             }
         }
     }
 }
-void Node::ParseNodeSPlugins(const UniValue& data, Config::SPlugins &splugin)
+void Node::ParseNodeEngineLabels(const UniValue& data, map<std::string,std::string> &labels)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
+            else if(vKeys[i]=="txid") labels.insert(std::make_pair("com.massgrid.txid",tdata.get_str()));
+        }
+    }
+}
+void Node::ParseNodeEnginePlugins(const UniValue& data, Config::Plugins &splugin)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -214,6 +294,22 @@ void Node::ParseNodeSPlugins(const UniValue& data, Config::SPlugins &splugin)
         }
     }
 }
+void Node::ParseNodeTLSInfo(const UniValue& data, Config::TLSInfo &tlsinfo)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="TrustRoot"){
+                tlsinfo.trustRoot =tdata.get_str();
+            }else if(vKeys[i]=="CertIssuerSubject"){
+                tlsinfo.certIssuerSubject =tdata.get_str();
+            }else if(vKeys[i]=="CertIssuerPublicKey"){
+                tlsinfo.certIssuerPublicKey =tdata.get_str();
+            }
+        }
+    }
+}
 void Node::ParseNodeStatus(const UniValue& data, Config::NodeStatus &status)
 {
     std::vector<std::string> vKeys=data.getKeys();
@@ -221,14 +317,16 @@ void Node::ParseNodeStatus(const UniValue& data, Config::NodeStatus &status)
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="State"){
-                status.state =tdata.get_str();
+                status.state =GetNodeStatusStateType(tdata.get_str());
             }else if(vKeys[i]=="Addr"){
-                status.Addr =tdata.get_str();
+                status.addr =tdata.get_str();
+            }else if(vKeys[i]=="Message"){
+                status.message =tdata.get_str();
             }
         }
     }
 }
-void Node::ParseNodeManageStatus(const UniValue& data, Config::NodeManagerStatus &managerStatus)
+void Node::ParseNodeManageStatus(const UniValue& data, Config::ManagerStatus &managerStatus)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
@@ -240,10 +338,55 @@ void Node::ParseNodeManageStatus(const UniValue& data, Config::NodeManagerStatus
         }
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="Reachability"){
-                managerStatus.Reachability =tdata.get_str();
+                managerStatus.reachability = GetNodeManageStatusType(tdata.get_str());
             }else if(vKeys[i]=="Addr"){
-                managerStatus.Addr =tdata.get_str();
+                managerStatus.addr =tdata.get_str();
             }
         }
     }
+}
+int Node::GetRoleType(std::string strType)
+{
+    int type=-1;
+    for (int i = 0; i < ARRAYLEN(Config::strRole); i++){
+        if (strType == Config::strRole[i]){
+            type = i;
+            break;
+        }
+    }
+    // if (i == ARRAYLEN(ppszTypeName))
+    return type;
+}
+int Node::GetNodeStatusStateType(std::string strType)
+{
+    int type=-1;
+    for (int i = 0; i < ARRAYLEN(Config::strNodeStatusState); i++){
+        if (strType == Config::strNodeStatusState[i]){
+            type = i;
+            break;
+        }
+    }
+    return type;
+}
+int Node::GetAvailabilityType(std::string strType)
+{
+    int type=-1;
+    for (int i = 0; i < ARRAYLEN(Config::strAvailability); i++){
+        if (strType == Config::strAvailability[i]){
+            type = i;
+            break;
+        }
+    }
+    return type;
+}
+int Node::GetNodeManageStatusType(std::string strType)
+{
+    int type=-1;
+    for (int i = 0; i < ARRAYLEN(Config::strRechability); i++){
+        if (strType == Config::strRechability[i]){
+            type = i;
+            break;
+        }
+    }
+    return type;
 }

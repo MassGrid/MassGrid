@@ -21,14 +21,10 @@ namespace Config{
         REACHABILITY_UNKNOWN=0,
         REACHABILITY_UNREACHABLE,
         REACHABILITY_REACHABLE
-    };
-    const char* strRole[]={"worker","manager"};
-    const char* strNodeStatusState[]={"unknown","down","ready","disconnected"};
-    const char* strAvailability[]={"active","pause","drain"};
-    const char* strRechability[]={"unknown","unreachable","rechable"};
+    }; 
     struct EngineDescription{
         std::string engineVersion;
-        Labels labels;
+        Labels labels; //map<std::string,std::string>
         vector<Plugins> plugin;
     };
     struct NodeSpec{
@@ -40,7 +36,7 @@ namespace Config{
     struct NodeDescription{
         std::string hostname;
         Platform platform;
-        Reservation resources;  //something?
+        ResourceObj resources;  //something?
         EngineDescription engine;
         TLSInfo tlsInfo;
     };
@@ -58,14 +54,23 @@ namespace Config{
 class Node:public DockerBase{
     static bool DockerNodeJson(const UniValue& data, Node& node);
     static void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec);
-    static void ParseNodeLabels(const UniValue& data,Config::Labels &labels);
+    static void ParseNodeLabels(const UniValue& data,std::map<std::string,std::string> &labels);
     static void ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp);
     static void ParseNodePlatform(const UniValue& data,Config::Platform &platform);
-    static void ParseNodeResource(const UniValue& data, Config::Limits &limits);
-    static void ParseNodeEngine(const UniValue& data, Config::Engine &engine);
-    static void ParseNodeSPlugins(const UniValue& data, Config::SPlugins &splugin);
+    static void ParseNodeResource(const UniValue& data, Config::ResourceObj &resources);
+    static void ParseNodeGenResources(const UniValue& data, Config::GenericResources &genResources);
+    static void ParseNodeGenResNameSpec(const UniValue& data, Config::NamedResourceSpec &namedResourceSpec);
+    static void ParseNodeGenResDiscSpec(const UniValue& data, Config::DiscreteResourceSpec &discResourceSpec);
+    static void ParseNodeEngine(const UniValue& data, Config::EngineDescription &engine);
+    static void ParseNodeEngineLabels(const UniValue& data, map<std::string,std::string> &labels);
+    static void ParseNodeEnginePlugins(const UniValue& data, Config::Plugins &splugin);
+    static void ParseNodeTLSInfo(const UniValue& data, Config::TLSInfo &tlsinfo);
     static void ParseNodeStatus(const UniValue& data, Config::NodeStatus &status);
-    static void ParseNodeManageStatus(const UniValue& data, Config::NodeManagerStatus &managerStatus);
+    static void ParseNodeManageStatus(const UniValue& data, Config::ManagerStatus &managerStatus);
+    static int GetRoleType(std::string strType);
+    static int GetNodeStatusStateType(std::string strType);
+    static int GetAvailabilityType(std::string strType);
+    static int GetNodeManageStatusType(std::string strType);
 public:
 
     static void DockerNodeList(const string& nodeData,std::map<std::string,Node> &nodes);
@@ -83,7 +88,7 @@ public:
     Config::NodeSpec spec,
     Config::NodeDescription description,
     Config::NodeStatus status,
-    Config::NodeManagerStatus managerStatus, 
+    Config::ManagerStatus managerStatus, 
     int protocolVersion=DEFAULT_CNODE_API_VERSION):spec(spec),description(description),
     status(status),managerStatus(managerStatus),
     DockerBase(id,version,createdTime,updateTime,protocolVersion){}
@@ -123,7 +128,8 @@ public:
         READWRITE(createdAt);
         READWRITE(updatedAt);
     }
-    NodeState getNodeState(){return status.state;}
+
+    int getNodeState(){return status.state;}
     
     void Update();
     std::string ToString();
