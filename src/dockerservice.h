@@ -76,10 +76,7 @@ namespace Config{
             ss << endpointSpec;
             return ss.GetHash();
         }
-        std::string ToString(){
-            return "{}";
-        }
-
+        std::string ToJsonString();
     };
 };
 class Service:public DockerBase{
@@ -110,7 +107,6 @@ class Service:public DockerBase{
     static void ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updateStatus);
     static void ParseArray(const UniValue& data,vector<std::string> &array);
     
-    static UniValue SpecToJson(Config::ServiceSpec &spec);
     static UniValue SpecLabelsToJson(Config::Labels &labels);
     static UniValue TaskTemplateToJson(Config::TaskSpec &taskTemplate);
     static UniValue ResourceToJson(Config::Resource &resource);
@@ -138,6 +134,7 @@ class Service:public DockerBase{
 
 public:
     static std::string DockerServSpecToJson(Service &service);
+    static UniValue SpecToJson(Config::ServiceSpec &spec);
 public:
     
     Config::ServiceSpec spec;

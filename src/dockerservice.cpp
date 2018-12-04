@@ -10,7 +10,7 @@ bool DockerCreateService::Sign(const CKey& keyClusterAddress, const CPubKey& pub
 
     // TODO: add sentinel data
     sigTime = GetAdjustedTime();
-    std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(version) + sspec.ToString() + boost::lexical_cast<std::string>(sigTime);
+    std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(version) + sspec.ToJsonString() + boost::lexical_cast<std::string>(sigTime);
 
     if(!CMessageSigner::SignMessage(strMessage, vchSig, keyClusterAddress)) {
         LogPrintf("DockerCreateService::Sign -- SignMessage() failed\n");
@@ -28,7 +28,7 @@ bool DockerCreateService::Sign(const CKey& keyClusterAddress, const CPubKey& pub
 bool DockerCreateService::CheckSignature(CPubKey& pubKeyClusterAddress)
 {
     // TODO: add sentinel data
-    std::string strMessage = vin.ToString() + pubKeyClusterAddress.ToString() + boost::lexical_cast<std::string>(version) + sspec.ToString() + boost::lexical_cast<std::string>(sigTime);
+    std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(version) + sspec.ToJsonString() + boost::lexical_cast<std::string>(sigTime);
     std::string strError = "";
 
     if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
@@ -972,4 +972,10 @@ UniValue Service::ArryToJson(std::vector<std::string> &strArry)
         arry.push_back(strArry[i]);
     }
     return arry;
+}
+std::string Config::ServiceSpec::ToJsonString()
+{
+    UniValue data(UniValue::VOBJ);
+    data=Service::SpecToJson(*this);
+    return data.write();
 }
