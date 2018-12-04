@@ -101,7 +101,7 @@ UniValue dockerserver(const UniValue& params, bool fHelp)
         }
         if (!vchPubKey.IsFullyValid())
             throw runtime_error(" Invalid public key: "+strAddress);
-        LogPrintf("result pubkey %s\n",vchPubKey.ToString().substr(0,65));
+        LogPrintf("result pubkey %s\n",vchPubKey.GetID().ToString());//.substr(0,65));
 
         dockercluster.DefaultAddress = strAddress;
         dockercluster.DefaultPubkey = vchPubKey;
@@ -114,7 +114,7 @@ UniValue dockerserver(const UniValue& params, bool fHelp)
         createService.vin = CTxIn();
         createService.sspec.labels["com.massgrid.pubkey"] = vchPubKey.ToString().substr(0,65);
         createService.sspec.mode.replicated.replicas = 3;
-        createService.sspec.name = " dockertest01";
+        createService.sspec.name = "dockertest01";
         createService.sspec.taskTemplate.containerSpec.image= "wany/cuda9.1-base:2.0";
         createService.sspec.taskTemplate.containerSpec.user= "wany";
         createService.sspec.taskTemplate.resources.limits.memoryBytes = 104857600;

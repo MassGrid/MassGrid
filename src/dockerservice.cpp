@@ -213,6 +213,7 @@ UniValue Service::SpecToJson(Config::ServiceSpec &spec)
     }
     return data;
 }
+
 void Service::ParseSpecLabels(const UniValue& data,Config::Labels &labels)
 {
     std::vector<std::string> vKeys=data.getKeys();

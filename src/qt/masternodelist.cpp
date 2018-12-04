@@ -289,7 +289,7 @@ void MasternodeList::updateNodeList()
         QTableWidgetItem *nodeCount = new QTableWidgetItem(QString::number(mn.lastPing.mdocker.nodeCount)+"/"+QString::number(mn.lastPing.mdocker.activeNodeCount));
         QTableWidgetItem *joinToken = new QTableWidgetItem(QString::fromStdString(mn.lastPing.mdocker.joinToken));
 
-        LogPrintf("MasternodeList::updateNodeList token:%s",mn.lastPing.mdocker.joinToken);
+        // LogPrintf("MasternodeList::updateNodeList token:%s",mn.lastPing.mdocker.joinToken);
         
         if (strCurrentFilter != "")
         {

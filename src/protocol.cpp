@@ -68,8 +68,8 @@ const char *MNVERIFY="mnv";
 // MassGrid docker types
 const char *GETDNDATA="getdndata";   //get own docker data
 const char *DNDATA="dndata";    //respone docker data
-const char *CREATESERVICE="createservice";
-const char *UPDATESERVICE="updateservice";
+const char *CREATESERVICE="createspec";
+const char *UPDATESERVICE="updatespec";
 };
 
 static const char* ppszTypeName[] =
