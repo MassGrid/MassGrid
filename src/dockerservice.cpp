@@ -96,6 +96,17 @@ void Service::DockerServiceList(const string& serviceData,std::map<std::string,S
         LogPrint("docker","Service::DockerServiceList unkonw exception\n");
     }
 }
+std::string Service::DockerServSpecToJson(Service &service)
+{
+
+    UniValue data(UniValue::VOBJ);
+    {
+        UniValue objSpec(UniValue::VOBJ);
+        objSpec=SpecToJson(service.spec);
+        data.push_back(Pair("Spec",objSpec));
+    }
+    return data.write();
+}
 bool Service::DcokerServiceJson(const UniValue& data, Service& service)
 {
     std::string id;
@@ -166,6 +177,42 @@ void Service::ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
         }
     }
 }
+UniValue Service::SpecToJson(Config::ServiceSpec &spec)
+{
+    UniValue data(UniValue::VOBJ);
+    data.push_back(Pair("Name",spec.name));
+    {
+        UniValue obj(UniValue::VOBJ);
+        
+        obj=SpecLabelsToJson(spec.labels);
+        data.push_back(Pair("Labels", obj));
+        
+        obj=TaskTemplateToJson(spec.taskTemplate);
+        data.push_back(Pair("TaskTemplate", obj));
+        
+        obj=ModeToJson(spec.mode);
+        data.push_back(Pair("Mode", obj));
+        
+        obj=UpdateConfigToJson(spec.updateConfig);
+        data.push_back(Pair("UpdateConfig", obj));
+
+        obj=UpdateConfigToJson(spec.rollbackConfig);
+        data.push_back(Pair("RollbackConfig", obj));
+
+        vector<Config::NetWork> networks=spec.networks;
+        UniValue arryNet(UniValue::VARR);
+        for(size_t j=0;j<networks.size();j++){
+            UniValue objNet(UniValue::VOBJ);
+            objNet=NetworkToJson(networks[j]);
+            arryNet.push_back(objNet);
+        }
+        data.push_back(Pair("Networks", arryNet));
+
+        obj=EndpointSpecToJson(spec.endpointSpec);
+        data.push_back(Pair("EndpointSpec", obj));
+    }
+    return data;
+}
 void Service::ParseSpecLabels(const UniValue& data,Config::Labels &labels)
 {
     std::vector<std::string> vKeys=data.getKeys();
@@ -176,6 +223,17 @@ void Service::ParseSpecLabels(const UniValue& data,Config::Labels &labels)
             else if(vKeys[i]=="txid") labels.insert(std::make_pair("com.massgrid.txid",tdata.get_str()));
         }
     }
+}
+UniValue Service::SpecLabelsToJson(Config::Labels &labels)
+{
+    // std::vector<std::string> vKeys={"com.massgrid.pubkey","com.massgrid.txid"};
+     UniValue data(UniValue::VOBJ);
+     if(labels.count("com.massgrid.pubkey")>0){
+        data.push_back(Pair("pubkey",labels["com.massgrid.pubkey"]));
+     }else if(labels.count("com.massgrid.txid")>0){
+        data.push_back(Pair("txid",labels["com.massgrid.txid"]));
+     }
+     return data;
 }
 void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate)
 {  
@@ -213,6 +271,44 @@ void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTempl
         }
     }
 }
+UniValue Service::TaskTemplateToJson(Config::TaskSpec &taskTemplate)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Runtime",taskTemplate.runtime));
+        data.push_back(Pair("ForceUpdate",taskTemplate.forceUpdate));    
+    }
+    {
+        UniValue obj(UniValue::VOBJ);
+        obj=ContainerSpecToJson(taskTemplate.containerSpec);
+        data.push_back(Pair("ContainerSpec",obj));
+
+        obj=ResourceToJson(taskTemplate.resources);
+        data.push_back(Pair("Resources",obj));
+
+        obj=RestartPolicyToJson(taskTemplate.restartPolicy);
+        data.push_back(Pair("RestartPolicy",obj));
+
+        obj=PlacementToJson(taskTemplate.placement);
+        data.push_back(Pair("Placement",obj));
+
+        obj=LogDriverToJson(taskTemplate.logdriver);
+        data.push_back(Pair("LogDriver",obj));
+
+    }
+    {
+        vector<Config::NetWork> networks=taskTemplate.netWorks;
+        UniValue arryNet(UniValue::VARR);
+        for(size_t j=0;j<networks.size();j++){
+            UniValue objNet(UniValue::VOBJ);
+            objNet=NetworkToJson(networks[j]);
+            arryNet.push_back(objNet);
+        }
+        data.push_back(Pair("Networks", arryNet));
+    }
+     return data;
+
+}
 
 void Service::ParseResource(const UniValue& data,Config::Resource &resource)
 {
@@ -227,6 +323,20 @@ void Service::ParseResource(const UniValue& data,Config::Resource &resource)
             }
         }
     }
+}
+UniValue Service::ResourceToJson(Config::Resource &resource)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        UniValue objLimit(UniValue::VOBJ);
+        objLimit=ResourceObjToJson(resource.limits);
+        data.push_back(Pair("Limits",objLimit));
+
+        UniValue objRev(UniValue::VOBJ);
+        objRev=ResourceObjToJson(resource.reservations);
+        data.push_back(Pair("Reservation",objRev));
+    }
+    return data;
 }
 void Service::ParseResourceObj(const UniValue& data, Config::ResourceObj &resources)
 {
@@ -251,6 +361,25 @@ void Service::ParseResourceObj(const UniValue& data, Config::ResourceObj &resour
         }
     }
 }
+UniValue Service::ResourceObjToJson(Config::ResourceObj &resources)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("NanoCPUs",resources.nanoCPUs));
+        data.push_back(Pair("MemoryBytes",resources.memoryBytes));
+    }
+    {
+        vector<Config::GenericResources> genres=resources.genericResources;
+        UniValue arryGenRev(UniValue::VARR);
+        for(size_t j=0;j<genres.size();j++){
+            UniValue objGenRev(UniValue::VOBJ);
+            objGenRev=ResGenResToJson(genres[j]);
+            arryGenRev.push_back(objGenRev);
+        }
+        data.push_back(Pair("GenericResources",arryGenRev));
+    }
+    return data;
+}
 void Service::ParseResGenRes(const UniValue& data, Config::GenericResources &genResources)
 {
     std::vector<std::string> vKeys=data.getKeys();
@@ -265,6 +394,20 @@ void Service::ParseResGenRes(const UniValue& data, Config::GenericResources &gen
         }
     }
 }
+UniValue Service::ResGenResToJson( Config::GenericResources &genResources)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        UniValue objNameSpec(UniValue::VOBJ);
+        objNameSpec=ResGenNameSpecToJson(genResources.namedResourceSpec);
+        data.push_back(Pair("NamedResourceSpec",objNameSpec));
+
+        UniValue objDiscSpec(UniValue::VOBJ);
+        objDiscSpec=ResGenDiscSpecToJson(genResources.discreateResourceSpec);
+        data.push_back(Pair("DiscreteResourceSpec",objDiscSpec));
+    }
+    return data;
+}
 void Service::ParseResGenNameSpec(const UniValue& data, Config::NamedResourceSpec &namedResourceSpec)
 {
     std::vector<std::string> vKeys=data.getKeys();
@@ -278,6 +421,15 @@ void Service::ParseResGenNameSpec(const UniValue& data, Config::NamedResourceSpe
             }
         }
     }
+}
+UniValue Service::ResGenNameSpecToJson(Config::NamedResourceSpec &namedResourceSpec)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Kind",namedResourceSpec.kind));
+        data.push_back(Pair("Vaule",namedResourceSpec.value));
+    }
+    return data;
 }
 void Service::ParseResGenDiscSpec(const UniValue& data, Config::DiscreteResourceSpec &discResourceSpec)
 {
@@ -295,6 +447,15 @@ void Service::ParseResGenDiscSpec(const UniValue& data, Config::DiscreteResource
             }
         }
     }
+}
+UniValue Service::ResGenDiscSpecToJson(Config::DiscreteResourceSpec &discResourceSpec)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Kind",discResourceSpec.kind));
+        data.push_back(Pair("Vaule",discResourceSpec.value));
+    }
+    return data;
 }
 void Service::ParseRestartPolicy(const UniValue& data,Config::RestartPolicy &repoly)
 {
@@ -316,6 +477,263 @@ void Service::ParseRestartPolicy(const UniValue& data,Config::RestartPolicy &rep
             }
         }
     }
+}
+UniValue Service::RestartPolicyToJson(Config::RestartPolicy &repoly)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Condition",repoly.condition));
+        data.push_back(Pair("MaxAttempts",repoly.maxAttempts));
+        data.push_back(Pair("Delay",repoly.delay));
+        data.push_back(Pair("Window",repoly.window));
+    }
+    return data;
+}
+void Service::ParsePlacement(const UniValue& data,Config::Placement &placement)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isArray()){
+            if(vKeys[i]=="Constraints"){
+                ParseArray(tdata,placement.constraints);
+            }else if(vKeys[i]=="Preferences"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::Preferences preference;
+                    ParsePreferences(tdata[j],preference);
+                    placement.preferences.push_back(preference);
+                }
+            }else if(vKeys[i]=="Platforms"){
+                for(size_t j=0;j<tdata.size();j++){
+                    Config::Platform platform;
+                    ParsePlatforms(tdata[j],platform);
+                    placement.platforms.push_back(platform);
+                }
+            }
+        }
+    }
+}
+UniValue Service::PlacementToJson(Config::Placement &placement)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        UniValue arryConst(UniValue::VARR);
+        arryConst=ArryToJson(placement.constraints);
+        data.push_back(Pair("Constraints",arryConst));
+    }
+    {
+        vector<Config::Preferences> preference=placement.preferences;
+        UniValue arryPrefer(UniValue::VARR);
+        for(size_t j=0;j<preference.size();j++){
+            UniValue objPrefer(UniValue::VOBJ);
+            objPrefer=PreferencesToJson(preference[j]);
+            arryPrefer.push_back(objPrefer);
+        }
+        data.push_back(Pair("Preferences",arryPrefer));
+
+        vector<Config::Platform> platform=placement.platforms;
+        UniValue arryPlat(UniValue::VARR);
+        for(size_t j=0;j<platform.size();j++){
+            UniValue objPlat(UniValue::VOBJ);
+            objPlat=PlatformsToJson(platform[j]);
+            arryPlat.push_back(objPlat);
+        }
+        data.push_back(Pair("Platforms",arryPlat));
+    }
+    return data;
+}
+void Service::ParsePreferences(const UniValue& data,Config::Preferences &preference)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Spread"){
+                ParsePreferencesSpread(tdata,preference.spread);
+            }
+        }
+    }
+}
+UniValue Service::PreferencesToJson(Config::Preferences &preference)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        UniValue objSpread(UniValue::VOBJ);
+        objSpread=PreferSpreadToJson(preference.spread);
+        data.push_back(Pair("Spread",objSpread));
+    }
+    return data;
+}
+void Service::ParsePreferencesSpread(const UniValue& data,Config::Spread &spread)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="SpreadDescriptor"){
+                spread.spreadDescriptor=tdata.get_str();
+            }
+        }
+    }
+}
+UniValue Service::PreferSpreadToJson(Config::Spread &spread)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("SpreadDescriptor",spread.spreadDescriptor));
+    }
+    return data;
+}
+void Service::ParsePlatforms(const UniValue& data,Config::Platform &platform)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Architecture") platform.architecture=tdata.get_str();
+            else if(vKeys[i]=="OS") platform.OS=tdata.get_str();
+        }
+    }
+}
+UniValue Service::PlatformsToJson(Config::Platform &platform)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Architecture",platform.architecture));
+        data.push_back(Pair("OS",platform.OS));
+    }
+    return data;
+}
+void Service::ParseNetwork(const UniValue& data,Config::NetWork &network)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Target") 
+                network.target=tdata.get_str();
+        }
+        if(data[vKeys[i]].isArray()){
+            if(vKeys[i]=="Aliases"){
+                ParseArray(tdata,network.aliases);
+            }
+        }
+    }
+}
+UniValue Service::NetworkToJson(Config::NetWork &network)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Target",network.target));
+
+        UniValue arryAlia(UniValue::VARR);
+        arryAlia=ArryToJson(network.aliases);
+        data.push_back(Pair("Aliases",arryAlia));    
+    }
+    return data;
+}
+void Service::ParseLogDriver(const UniValue& data,Config::LogDriver &logdriver)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="Name"){
+                logdriver.name=tdata.get_str();
+            }
+        }
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Options"){//key?
+                ParseLogDriverOpt(tdata,logdriver.options);
+            }
+        }
+    }
+}
+UniValue Service::LogDriverToJson(Config::LogDriver &logdriver)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Name",logdriver.name));
+    }
+    {
+        UniValue objLogDri(UniValue::VOBJ);
+        objLogDri=LogDriverOptToJson(logdriver.options);
+        data.push_back(Pair("Options",objLogDri));
+    }
+    return data;
+}
+void Service::ParseLogDriverOpt(const UniValue& data,Config::Labels &labels)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isStr()){
+            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
+        }
+    }
+}
+
+UniValue Service::LogDriverOptToJson(Config::Labels &labels)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        for(auto &iter: labels) {
+            if(iter.first=="com.massgrid.key")
+                data.push_back(Pair("key",iter.second));
+        }
+    }
+    return data;
+}
+void Service::ParseMode(const UniValue& data,Config::Mode &mode)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isObject()){
+            if(vKeys[i]=="Replicated"){
+                ParseModeReplicated(tdata,mode.replicated);
+            }
+        }
+        if(data[vKeys[i]].isBool()){
+            if(vKeys[i]=="Global"){
+                mode.global=tdata.get_bool();
+            }
+        }
+    }
+}
+UniValue Service::ModeToJson(Config::Mode &mode)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        if(mode.global){
+            data.push_back(Pair("Global",mode.global));
+        }else{
+            UniValue objRep(UniValue::VOBJ);
+            objRep=ModeReplicatedToJson(mode.replicated);
+            data.push_back(Pair("Replicated",objRep));
+        }
+    }
+    return data;
+}
+void Service::ParseModeReplicated(const UniValue& data,Config::Replicated &rep)
+{
+    std::vector<std::string> vKeys=data.getKeys();
+    for(size_t i=0;i<data.size();i++){
+        UniValue tdata(data[vKeys[i]]);
+        if(data[vKeys[i]].isNum()){
+            if(vKeys[i]=="Replicas"){
+                rep.replicas=tdata.get_int64();
+            }
+        }
+    }
+}
+UniValue Service::ModeReplicatedToJson(Config::Replicated &rep)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Replicas",rep.replicas));
+    }
+    return data;
 }
 void Service::ParseUpdateConfig(const UniValue& data,Config::UpdateConfig &upconfig)
 {
@@ -342,137 +760,18 @@ void Service::ParseUpdateConfig(const UniValue& data,Config::UpdateConfig &upcon
         }
     }
 }
-void Service::ParsePlacement(const UniValue& data,Config::Placement &placement)
+UniValue Service::UpdateConfigToJson(Config::UpdateConfig &upconfig)
 {
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isArray()){
-            if(vKeys[i]=="Constraints"){
-                ParseArray(tdata,placement.constraints);
-            }else if(vKeys[i]=="Preferences"){
-                for(size_t j=0;j<tdata.size();j++){
-                    Config::Preferences preference;
-                    ParsePreferences(tdata[j],preference);
-                    placement.preferences.push_back(preference);
-                }
-            }else if(vKeys[i]=="Platforms"){
-                for(size_t j=0;j<tdata.size();j++){
-                    Config::Platform platform;
-                    ParsePlatforms(tdata[j],platform);
-                    placement.platforms.push_back(platform);
-                }
-            }
-        }
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Parallelism",upconfig.parallelism));
+        data.push_back(Pair("Delay",upconfig.delay));
+        data.push_back(Pair("Monitor",upconfig.monitor));
+        data.push_back(Pair("MaxFailureRatio",upconfig.maxFailureRatio));
+        data.push_back(Pair("FailureAction",upconfig.failureAction));
+        data.push_back(Pair("Order",upconfig.order));
     }
-}
-void Service::ParsePreferences(const UniValue& data,Config::Preferences &preference)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isObject()){
-            if(vKeys[i]=="Spread"){
-                ParsePreferencesSpread(tdata,preference.spread);
-            }
-        }
-    }
-}
-void Service::ParsePreferencesSpread(const UniValue& data,Config::Spread &spread)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="SpreadDescriptor"){
-                spread.spreadDescriptor=tdata.get_str();
-            }
-        }
-    }
-}
-void Service::ParsePlatforms(const UniValue& data,Config::Platform &platform)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="Architecture") platform.architecture=tdata.get_str();
-            else if(vKeys[i]=="OS") platform.OS=tdata.get_str();
-        }
-    }
-}
-void Service::ParseNetwork(const UniValue& data,Config::NetWork &network)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="Target") 
-                network.target=tdata.get_str();
-        }
-        if(data[vKeys[i]].isArray()){
-            if(vKeys[i]=="Aliases"){
-                ParseArray(tdata,network.aliases);
-            }
-        }
-    }
-}
-void Service::ParseLogDriver(const UniValue& data,Config::LogDriver &logdriver)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="Name"){
-                logdriver.name=tdata.get_str();
-            }
-        }
-        if(data[vKeys[i]].isObject()){
-            if(vKeys[i]=="Options"){//key?
-                ParseLogDriverOpt(tdata,logdriver.options);
-            }
-        }
-    }
-}
-void Service::ParseLogDriverOpt(const UniValue& data,Config::Labels &labels)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
-        }
-    }
-}
-
-void Service::ParseMode(const UniValue& data,Config::Mode &mode)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isObject()){
-            if(vKeys[i]=="Replicated"){
-                ParseModeReplicated(tdata,mode.replicated);
-            }
-        }
-        if(data[vKeys[i]].isBool()){
-            if(vKeys[i]=="Global"){
-                mode.global=tdata.get_bool();
-            }
-        }
-    }
-}
-void Service::ParseModeReplicated(const UniValue& data,Config::Replicated &rep)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isNum()){
-            if(vKeys[i]=="Replicas"){
-                rep.replicas=tdata.get_int64();
-            }
-        }
-    }
+    return data;
 }
 void Service::ParseEndpointSpec(const UniValue& data,Config::EndpointSpec &endpointSpec)
 {
@@ -494,6 +793,24 @@ void Service::ParseEndpointSpec(const UniValue& data,Config::EndpointSpec &endpo
             }
         }
     }
+}
+UniValue Service::EndpointSpecToJson(Config::EndpointSpec &endpointSpec)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        vector<Config::EndpointPortConfig> port=endpointSpec.ports;
+        UniValue arryPort(UniValue::VARR);
+        for(size_t j=0;j<port.size();j++){
+            UniValue objPort(UniValue::VOBJ);
+            objPort=EndSpecPortToJson(port[j]);
+            arryPort.push_back(objPort);
+        }
+        data.push_back(Pair("Ports",arryPort));
+    }
+    {
+        data.push_back(Pair("Mode",endpointSpec.mode));
+    }
+    return data;
 }
 void Service::ParseEndSpecPort(const UniValue& data,Config::EndpointPortConfig &port)
 {
@@ -519,6 +836,18 @@ void Service::ParseEndSpecPort(const UniValue& data,Config::EndpointPortConfig &
     }
 }
 
+UniValue Service::EndSpecPortToJson(Config::EndpointPortConfig &port)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("Name",port.name));
+        data.push_back(Pair("Protocol",port.protocol));
+        data.push_back(Pair("PublishMode",port.publishedPort));
+        data.push_back(Pair("TargetPort",port.targetPort));
+        data.push_back(Pair("PublishedPort",port.publishedPort));
+    }
+    return data;
+}
 
 
 void Service::ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint)
@@ -548,6 +877,35 @@ void Service::ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint)
         }
     }
 }
+UniValue Service::EndpointToJson(Config::Endpoint &endpoint)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        UniValue objSpec(UniValue::VOBJ);
+        objSpec=EndpointSpecToJson(endpoint.spec);
+        data.push_back(Pair("Spec",objSpec));
+    }
+    {
+        vector<Config::EndpointPortConfig> port=endpoint.ports;
+        UniValue arryPort(UniValue::VARR);
+        for(size_t j=0;j<port.size();j++){
+            UniValue objPort(UniValue::VOBJ);
+            objPort=EndSpecPortToJson(port[j]);
+            arryPort.push_back(objPort);
+        }
+        data.push_back(Pair("Ports",arryPort));
+
+        vector<Config::VirtualIP> virtualip=endpoint.virtualIPs;
+        UniValue arryVir(UniValue::VARR);
+        for(size_t j=0;j<virtualip.size();j++){
+            UniValue objVir(UniValue::VOBJ);
+            objVir=VirtualIPsToJson(virtualip[j]);
+            arryVir.push_back(objVir);
+        }
+        data.push_back(Pair("VirtualIPs",arryVir));
+    }
+    return data;
+}
 void Service::ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip)
 {
     std::vector<std::string> vKeys=data.getKeys();
@@ -561,6 +919,15 @@ void Service::ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip)
             }
         }
     }
+}
+UniValue Service::VirtualIPsToJson(Config::VirtualIP &virtualip)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("NetworkID",virtualip.networkID));
+        data.push_back(Pair("Addr",virtualip.addr));
+    }
+    return data;
 }
 void Service::ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updateStatus)
 {
@@ -580,10 +947,29 @@ void Service::ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updat
         }
     }
 }
+UniValue Service::UpdateStatusToJson(Config::UpdateStatus &updateStatus)
+{
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("State",updateStatus.state));
+        data.push_back(Pair("Message",updateStatus.message));
+        data.push_back(Pair("StartedAt",updateStatus.createdAt));
+        data.push_back(Pair("CompletedAt",updateStatus.completedAt));
+    }
+    return data;
+}
 void Service::ParseArray(const UniValue& data,vector<std::string> &array)
 {
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         array.push_back(data[vKeys[i]].get_str());
     }
+}
+UniValue Service::ArryToJson(std::vector<std::string> &strArry)
+{
+    UniValue arry(UniValue::VARR);
+    for(size_t i=0;i<strArry.size();i++){
+        arry.push_back(strArry[i]);
+    }
+    return arry;
 }

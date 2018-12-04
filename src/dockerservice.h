@@ -79,7 +79,7 @@ namespace Config{
         std::string ToString(){
             return "{}";
         }
-        
+
     };
 };
 class Service:public DockerBase{
@@ -109,7 +109,35 @@ class Service:public DockerBase{
     static void ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip);
     static void ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updateStatus);
     static void ParseArray(const UniValue& data,vector<std::string> &array);
+    
+    static UniValue SpecToJson(Config::ServiceSpec &spec);
+    static UniValue SpecLabelsToJson(Config::Labels &labels);
+    static UniValue TaskTemplateToJson(Config::TaskSpec &taskTemplate);
+    static UniValue ResourceToJson(Config::Resource &resource);
+    static UniValue ResourceObjToJson(Config::ResourceObj &resources);
+    static UniValue ResGenResToJson( Config::GenericResources &genResources);
+    static UniValue ResGenNameSpecToJson(Config::NamedResourceSpec &namedResourceSpec);
+    static UniValue ResGenDiscSpecToJson(Config::DiscreteResourceSpec &discResourceSpec);
+    static UniValue RestartPolicyToJson(Config::RestartPolicy &repoly);
+    static UniValue PlacementToJson(Config::Placement &placement);
+    static UniValue PreferencesToJson(Config::Preferences &preference);
+    static UniValue PreferSpreadToJson(Config::Spread &spread);
+    static UniValue PlatformsToJson(Config::Platform &platform);
+    static UniValue NetworkToJson(Config::NetWork &network);
+    static UniValue LogDriverToJson(Config::LogDriver &logdriver);
+    static UniValue LogDriverOptToJson(Config::Labels &labels);
+    static UniValue ModeToJson(Config::Mode &mode);
+    static UniValue ModeReplicatedToJson(Config::Replicated &rep);
+    static UniValue UpdateConfigToJson(Config::UpdateConfig &upconfig);
+    static UniValue EndpointSpecToJson(Config::EndpointSpec &endpointSpec);
+    static UniValue EndSpecPortToJson(Config::EndpointPortConfig &port);
+    static UniValue EndpointToJson(Config::Endpoint &endpoint);
+    static UniValue VirtualIPsToJson(Config::VirtualIP &virtualip);
+    static UniValue UpdateStatusToJson(Config::UpdateStatus &updateStatus);
+    static UniValue ArryToJson(std::vector<std::string> &strArry);
 
+public:
+    static std::string DockerServSpecToJson(Service &service);
 public:
     
     Config::ServiceSpec spec;
@@ -117,7 +145,7 @@ public:
 
     Config::Endpoint endpoint;
     Config::UpdateStatus updateStatus;
-
+    
     map<std::string,Task> mapDockerTasklists;
     static void DockerServiceList(const string& serviceData,std::map<std::string,Service> &services);
 public:    

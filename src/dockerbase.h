@@ -96,9 +96,9 @@ namespace Config{
         bool readOnly{};
         std::string consistency;
         BindOptions bindOptions;
-        VolumeOptions volumeOption;
+        VolumeOptions volumeOptions;
         TmpfsOptions tmpfsOptions;
-        ADD_SERIALIZE_PROPERTIES(type,source,target,readOnly,consistency,volumeOption,tmpfsOptions);
+        ADD_SERIALIZE_PROPERTIES(type,source,target,readOnly,consistency,volumeOptions,tmpfsOptions);
     };
 
     struct DiscreteResourceSpec{

@@ -8,13 +8,14 @@ namespace Config{
         vector<std::string> search;
         vector<std::string> options;
         ADD_SERIALIZE_PROPERTIES(nameservers,search,options);
+
     };
 
     struct File{
         std::string name;
         std::string uid;
         std::string gid;
-        uint32_t mode;
+        int64_t mode;
         ADD_SERIALIZE_PROPERTIES(name,uid,gid,mode);
     };
 
@@ -90,4 +91,20 @@ void ParseContainerSpecSec(const UniValue& data,Config::Secret &secret);
 void ParseContSpecSecFile(const UniValue& data,Config::File &file);
 void ParseContainerSpeConf(const UniValue& data,Config::Config &config);
 void ParseArray(const UniValue& data,vector<std::string> &array);
+
+UniValue ContainerSpecToJson(Config::ContainerSpec &containerSpec);
+UniValue SpecLabelsToJson(Config::Labels &labels);
+UniValue MountToJson(Config::Mount &mount);
+UniValue MountBindToJson(Config::BindOptions &bindOption);
+UniValue MountVolToJson(Config::VolumeOptions &voloption);
+UniValue MountVolLabelToJson(Config::Labels &labels);
+UniValue MountVolDrivToJson(Config::DriverConfig &drivConfig);
+UniValue MountVolDrivOPToJson(Config::Labels &labels);
+UniValue MountTfsToJson(Config::TmpfsOptions &tmpfsOption);
+UniValue SpecHealtToJson(Config::HealthCheck &heltCheck);
+UniValue SpecDNSToJson(Config::DNSConfig &dnsConfig);
+UniValue SpecSecToJson(Config::Secret &secret);
+UniValue SpecSecFileToJson(Config::File &file);
+UniValue SpecConfToJson(Config::Config &config);
+UniValue ArryToJson(std::vector<std::string> &strArry);
 #endif //DOCKERCONTAINER_H
