@@ -10,19 +10,19 @@ std::string dockernodefilter::ToJsonString(){
     UniValue data(UniValue::VOBJ);
     if(!id.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=id.end();++iter)
+        for(vector<std::string>::iterator iter = id.begin();iter!=id.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("id",arr));
     }   
     if(!label.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=label.end();++iter)
+        for(vector<std::string>::iterator iter = label.begin();iter!=label.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("label",arr));
     }
     if(!name.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=name.end();++iter)
+        for(vector<std::string>::iterator iter = name.begin();iter!=name.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("name",arr));
     }

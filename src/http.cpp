@@ -47,6 +47,7 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
     string host=ip,ports=std::to_string(port);
     string hostUrl=host+":"+ports;
     boost::asio::streambuf strHttpHead;
+    unsigned int status_code;
     //Create an HTTP protocol header  
     if(HttpHeadCreate(strMethod, hostUrl, page, strData,strHttpHead)!=0){
         LogPrint("dockerapi","HttpRequest::HttpRequestExec Header is ULL\n");
@@ -82,7 +83,6 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
         std::istream response_stream(&response);
         std::string http_version;
         response_stream >> http_version;
-        unsigned int status_code;
         response_stream >> status_code;
         std::string status_message;
         std::getline(response_stream, status_message);
@@ -91,7 +91,7 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
             return -2;
         }
         // If the server returns non-200, thinks it is wrong, it does not support jumps such as 301/302.
-        if (status_code != 200){
+        if (status_code < 0){
             strResponse = "Response returned with status code != 200 ";
             return status_code;
         }
@@ -122,7 +122,7 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
             std::istreambuf_iterator<char> eos;
             std::string data = string(std::istreambuf_iterator<char>(response_stream), eos);
             strResponse=getJson(data);
-            return 0;           
+            return status_code;           
         }
 
         if (error != boost::asio::error::eof){
@@ -133,7 +133,7 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
         strResponse = e.what();
         return -4;  
     }      
-    return 0;  
+    return status_code;  
 }
   
   
@@ -158,10 +158,10 @@ int HttpRequest::HttpHeadCreate(const string &strMethod, const string &strHostPo
     request_stream << "Connection: close\r\n";
     if(strMethod == "POST"){
         request_stream << "Content-Length: " << strData.length() << "\r\n";
-        request_stream << "\r\n\r\n";
+        request_stream << "\r\n";
         request_stream << strData;
     }
-    request_stream << "\r\n\r\n";  
+    request_stream << "\r\n";  
       
     return 0;   
 }

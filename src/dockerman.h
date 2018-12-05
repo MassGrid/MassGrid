@@ -56,7 +56,7 @@ private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 private:
-    const char* address = "127.0.0.1";
+    const char* address = "localhost";
     uint32_t apiPort = 2375;
     uint32_t swarmPort = 2377;
 

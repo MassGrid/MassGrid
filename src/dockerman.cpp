@@ -3,6 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "dockerman.h"
 #include "http.h"
+#include <set>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp> 
 CDockerMan dockerman;
@@ -13,14 +14,14 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
     LogPrint("docker","CDockerMan::PushMessage Started Method: %s\n",strMethod[mtd]);
     std::string url;
     HttpType type;
-    if(!pushdata.empty()){
-        pushdata = "filters=" + pushdata;
-    }
     switch (mtd)
     {
         case Method::METHOD_NODES_LISTS:
             url="/nodes";
             type=HttpType::HTTP_GET;
+            if(!pushdata.empty()){
+                pushdata = "filters=" + pushdata;
+            }
             break;
         case Method::METHOD_NODES_INSPECT:
             url="/nodes/";
@@ -39,6 +40,9 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
         case Method::METHOD_SERVICES_LISTS:
             url="/services";
             type=HttpType::HTTP_GET;
+            if(!pushdata.empty()){
+                pushdata = "filters=" + pushdata;
+            }
             break;
         case Method::METHOD_SERVICES_CREATE:
             url="/services/create";
@@ -71,6 +75,9 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
         case Method::METHOD_TASKS_LISTS:
             url="/tasks";
             type=HttpType::HTTP_GET;
+            if(!pushdata.empty()){
+                pushdata = "filters=" + pushdata;
+            }
             break;
         case Method::METHOD_TASKS_INSPECT:
             url="/tasks/";
@@ -95,7 +102,7 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
             return false;
     }
     HttpRequest http(address,apiPort,url,pushdata);
-    LogPrint("docker","CDockerMan::RequestMessages methed %s\n send:%s\n",url,pushdata);
+    LogPrint("docker","CDockerMan::RequestMessages Methed %s Send:%s\n",url,pushdata);
     int ret;
     if(type == HttpType::HTTP_GET){
         ret=http.HttpGet();
@@ -118,12 +125,13 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
 }
 
 bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata){
-    LogPrint("docker","CDockerMan::ProcessMessage Started Method: %s\n",strMethod[mtd]);
+    LogPrint("docker","CDockerMan::ProcessMessage Started Method: %s  Messages %s\n",strMethod[mtd],responsedata);
     std::string strMessage;
     std::string id;
     HttpType type;
-    if(ret != 0){
-        LogPrint("docker","CDockerMan::ProcessMessage ERROR ProcessMessage: %d\n",ret);
+    if(ret != 200 && ret !=201){
+        LogPrintf("CDockerMan::ProcessMessage ERROR ProcessMessage: %d  Messages %s\n",ret,responsedata);
+        return false;
     }
     UniValue jsondata(UniValue::VOBJ);
     jsondata.read(responsedata);
@@ -170,14 +178,14 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
             }
             else{
-                LogPrint("docker","CDockerMan::ProcessMessage Not exist this ID\n");
+                LogPrint("docker","CDockerMan::ProcessMessage Not exist this ServiceId\n");
                 return false;
             }
             break;
         }
         case Method::METHOD_SERVICES_INSPECT:
         {
-            Service::DockerServiceList(responsedata,mapServiceLists);
+            Service::DockerServiceInspect(responsedata,mapServiceLists);
             if(jsondata.exists("ID")){
                 dockertaskfilter taskfilter;
                 taskfilter.serviceid.push_back(jsondata["ID"].get_str());
@@ -188,7 +196,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                     return false;
             }
             else{
-                LogPrint("docker","CDockerMan::ProcessMessage Not exist this ID\n");
+                LogPrint("docker","CDockerMan::ProcessMessage Not exist this ServiceId\n");
                 return false;
             }    
             break;
@@ -199,10 +207,10 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             auto it = mapServiceLists.begin();
             if((it = mapServiceLists.find(id)) != mapServiceLists.end()){
                 mapServiceLists.erase(it);
-                LogPrint("docker","CDockerMan::ProcessMessage erase id %s\n",id);
+                LogPrint("docker","CDockerMan::ProcessMessage erase ServiceId %s\n",id);
             }
             else{
-                LogPrint("docker","CDockerMan::ProcessMessage not find id %s\n",id);
+                LogPrint("docker","CDockerMan::ProcessMessage not find ServiceId %s\n",id);
                 return false;
             }
             break;
@@ -213,9 +221,9 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             bool ret = PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
             if(!ret){
                 return false;
-                LogPrint("docker","CDockerMan::ProcessMessage update failed id %s\n",id);
+                LogPrint("docker","CDockerMan::ProcessMessage update failed ServiceId %s\n",id);
             }
-            LogPrint("docker","CDockerMan::ProcessMessage update successful id %s\n",id);
+            LogPrint("docker","CDockerMan::ProcessMessage update successful ServiceId %s\n",id);
             break;
         }
         case Method::METHOD_SERVICES_LOGS:  // not implemented yet
@@ -230,11 +238,15 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         {
             mapTaskLists.clear();
             Task::DockerTaskList(responsedata,mapTaskLists);
+            set<std::string> countServiceID;
             for(auto it = mapTaskLists.begin();it != mapTaskLists.end();++it){
                 if(mapServiceLists.find(it->second.serviceID)!= mapServiceLists.end()){
-                    mapServiceLists[it->second.serviceID].mapDockerTasklists.clear();
+                    if(countServiceID.find(it->second.serviceID) == countServiceID.end()){
+                        mapServiceLists[it->second.serviceID].mapDockerTasklists.clear();
+                        countServiceID.insert(it->second.serviceID);
+                    }
                     mapServiceLists[it->second.serviceID].mapDockerTasklists[it->first]=it->second;
-                    LogPrint("docker","CDockerMan::ProcessMessage update successful id %s\n",id);
+                    LogPrint("docker","CDockerMan::ProcessMessage update successful ServiceId %s TaskId %s\n",it->second.serviceID,it->first);
                 }
             }
             break;

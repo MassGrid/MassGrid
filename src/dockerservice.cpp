@@ -42,19 +42,19 @@ std::string dockerservicefilter::ToJsonString(){
     UniValue data(UniValue::VOBJ);
     if(!id.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=id.end();++iter)
+        for(vector<std::string>::iterator iter = id.begin();iter!=id.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("id",arr));
     }   
     if(!label.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=label.end();++iter)
+        for(vector<std::string>::iterator iter = label.begin();iter!=label.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("label",arr));
     }
     if(!name.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=name.end();++iter)
+        for(vector<std::string>::iterator iter = name.begin();iter!=name.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("name",arr));
     }
@@ -74,7 +74,7 @@ std::string dockerservicefilter::ToJsonString(){
 }
 void Service::DockerServiceList(const string& serviceData,std::map<std::string,Service> &services)
 {
-    // LogPrint("docker","Service::DockerServiceList docker json node\n");
+    LogPrint("docker","Service::DockerServiceList docker json node %s\n",serviceData);
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(serviceData)){
@@ -94,6 +94,26 @@ void Service::DockerServiceList(const string& serviceData,std::map<std::string,S
         LogPrint("docker","Service::DockerServiceList JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
         LogPrint("docker","Service::DockerServiceList unkonw exception\n");
+    }
+}
+
+void Service::DockerServiceInspect(const string& serviceData,std::map<std::string,Service> &services)
+{
+    LogPrint("docker","Service::DockerServiceInspect docker json node %s\n",serviceData);
+    try{
+        UniValue data(UniValue::VOBJ);
+        if(!data.read(serviceData)){
+            LogPrint("docker","Service::DockerServiceInspect docker json error\n");
+            return;
+        }
+            Service service;
+            bool fSuccess = DcokerServiceJson(data,service);
+            if(fSuccess)
+                services[service.ID]=service;
+    }catch(std::exception& e){
+        LogPrint("docker","Service::DockerServiceInspect JSON read error,%s\n",string(e.what()).c_str());
+    }catch(...){
+        LogPrint("docker","Service::DockerServiceInspect unkonw exception\n");
     }
 }
 std::string Service::DockerServSpecToJson(Service &service)

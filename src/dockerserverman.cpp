@@ -25,7 +25,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         
         mdndata.mapDockerServiceLists.clear();
         for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
-            if(it->second.spec.labels.find("com.massgrid.pubkey") != it->second.spec.labels.end()){
+            if(it->second.spec.labels.find("com.massgrid.pubkey") != it->second.spec.labels.end() && 
+                    it->second.spec.labels["com.massgrid.pubkey"] == mdndata.pubKeyClusterAddress.ToString().substr(0,65)){
                 mdndata.mapDockerServiceLists.insert(*it);
             }
         }
@@ -59,7 +60,21 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             LogPrintf("CDockerServerman::ProcessMessage --sspec version %d is too old %d\n", sspec.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
             return;
         }
-        CheckAndCreateServerSpec(sspec);
+        if(CheckAndCreateServerSpec(sspec)){
+            DockerGetData mdndata;
+                mdndata.mapDockerServiceLists.clear();
+            for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
+                if(it->second.spec.labels.find("com.massgrid.pubkey") != it->second.spec.labels.end() && 
+                    it->second.spec.labels["com.massgrid.pubkey"] == sspec.pubKeyClusterAddress.ToString().substr(0,65)){
+                    mdndata.mapDockerServiceLists.insert(*it);
+                }
+            }
+            mdndata.version = DOCKERREQUEST_API_VERSION;
+            mdndata.sigTime = GetAdjustedTime();
+            
+            LogPrintf("CDockerServerman::ProcessMessage -- CREATESERVICE Sent DNDATA to peer %d\n", pfrom->id);
+            connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
+        }
     }else if(strCommand == NetMsgType::UPDATESERVICE){
         LogPrint("docker","CDockerServerman::ProcessMessage UPDATESERVICE Started\n");
         if (!fMasterNode) return;
@@ -69,7 +84,21 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             LogPrintf("CDockerServerman::ProcessMessage --sspec version %d is too old %d\n", sspec.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
             return;
         }
-        CheckAndUpdateServerSpec(sspec);
+        if(CheckAndCreateServerSpec(sspec)){
+            DockerGetData mdndata;
+                mdndata.mapDockerServiceLists.clear();
+            for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
+                if(it->second.spec.labels.find("com.massgrid.pubkey") != it->second.spec.labels.end() && 
+                    it->second.spec.labels["com.massgrid.pubkey"] == sspec.pubKeyClusterAddress.ToString().substr(0,65)){
+                    mdndata.mapDockerServiceLists.insert(*it);
+                }
+            }
+            mdndata.version = DOCKERREQUEST_API_VERSION;
+            mdndata.sigTime = GetAdjustedTime();
+            
+            LogPrintf("CDockerServerman::ProcessMessage -- CREATESERVICE Sent DNDATA to peer %d\n", pfrom->id);
+            connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
+        }
     }
 
 }
@@ -96,9 +125,8 @@ bool CDockerServerman::CheckAndCreateServerSpec(DockerCreateService Spec){
 
     //  4. update spec
 
-    dockerman.PushMessage(Method::METHOD_SERVICES_CREATE,"",Spec.ToJsonString());
-    
-    return true;
+    return dockerman.PushMessage(Method::METHOD_SERVICES_CREATE,"",Spec.sspec.ToJsonString());
+
 }
 bool CDockerServerman::CheckAndUpdateServerSpec(DockerUpdateService Spec){
 
@@ -123,8 +151,6 @@ bool CDockerServerman::CheckAndUpdateServerSpec(DockerUpdateService Spec){
 
     //  4. update spec
 
-    dockerman.PushMessage(Method::METHOD_SERVICES_CREATE,"",Spec.ToJsonString());
-    
-    return true;
+    return dockerman.PushMessage(Method::METHOD_SERVICES_CREATE,"",Spec.ToJsonString());
 
 }

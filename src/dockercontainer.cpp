@@ -549,9 +549,8 @@ UniValue SpecConfToJson(Config::Config &config)
 }
 void ParseArray(const UniValue& data,vector<std::string> &array)
 {
-    std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
-        array.push_back(data[vKeys[i]].get_str());
+        array.push_back(data[i].get_str());
     }
 }
 UniValue ArryToJson(std::vector<std::string> &strArry)

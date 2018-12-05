@@ -119,6 +119,7 @@ UniValue dockerserver(const UniValue& params, bool fHelp)
         createService.sspec.taskTemplate.containerSpec.user= "wany";
         createService.sspec.taskTemplate.resources.limits.memoryBytes = 104857600;
         createService.sspec.taskTemplate.restartPolicy.condition = "on-failure";
+        createService.sspec.taskTemplate.containerSpec.command.push_back( "ping localhost");
 
         if(!dockercluster.Check(createService))
             return "dockercluster.Check error";

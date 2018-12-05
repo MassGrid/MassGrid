@@ -10,31 +10,31 @@ std::string dockertaskfilter::ToJsonString(){
     UniValue data(UniValue::VOBJ);
     if(!id.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=id.end();++iter)
+        for(vector<std::string>::iterator iter = id.begin();iter!=id.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("id",arr));
     }   
     if(!label.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=label.end();++iter)
+        for(vector<std::string>::iterator iter = label.begin();iter!=label.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("label",arr));
     }
     if(!name.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=name.end();++iter)
+        for(vector<std::string>::iterator iter = name.begin();iter!=name.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("name",arr));
     }
     if(!nodeid.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=nodeid.end();++iter)
+        for(vector<std::string>::iterator iter = nodeid.begin();iter!=nodeid.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("node",arr));
     }
     if(!serviceid.empty()){
         UniValue arr(UniValue::VARR);
-        for(vector<std::string>::iterator iter;iter!=serviceid.end();++iter)
+        for(vector<std::string>::iterator iter = serviceid.begin();iter!=serviceid.end();++iter)
             arr.push_back(*iter);
         data.push_back(Pair("service",arr));
     }
@@ -482,9 +482,8 @@ void Task::ParseGenResDiscSpec(const UniValue& data, Config::DiscreteResourceSpe
 
 void Task::ParseArray(const UniValue& data,vector<std::string> &array)
 {
-    std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
-        array.push_back(data[vKeys[i]].get_str());
+        array.push_back(data[i].get_str());
     }
 }
 
