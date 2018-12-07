@@ -101,7 +101,7 @@ UniValue dockerserver(const UniValue& params, bool fHelp)
         }
         if (!vchPubKey.IsFullyValid())
             throw runtime_error(" Invalid public key: "+strAddress);
-        LogPrintf("result pubkey %s\n",vchPubKey.GetID().ToString());//.substr(0,65));
+        LogPrintf("result pubkey %s\n",vchPubKey.ToString());//.substr(0,65));
 
         dockercluster.DefaultAddress = strAddress;
         dockercluster.DefaultPubkey = vchPubKey;

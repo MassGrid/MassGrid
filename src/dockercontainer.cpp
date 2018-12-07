@@ -291,7 +291,7 @@ void ParseContSpecMountVolLabel(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
+            if(vKeys[i]=="com.massgrid.pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
         }
     }
 }
@@ -301,7 +301,7 @@ UniValue MountVolLabelToJson(Config::Labels &labels)
     {
         for(auto &iter: labels) {
             if(iter.first=="com.massgrid.pubkey")
-                data.push_back(Pair("pubkey",iter.second));
+                data.push_back(Pair("com.massgrid.pubkey",iter.second));
         }
     }
     return data;
@@ -342,7 +342,7 @@ void ParseContSpecMountVolLabelOP(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
+            if(vKeys[i]=="com.massgrid.pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
         }
     }
 }
@@ -352,7 +352,7 @@ UniValue MountVolDrivOPToJson(Config::Labels &labels)
     {
         for(auto &iter: labels) {
             if(iter.first=="com.massgrid.pubkey")
-                data.push_back(Pair("pubkey",iter.second));
+                data.push_back(Pair("com.massgrid.pubkey",iter.second));
         }
     }
     return data;

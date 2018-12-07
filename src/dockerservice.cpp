@@ -240,8 +240,8 @@ void Service::ParseSpecLabels(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
-            else if(vKeys[i]=="txid") labels.insert(std::make_pair("com.massgrid.txid",tdata.get_str()));
+            if(vKeys[i]=="com.massgrid.pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
+            else if(vKeys[i]=="com.massgrid.txid") labels.insert(std::make_pair("com.massgrid.txid",tdata.get_str()));
         }
     }
 }
@@ -250,9 +250,9 @@ UniValue Service::SpecLabelsToJson(Config::Labels &labels)
     // std::vector<std::string> vKeys={"com.massgrid.pubkey","com.massgrid.txid"};
      UniValue data(UniValue::VOBJ);
      if(labels.count("com.massgrid.pubkey")>0){
-        data.push_back(Pair("pubkey",labels["com.massgrid.pubkey"]));
+        data.push_back(Pair("com.massgrid.pubkey",labels["com.massgrid.pubkey"]));
      }else if(labels.count("com.massgrid.txid")>0){
-        data.push_back(Pair("txid",labels["com.massgrid.txid"]));
+        data.push_back(Pair("com.massgrid.txid",labels["com.massgrid.txid"]));
      }
      return data;
 }
