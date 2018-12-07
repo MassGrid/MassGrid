@@ -136,8 +136,8 @@ void Node::ParseNodeLabels(const UniValue& data,std::map<std::string,std::string
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
-        if(data[vKeys[i]].isStr()){//additional
-            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
+        if(data[vKeys[i]].isStr()){
+            labels.insert(std::make_pair(vKeys[i],tdata.get_str()));
         }
     }
 }
@@ -275,8 +275,7 @@ void Node::ParseNodeEngineLabels(const UniValue& data, map<std::string,std::stri
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="com.massgrid.pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
-            else if(vKeys[i]=="txid") labels.insert(std::make_pair("com.massgrid.txid",tdata.get_str()));
+            labels.insert(std::make_pair(vKeys[i],tdata.get_str()));
         }
     }
 }

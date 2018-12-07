@@ -145,7 +145,7 @@ void Task::ParseTaskLabels(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
+            labels.insert(std::make_pair(vKeys[i],tdata.get_str()));
         }
     }
 }
@@ -388,7 +388,7 @@ void Task::ParseLogDriverOpt(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
+            labels.insert(std::make_pair(vKeys[i],tdata.get_str()));
         }
     }
 }
@@ -477,13 +477,6 @@ void Task::ParseGenResDiscSpec(const UniValue& data, Config::DiscreteResourceSpe
                 discResourceSpec.value=tdata.get_int64();
             }
         }
-    }
-}
-
-void Task::ParseArray(const UniValue& data,vector<std::string> &array)
-{
-    for(size_t i=0;i<data.size();i++){
-        array.push_back(data[i].get_str());
     }
 }
 

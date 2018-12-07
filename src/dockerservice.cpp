@@ -240,21 +240,18 @@ void Service::ParseSpecLabels(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="com.massgrid.pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
-            else if(vKeys[i]=="com.massgrid.txid") labels.insert(std::make_pair("com.massgrid.txid",tdata.get_str()));
+            labels.insert(std::make_pair(vKeys[i],tdata.get_str()));
         }
     }
 }
 UniValue Service::SpecLabelsToJson(Config::Labels &labels)
 {
-    // std::vector<std::string> vKeys={"com.massgrid.pubkey","com.massgrid.txid"};
-     UniValue data(UniValue::VOBJ);
-     if(labels.count("com.massgrid.pubkey")>0){
-        data.push_back(Pair("com.massgrid.pubkey",labels["com.massgrid.pubkey"]));
-     }else if(labels.count("com.massgrid.txid")>0){
-        data.push_back(Pair("com.massgrid.txid",labels["com.massgrid.txid"]));
-     }
-     return data;
+    UniValue data(UniValue::VOBJ);
+
+    for(auto &label: labels){
+         data.push_back(Pair(label.first,label.second));
+    }
+    return data;
 }
 void Service::ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate)
 {  
@@ -689,7 +686,7 @@ void Service::ParseLogDriverOpt(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
+            labels.insert(std::make_pair(vKeys[i],tdata.get_str()));
         }
     }
 }
@@ -699,8 +696,7 @@ UniValue Service::LogDriverOptToJson(Config::Labels &labels)
     UniValue data(UniValue::VOBJ);
     {
         for(auto &iter: labels) {
-            if(iter.first=="com.massgrid.key")
-                data.push_back(Pair("key",iter.second));
+            data.push_back(Pair(iter.first,iter.second));
         }
     }
     return data;
@@ -978,13 +974,6 @@ UniValue Service::UpdateStatusToJson(Config::UpdateStatus &updateStatus)
         data.push_back(Pair("CompletedAt",updateStatus.completedAt));
     }
     return data;
-}
-void Service::ParseArray(const UniValue& data,vector<std::string> &array)
-{
-    std::vector<std::string> vKeys=data.getKeys();
-    for(size_t i=0;i<data.size();i++){
-        array.push_back(data[vKeys[i]].get_str());
-    }
 }
 UniValue Service::ArryToJson(std::vector<std::string> &strArry)
 {

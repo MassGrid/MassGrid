@@ -56,7 +56,6 @@ class Task :public DockerBase{
     static void ParseGenResources(const UniValue& data, Config::GenericResources &genResources);
     static void ParseGenResNameSpec(const UniValue& data, Config::NamedResourceSpec &namedResourceSpec);
     static void ParseGenResDiscSpec(const UniValue& data, Config::DiscreteResourceSpec &discResourceSpec);
-    static void ParseArray(const UniValue& data,vector<std::string> &array);
     static int GetTaskStatus(std::string strType);
 public:
 

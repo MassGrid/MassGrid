@@ -158,7 +158,7 @@ void ParseContainerSpecLabels(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="key") labels.insert(std::make_pair("com.massgrid.key",tdata.get_str()));
+            labels.insert(std::make_pair(vKeys[i],tdata.get_str()));
         }
     }
 }
@@ -167,8 +167,7 @@ UniValue SpecLabelsToJson(Config::Labels &labels)
     UniValue data(UniValue::VOBJ);
     {
         for(auto &iter: labels) {
-            if(iter.first=="com.massgrid.key")
-                data.push_back(Pair("key",iter.second));
+                data.push_back(Pair(iter.first,iter.second));
         }
     }
     return data;
@@ -291,7 +290,7 @@ void ParseContSpecMountVolLabel(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="com.massgrid.pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
+            labels.insert(std::make_pair(vKeys[i],tdata.get_str()));
         }
     }
 }
@@ -300,8 +299,7 @@ UniValue MountVolLabelToJson(Config::Labels &labels)
     UniValue data(UniValue::VOBJ);
     {
         for(auto &iter: labels) {
-            if(iter.first=="com.massgrid.pubkey")
-                data.push_back(Pair("com.massgrid.pubkey",iter.second));
+            data.push_back(Pair(iter.first,iter.second));
         }
     }
     return data;
@@ -342,7 +340,7 @@ void ParseContSpecMountVolLabelOP(const UniValue& data,Config::Labels &labels)
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="com.massgrid.pubkey") labels.insert(std::make_pair("com.massgrid.pubkey",tdata.get_str()));
+            labels.insert(std::make_pair(vKeys[i],tdata.get_str()));
         }
     }
 }
@@ -351,8 +349,7 @@ UniValue MountVolDrivOPToJson(Config::Labels &labels)
     UniValue data(UniValue::VOBJ);
     {
         for(auto &iter: labels) {
-            if(iter.first=="com.massgrid.pubkey")
-                data.push_back(Pair("com.massgrid.pubkey",iter.second));
+            data.push_back(Pair(iter.first,iter.second));
         }
     }
     return data;

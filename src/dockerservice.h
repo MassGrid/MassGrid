@@ -105,7 +105,6 @@ class Service:public DockerBase{
     static void ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint);
     static void ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip);
     static void ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updateStatus);
-    static void ParseArray(const UniValue& data,vector<std::string> &array);
     
     static UniValue SpecLabelsToJson(Config::Labels &labels);
     static UniValue TaskTemplateToJson(Config::TaskSpec &taskTemplate);

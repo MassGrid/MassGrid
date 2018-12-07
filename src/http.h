@@ -25,9 +25,11 @@ class HttpRequest
         int HttpPost();
         int HttpPost(const string &ip,const int &port,const string &page,const string &strData);
         std::string getReponseData(){return strResponse;}
+        
     private:  
         int HttpRequestExec(const string &strMethod, const string &ip, const int &port,const string &page, const string &strData);
         int HttpHeadCreate(const string &strMethod, const string &strHostPort, const string &page, const string &strData, boost::asio::streambuf &request); 
+        int GetContentSize(boost::asio::streambuf &response);
     public:
         std::string ip;
         int port;

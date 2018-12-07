@@ -29,7 +29,14 @@ int HttpRequest::HttpPost()
 {  
     return HttpRequestExec("POST", ip, port, url, strData);
 } 
-  
+int HttpRequest::GetContentSize(boost::asio::streambuf &response)
+{
+    std::string head;
+    std::istream response_data(&response);
+    std::getline(response_data, head);
+    int contLength=std::stol(head.c_str(),nullptr,16);
+    return contLength;
+} 
 //Execute http request  
 int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, const int &port,const string &page, const string &strData)
 {
@@ -99,8 +106,13 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
         // header
         std::string header;
         std::vector<string> headers;        
-        while (std::getline(response_stream, header) && header != "\r")
+        int contLength=0;
+        while (std::getline(response_stream, header) && header != "\r"){
             headers.push_back(header);
+            if(header.find("Content-Length")!=string::npos){
+                sscanf(header.c_str(),"%*s %d",&contLength);
+            }
+        }
 
         // std::cout<<"HttpHeader:\n**************\n";
         // std::cout<<http_version.c_str()<<" "<<status_code<<" "<<status_message.c_str()<<std::endl;
@@ -117,11 +129,15 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
         }
 
         //Responsive data
-        if (response.size()){
+        if (response.size()>0){
             std::istream response_stream(&response);
+            if(contLength==0){
+                contLength=GetContentSize(response);
+            }
             std::istreambuf_iterator<char> eos;
             std::string data = string(std::istreambuf_iterator<char>(response_stream), eos);
-            strResponse=getJson(data);
+            if(contLength==0 || contLength>data.size()) contLength=data.size();
+            strResponse=data.substr(0,contLength);//getJson(data);
             return status_code;           
         }
 
