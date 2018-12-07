@@ -211,17 +211,21 @@ UniValue MountToJson(Config::Mount &mount)
         data.push_back(Pair("ReadOnly",mount.readOnly)); 
     }
     {
-        UniValue objBind(UniValue::VOBJ);
-        objBind=MountBindToJson(mount.bindOptions);
-        data.push_back(Pair("BindOptions",objBind));
+        if(mount.type == "tmpfs"){
+        UniValue objTmpfs(UniValue::VOBJ);
+        objTmpfs=MountTfsToJson(mount.tmpfsOptions);
+        data.push_back(Pair("TmpfsOptions",objTmpfs));
+        }
+        else if(mount.type == "volume"){
 
         UniValue objVol(UniValue::VOBJ);
         objVol=MountVolToJson(mount.volumeOptions);
         data.push_back(Pair("VolumeOptions",objVol));
-
-        UniValue objTmpfs(UniValue::VOBJ);
-        objTmpfs=MountTfsToJson(mount.tmpfsOptions);
-        data.push_back(Pair("TmpfsOptions",objTmpfs));
+        }else{
+        UniValue objBind(UniValue::VOBJ);
+        objBind=MountBindToJson(mount.bindOptions);
+        data.push_back(Pair("BindOptions",objBind));
+        }
     }
     return data;
 }

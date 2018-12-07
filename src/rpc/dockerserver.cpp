@@ -113,14 +113,26 @@ UniValue dockerserver(const UniValue& params, bool fHelp)
         createService.pubKeyClusterAddress = vchPubKey;
         createService.vin = CTxIn();
         createService.sspec.labels["com.massgrid.pubkey"] = vchPubKey.ToString().substr(0,65);
-        createService.sspec.mode.replicated.replicas = 3;
-        createService.sspec.name = "dockertest01";
-        createService.sspec.taskTemplate.containerSpec.image= "wany/cuda9.1-base:2.0";
-        createService.sspec.taskTemplate.containerSpec.user= "wany";
+        createService.sspec.mode.replicated.replicas = 1;
+        createService.sspec.name = "dockertest03";
+        createService.sspec.taskTemplate.containerSpec.image= "wany/cuda9.1-base:2.2";
+        createService.sspec.taskTemplate.containerSpec.user= "root";
         createService.sspec.taskTemplate.resources.limits.memoryBytes = 104857600;
         createService.sspec.taskTemplate.restartPolicy.condition = "on-failure";
-        createService.sspec.taskTemplate.containerSpec.command.push_back( "ping localhost");
+        createService.sspec.taskTemplate.containerSpec.command.push_back("start.sh");
 
+        createService.sspec.taskTemplate.containerSpec.env.push_back("N2N_NAME=massgridn2n");
+        createService.sspec.taskTemplate.containerSpec.env.push_back("N2N_KEY=massgrid1208");
+        createService.sspec.taskTemplate.containerSpec.env.push_back("N2N_LOCALIP=10.0.0.241");
+        createService.sspec.taskTemplate.containerSpec.env.push_back("N2N_SERVERIP=120.78.79.157:8999");
+        createService.sspec.taskTemplate.containerSpec.env.push_back(R"(SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI87aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ q873040807@gmail.com)");
+        
+      
+        createService.sspec.taskTemplate.placement.constraints.push_back("node.role == worker");
+        Config::Mount mount;
+        mount.target="/dev/net";
+        mount.source="/dev/net";
+        createService.sspec.taskTemplate.containerSpec.mounts.push_back(mount);
         if(!dockercluster.Check(createService))
             return "dockercluster.Check error";
             

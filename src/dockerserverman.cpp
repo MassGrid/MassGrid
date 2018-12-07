@@ -16,17 +16,14 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         LogPrint("docker","CDockerServerman::ProcessMessage GETDNDATA Started\n");
         if (!fMasterNode) return;
         DockerGetData mdndata;
-        vRecv >> mdndata;
-        if(mdndata.version < DOCKERREQUEST_API_MINSUPPORT_VERSION){
-            LogPrintf("CDockerServerman::ProcessMessage --mdndata version %d is too old %d\n", mdndata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
-            return;
-        }
-        LogPrint("docker", "CDockerServerman::ProcessMessage GETDNDATA -- pubkey =%s\n", mdndata.pubKeyClusterAddress.ToString());
+        CPubKey pubkey;
+        vRecv >> pubkey;
+        LogPrint("docker", "CDockerServerman::ProcessMessage GETDNDATA -- pubkey =%s\n", pubkey.ToString().substr(0,65));
         
         mdndata.mapDockerServiceLists.clear();
         for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
             if(it->second.spec.labels.find("com.massgrid.pubkey") != it->second.spec.labels.end() && 
-                    it->second.spec.labels["com.massgrid.pubkey"] == mdndata.pubKeyClusterAddress.ToString().substr(0,65)){
+                    it->second.spec.labels["com.massgrid.pubkey"] == pubkey.ToString().substr(0,65)){
                 mdndata.mapDockerServiceLists.insert(*it);
             }
         }
