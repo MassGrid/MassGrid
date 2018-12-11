@@ -28,6 +28,7 @@ public:
         READWRITE(createdAt);
         READWRITE(updatedAt);
         READWRITE(nProtocolVersion);
+        READWRITE(joinWorkerTokens);
     }
     Swarm(const Swarm& from){
         ID=from.ID;

@@ -26,13 +26,14 @@ namespace Config{
         std::string engineVersion;
         Labels labels; //map<std::string,std::string>
         vector<Plugins> plugin;
-        
+        ADD_SERIALIZE_PROPERTIES(engineVersion,labels,plugin);
     };
     struct NodeSpec{
         std::string name;
         Labels labels;
         int role;   //worker manager
         int availability;   //active pause drain
+        ADD_SERIALIZE_PROPERTIES(name,labels,role,availability);
     };
     struct NodeDescription{
         std::string hostname;
@@ -40,16 +41,19 @@ namespace Config{
         ResourceObj resources;  //something?
         EngineDescription engine;
         TLSInfo tlsInfo;
+        ADD_SERIALIZE_PROPERTIES(hostname,platform,resources,engine,tlsInfo);
     };
     struct NodeStatus{
         int state;  //unknown down ready disconnected
         std::string message;    
         std::string addr;
+        ADD_SERIALIZE_PROPERTIES(state,message,addr);
     };
     struct ManagerStatus{
         bool Leader{};
         int reachability;   //unknown unreachable reachable
         std::string addr;
+        ADD_SERIALIZE_PROPERTIES(Leader,reachability,addr);
     }; 
 };
 class Node:public DockerBase{
@@ -128,6 +132,10 @@ public:
         READWRITE(version);
         READWRITE(createdAt);
         READWRITE(updatedAt);
+        READWRITE(spec);
+        READWRITE(description);
+        READWRITE(status);
+        READWRITE(managerStatus); 
     }
 
     int getNodeState(){return status.state;}

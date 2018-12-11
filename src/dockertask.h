@@ -136,6 +136,16 @@ public:
         READWRITE(createdAt);
         READWRITE(updatedAt);
         READWRITE(nProtocolVersion);
+        READWRITE(name);
+        READWRITE(labels);
+        READWRITE(spec);
+        READWRITE(serviceID);
+        READWRITE(slot);
+        READWRITE(nodeID);
+        READWRITE(genericResources);
+        READWRITE(status);
+        READWRITE(desiredState);
+        READWRITE(networksAttachments);
     }
 
 

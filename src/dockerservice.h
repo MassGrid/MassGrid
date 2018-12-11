@@ -189,9 +189,16 @@ public:
         READWRITE(createdAt);
         READWRITE(updatedAt);
         READWRITE(nProtocolVersion);
+        READWRITE(spec);
+        READWRITE(previousSpec);
+        READWRITE(endpoint);
+        READWRITE(updateStatus);
     }
     void Update();
     std::string ToString();
+    std::string ToJsonString(){
+            return spec.ToJsonString();
+        }
 };
 
 class dockerservicefilter:public filterbase{
@@ -261,10 +268,10 @@ public:
     bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
     bool CheckSignature(CPubKey& pubKeyMasternode);
     std::string ToJsonString(){
-            return "{}";
+            return sspec.ToJsonString();
         }
     std::string ToString(){
-        return sspec.GetHash().ToString();
+        return GetHash().ToString();
     }
 };
 typedef DockerCreateService DockerUpdateService;
