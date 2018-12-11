@@ -143,6 +143,7 @@ public:
     Config::UpdateStatus updateStatus;
     
     map<std::string,Task> mapDockerTasklists;
+
     static void DockerServiceList(const string& serviceData,std::map<std::string,Service> &services);
     static void DockerServiceInspect(const string& serviceData,std::map<std::string,Service> &services);
 public:    
@@ -193,6 +194,7 @@ public:
         READWRITE(previousSpec);
         READWRITE(endpoint);
         READWRITE(updateStatus);
+        READWRITE(mapDockerTasklists);
     }
     void Update();
     std::string ToString();
