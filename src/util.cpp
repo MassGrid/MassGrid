@@ -843,7 +843,7 @@ std::string DefaultReceiveAddress()
     return defaultReceiveAddress;
 }
 
-CPubKey DefaultPubkey()
+CPubKey GetDefaultPubkey()
 {
     return defaultPubkey;
 }

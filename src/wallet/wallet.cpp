@@ -200,6 +200,7 @@ void CWallet::DeriveNewChildKey(const CKeyMetadata& metadata, CKey& secretRet, u
 bool CWallet::GetPubKey(const CKeyID &address, CPubKey& vchPubKeyOut) const
 {
     LOCK(cs_wallet);
+
     std::map<CKeyID, CHDPubKey>::const_iterator mi = mapHdPubKeys.find(address);
     if (mi != mapHdPubKeys.end())
     {
@@ -4007,7 +4008,26 @@ CPubKey CWallet::CreatePubKey(const std::string& addr)
         if (!vchPubKey.IsFullyValid())
             throw runtime_error(" Invalid public key: "+ks);
         // pubkeys[i] = vchPubKey;
+        return vchPubKey;
     }
+
+    // std::string strAddress = addr;
+    // CMassGridAddress address(strAddress);
+    // CPubKey vchPubKey;
+    // if (pwalletMain && address.IsValid())
+    // {
+    //     CKeyID keyID;
+    //     if (!address.GetKeyID(keyID))
+    //         throw runtime_error(
+    //             strprintf("%s does not refer to a key",strAddress));
+    //     if (!pwalletMain->GetPubKey(keyID, vchPubKey))
+    //         throw runtime_error(
+    //             strprintf("no full public key for address %s",strAddress));
+    // }
+    // if (!vchPubKey.IsFullyValid())
+    //     throw runtime_error(" Invalid public key: "+strAddress);
+    // LogPrintf("result pubkey %s\n",vchPubKey.GetID().ToString());//.substr(0,65));
+    // return vchPubKey;
 }
 
 CKeyPool::CKeyPool()

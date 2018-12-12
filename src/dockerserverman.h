@@ -8,6 +8,10 @@
 #include <dockertask.h>
 #include "base58.h"
 #include "primitives/transaction.h"
+
+#define DOCKER_MAX_CPU_NUM 4
+#define DOCKER_MAX_MEMORY_BYTE 4143001600
+#define DOCKER_MAX_GPU_NUM 12
 class CDockerServerman;
 extern CDockerServerman dockerServerman;
 
@@ -19,7 +23,7 @@ private:
 public:
 
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
-    bool CheckAndCreateServerSpec(DockerCreateService Spec);
-    bool CheckAndUpdateServerSpec(DockerUpdateService Spec);
+    bool CheckAndCreateServiveSpec(DockerCreateService Spec);
+    bool CheckAndUpdateServiceSpec(DockerUpdateService Spec);
 };
 #endif  //DOCKERSERVERMAN_H

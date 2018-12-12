@@ -84,58 +84,43 @@ UniValue dockerserver(const UniValue& params, bool fHelp)
 
     if(strCommand == "create")
     {
-        if (params.size() < 2)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Masternode address required");
-        std::string strAddress = params[1].get_str();
-        CMassGridAddress address(strAddress);
-        CPubKey vchPubKey;
-        if (pwalletMain && address.IsValid())
-        {
-            CKeyID keyID;
-            if (!address.GetKeyID(keyID))
-                throw runtime_error(
-                    strprintf("%s does not refer to a key",strAddress));
-            if (!pwalletMain->GetPubKey(keyID, vchPubKey))
-                throw runtime_error(
-                    strprintf("no full public key for address %s",strAddress));
-        }
-        if (!vchPubKey.IsFullyValid())
-            throw runtime_error(" Invalid public key: "+strAddress);
-        LogPrintf("result pubkey %s\n",vchPubKey.ToString());//.substr(0,65));
-
-        dockercluster.DefaultAddress = strAddress;
-        dockercluster.DefaultPubkey = vchPubKey;
-        dockercluster.SetConnectDockerAddress("119.3.66.159:19443");
-        dockercluster.ProcessDockernodeConnections();
+        if (params.size() < 10)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Request more parameter");
+        std::string strAddr = params[1].get_str();
+        if(!dockercluster.SetConnectDockerAddress(strAddr))
+            throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
+        if(!dockercluster.ProcessDockernodeConnections())
+            throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Connect to Masternode failed");
 
         DockerCreateService createService;
 
-        createService.pubKeyClusterAddress = vchPubKey;
+        createService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
         createService.vin = CTxIn();
-        createService.sspec.labels["com.massgrid.pubkey"] = vchPubKey.ToString().substr(0,65);
-        createService.sspec.mode.replicated.replicas = 1;
-        createService.sspec.name = "dockertest03";
-        createService.sspec.taskTemplate.containerSpec.image= "wany/cuda9.1-base:2.2";
-        createService.sspec.taskTemplate.containerSpec.user= "root";
-        createService.sspec.taskTemplate.resources.limits.memoryBytes = 104857600;
-        createService.sspec.taskTemplate.restartPolicy.condition = "on-failure";
-        createService.sspec.taskTemplate.containerSpec.command.push_back("start.sh");
-
-        createService.sspec.taskTemplate.containerSpec.env.push_back("N2N_NAME=massgridn2n");
-        createService.sspec.taskTemplate.containerSpec.env.push_back("N2N_KEY=massgrid1208");
-        createService.sspec.taskTemplate.containerSpec.env.push_back("N2N_LOCALIP=10.0.0.241");
-        createService.sspec.taskTemplate.containerSpec.env.push_back("N2N_SERVERIP=120.78.79.157:8999");
-        createService.sspec.taskTemplate.containerSpec.env.push_back(R"(SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI87aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ q873040807@gmail.com)");
         
-      
-        createService.sspec.taskTemplate.placement.constraints.push_back("node.role == worker");
-        Config::Mount mount;
-        mount.target="/dev/net";
-        mount.source="/dev/net";
-        createService.sspec.taskTemplate.containerSpec.mounts.push_back(mount);
-        if(!dockercluster.Check(createService))
-            return "dockercluster.Check error";
-            
+        std::string strServiceName = params[2].get_str();
+        createService.serviceName = strServiceName;
+
+        std::string strServiceImage = params[3].get_str();
+        createService.image = strServiceImage;
+
+        int64_t strServiceCpu = params[4].get_int64();
+        createService.cpu = strServiceCpu;
+
+        int64_t strServiceMemoey_byte = params[5].get_int64();
+        createService.memory_byte = strServiceMemoey_byte;
+        
+        std::string strServiceGpuName = params[6].get_str();
+        createService.gpuname = strServiceGpuName;
+
+        int64_t strServiceGpu = params[7].get_int64();
+        createService.gpu = strServiceGpu;
+
+        std::string strn2n_Community = params[8].get_str();
+        createService.n2n_community = strn2n_Community;
+
+        std::string strssh_pubkey = params[9].get_str();
+        createService.ssh_pubkey = strssh_pubkey;
+        
         if(!dockercluster.CreateAndSendSeriveSpec(createService))
             return "dockercluster.CreateAndSendSeriveSpec error";
         LogPrintf(" createService.sspec hash %s \n",createService.ToString());

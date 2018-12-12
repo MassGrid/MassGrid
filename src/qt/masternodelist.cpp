@@ -13,7 +13,13 @@
 #include "walletmodel.h"
 
 #include <QTimer>
+#include <QTableWidgetItem>
+#include <QListWidgetItem>
+
 #include "cmessagebox.h"
+// #include "docker"
+#include "dockercluster.h"
+#include "util.h"
 
 int GetOffsetFromUtc()
 {
@@ -62,7 +68,11 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     contextMenu = new QMenu();
     contextMenu->addAction(startAliasAction);
     connect(ui->tableWidgetMyMasternodes, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+    connect(ui->tableWidgetMasternodes, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDockerDetail(QModelIndex)));
+    connect(ui->serverListWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(loadServerDetail(QModelIndex)));
+    
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
+    connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
@@ -97,6 +107,29 @@ void MasternodeList::showContextMenu(const QPoint &point)
 {
     QTableWidgetItem *item = ui->tableWidgetMyMasternodes->itemAt(point);
     if(item) contextMenu->exec(QCursor::pos());
+}
+
+void MasternodeList::showDockerDetail(QModelIndex index)
+{
+    int row = index.row();
+    // ui->tableWidgetMasternodes
+    const std::string& address_port = ui->tableWidgetMasternodes->item(row,0)->text().toStdString().c_str();
+
+    const std::string& addr = DefaultReceiveAddress();
+
+    LogPrintf("====>showDockerDetail：%s\n",addr);
+
+    CPubKey pubkey = pwalletMain->CreatePubKey(addr);
+
+    LogPrintf("====>pubkey string:%s\n",pubkey.ToString());
+
+    if(dockercluster.SetConnectDockerAddress(address_port) && dockercluster.ProcessDockernodeConnections()){
+        dockercluster.AskForDNData();
+        CMessageBox::information(0, tr("connect docker"),
+            tr("ask for dndata sucess"));
+            return ;
+    }
+    CMessageBox::information(0, tr("connect docker"),tr("connect failed"));
 }
 
 void MasternodeList::StartAlias(std::string strAlias)
@@ -429,4 +462,76 @@ void MasternodeList::on_tableWidgetMyMasternodes_itemSelectionChanged()
 void MasternodeList::on_UpdateButton_clicked()
 {
     updateMyNodeList(true);
+}
+
+void MasternodeList::loadServerList()
+{
+    ui->serverListWidget->clear();
+
+    std::map<std::string,Service> serverlist = dockercluster.mapDockerServiceLists;
+
+    std::map<std::string,Service>::iterator iter = serverlist.begin();
+
+    for(;iter != serverlist.end();iter++){
+        QListWidgetItem* item = new QListWidgetItem(ui->serverListWidget);
+        item->setText(QString::fromStdString(iter->first));
+        ui->serverListWidget->addItem(item);
+    }
+    clearDockerDetail();
+}
+    // std::string name;
+    // Labels labels;
+    // TaskSpec taskTemplate;
+    // Mode mode;
+    // UpdateConfig updateConfig;
+    // UpdateConfig rollbackConfig;
+    // vector<NetWork> networks;
+    // EndpointSpec endpointSpec;
+
+void MasternodeList::loadServerDetail(QModelIndex index)
+{
+    QString key = ui->serverListWidget->item(index.row())->text();
+    Service service = dockercluster.mapDockerServiceLists[key.toStdString().c_str()];
+
+    std::string name = service.spec.name;
+    std::string address = service.spec.labels["com.massgrid.pubkey"];
+
+
+    std::string image = service.spec.taskTemplate.containerSpec.image;
+    std::string userName = service.spec.taskTemplate.containerSpec.user;
+
+    std::string command;
+    int commandSize = service.spec.taskTemplate.containerSpec.command.size();
+    if(commandSize){
+        command = service.spec.taskTemplate.containerSpec.command[0];
+        for(int i=1;i<commandSize;i++)
+            command += "," + service.spec.taskTemplate.containerSpec.command[i];
+    }
+
+    // LogPrintf("====>loadServerDetail:%s \n",service.spec.ToJsonString());
+    LogPrintf("====>name:%s \n",name);
+    LogPrintf("====>address:%s \n",address);
+    LogPrintf("====>image:%s \n",image);
+    LogPrintf("====>command:%s \n",command);
+    LogPrintf("====>userName:%s \n",userName);
+
+    ui->label_name->setText(QString::fromStdString(name));
+    ui->label_address->setText(QString::fromStdString(address));
+    ui->label_image->setText(QString::fromStdString(image));
+    ui->label_command->setText(QString::fromStdString(command));
+    ui->label_user->setText(QString::fromStdString(userName));
+}
+
+void MasternodeList::slot_updateServiceBtn()
+{
+    loadServerList();
+}
+
+void MasternodeList::clearDockerDetail()
+{
+    ui->label_name->setText("");
+    ui->label_address->setText("");
+    ui->label_image->setText("");
+    ui->label_command->setText("");
+    ui->label_user->setText("");
 }

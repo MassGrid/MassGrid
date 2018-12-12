@@ -9,6 +9,7 @@
 #include "base58.h"
 #include "primitives/transaction.h"
 class Cluster;
+class CPubKey;
 extern Cluster dockercluster;
 class Cluster{
 private:
@@ -23,18 +24,17 @@ public:
         // CTxIn masternodeId{};
 
         CPubKey DefaultPubkey{};
+        void setDefaultPubkey(CPubKey pubkey);
         CMassGridAddress DefaultAddress{};
-
 
         bool SetConnectDockerAddress(std::string address_port);
         bool ProcessDockernodeConnections();
-
+        
 
         void AskForDNData();
-        bool Check(DockerUpdateService sspec);   //send to server must be check;
         bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
         bool UpdateAndSendSeriveSpec(DockerUpdateService sspec);    //send message
-        bool CheckAndUpdate(DockerUpdateService sspec);      //update infomation after check from receive
+        // bool CheckAndUpdate(DockerUpdateService sspec);      //update infomation after check from receive
 
 };
 #endif  //DOCKERCLUSTER_H

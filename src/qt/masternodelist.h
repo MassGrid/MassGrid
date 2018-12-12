@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <QTimer>
 #include <QWidget>
+#include <QTableWidget>
 
 #define MY_MASTERNODELIST_UPDATE_SECONDS                 60
 #define MASTERNODELIST_UPDATE_SECONDS                    15
@@ -20,6 +21,7 @@ namespace Ui {
 
 class ClientModel;
 class WalletModel;
+class QTableWidgetItem;
 
 QT_BEGIN_NAMESPACE
 class QModelIndex;
@@ -65,6 +67,12 @@ private:
 
     QString strCurrentFilter;
 
+private:
+    void loadServerList();
+
+    void clearDockerDetail();
+    // void loadServerDetail();
+
 private Q_SLOTS:
     void showContextMenu(const QPoint &);
     void on_filterLineEdit_textChanged(const QString &strFilterIn);
@@ -73,5 +81,8 @@ private Q_SLOTS:
     void on_startMissingButton_clicked();
     void on_tableWidgetMyMasternodes_itemSelectionChanged();
     void on_UpdateButton_clicked();
+    void showDockerDetail(QModelIndex);
+    void loadServerDetail(QModelIndex);
+    void slot_updateServiceBtn();
 };
 #endif // MASTERNODELIST_H

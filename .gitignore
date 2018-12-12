@@ -120,6 +120,7 @@ qa/cache/*
 
 libmassgridconsensus.pc
 contrib/devtools/split-debug.sh
+contrib/massgrid-qt.pro.user
 src/qt/massgrid-qt.bash
 qa/pull-tester/tests-config.sh
 

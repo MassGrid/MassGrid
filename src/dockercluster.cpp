@@ -9,8 +9,16 @@
 #include "validation.h"
 #include "init.h"
 #include "wallet/wallet.h"
+#include "util.h"
+#include "pubkey.h"
 Cluster dockercluster;
+
 bool Cluster::SetConnectDockerAddress(std::string address_port){
+    setDefaultPubkey(GetDefaultPubkey());   
+
+    LogPrintf("====>SetConnectDockerAddress: addr:%s\n",DefaultReceiveAddress());
+    LogPrintf("====>SetConnectDockerAddress: pubkey str:%s\n",DefaultPubkey.ToString());
+
     LogPrint("docker","Cluster::SetConnectDockerAddress Started\n");
     if (!Lookup(address_port.c_str(), connectDockerAddr, 0, false)){
         LogPrintf("Cluster::SetConnectDockerAddress Incorrect DockerNode address %s", address_port);
@@ -102,27 +110,7 @@ bool Cluster::UpdateAndSendSeriveSpec(DockerUpdateService sspec){
     return true;
 }
 
-
-bool Cluster::Check(DockerUpdateService upspec){
-    // 1.first check time
-    if(upspec.sigTime > GetAdjustedTime() + 60 * 5 && upspec.sigTime < GetAdjustedTime() - 60 * 5){
-        LogPrintf("Cluster::Check sigTime is invaild\n");
-        return false;
-    }
-    
-    //  2.check infomation
-    if(upspec.vin != CTxIn()){
-        LogPrintf("Cluster::Check vin is invaild\n");
-        return false;
-    }
-
-    
-    return true;
-}
-bool Cluster::CheckAndUpdate(DockerUpdateService sspec){
-    if(!Check(sspec))
-        return false;
-    
-    //docker server update the infomation to sspec
-    return true;
+void Cluster::setDefaultPubkey(CPubKey pubkey)
+{
+    DefaultPubkey = pubkey;
 }

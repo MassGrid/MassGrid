@@ -245,7 +245,16 @@ public:
     CPubKey pubKeyClusterAddress{};
     CTxIn vin{};
     int64_t sigTime{}; //dkct message times
-    Config::ServiceSpec sspec{};
+    // Config::ServiceSpec sspec{};
+
+    std::string n2n_community{};
+    std::string serviceName{};
+    std::string image{};
+    std::string gpuname{};
+    std::string ssh_pubkey{};
+    int64_t cpu{};
+    int64_t gpu{};
+    int64_t memory_byte{};
 
 
     ADD_SERIALIZE_METHODS;
@@ -256,7 +265,16 @@ public:
         READWRITE(version);
         READWRITE(pubKeyClusterAddress);
         READWRITE(sigTime);
-        READWRITE(sspec);
+        // READWRITE(sspec);
+        READWRITE(n2n_community);
+        READWRITE(serviceName);
+        READWRITE(image);
+        READWRITE(gpuname);
+        READWRITE(ssh_pubkey);
+        READWRITE(cpu);
+        READWRITE(gpu);
+        READWRITE(memory_byte);
+
     }
     uint256 GetHash() const
     {
@@ -264,17 +282,88 @@ public:
         ss << vin;
         ss << version;
         ss << pubKeyClusterAddress;
-        ss << sspec;
+        // ss << sspec;
+        ss << n2n_community;
+        ss << serviceName;
+        ss << image;
+        ss << gpuname;
+        ss << ssh_pubkey;
+        ss << cpu;
+        ss << gpu;
+        ss << memory_byte;
+
         return ss.GetHash();
     }
     bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
     bool CheckSignature(CPubKey& pubKeyMasternode);
-    std::string ToJsonString(){
-            return sspec.ToJsonString();
-        }
+    // std::string ToJsonString(){
+    //         return sspec.ToJsonString();
+    //     }
     std::string ToString(){
         return GetHash().ToString();
     }
 };
-typedef DockerCreateService DockerUpdateService;
+class DockerUpdateService:public DockerCreateService
+{
+public:
+    std::string serviceid;
+    uint64_t version = DOCKERREQUEST_API_VERSION;
+    std::vector<unsigned char> vchSig{};
+    CPubKey pubKeyClusterAddress{};
+    CTxIn vin{};
+    int64_t sigTime{}; 
+
+    std::string n2n_community{};
+    std::string serviceName{};
+    std::string image{};
+    std::string gpuname{};
+    std::string ssh_pubkey{};
+    int64_t cpu{};
+    int64_t gpu{};
+    int64_t memory_byte{};
+
+
+    ADD_SERIALIZE_METHODS;
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(vchSig);
+        READWRITE(vin);
+        READWRITE(version);
+        READWRITE(pubKeyClusterAddress);
+        READWRITE(sigTime);
+        READWRITE(serviceid);
+        READWRITE(n2n_community);
+        READWRITE(serviceName);
+        READWRITE(image);
+        READWRITE(gpuname);
+        READWRITE(ssh_pubkey);
+        READWRITE(cpu);
+        READWRITE(gpu);
+        READWRITE(memory_byte);
+
+    }
+    uint256 GetHash() const
+    {
+        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
+        ss << vin;
+        ss << version;
+        ss << pubKeyClusterAddress;
+        ss << serviceid;
+        ss << n2n_community;
+        ss << serviceName;
+        ss << image;
+        ss << gpuname;
+        ss << ssh_pubkey;
+        ss << cpu;
+        ss << gpu;
+        ss << memory_byte;
+
+        return ss.GetHash();
+    }
+    bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
+    bool CheckSignature(CPubKey& pubKeyMasternode);
+    std::string ToString(){
+        return GetHash().ToString();
+    }
+};
 #endif //__DOCKERSERVICE__

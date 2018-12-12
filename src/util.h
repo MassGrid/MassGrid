@@ -164,7 +164,7 @@ void runCommand(const std::string& strCommand);
 void SetDefaultReceiveAddress(const std::string& address);
 std::string DefaultReceiveAddress();
 
-CPubKey DefaultPubkey();
+CPubKey GetDefaultPubkey();
 void SetDefaultPubkey(CPubKey pubkey);
 
 inline bool IsSwitchChar(char c)

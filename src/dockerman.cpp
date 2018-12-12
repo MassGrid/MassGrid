@@ -5,11 +5,51 @@
 #include "http.h"
 #include <set>
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp> 
+#include <boost/lexical_cast.hpp>
 CDockerMan dockerman;
 std::map<std::string,Node> mapNodeLists;    //temp
 std::map<std::string,Service> mapServiceLists;
 std::map<std::string,Task> mapTaskLists;
+std::string CDockerMan::GetFreeIP(){
+
+    LOCK(cs);
+    for(int i=1;i<255;++i)
+        for(int j=2;j<255;++j){
+            if(!isExistIP[i][j]){
+                isExistIP[i][j]=true;
+                std::string ipaddr = "192.168." + boost::lexical_cast<std::string>(i) + "." + boost::lexical_cast<std::string>(j);
+                LogPrint("docker","CDockerMan::SetIPBook ip: %s is using\n",ipaddr);
+                return ipaddr;
+            }
+        }
+}
+bool CDockerMan::IsFreeIP(std::string ip){
+    LOCK(cs);
+    vector<string> destination;
+    boost::split(destination,ip, boost::is_any_of( "." ), boost::token_compress_on );
+    if(destination.size() == 4){
+        int i = boost::lexical_cast<int>(destination[2]);
+        int j = boost::lexical_cast<int>(destination[3]);
+        if(i >0 && i<255 &&j >1 && j<255)
+            return !isExistIP[i][j];
+    }
+}
+void CDockerMan::SetIPBook(std::string ip,bool isused){
+    LOCK(cs);
+    vector<string> destination;
+    boost::split(destination,ip, boost::is_any_of( "." ), boost::token_compress_on );
+    if(destination.size() == 4){
+        int i = boost::lexical_cast<int>(destination[2]);
+        int j = boost::lexical_cast<int>(destination[3]);
+        if(i >0 && i<255 &&j >1 && j<255){
+            isExistIP[i][j]=isused;
+            if(isused)
+                LogPrint("docker","CDockerMan::SetIPBook ip: %s is using\n",ip);
+            else
+                LogPrint("docker","CDockerMan::SetIPBook ip: %s is free\n",ip);
+        }
+    }
+}
 bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
     LogPrint("docker","CDockerMan::PushMessage Started Method: %s\n",strMethod[mtd]);
     std::string url;
@@ -385,6 +425,7 @@ void CDockerMan::GetVersionAndJoinToken(){
             }
 
             JoinToken = swarm.joinWorkerTokens+" "+it->second.managerStatus.addr;   //set JoinToken
+            managerAddr = it->second.managerStatus.addr.substr(0,it->second.managerStatus.addr.find_last_of(":"));
             return;
         }
     }

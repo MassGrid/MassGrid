@@ -59,13 +59,16 @@ private:
     const char* address = "localhost";
     uint32_t apiPort = 2375;
     uint32_t swarmPort = 2377;
-
+    bool isExistIP[255][255]{};
 public:
+
+    const uint32_t n2nServerPort = 8999;
     union docker_Version version;
     std::map<std::string,Node> mapDockerNodeLists;
     std::map<std::string,Service> mapDockerServiceLists;
     Swarm swarm;
     std::string JoinToken;
+    std::string managerAddr;    //no port
 
 
     bool ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata);
@@ -83,6 +86,9 @@ public:
     void SetPort(uint32_t p){apiPort = p;}
     uint32_t GetPort(){return apiPort;}
     void GetVersionAndJoinToken();
+    std::string GetFreeIP();
+    void SetIPBook(std::string ip,bool isused);
+    bool IsFreeIP(std::string ip);
 };
 
 #endif //DOCKERMAN_H
