@@ -53,12 +53,12 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
         LogPrintf("CDockerServerman::ProcessMessage sigTime:%d \n",mdndata.sigTime);
 
-        std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
-        std::string tmpid = iter->first;
+        // std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
+        // std::string tmpid = iter->first;
         // std::string servspecjson = 
         ///Service::DockerServSpecToJson(iter->second);
         // LogPrintf("======>CDockerServerman::ProcessMessage tmpid:%s\v",tmpid);
-        LogPrintf("======>CDockerServerman::ProcessMessage service:%s\v",iter->second.spec.ToJsonString());
+        // LogPrintf("======>CDockerServerman::ProcessMessage service:%s\n",iter->second.spec.ToJsonString());
 
 
     }else if(strCommand == NetMsgType::CREATESERVICE){

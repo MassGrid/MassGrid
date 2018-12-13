@@ -11,55 +11,55 @@ namespace Config{
     struct Global{
     };
     struct Mode{
-        Replicated replicated;
+        Replicated replicated{};
         bool global{};      //pick one  if global is false,use the replicated
         ADD_SERIALIZE_PROPERTIES(replicated,global);
     };
     struct EndpointPortConfig{
-        std::string name;
-        std::string protocol;   //tcp udp sctp
-        int64_t targetPort;
-        int64_t publishedPort;
-        std::string publishMode;    //default ingress ,host
+        std::string name{};
+        std::string protocol{};   //tcp udp sctp
+        int64_t targetPort{};
+        int64_t publishedPort{};
+        std::string publishMode{};    //default ingress ,host
         ADD_SERIALIZE_PROPERTIES(name,protocol,targetPort,publishedPort,publishMode);
     };
     struct VirtualIP{
-        std::string networkID;
-        std::string addr;
+        std::string networkID{};
+        std::string addr{};
         ADD_SERIALIZE_PROPERTIES(networkID,addr);
     };
 
     struct EndpointSpec{
-        std::string mode; //default vip ,vip dnsrr
-        vector<EndpointPortConfig> ports;
+        std::string mode{}; //default vip ,vip dnsrr
+        vector<EndpointPortConfig> ports{};
         ADD_SERIALIZE_PROPERTIES(mode,ports);
     };
     
     struct Endpoint{
-        EndpointSpec spec;
-        vector<EndpointPortConfig> ports;
-        vector<VirtualIP> virtualIPs;
+        EndpointSpec spec{};
+        vector<EndpointPortConfig> ports{};
+        vector<VirtualIP> virtualIPs{};
         ADD_SERIALIZE_PROPERTIES(spec,ports,virtualIPs);
     };
     struct UpdateConfig{
         int64_t parallelism{};
         int64_t delay{};
-        std::string failureAction;  //continue pasue rollback
+        std::string failureAction{};  //continue pasue rollback
         int64_t monitor{};
         double maxFailureRatio{};   //default 0
-        std::string order;          // stop-first start-first
+        std::string order{};          // stop-first start-first
         ADD_SERIALIZE_PROPERTIES(parallelism,delay,failureAction,monitor,maxFailureRatio,order);
     };
 
     struct ServiceSpec{     //create template
-        std::string name;
-        Labels labels;
-        TaskSpec taskTemplate;
-        Mode mode;
-        UpdateConfig updateConfig;
-        UpdateConfig rollbackConfig;
-        vector<NetWork> networks;
-        EndpointSpec endpointSpec;
+        std::string name{};
+        Labels labels{};
+        TaskSpec taskTemplate{};
+        Mode mode{};
+        UpdateConfig updateConfig{};
+        UpdateConfig rollbackConfig{};
+        vector<NetWork> networks{};
+        EndpointSpec endpointSpec{};
         ADD_SERIALIZE_PROPERTIES(name,labels,taskTemplate,mode,updateConfig,rollbackConfig,networks,endpointSpec);
 
 
@@ -136,13 +136,13 @@ public:
     static UniValue SpecToJson(Config::ServiceSpec &spec);
 public:
     
-    Config::ServiceSpec spec;
-    Config::ServiceSpec previousSpec;   //?
+    Config::ServiceSpec spec{};
+    Config::ServiceSpec previousSpec{};   //?
 
-    Config::Endpoint endpoint;
-    Config::UpdateStatus updateStatus;
+    Config::Endpoint endpoint{};
+    Config::UpdateStatus updateStatus{};
     
-    map<std::string,Task> mapDockerTasklists;
+    map<std::string,Task> mapDockerTasklists{};
 
     static void DockerServiceList(const string& serviceData,std::map<std::string,Service> &services);
     static void DockerServiceInspect(const string& serviceData,std::map<std::string,Service> &services);
@@ -217,7 +217,7 @@ public:
     CPubKey pubKeyClusterAddress{};
     CTxIn vin{};
     int64_t sigTime{}; //dkct message times
-    std::map<std::string,Service> mapDockerServiceLists;
+    std::map<std::string,Service> mapDockerServiceLists{};
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>

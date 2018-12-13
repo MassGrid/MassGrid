@@ -23,36 +23,36 @@ namespace Config{
         REACHABILITY_REACHABLE
     }; 
     struct EngineDescription{
-        std::string engineVersion;
-        Labels labels; //map<std::string,std::string>
-        vector<Plugins> plugin;
+        std::string engineVersion{};
+        Labels labels{}; //map<std::string,std::string>
+        vector<Plugins> plugin{};
         ADD_SERIALIZE_PROPERTIES(engineVersion,labels,plugin);
     };
     struct NodeSpec{
-        std::string name;
-        Labels labels;
-        int role;   //worker manager
-        int availability;   //active pause drain
+        std::string name{};
+        Labels labels{};
+        int role{};   //worker manager
+        int availability{};   //active pause drain
         ADD_SERIALIZE_PROPERTIES(name,labels,role,availability);
     };
     struct NodeDescription{
-        std::string hostname;
-        Platform platform;
-        ResourceObj resources;  //something?
-        EngineDescription engine;
-        TLSInfo tlsInfo;
+        std::string hostname{};
+        Platform platform{};
+        ResourceObj resources{};  //something?
+        EngineDescription engine{};
+        TLSInfo tlsInfo{};
         ADD_SERIALIZE_PROPERTIES(hostname,platform,resources,engine,tlsInfo);
     };
     struct NodeStatus{
-        int state;  //unknown down ready disconnected
-        std::string message;    
-        std::string addr;
+        int state{};  //unknown down ready disconnected
+        std::string message{};    
+        std::string addr{};
         ADD_SERIALIZE_PROPERTIES(state,message,addr);
     };
     struct ManagerStatus{
         bool Leader{};
-        int reachability;   //unknown unreachable reachable
-        std::string addr;
+        int reachability{};   //unknown unreachable reachable
+        std::string addr{};
         ADD_SERIALIZE_PROPERTIES(Leader,reachability,addr);
     }; 
 };
@@ -80,10 +80,10 @@ public:
 
     static void DockerNodeList(const string& nodeData,std::map<std::string,Node> &nodes);
 
-    Config::NodeSpec spec;
-    Config::NodeDescription description;
-    Config::NodeStatus status;
-    Config::ManagerStatus managerStatus; 
+    Config::NodeSpec spec{};
+    Config::NodeDescription description{};
+    Config::NodeStatus status{};
+    Config::ManagerStatus managerStatus{}; 
 
 // function]
 public:

@@ -47,87 +47,87 @@ namespace Config{
     static const char* strStatus[] = { "created", "restarting", "running", "removing", "paused", "exited", "dead" };
 
     struct Version{
-        uint64_t index;
+        uint64_t index{};
         ADD_SERIALIZE_PROPERTIES(index);
     };
     struct Status{
-        enum eStatus state;
-        uint64_t timestamp;
-        std::string message;
-        std::string err;
+        enum eStatus state{};
+        int64_t timestamp{};
+        std::string message{};
+        std::string err{};
     };
     struct HealthCheck{
-        std::vector<std::string> test;
-        int64_t intervals;
-        int64_t timeout;
-        int64_t retries;
-        int64_t startPeriod;
+        std::vector<std::string> test{};
+        int64_t intervals{};
+        int64_t timeout{};
+        int64_t retries{};
+        int64_t startPeriod{};
         ADD_SERIALIZE_PROPERTIES(test,intervals,timeout,retries,startPeriod);
     };
 
     struct BindOptions{
-        std::string propagation;
+        std::string propagation{};
         ADD_SERIALIZE_PROPERTIES(propagation);
     };
 
     struct DriverConfig{
-        std::string name;
-        Labels options;
+        std::string name{};
+        Labels options{};
         ADD_SERIALIZE_PROPERTIES(name,options);
     };
 
     struct VolumeOptions{
         bool nocopy{};
-        Labels labels;
-        DriverConfig driverConfig;
+        Labels labels{};
+        DriverConfig driverConfig{};
         ADD_SERIALIZE_PROPERTIES(nocopy,labels,driverConfig);
     };
 
     struct TmpfsOptions{
-        int64_t sizeBytes;
-        int mode;
+        int64_t sizeBytes{};
+        int mode{};
         ADD_SERIALIZE_PROPERTIES(sizeBytes,mode);
     };
 
     struct Mount{
-        std::string type;
-        std::string source;
-        std::string target;
+        std::string type{};
+        std::string source{};
+        std::string target{};
         bool readOnly{};
-        std::string consistency;
-        BindOptions bindOptions;
-        VolumeOptions volumeOptions;
-        TmpfsOptions tmpfsOptions;
+        std::string consistency{};
+        BindOptions bindOptions{};
+        VolumeOptions volumeOptions{};
+        TmpfsOptions tmpfsOptions{};
         ADD_SERIALIZE_PROPERTIES(type,source,target,readOnly,consistency,volumeOptions,tmpfsOptions);
     };
 
     struct DiscreteResourceSpec{
-        std::string kind;
-        int64_t value;
+        std::string kind{};
+        int64_t value{};
         ADD_SERIALIZE_PROPERTIES(kind,value);
     };
 
     struct NamedResourceSpec{
-        std::string kind;
-        std::string value;
+        std::string kind{};
+        std::string value{};
         ADD_SERIALIZE_PROPERTIES(kind,value);
     };
 
     struct GenericResources{
-        NamedResourceSpec namedResourceSpec;
-        DiscreteResourceSpec discreateResourceSpec;
+        NamedResourceSpec namedResourceSpec{};
+        DiscreteResourceSpec discreateResourceSpec{};
         ADD_SERIALIZE_PROPERTIES(namedResourceSpec,discreateResourceSpec);
     };
 
     struct ResourceObj{
-        uint64_t nanoCPUs;
-        uint64_t memoryBytes;
+        int64_t nanoCPUs{};
+        int64_t memoryBytes{};
         vector<struct GenericResources> genericResources;
         ADD_SERIALIZE_PROPERTIES(nanoCPUs,memoryBytes,genericResources);
     };
 
     struct RestartPolicy{
-        std::string condition;
+        std::string condition{};
         int64_t delay{};
         int64_t maxAttempts{};
         int64_t window{};
@@ -135,105 +135,105 @@ namespace Config{
     };
 
     struct Spread{
-        std::string spreadDescriptor;
+        std::string spreadDescriptor{};
         ADD_SERIALIZE_PROPERTIES(spreadDescriptor);
     };
 
     struct Preferences{
-        Spread spread;
+        Spread spread{};
         ADD_SERIALIZE_PROPERTIES(spread);
     };
 
 
     struct Resource{
-        struct ResourceObj limits;
-        struct ResourceObj reservations;
+        struct ResourceObj limits{};
+        struct ResourceObj reservations{};
         ADD_SERIALIZE_PROPERTIES(limits,reservations);
     };
 
     struct Platform{
-        std::string architecture;
-        std::string OS;
+        std::string architecture{};
+        std::string OS{};
         ADD_SERIALIZE_PROPERTIES(architecture,OS);
     };
 
     struct Placement{
-        vector<std::string> constraints;
-        vector<Preferences> preferences;
-        vector<Platform> platforms;
+        vector<std::string> constraints{};
+        vector<Preferences> preferences{};
+        vector<Platform> platforms{};
         ADD_SERIALIZE_PROPERTIES(constraints,preferences,platforms);
     };
     struct NetWork{
-        std::string target;
-        vector<std::string> aliases;
+        std::string target{};
+        vector<std::string> aliases{};
         ADD_SERIALIZE_PROPERTIES(target,aliases);
     };
 
     struct Driver{
-        std::string name;
+        std::string name{};
         ADD_SERIALIZE_PROPERTIES(name);
     };
 
     struct DriverState{
-        std::string name; 
+        std::string name{}; 
         // Options
 
         ADD_SERIALIZE_PROPERTIES(name);
     };
 
     struct ConfigIP{
-        std::string subnet;
-        std::string gateway;
+        std::string subnet{};
+        std::string gateway{};
 
         ADD_SERIALIZE_PROPERTIES(subnet,gateway);
     };
     struct IPAMOption{
-        Driver driver;
-        vector<ConfigIP> configip;
-        std::string scope;
+        Driver driver{};
+        vector<ConfigIP> configip{};
+        std::string scope{};
         ADD_SERIALIZE_PROPERTIES(driver,configip);
     };
 
     struct UpdateStatus{
-        std::string state;   //updating paused completed
-        uint64_t createdAt;
-        uint64_t completedAt;
-        std::string message;
+        std::string state{};   //updating paused completed
+        uint64_t createdAt{};
+        uint64_t completedAt{};
+        std::string message{};
         ADD_SERIALIZE_PROPERTIES(state,createdAt,completedAt,message);
     };
 
     struct NetWorkSpec{
-        std::string name;
-        Labels labels;
-        vector<std::string> driverConfiguration;
-        bool ingress;
-        IPAMOption IPAMOptions;
+        std::string name{};
+        Labels labels{};
+        vector<std::string> driverConfiguration{};
+        bool ingress{};
+        IPAMOption IPAMOptions{};
         ADD_SERIALIZE_PROPERTIES(name,labels,driverConfiguration,ingress,IPAMOptions);
     };
 
     struct Plugins{
-        std::string type;
-        std::string name;
+        std::string type{};
+        std::string name{};
         ADD_SERIALIZE_PROPERTIES(type,name);
     };
 
     struct TLSInfo{
-        std::string trustRoot;
-        std::string certIssuerSubject;
-        std::string certIssuerPublicKey;
+        std::string trustRoot{};
+        std::string certIssuerSubject{};
+        std::string certIssuerPublicKey{};
         ADD_SERIALIZE_PROPERTIES(trustRoot,certIssuerSubject,certIssuerPublicKey);
     };
 
     struct NetworkTemplate{
         int nProtocolVersion = DEFAULT_CTASK_API_VERSION;
-        int index;
-        std::string ID;
-        uint64_t createdAt;
-        uint64_t updatedAt;
-        NetWorkSpec Spec;
-        DriverState driverState;
-        IPAMOption IPAMOptions;
-        vector<std::string> addresses;
+        int index{};
+        std::string ID{};
+        uint64_t createdAt{};
+        uint64_t updatedAt{};
+        NetWorkSpec Spec{};
+        DriverState driverState{};
+        IPAMOption IPAMOptions{};
+        vector<std::string> addresses{};
         ADD_SERIALIZE_PROPERTIES(nProtocolVersion,index,ID,createdAt,updatedAt,Spec,driverState,IPAMOptions,addresses);
     };
 
@@ -246,10 +246,10 @@ protected:
     mutable CCriticalSection cs;
 public:
     int nProtocolVersion = DEFAULT_CDOCKER_API_VERSION;
-    Config::Version version;
-    std::string ID;
-    uint64_t createdAt;
-    uint64_t updatedAt;
+    Config::Version version{};
+    std::string ID{};
+    uint64_t createdAt{};
+    uint64_t updatedAt{};
     
 public:
     DockerBase() =default;
@@ -279,9 +279,9 @@ public:
 class filterbase{
 
 public:
-    vector<std::string> id;
-    vector<std::string> label;
-    vector<std::string> name;
+    vector<std::string> id{};
+    vector<std::string> label{};
+    vector<std::string> name{};
     virtual std::string ToJsonString()= 0;
 };
 uint64_t getDockerTime(const std::string& timeStr);

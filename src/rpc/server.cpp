@@ -347,7 +347,7 @@ static const CRPCCommand vRPCCommands[] =
     /* MassGrid features */
     { "massgrid",               "masternode",             &masternode,             true  },
     { "massgrid",               "masternodelist",         &masternodelist,         true  },
-    { "massgrid",               "dockerserver",           &dockerserver,           true  },
+    { "massgrid",               "dockercreate",           &dockercreate,           true  },
     { "massgrid",               "masternodebroadcast",    &masternodebroadcast,    true  },
     { "massgrid",               "gobject",                &gobject,                true  },
     { "massgrid",               "voteraw",                &voteraw,                true  },

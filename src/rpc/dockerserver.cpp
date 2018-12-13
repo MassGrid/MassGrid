@@ -30,7 +30,7 @@
 void EnsureWalletIsUnlocked();
 #endif // ENABLE_WALLET
 
-UniValue dockerserver(const UniValue& params, bool fHelp)
+UniValue dockercreate(const UniValue& params, bool fHelp)
 {
     std::string strCommand;
     if (params.size() >= 1) {
@@ -92,7 +92,7 @@ UniValue dockerserver(const UniValue& params, bool fHelp)
         if(!dockercluster.ProcessDockernodeConnections())
             throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Connect to Masternode failed");
 
-        DockerCreateService createService;
+        DockerCreateService createService{};
 
         createService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
         createService.vin = CTxIn();
@@ -105,7 +105,7 @@ UniValue dockerserver(const UniValue& params, bool fHelp)
 
         int64_t strServiceCpu = params[4].get_int64();
         createService.cpu = strServiceCpu;
-
+        LogPrintf("cpu %lld \n",createService.cpu);
         int64_t strServiceMemoey_byte = params[5].get_int64();
         createService.memory_byte = strServiceMemoey_byte;
         

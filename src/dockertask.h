@@ -11,26 +11,26 @@ namespace Config{
         TASKSTATE_REJECTED,TASKSTATE_REMOVE,TASKSTATE_ORPHANED
     };
     struct TaskStatus{
-        uint64_t timeStamp;
-        int state;  //new allocated pending assigned 
+        uint64_t timeStamp{};
+        int state{};  //new allocated pending assigned 
                             //accepted preparing ready starting 
                             //running complete shutdown failed
                             //rejected remove orphaned
-        std::string message;
-        std::string err;
-        ContainerStatus containerStatus;
+        std::string message{};
+        std::string err{};
+        ContainerStatus containerStatus{};
         ADD_SERIALIZE_PROPERTIES(timeStamp,state,message,err,containerStatus);
     };
     struct TaskSpec{    
         // pluginSpec
-        ContainerSpec containerSpec;
-        Resource resources;
-        RestartPolicy restartPolicy;
-        Placement placement;
-        int64_t forceUpdate;
-        std::string runtime;
-        vector<struct NetWork> netWorks;
-        LogDriver logdriver;
+        ContainerSpec containerSpec{};
+        Resource resources{};
+        RestartPolicy restartPolicy{};
+        Placement placement{};
+        int64_t forceUpdate{};
+        std::string runtime{};
+        vector<struct NetWork> netWorks{};
+        LogDriver logdriver{};
         ADD_SERIALIZE_PROPERTIES(containerSpec,resources,restartPolicy,placement,forceUpdate,runtime,netWorks,logdriver);
     };
 };
@@ -61,20 +61,20 @@ public:
 
     static void DockerTaskList(const string& taskData, std::map<std::string,Task> &tasks);
 
-    std::string name;
-    Config::Labels labels;
+    std::string name{};
+    Config::Labels labels{};
     
-    Config::TaskSpec spec;
-    std::string serviceID;
+    Config::TaskSpec spec{};
+    std::string serviceID{};
     // CService service;
-    int64_t slot;
-    std::string nodeID;
+    int64_t slot{};
+    std::string nodeID{};
     // CNode node;
-     std::vector<Config::GenericResources> genericResources;
-    Config::TaskStatus status;
+     std::vector<Config::GenericResources> genericResources{};
+    Config::TaskStatus status{};
 
-    int desiredState;
-    std::vector<Config::NetworkTemplate> networksAttachments;
+    int desiredState{};
+    std::vector<Config::NetworkTemplate> networksAttachments{};
 
 public:
     Task() = default;
