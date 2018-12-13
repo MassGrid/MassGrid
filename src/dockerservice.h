@@ -282,7 +282,7 @@ public:
         ss << vin;
         ss << version;
         ss << pubKeyClusterAddress;
-        // ss << sspec;
+        ss << sigTime;
         ss << n2n_community;
         ss << serviceName;
         ss << image;
