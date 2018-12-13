@@ -195,7 +195,7 @@ void Task::ParseResource(const UniValue& data,Config::Resource &resource)
         if(data[vKeys[i]].isObject()){
             if(vKeys[i]=="Limits"){
                 ParseResourceObj(tdata,resource.limits);
-            }else if(vKeys[i]=="Reservation"){
+            }else if(vKeys[i]=="Reservations"){
                 ParseResourceObj(tdata,resource.reservations);
             }
         }

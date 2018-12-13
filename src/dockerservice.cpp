@@ -395,7 +395,7 @@ UniValue Service::ResourceToJson(Config::Resource &resource)
 
         UniValue objRev(UniValue::VOBJ);
         objRev=ResourceObjToJson(resource.reservations);
-        data.push_back(Pair("Reservation",objRev));
+        data.push_back(Pair("Reservations",objRev));
     }
     return data;
 }
