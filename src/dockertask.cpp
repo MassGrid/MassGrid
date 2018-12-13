@@ -246,7 +246,7 @@ void Task::ParseResGenNameSpec(const UniValue& data, Config::NamedResourceSpec &
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="Kind"){
                 namedResourceSpec.kind=tdata.get_str();
-            }else if(vKeys[i]=="Vaule"){
+            }else if(vKeys[i]=="Value"){
                 namedResourceSpec.value=tdata.get_str();
             }
         }
@@ -263,7 +263,7 @@ void Task::ParseResGenDiscSpec(const UniValue& data, Config::DiscreteResourceSpe
             }
         }
         if(data[vKeys[i]].isNum()){
-            if(vKeys[i]=="Vaule"){
+            if(vKeys[i]=="Value"){
                 discResourceSpec.value=tdata.get_int64();
             }
         }
@@ -456,7 +456,7 @@ void Task::ParseGenResNameSpec(const UniValue& data, Config::NamedResourceSpec &
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="Kind"){
                 namedResourceSpec.kind=tdata.get_str();
-            }else if(vKeys[i]=="Vaule"){
+            }else if(vKeys[i]=="Value"){
                 namedResourceSpec.value=tdata.get_str();
             }
         }
@@ -473,7 +473,7 @@ void Task::ParseGenResDiscSpec(const UniValue& data, Config::DiscreteResourceSpe
             }
         }
         if(data[vKeys[i]].isNum()){
-            if(vKeys[i]=="Vaule"){
+            if(vKeys[i]=="Value"){
                 discResourceSpec.value=tdata.get_int64();
             }
         }

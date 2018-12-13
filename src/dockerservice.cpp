@@ -477,7 +477,7 @@ void Service::ParseResGenNameSpec(const UniValue& data, Config::NamedResourceSpe
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="Kind"){
                 namedResourceSpec.kind=tdata.get_str();
-            }else if(vKeys[i]=="Vaule"){
+            }else if(vKeys[i]=="Value"){
                 namedResourceSpec.value=tdata.get_str();
             }
         }
@@ -488,7 +488,7 @@ UniValue Service::ResGenNameSpecToJson(Config::NamedResourceSpec &namedResourceS
     UniValue data(UniValue::VOBJ);
     {
         data.push_back(Pair("Kind",namedResourceSpec.kind));
-        data.push_back(Pair("Vaule",namedResourceSpec.value));
+        data.push_back(Pair("Value",namedResourceSpec.value));
     }
     return data;
 }
@@ -503,7 +503,7 @@ void Service::ParseResGenDiscSpec(const UniValue& data, Config::DiscreteResource
             }
         }
         if(data[vKeys[i]].isNum()){
-            if(vKeys[i]=="Vaule"){
+            if(vKeys[i]=="Value"){
                 discResourceSpec.value=tdata.get_int64();
             }
         }
@@ -514,7 +514,7 @@ UniValue Service::ResGenDiscSpecToJson(Config::DiscreteResourceSpec &discResourc
     UniValue data(UniValue::VOBJ);
     {
         data.push_back(Pair("Kind",discResourceSpec.kind));
-        data.push_back(Pair("Vaule",discResourceSpec.value));
+        data.push_back(Pair("Value",discResourceSpec.value));
     }
     return data;
 }

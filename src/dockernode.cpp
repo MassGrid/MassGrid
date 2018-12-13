@@ -220,7 +220,7 @@ void Node::ParseNodeGenResNameSpec(const UniValue& data, Config::NamedResourceSp
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="Kind"){
                 namedResourceSpec.kind=tdata.get_str();
-            }else if(vKeys[i]=="Vaule"){
+            }else if(vKeys[i]=="Value"){
                 namedResourceSpec.value=tdata.get_str();
             }
         }
@@ -237,7 +237,7 @@ void Node::ParseNodeGenResDiscSpec(const UniValue& data, Config::DiscreteResourc
             }
         }
         if(data[vKeys[i]].isNum()){
-            if(vKeys[i]=="Vaule"){
+            if(vKeys[i]=="Value"){
                 discResourceSpec.value=tdata.get_int64();
             }
         }
