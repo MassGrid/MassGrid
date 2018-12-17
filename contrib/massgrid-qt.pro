@@ -18,8 +18,8 @@ FORMS += \
     ../src/qt/forms/cmessagebox.ui \
     ../src/qt/forms/signverifymessagedialog.ui \
     ../src/qt/forms/transactiondescdialog.ui\
-    ../src/qt/forms/mainwintitle.ui
-
+    ../src/qt/forms/mainwintitle.ui\
+    ../src/qt/forms/adddockerservicedlg.ui
 
 RESOURCES += \
-    ../src/qt/massgrid.qrc
+../src/qt/massgrid.qrc

@@ -205,7 +205,6 @@ void CMasternodeSync::ProcessTick(CConnman& connman)
                 SendGovernanceSyncRequest(pnode, connman);
             } else {
                 nRequestedMasternodeAssets = MASTERNODE_SYNC_FINISHED;
-                LogPrintf("------->CMasternodeSync::ProcessTick:MASTERNODE_SYNC_FINISHED\n");
             }
             nRequestedMasternodeAttempt++;
             connman.ReleaseNodeVector(vNodesCopy);

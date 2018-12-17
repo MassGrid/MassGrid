@@ -549,10 +549,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         }
         else if (strType == "defaultkey")
         {
-            ssValue >> pwallet->vchDefaultKey;
-            LogPrintf("----> wallet db pubkey getid:%s\n",pwallet->vchDefaultKey.GetID().ToString());
-            LogPrintf("----> wallet db pubkey:%s\n",pwallet->vchDefaultKey.ToString());
-            
+            ssValue >> pwallet->vchDefaultKey;            
         }
         else if (strType == "pool")
         {

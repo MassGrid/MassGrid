@@ -373,6 +373,7 @@ void AddressBookPage::selectNewAddress(const QModelIndex &parent, int begin, int
         newAddressToSelect.clear();
     }
 }
+
 void AddressBookPage::mousePressEvent(QMouseEvent *e)
 {
     int posx = e->pos().x();

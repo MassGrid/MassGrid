@@ -84,5 +84,6 @@ private Q_SLOTS:
     void showDockerDetail(QModelIndex);
     void loadServerDetail(QModelIndex);
     void slot_updateServiceBtn();
+    void slot_createServiceBtn();
 };
 #endif // MASTERNODELIST_H

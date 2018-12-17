@@ -186,7 +186,7 @@
                 <string>&amp;New</string>
                </property>
                <property name="icon">
-                <iconset resource="../massgrid.qrc">
+                <iconset>
                  <normaloff>:/pic/res/pic/add.png</normaloff>:/pic/res/pic/add.png</iconset>
                </property>
                <property name="toolButtonStyle">
@@ -203,7 +203,7 @@
                 <string>&amp;Copy</string>
                </property>
                <property name="icon">
-                <iconset resource="../massgrid.qrc">
+                <iconset>
                  <normaloff>:/icons/editcopy</normaloff>:/icons/editcopy</iconset>
                </property>
                <property name="toolButtonStyle">
@@ -220,7 +220,7 @@
                 <string>&amp;Delete</string>
                </property>
                <property name="icon">
-                <iconset resource="../massgrid.qrc">
+                <iconset>
                  <normaloff>:/pic/res/pic/closeBtn.png</normaloff>:/pic/res/pic/closeBtn.png</iconset>
                </property>
                <property name="toolButtonStyle">
@@ -256,7 +256,7 @@
                 <string>&amp;Export</string>
                </property>
                <property name="icon">
-                <iconset resource="../massgrid.qrc">
+                <iconset>
                  <normaloff>:/pic/res/pic/outputData-white.png</normaloff>:/pic/res/pic/outputData-white.png</iconset>
                </property>
                <property name="toolButtonStyle">
@@ -304,12 +304,7 @@
     </widget>
    </item>
   </layout>
-  <zorder>centerWin</zorder>
-  <zorder></zorder>
-  <zorder></zorder>
  </widget>
- <resources>
-  <include location="../massgrid.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>688</width>
-    <height>591</height>
+    <height>613</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -196,7 +196,7 @@ QComboBox QAbstractItemView::item
 </string>
              </property>
              <property name="currentIndex">
-              <number>1</number>
+              <number>4</number>
              </property>
              <widget class="QWidget" name="tabMain">
               <attribute name="title">

@@ -12,8 +12,6 @@ CDockerServerman dockerServerman;
 void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman){
     
     if (!masternodeSync.IsSynced()) return;
-
-    LogPrintf("====>CDockerServerman::ProcessMessage start strcommand：%s\n",strCommand);
     
     if (strCommand == NetMsgType::GETDNDATA) { //server
         
@@ -39,7 +37,6 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
     }else if(strCommand == NetMsgType::DNDATA){     //cluster
 
-        LogPrintf("====>dockerserverman dndata\n");
         LogPrint("docker","CDockerServerman::ProcessMessage DNDATA Started\n");
         DockerGetData mdndata;
         vRecv >> mdndata;
@@ -51,15 +48,11 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         dockercluster.mapDockerServiceLists = mdndata.mapDockerServiceLists;
         dockercluster.sigTime = mdndata.sigTime;
 
+        LogPrintf("CDockerServerman::ProcessMessage mapDockerServiceLists:%d \n",mdndata.mapDockerServiceLists.size());
         LogPrintf("CDockerServerman::ProcessMessage sigTime:%d \n",mdndata.sigTime);
 
-        // std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
-        // std::string tmpid = iter->first;
-        // std::string servspecjson = 
-        ///Service::DockerServSpecToJson(iter->second);
-        // LogPrintf("======>CDockerServerman::ProcessMessage tmpid:%s\v",tmpid);
-        // LogPrintf("======>CDockerServerman::ProcessMessage service:%s\n",iter->second.spec.ToJsonString());
-
+        std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
+        std::string tmpid = iter->first;
 
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("docker","CDockerServerman::ProcessMessage CREATESERVICE Started\n");
@@ -111,7 +104,6 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
         }
     }
-        LogPrintf("====>CDockerServerman::ProcessMessage end\n");
 }
 bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createService){
 

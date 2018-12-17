@@ -28,7 +28,8 @@ QT_FORMS_UI = \
   qt/forms/cmessagebox.ui\
   qt/forms/privkeymgr.ui\
   qt/forms/cprogressdialog.ui\
-  qt/forms/mainwintitle.ui
+  qt/forms/mainwintitle.ui \
+  qt/forms/adddockerservicedlg.ui
 
 QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
@@ -81,7 +82,8 @@ QT_MOC_CPP = \
   qt/moc_walletmodel.cpp \
   qt/moc_walletview.cpp \
   qt/moc_cupdatethread.cpp \
-  qt/moc_mainwintitle.cpp
+  qt/moc_mainwintitle.cpp \
+  qt/moc_adddockerservicedlg.cpp
 
 
 MASSGRID_MM = \
@@ -153,6 +155,7 @@ MASSGRID_QT_H = \
   qt/cprogressdialog.h\
   qt/transactiondescdialog.h \
   qt/mainwintitle.h\
+  qt/adddockerservicedlg.h \
   qt/transactionfilterproxy.h \
   qt/transactionrecord.h \
   qt/transactiontablemodel.h \
@@ -279,6 +282,7 @@ MASSGRID_QT_CPP += \
   qt/cprogressdialog.cpp\
   qt/transactiondescdialog.cpp \
   qt/mainwintitle.cpp\
+  qt/adddockerservicedlg.cpp \
   qt/transactionfilterproxy.cpp \
   qt/transactionrecord.cpp \
   qt/transactiontablemodel.cpp \

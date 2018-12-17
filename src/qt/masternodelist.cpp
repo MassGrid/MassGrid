@@ -20,6 +20,8 @@
 // #include "docker"
 #include "dockercluster.h"
 #include "util.h"
+#include "adddockerservicedlg.h"
+#include "massgridgui.h"
 
 int GetOffsetFromUtc()
 {
@@ -73,6 +75,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
     connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
+    connect(ui->createServiceBtn, SIGNAL(clicked()), this, SLOT(slot_createServiceBtn()));
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
@@ -82,6 +85,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     fFilterUpdated = false;
     nTimeFilterUpdated = GetTime();
     updateNodeList();
+    clearDockerDetail();
 }
 
 MasternodeList::~MasternodeList()
@@ -116,13 +120,7 @@ void MasternodeList::showDockerDetail(QModelIndex index)
     const std::string& address_port = ui->tableWidgetMasternodes->item(row,0)->text().toStdString().c_str();
 
     const std::string& addr = DefaultReceiveAddress();
-
-    LogPrintf("====>showDockerDetail：%s\n",addr);
-
     CPubKey pubkey = pwalletMain->CreatePubKey(addr);
-
-    LogPrintf("====>pubkey string:%s\n",pubkey.ToString());
-
     if(dockercluster.SetConnectDockerAddress(address_port) && dockercluster.ProcessDockernodeConnections()){
         dockercluster.AskForDNData();
         CMessageBox::information(0, tr("connect docker"),
@@ -507,14 +505,6 @@ void MasternodeList::loadServerDetail(QModelIndex index)
         for(int i=1;i<commandSize;i++)
             command += "," + service.spec.taskTemplate.containerSpec.command[i];
     }
-
-    // LogPrintf("====>loadServerDetail:%s \n",service.spec.ToJsonString());
-    LogPrintf("====>name:%s \n",name);
-    LogPrintf("====>address:%s \n",address);
-    LogPrintf("====>image:%s \n",image);
-    LogPrintf("====>command:%s \n",command);
-    LogPrintf("====>userName:%s \n",userName);
-
     ui->label_name->setText(QString::fromStdString(name));
     ui->label_address->setText(QString::fromStdString(address));
     ui->label_image->setText(QString::fromStdString(image));
@@ -534,4 +524,15 @@ void MasternodeList::clearDockerDetail()
     ui->label_image->setText("");
     ui->label_command->setText("");
     ui->label_user->setText("");
+}
+
+void MasternodeList::slot_createServiceBtn()
+{
+    AddDockerServiceDlg dlg;
+
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
+    dlg.exec();
 }
