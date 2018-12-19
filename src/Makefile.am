@@ -1,4 +1,4 @@
-DIST_SUBDIRS = secp256k1 univalue
+DIST_SUBDIRS = secp256k1 univalue n2n
 
 AM_LDFLAGS = $(PTHREAD_CFLAGS) $(LIBTOOL_LDFLAGS) $(HARDENED_LDFLAGS)
 AM_CXXFLAGS = $(HARDENED_CXXFLAGS)
@@ -18,6 +18,7 @@ MASSGRID_CONFIG_INCLUDES=-I$(builddir)/config
 MASSGRID_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
 
 MASSGRID_INCLUDES += -I$(srcdir)/secp256k1/include
+MASSGRID_INCLUDES += -I$(srcdir)/n2n/include
 MASSGRID_INCLUDES += $(UNIVALUE_CFLAGS)
 
 LIBMASSGRID_SERVER=libmassgrid_server.a
@@ -28,8 +29,12 @@ LIBMASSGRID_UTIL=libmassgrid_util.a
 LIBMASSGRID_CRYPTO=crypto/libmassgrid_crypto.a
 LIBMASSGRIDQT=qt/libmassgridqt.a
 LIBSECP256K1=secp256k1/libsecp256k1.la
+LIBN2N=n2n/libn2n.la
 
 $(LIBSECP256K1): $(wildcard secp256k1/src/*) $(wildcard secp256k1/include/*)
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -C $(@D) $(@F)
+
+$(LIBN2N): $(wildcard n2n/src/*) $(wildcard n2n/include/*)
 	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -C $(@D) $(@F)
 
 # Make is not made aware of per-object dependencies to avoid limiting building parallelization
@@ -511,7 +516,8 @@ massgridd_LDADD = \
   $(LIBMASSGRID_CRYPTO) \
   $(LIBLEVELDB) \
   $(LIBMEMENV) \
-  $(LIBSECP256K1)
+  $(LIBSECP256K1) \
+  $(LIBN2N)
 
 if ENABLE_ZMQ
 massgridd_LDADD += $(LIBMASSGRID_ZMQ) $(ZMQ_LIBS)
@@ -612,6 +618,7 @@ clean-local:
 	-$(MAKE) -C leveldb clean
 	-$(MAKE) -C secp256k1 clean
 	-$(MAKE) -C univalue clean
+	-$(MAKE) -C n2n clean
 	-rm -f leveldb/*/*.gcda leveldb/*/*.gcno leveldb/helpers/memenv/*.gcda leveldb/helpers/memenv/*.gcno
 	-rm -f config.h
 

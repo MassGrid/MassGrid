@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libn2n
+Description: Optimized C library for EC operations on curve n2n
+URL: https://github.com/wanyvic/n2n
+Version: @PACKAGE_VERSION@
+Cflags: -I${includedir}
+Libs.private: @SECP_LIBS@
+Libs: -L${libdir} -ln2n

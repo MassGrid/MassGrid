@@ -1,5 +1,5 @@
 
-# **MassGrid-Core (MGD) v1.2.0.1**
+# **MassGrid-Core (MGD) v1.3.0.1**
 
 [![Build Status](https://travis-ci.org/MassGrid/MassGrid.svg?branch=masternode)](https://travis-ci.org/MassGrid/MassGrid)
 
@@ -54,7 +54,9 @@ To Build
 ---------------------
 
 ```bash
-qmake
+cd MassGrid
+./autogen.sh
+./configure
 make
 make install # optional
 ```
