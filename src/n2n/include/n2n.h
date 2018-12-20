@@ -102,7 +102,7 @@ struct ether_hdr
 } __attribute__ ((__packed__));
 
 typedef struct ether_hdr ether_hdr_t;
-
+typedef struct n2n_REGISTER_SUPER n2n_REGISTER_SUPER_t;
 #ifdef __sun__
 #include <sys/sysmacros.h> /* MIN() and MAX() declared here */
 #undef N2N_HAVE_DAEMON
@@ -255,7 +255,7 @@ extern const uint8_t broadcast_addr[6];
 extern const uint8_t multicast_addr[6];
 
 /* Functions */
-extern void traceEvent(int eventTraceLevel, char* file, int line, char * format, ...);
+// extern void traceEvent(int eventTraceLevel, char* file, int line, char * format, ...);
 extern int  tuntap_open(tuntap_dev *device, char *dev, const char *address_mode, char *device_ip, 
 			char *device_mask, const char * device_mac, int mtu);
 extern int  tuntap_read(struct tuntap_dev *tuntap, unsigned char *buf, int len);

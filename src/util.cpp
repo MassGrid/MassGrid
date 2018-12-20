@@ -286,6 +286,8 @@ bool LogAcceptCategory(const char* category)
                 ptrCategory->insert(string("mnpayments"));
                 ptrCategory->insert(string("gobject"));
                 ptrCategory->insert(string("docker"));
+                ptrCategory->insert(string("sn"));
+                ptrCategory->insert(string("edge"));
                 ptrCategory->insert(string("dockerapi"));
             }
         }
