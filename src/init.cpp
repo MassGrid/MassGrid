@@ -2003,7 +2003,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     // ********************************************************* Step 12: start node
 threadGroup.create_thread(boost::bind(&ThreadCheckInstantSend, boost::ref(*g_connman)));
 
-    // if(fMasterNode)
+    if(fMasterNode)
 threadGroup.create_thread(&ThreadSnStart);
 
     if (!CheckDiskSpace())
