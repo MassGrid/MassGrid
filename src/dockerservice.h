@@ -168,6 +168,7 @@ public:
         previousSpec=from.previousSpec;
         endpoint=from.endpoint;
         updateStatus=from.updateStatus;
+        mapDockerTasklists=from.mapDockerTasklists;
     }
     Service& operator=(Service const& from){
         ID=from.ID;
@@ -179,6 +180,7 @@ public:
         previousSpec=from.previousSpec;
         endpoint=from.endpoint;
         updateStatus=from.updateStatus;
+        mapDockerTasklists=from.mapDockerTasklists;
         return *this;
     }
         ADD_SERIALIZE_METHODS;

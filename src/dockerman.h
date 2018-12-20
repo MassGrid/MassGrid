@@ -89,6 +89,7 @@ public:
     std::string GetFreeIP();
     void SetIPBook(std::string ip,bool isused);
     bool IsFreeIP(std::string ip);
+    void UpdateIPfromServicelist();
 };
 
 #endif //DOCKERMAN_H

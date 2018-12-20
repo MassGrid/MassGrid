@@ -8,10 +8,13 @@
  */
 
 
-#include "n2n.h"
+#include <boost/thread.hpp>
+#include "dockersupernode.h"
+#include "init.h"
+#include "n2n/include/n2n.h"
 
 
-#define N2N_SN_LPORT_DEFAULT 7654
+#define N2N_SN_LPORT_DEFAULT 8999
 #define N2N_SN_PKTBUF_SIZE   2048
 
 #define N2N_SN_MGMT_PORT                5645
@@ -67,7 +70,7 @@ static int init_sn( n2n_sn_t * sss )
 #endif
     memset( sss, 0, sizeof(n2n_sn_t) );
 
-    sss->daemon = 1; /* By defult run as a daemon. */
+    sss->daemon = 0; /* By defult run as a daemon. */
     sss->lport = N2N_SN_LPORT_DEFAULT;
     sss->sock = -1;
     sss->mgmt_sock = -1;
@@ -120,7 +123,7 @@ static int update_edge( n2n_sn_t * sss,
     n2n_sock_str_t      sockbuf;
     struct peer_info *  scan;
 
-    traceEvent( TRACE_DEBUG, "update_edge for %s [%s]",
+    LogPrint("sn", "update_edge for %s [%s]\n",
                 macaddr_str( mac_buf, reg->edgeMac ),
                 sock_to_cstr( sockbuf, sender_sock ) );
 
@@ -139,18 +142,18 @@ static int update_edge( n2n_sn_t * sss,
         scan->timeout = reg->timeout;
         if(reg->aflags & N2N_AFLAGS_LOCAL_SOCKET) {
             scan->num_sockets = 2;
-            scan->sockets = malloc(scan->num_sockets*sizeof(n2n_sock_t));
+            scan->sockets = (n2n_sock_t *)malloc(scan->num_sockets*sizeof(n2n_sock_t));
             scan->sockets[1] = reg->local_sock;
         } else {
             scan->num_sockets = 1;
-            scan->sockets = malloc(scan->num_sockets*sizeof(n2n_sock_t));
+            scan->sockets = (n2n_sock_t *)malloc(scan->num_sockets*sizeof(n2n_sock_t));
         }
         scan->sockets[0] = scan->sock;
 
         /* insert this guy at the head of the edges list */
 		sglib_hashed_peer_info_t_add(sss->edges, scan);
 
-        traceEvent( TRACE_INFO, "update_edge created   %s ==> %s",
+        LogPrint("sn", "update_edge created   %s ==> %s\n",
                     macaddr_str( mac_buf, reg->edgeMac ),
                     sock_to_cstr( sockbuf, sender_sock ) );
     }
@@ -173,7 +176,7 @@ static int update_edge( n2n_sn_t * sss,
             if (reg->aflags & N2N_AFLAGS_LOCAL_SOCKET) {
                 scan->num_sockets = 2;
                 free(scan->sockets);
-                scan->sockets = malloc(scan->num_sockets*sizeof(n2n_sock_t));
+                scan->sockets = (n2n_sock_t *)malloc(scan->num_sockets*sizeof(n2n_sock_t));
                 scan->sockets[0] = scan->sock;
                 scan->sockets[1] = reg->local_sock;
             }
@@ -185,16 +188,16 @@ static int update_edge( n2n_sn_t * sss,
             } else {
                 scan->num_sockets = 1;
                 free(scan->sockets);
-                scan->sockets = malloc(scan->num_sockets*sizeof(n2n_sock_t));
+                scan->sockets = (n2n_sock_t *)malloc(scan->num_sockets*sizeof(n2n_sock_t));
                 scan->sockets[0] = scan->sock;
             }
         }
         if (num_changes) {
-            traceEvent( TRACE_INFO, "update_edge updated   %s ==> %s",
+            LogPrint("sn", "update_edge updated   %s ==> %s\n",
                         macaddr_str( mac_buf, reg->edgeMac ),
                         sock_to_cstr( sockbuf, sender_sock ) );
         } else {
-            traceEvent( TRACE_DEBUG, "update_edge unchanged %s ==> %s",
+            LogPrint("sn", "update_edge unchanged %s ==> %s\n",
                         macaddr_str( mac_buf, reg->edgeMac ),
                         sock_to_cstr( sockbuf, sender_sock ) );
         }
@@ -225,7 +228,7 @@ static ssize_t sendto_sock(n2n_sn_t * sss,
         udpsock.sin_port = htons( sock->port );
         memcpy( &(udpsock.sin_addr.s_addr), &(sock->addr.v4), IPV4_SIZE );
 
-        traceEvent( TRACE_DEBUG, "sendto_sock %lu to [%s]",
+        LogPrint("sn", "sendto_sock %lu to [%s]\n",
                     pktsize,
                     sock_to_cstr( sockbuf, sock ) );
 
@@ -265,7 +268,7 @@ static int try_forward( n2n_sn_t * sss,
         if ( data_sent_len == pktsize )
         {
             ++(sss->stats.fwd);
-            traceEvent(TRACE_DEBUG, "unicast %lu to [%s] %s",
+            LogPrint("sn", "unicast %lu to [%s] %s\n",
                        pktsize,
                        sock_to_cstr( sockbuf, &(scan->sock) ),
                        macaddr_str(mac_buf, scan->mac_addr));
@@ -273,7 +276,7 @@ static int try_forward( n2n_sn_t * sss,
         else
         {
             ++(sss->stats.errors);
-            traceEvent(TRACE_ERROR, "unicast %lu to [%s] %s FAILED (%d: %s)",
+            LogPrintf( "unicast %lu to [%s] %s FAILED (%d: %s)\n",
                        pktsize,
                        sock_to_cstr( sockbuf, &(scan->sock) ),
                        macaddr_str(mac_buf, scan->mac_addr),
@@ -282,7 +285,7 @@ static int try_forward( n2n_sn_t * sss,
     }
     else
     {
-        traceEvent( TRACE_DEBUG, "try_forward unknown MAC" );
+        LogPrint("sn", "try_forward unknown MAC\n" );
 
         /* Not a known MAC so drop. */
     }
@@ -307,7 +310,7 @@ static int try_broadcast( n2n_sn_t * sss,
     macstr_t            mac_buf;
     n2n_sock_str_t      sockbuf;
 
-    traceEvent( TRACE_DEBUG, "try_broadcast" );
+    LogPrint("sn", "try_broadcast\n" );
 
 	for(ll=sglib_hashed_peer_info_t_it_init(&it,sss->edges); ll!=NULL; ll=sglib_hashed_peer_info_t_it_next(&it)) {
         if( 0 == (memcmp(ll->community_name, cmn->community, sizeof(n2n_community_t)) )
@@ -321,7 +324,7 @@ static int try_broadcast( n2n_sn_t * sss,
             if(data_sent_len != pktsize)
             {
                 ++(sss->stats.errors);
-                traceEvent(TRACE_WARNING, "multicast %lu to [%s] %s failed %s",
+                LogPrintf( "multicast %lu to [%s] %s failed %s\n",
                            pktsize,
                            sock_to_cstr( sockbuf, &(ll->sock) ),
                            macaddr_str(mac_buf, ll->mac_addr),
@@ -330,7 +333,7 @@ static int try_broadcast( n2n_sn_t * sss,
             else 
             {
                 ++(sss->stats.broadcast);
-                traceEvent(TRACE_DEBUG, "multicast %lu to [%s] %s",
+                LogPrint("sn", "multicast %lu to [%s] %s\n",
                            pktsize,
                            sock_to_cstr( sockbuf, &(ll->sock) ),
                            macaddr_str(mac_buf, ll->mac_addr));
@@ -352,7 +355,7 @@ static int process_mgmt( n2n_sn_t * sss,
     size_t ressize=0;
     ssize_t r;
 
-    traceEvent( TRACE_DEBUG, "process_mgmt" );
+    LogPrint("sn", "process_mgmt\n" );
 
     ressize += snprintf( resbuf+ressize, N2N_SN_PKTBUF_SIZE-ressize, 
                          "----------------\n" );
@@ -399,7 +402,7 @@ static int process_mgmt( n2n_sn_t * sss,
     if ( r <= 0 )
     {
         ++(sss->stats.errors);
-        traceEvent( TRACE_ERROR, "process_mgmt : sendto failed. %s", strerror(errno) );
+        LogPrintf( "process_mgmt : sendto failed. %s\n", strerror(errno) );
     }
 
     return 0;
@@ -446,7 +449,7 @@ static int process_udp( n2n_sn_t * sss,
     n2n_REGISTER_SUPER_t            regs;
     n2n_REGISTER_SUPER_ACK_t        ack;
 
-    traceEvent( TRACE_DEBUG, "process_udp(%lu)", udp_size );
+    LogPrint("sn", "process_udp(%lu)\n", udp_size );
 
     /* Use decode_common() to determine the kind of packet then process it:
      *
@@ -461,7 +464,7 @@ static int process_udp( n2n_sn_t * sss,
     idx = 0; /* marches through packet header as parts are decoded. */
     if ( decode_common(&cmn, udp_buf, &rem, &idx) < 0 )
     {
-        traceEvent( TRACE_ERROR, "Failed to decode common section" );
+        LogPrintf( "Failed to decode common section\n" );
         return -1; /* failed to decode packet */
     }
 
@@ -470,7 +473,7 @@ static int process_udp( n2n_sn_t * sss,
 
     if ( cmn.ttl < 1 )
     {
-        traceEvent( TRACE_WARNING, "Expired TTL" );
+        LogPrintf( "Expired TTL\n" );
         return 0; /* Don't process further */
     }
 
@@ -490,7 +493,7 @@ static int process_udp( n2n_sn_t * sss,
 
         unicast = (0 == is_multi_broadcast(eth.dstMac) );
 
-        traceEvent( TRACE_DEBUG, "Rx PACKET (%s) %s -> %s %s",
+        LogPrint("sn", "Rx PACKET (%s) %s -> %s %s\n",
                     (unicast?"unicast":"multicast"),
                     macaddr_str( mac_buf, eth.srcMac ),
                     macaddr_str( mac_buf2, eth.dstMac ),
@@ -516,7 +519,7 @@ static int process_udp( n2n_sn_t * sss,
             /* Already from a supernode. Nothing to modify, just pass to
              * destination. */
 
-            traceEvent( TRACE_DEBUG, "Rx PACKET fwd unmodified" );
+            LogPrint("sn", "Rx PACKET fwd unmodified\n" );
 
             rec_buf = udp_buf;
             encx = udp_size;
@@ -535,7 +538,7 @@ static int process_udp( n2n_sn_t * sss,
     case MSG_TYPE_QUERY_PEER:
         decode_QUERY_PEER( &query, &cmn, udp_buf, &rem, &idx );
 
-        traceEvent( TRACE_DEBUG, "Rx QUERY_PEER from %s for %s",
+        LogPrint("sn", "Rx QUERY_PEER from %s for %s\n",
                     macaddr_str( mac_buf,  query.srcMac ),
                     macaddr_str( mac_buf2, query.targetMac ) );
 
@@ -560,10 +563,10 @@ static int process_udp( n2n_sn_t * sss,
             sendto( sss->sock, encbuf, encx, 0, 
                     (struct sockaddr *)sender_sock, sizeof(struct sockaddr_in) );
 
-            traceEvent( TRACE_DEBUG, "Tx PEER_INFO to %s",
+            LogPrint("sn", "Tx PEER_INFO to %s\n",
                         macaddr_str( mac_buf, query.srcMac ) );
         } else {
-            traceEvent( TRACE_DEBUG, "Ignoring QUERY_PEER for unknown edge %s",
+            LogPrint("sn", "Ignoring QUERY_PEER for unknown edge %s\n",
                         macaddr_str( mac_buf, query.targetMac ) );
         }
 
@@ -579,7 +582,7 @@ static int process_udp( n2n_sn_t * sss,
         
         if ( unicast )
         {
-        traceEvent( TRACE_DEBUG, "Rx REGISTER %s -> %s %s",
+        LogPrint("sn", "Rx REGISTER %s -> %s %s\n",
                     macaddr_str( mac_buf, reg.srcMac ),
                     macaddr_str( mac_buf2, reg.dstMac ),
                     ((cmn.flags & N2N_FLAGS_FROM_SUPERNODE)?"from sn":"local") );
@@ -616,11 +619,11 @@ static int process_udp( n2n_sn_t * sss,
         }
         else
         {
-            traceEvent( TRACE_ERROR, "Rx REGISTER with multicast destination" );
+            LogPrintf( "Rx REGISTER with multicast destination\n" );
         }
         break;
     case MSG_TYPE_REGISTER_ACK:
-        traceEvent( TRACE_DEBUG, "Rx REGISTER_ACK (NOT IMPLEMENTED) SHould not be via supernode" );
+        LogPrint("sn", "Rx REGISTER_ACK (NOT IMPLEMENTED) SHould not be via supernode\n" );
         break;
     case MSG_TYPE_REGISTER_SUPER:
         /* Edge requesting registration with us.  */
@@ -645,7 +648,7 @@ static int process_udp( n2n_sn_t * sss,
         ack.num_sn=0; /* No backup */
         memset( &(ack.sn_bak), 0, sizeof(n2n_sock_t) );
 
-        traceEvent( TRACE_DEBUG, "Rx REGISTER_SUPER for %s [%s]",
+        LogPrint("sn", "Rx REGISTER_SUPER for %s [%s]\n",
                     macaddr_str( mac_buf, regs.edgeMac ),
                     sock_to_cstr( sockbuf, &(ack.sock) ) );
 
@@ -656,38 +659,19 @@ static int process_udp( n2n_sn_t * sss,
         sendto( sss->sock, encbuf, encx, 0, 
                 (struct sockaddr *)sender_sock, sizeof(struct sockaddr_in) );
 
-        traceEvent( TRACE_DEBUG, "Tx REGISTER_SUPER_ACK for %s [%s]",
+        LogPrint("sn", "Tx REGISTER_SUPER_ACK for %s [%s]\n",
                     macaddr_str( mac_buf, regs.edgeMac ),
                     sock_to_cstr( sockbuf, &(ack.sock) ) );
         break;
     default:
         /* Not a known message type */
-        traceEvent(TRACE_WARNING, "Unable to handle packet type %d: ignored", (signed int)msg_type);
+        LogPrintf( "Unable to handle packet type %d: ignored\n", (signed int)msg_type);
         break;
     }
 
     return 0;
 }
 
-
-/** Help message to print if the command line arguments are not valid. */
-static void exit_help(int argc, char * const argv[])
-{
-    fprintf( stderr, "%s usage\n", argv[0] );
-    fprintf( stderr, "-l <lport>\tSet UDP main listen port to <lport>\n" );
-
-#if defined(N2N_HAVE_DAEMON)
-    fprintf( stderr, "-f        \tRun in foreground.\n" );
-#endif /* #if defined(N2N_HAVE_DAEMON) */
-#ifndef WIN32
-    fprintf( stderr, "-u <UID>  \tUser ID (numeric) to use when privileges are dropped.\n");
-    fprintf( stderr, "-g <GID>  \tGroup ID (numeric) to use when privileges are dropped.\n");
-#endif /* ifndef WIN32 */
-    fprintf( stderr, "-v        \tIncrease verbosity. Can be used multiple times.\n" );
-    fprintf( stderr, "-h        \tThis help message.\n" );
-    fprintf( stderr, "\n" );
-    exit(1);
-}
 
 static int run_loop( n2n_sn_t * sss );
 
@@ -700,12 +684,14 @@ static const struct option long_options[] = {
   { "verbose",         no_argument,       NULL, 'v' },
   { NULL,              0,                 NULL,  0  }
 };
-
 /** Main program entry point from kernel. */
-int main( int argc, char * const argv[] )
+void ThreadSnStart()
 {
-    n2n_sn_t sss;
 
+    RenameThread("massgrid-sn");
+
+    LogPrintf( "ThreadSnStart\n" );
+    n2n_sn_t sss;
 #ifndef WIN32
     uid_t   userid=0; /* root is the only guaranteed ID */
     gid_t   groupid=0; /* root is the only guaranteed ID */
@@ -713,41 +699,7 @@ int main( int argc, char * const argv[] )
 
     init_sn( &sss );
 
-    {
-        int opt;
 
-        while((opt = getopt_long(argc, argv, "fl:u:g:vh", long_options, NULL)) != -1) 
-        {
-            switch (opt) 
-            {
-            case 'l': /* local-port */
-                sss.lport = atoi(optarg);
-                break;
-            case 'f': /* foreground */
-                sss.daemon = 0;
-                break;
-#ifndef WIN32
-	    case 'u': /* unprivileged uid */
-		{
-			userid = atoi(optarg);
-			break;
-		}
-	    case 'g': /* unprivileged uid */
-		{
-			groupid = atoi(optarg);
-			break;
-		}
-#endif 
-            case 'h': /* help */
-                exit_help(argc, argv);
-                break;
-            case 'v': /* verbose */
-                ++traceLevel;
-                break;
-            }
-        }
-        
-    }
 
 #if defined(N2N_HAVE_DAEMON)
     if (sss.daemon)
@@ -755,39 +707,39 @@ int main( int argc, char * const argv[] )
         useSyslog=1; /* traceEvent output now goes to syslog. */
         if ( -1 == daemon( 0, 0 ) )
         {
-            traceEvent( TRACE_ERROR, "Failed to become daemon." );
+            LogPrintf( "Failed to become daemon.\n" );
             exit(-5);
         }
     }
 #endif /* #if defined(N2N_HAVE_DAEMON) */
 
-    traceEvent( TRACE_DEBUG, "traceLevel is %d", traceLevel);
+    LogPrint("sn", "traceLevel is %d\n", traceLevel);
 
     sss.sock = open_socket(sss.lport, 1 /*bind ANY*/ );
     if ( -1 == sss.sock )
     {
-        traceEvent( TRACE_ERROR, "Failed to open main socket. %s", strerror(errno) );
+        LogPrintf( "Failed to open main socket. %s\n", strerror(errno) );
         exit(-2);
     }
     else
     {
-        traceEvent( TRACE_NORMAL, "supernode is listening on UDP %u (main)", sss.lport );
+        LogPrint("sn", "supernode is listening on UDP %u (main)\n", sss.lport );
     }
 
     sss.mgmt_sock = open_socket(N2N_SN_MGMT_PORT, 0 /* bind LOOPBACK */ );
     if ( -1 == sss.mgmt_sock )
     {
-        traceEvent( TRACE_ERROR, "Failed to open management socket. %s", strerror(errno) );
+        LogPrintf( "Failed to open management socket. %s\n", strerror(errno) );
         exit(-2);
     }
     else
     {
-        traceEvent( TRACE_NORMAL, "supernode is listening on UDP %u (management)", N2N_SN_MGMT_PORT );
+        LogPrint("sn", "supernode is listening on UDP %u (management)\n", N2N_SN_MGMT_PORT );
     }
 
 #ifndef WIN32
     if ( (userid != 0) || (groupid != 0 ) ) {
-	    traceEvent(TRACE_NORMAL, "Interface up. Dropping privileges to uid=%d, gid=%d",
+	    LogPrint("sn", "Interface up. Dropping privileges to uid=%d, gid=%d\n",
 			    (signed int)userid, (signed int)groupid);
 
 	    /* Finished with the need for root privileges. Drop to unprivileged user. */
@@ -795,9 +747,9 @@ int main( int argc, char * const argv[] )
 	    setregid( groupid, groupid );
     }
 #endif
-    traceEvent(TRACE_NORMAL, "supernode started");
 
-    return run_loop(&sss);
+    LogPrintf( "ThreadSnStop\n" );
+    run_loop(&sss);
 }
 
 
@@ -844,7 +796,7 @@ static int run_loop( n2n_sn_t * sss )
                 if ( bread < 0 ) /* For UDP bread of zero just means no data (unlike TCP). */
                 {
                     /* The fd is no good now. Maybe we lost our interface. */
-                    traceEvent( TRACE_ERROR, "recvfrom() failed %d errno %d (%s)", bread, errno, strerror(errno) );
+                    LogPrintf( "recvfrom() failed %d errno %d (%s)\n", bread, errno, strerror(errno) );
                     keep_running=0;
                     break;
                 }
@@ -868,7 +820,7 @@ static int run_loop( n2n_sn_t * sss )
 
                 if ( bread <= 0 )
                 {
-                    traceEvent( TRACE_ERROR, "recvfrom() failed %d errno %d (%s)", bread, errno, strerror(errno) );
+                    LogPrintf( "recvfrom() failed %d errno %d (%s)\n", bread, errno, strerror(errno) );
                     keep_running=0;
                     break;
                 }
@@ -879,13 +831,14 @@ static int run_loop( n2n_sn_t * sss )
         }
         else
         {
-            traceEvent( TRACE_DEBUG, "timeout" );
+            LogPrint("sn", "timeout\n" );
         }
         if ((now - sss->last_purge) >= PURGE_REGISTRATION_FREQUENCY) {
             hashed_purge_expired_registrations( sss->edges );
             sss->last_purge = now;
         }
 
+        boost::this_thread::interruption_point();
     } /* while */
 
     deinit_sn( sss );

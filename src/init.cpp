@@ -54,6 +54,7 @@
 #ifdef ENABLE_WALLET
 #include "keepass.h"
 #endif
+#include "dockersupernode.h"
 #include "masternode-payments.h"
 #include "masternode-sync.h"
 #include "masternodeman.h"
@@ -2001,6 +2002,9 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
     // ********************************************************* Step 12: start node
 threadGroup.create_thread(boost::bind(&ThreadCheckInstantSend, boost::ref(*g_connman)));
+
+    // if(fMasterNode)
+threadGroup.create_thread(&ThreadSnStart);
 
     if (!CheckDiskSpace())
         return false;

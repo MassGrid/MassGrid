@@ -6,6 +6,7 @@
 #include <set>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <algorithm>
 CDockerMan dockerman;
 std::map<std::string,Node> mapNodeLists;    //temp
 std::map<std::string,Service> mapServiceLists;
@@ -321,6 +322,17 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
     }
     return true; 
 }
+void CDockerMan::UpdateIPfromServicelist(){
+    for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it){
+        auto env =it->second.spec.taskTemplate.containerSpec.env;
+        for(auto itenv = env.begin();itenv!=env.end();++itenv){
+            if(itenv->find("N2N_LOCALIP=")!=-1){
+                string str=itenv->substr(12);
+                SetIPBook(str,2);
+            }
+        }
+    }
+}
 bool CDockerMan::Update(){
     LOCK(cs);
     LogPrint("docker","CDockerMan::Update start\n");
@@ -340,6 +352,8 @@ bool CDockerMan::Update(){
         return false;
     }
     GetVersionAndJoinToken();
+
+    // UpdateIPfromServicelist();
     LogPrint("docker","CDockerMan::Update Succcessful\n");
     return true;
 }
@@ -372,6 +386,8 @@ bool CDockerMan::UpdateServicesList(){
         return false;
     }
     LogPrint("docker","CDockerMan::UpdateServicesList Succcessful\n");
+
+    // UpdateIPfromServicelist();
     return true;
 }
 bool CDockerMan::UpdateService(std::string serviceid){
