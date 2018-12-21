@@ -335,7 +335,7 @@ void CDockerMan::UpdateIPfromServicelist(){
         auto env =it->second.spec.taskTemplate.containerSpec.env;
         for(auto itenv = env.begin();itenv!=env.end();++itenv){
             if(itenv->find("N2N_SERVERIP=")!=-1){
-                string str=itenv->substr(12);
+                string str=itenv->substr(13);
                 serviceIp.Insert(str);
             }
         }
