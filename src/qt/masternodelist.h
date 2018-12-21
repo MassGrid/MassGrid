@@ -50,6 +50,8 @@ public Q_SLOTS:
     void updateMyMasternodeInfo(QString strAlias, QString strAddr, const COutPoint& outpoint);
     void updateMyNodeList(bool fForce = false);
     void updateNodeList();
+    // void updateDockerView();
+    void refreshServerList();
 
 Q_SIGNALS:
 
@@ -67,9 +69,10 @@ private:
 
     QString strCurrentFilter;
 
-private:
-    void loadServerList();
+    std::string m_curAddr_Port;
 
+private:
+    int loadServerList();
     void clearDockerDetail();
     // void loadServerDetail();
 

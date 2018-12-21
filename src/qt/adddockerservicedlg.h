@@ -26,7 +26,7 @@ private:
     std::string m_addr_port;
 
 private:
-    bool createDocketService();
+    bool createDockerService();
 protected:
     void mousePressEvent(QMouseEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
@@ -34,7 +34,6 @@ protected:
 
 private Q_SLOTS:
     void slot_okbutton();
-
 };
 
 #endif // ADDDOCKERSERVICEDLG_H

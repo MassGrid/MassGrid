@@ -402,7 +402,7 @@ QTabWidget::pane{
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,1">
+          <layout class="QVBoxLayout" name="verticalLayout_4" stretch="2,1">
            <item>
             <widget class="QFrame" name="frame_3">
              <property name="minimumSize">
@@ -472,28 +472,45 @@ QTabWidget::pane{
                    </widget>
                   </item>
                   <item row="3" column="0">
-                   <widget class="QLabel" name="label_16">
+                   <spacer name="verticalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QFormLayout" name="formLayout_2">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_5">
                     <property name="text">
-                     <string>Command:</string>
+                     <string>N2N_NAME:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="3" column="1">
-                   <widget class="QLabel" name="label_command">
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="label_n2n_name">
                     <property name="text">
                      <string>TextLabel</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="0">
+                  <item row="1" column="0">
                    <widget class="QLabel" name="label_14">
                     <property name="text">
-                     <string>Address</string>
+                     <string>Remote_IP:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="1">
-                   <widget class="QLabel" name="label_address">
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="label_n2n_localip">
                     <property name="maximumSize">
                      <size>
                       <width>150</width>
@@ -505,20 +522,48 @@ QTabWidget::pane{
                     </property>
                    </widget>
                   </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_9">
+                    <property name="text">
+                     <string>N2N_SERVERIP:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLabel" name="label_n2n_serverip">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="0">
+                   <spacer name="verticalSpacer_3">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="label_7">
+                    <property name="text">
+                     <string>SSH-PubKey:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
+                   <widget class="QLabel" name="label_ssh_pubkey">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                   </widget>
+                  </item>
                  </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
                 </item>
                </layout>
               </item>
@@ -559,6 +604,9 @@ QTabWidget::pane{
               <property name="bottomMargin">
                <number>2</number>
               </property>
+              <item row="1" column="0">
+               <widget class="QTableWidget" name="tasklistWidget"/>
+              </item>
               <item row="2" column="0">
                <widget class="QFrame" name="frame_2">
                 <property name="minimumSize">
@@ -609,15 +657,12 @@ QTabWidget::pane{
                  <item>
                   <widget class="QPushButton" name="pushButton">
                    <property name="text">
-                    <string>更新</string>
+                    <string>update</string>
                    </property>
                   </widget>
                  </item>
                 </layout>
                </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QTableWidget" name="tasklistWidget"/>
               </item>
              </layout>
             </widget>

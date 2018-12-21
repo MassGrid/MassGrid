@@ -62,6 +62,8 @@ const uint8_t ipv6_multicast_addr[6] = { 0x33, 0x33, 0x00, 0x00, 0x00, 0x00 }; /
 
 /* ************************************** */
 
+void traceEvent(int eventTraceLevel, char* file, int line, char * format, ...);
+
 SOCKET open_socket(int local_port, int bind_any) {
   SOCKET sock_fd;
   struct sockaddr_in local_address;
