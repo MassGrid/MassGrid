@@ -51,9 +51,6 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         LogPrintf("CDockerServerman::ProcessMessage mapDockerServiceLists:%d \n",mdndata.mapDockerServiceLists.size());
         LogPrintf("CDockerServerman::ProcessMessage sigTime:%d \n",mdndata.sigTime);
 
-        std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
-        std::string tmpid = iter->first;
-
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("docker","CDockerServerman::ProcessMessage CREATESERVICE Started\n");
         if (!fMasterNode) return;
