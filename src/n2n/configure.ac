@@ -125,7 +125,7 @@ AC_ARG_ENABLE(test,
     [use_test=no])
 
 AC_ARG_ENABLE([executable],
-  [AS_HELP_STRING([--enable-executable],
+  [AS_HELP_STRING([--disenable-executable],
   [enable build executable (disabled by default)])],
   [use_executable=$enableval],
   [use_executable=no])
@@ -146,7 +146,7 @@ AC_C_BIGENDIAN()
 
 AM_CONDITIONAL([USE_BENCHMARK], [test x"$use_benchmark" = x"yes"])
 AM_CONDITIONAL([USE_TEST], [test x"$use_test" = x"yes"])
-AM_CONDITIONAL([USE_EXECUTABLE], [test x"$use_executable" = x"yes"])
+AM_CONDITIONAL([USE_EXECUTABLE], [test x"$use_executable" = x"no"])
 AC_CONFIG_HEADERS([libn2n-config.h])
 AC_CONFIG_FILES([Makefile libn2n.pc])
 AC_SUBST(CRYPTO_LIBS)

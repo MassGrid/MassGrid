@@ -36,7 +36,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
 
     }else if(strCommand == NetMsgType::DNDATA){     //cluster
-
+        
         LogPrint("docker","CDockerServerman::ProcessMessage DNDATA Started\n");
         DockerGetData mdndata;
         vRecv >> mdndata;
@@ -166,10 +166,9 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     else
         spec.taskTemplate.containerSpec.env.push_back("N2N_NAME="+createService.n2n_community.substr(0,20));
     
-    std::string ipaddr = dockerman.GetFreeIP();
-    spec.taskTemplate.containerSpec.env.push_back("N2N_KEY=massgrid1208");
-    spec.taskTemplate.containerSpec.env.push_back("N2N_LOCALIP=" + ipaddr);
-    spec.taskTemplate.containerSpec.env.push_back("N2N_SERVERIP=" + dockerman.managerAddr + ":" + boost::lexical_cast<std::string>(dockerman.n2nServerPort));
+    std::string ipaddr = dockerman.serviceIp.GetFreeIP();
+    spec.taskTemplate.containerSpec.env.push_back("N2N_SERVERIP=" + ipaddr);
+    spec.taskTemplate.containerSpec.env.push_back("N2N_SNIP=" + dockerman.managerAddr + ":" + boost::lexical_cast<std::string>(dockerman.n2nServerPort));
     spec.taskTemplate.containerSpec.env.push_back("SSH_PUBKEY=" + createService.ssh_pubkey);
     
     spec.taskTemplate.placement.constraints.push_back("node.role == worker");
@@ -179,7 +178,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     spec.taskTemplate.containerSpec.mounts.push_back(mount);
 
     if(!dockerman.PushMessage(Method::METHOD_SERVICES_CREATE,"",spec.ToJsonString())){
-        dockerman.SetIPBook(ipaddr,false);
+        dockerman.serviceIp.Erase(ipaddr);
         return false;
     }
     return true;

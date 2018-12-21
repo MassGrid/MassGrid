@@ -18,7 +18,7 @@ private:
 public:
         std::map<std::string,Service> mapDockerServiceLists;
         int64_t sigTime{};  //update time
-
+        std::string n2nLocalIp{};
         CService connectDockerAddr{};
         CNode* connectNode = nullptr;
         // CTxIn masternodeId{};

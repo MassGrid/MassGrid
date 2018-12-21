@@ -11,44 +11,51 @@ CDockerMan dockerman;
 std::map<std::string,Node> mapNodeLists;    //temp
 std::map<std::string,Service> mapServiceLists;
 std::map<std::string,Task> mapTaskLists;
-std::string CDockerMan::GetFreeIP(){
-
-    LOCK(cs);
-    for(int i=1;i<255;++i)
-        for(int j=2;j<255;++j){
-            if(!isExistIP[i][j]){
-                isExistIP[i][j]=true;
-                std::string ipaddr = "192.168." + boost::lexical_cast<std::string>(i) + "." + boost::lexical_cast<std::string>(j);
-                LogPrint("docker","CDockerMan::SetIPBook ip: %s is using\n",ipaddr);
-                return ipaddr;
+std::string IpSet::GetFreeIP(){
+    for(int i = 1;i < MAX_SIZE;++i)
+        for(int j = 5;j < MAX_SIZE;j+=5){
+            std::string t;
+            t = ip_start + boost::lexical_cast<std::string>(i) + "." + boost::lexical_cast<std::string>(j);
+            in_addr_t ipaddr = inet_addr(t.c_str());
+            if(!ip_set.count(ipaddr)){
+                ip_set.insert(ipaddr);
+                return t;
             }
         }
 }
-bool CDockerMan::IsFreeIP(std::string ip){
-    LOCK(cs);
-    vector<string> destination;
-    boost::split(destination,ip, boost::is_any_of( "." ), boost::token_compress_on );
-    if(destination.size() == 4){
-        int i = boost::lexical_cast<int>(destination[2]);
-        int j = boost::lexical_cast<int>(destination[3]);
-        if(i >0 && i<255 &&j >1 && j<255)
-            return !isExistIP[i][j];
-    }
+
+void IpSet::Insert(std::string str){
+    if(!IsVaild(str))
+        return;
+    in_addr_t ipaddr = inet_addr(str.c_str());
+    ip_set.insert(ipaddr);
+
 }
-void CDockerMan::SetIPBook(std::string ip,bool isused){
-    LOCK(cs);
+bool IpSet::IsFree(std::string str){
+    if(!IsVaild(str))
+        return false;
+    in_addr_t ipaddr = inet_addr(str.c_str());
+    if(!ip_set.count(ipaddr))
+        return true;
+    return false;
+}
+void IpSet::Erase(std::string str){
+    if(!IsVaild(str))
+        return;
+    in_addr_t ipaddr = inet_addr(str.c_str());
+    auto it = ip_set.find(ipaddr);
+    if(it!=ip_set.end())
+        ip_set.erase(it);
+}
+bool IpSet::IsVaild(std::string s){
     vector<string> destination;
-    boost::split(destination,ip, boost::is_any_of( "." ), boost::token_compress_on );
+    boost::split(destination,s, boost::is_any_of( "." ), boost::token_compress_on );
     if(destination.size() == 4){
         int i = boost::lexical_cast<int>(destination[2]);
         int j = boost::lexical_cast<int>(destination[3]);
-        if(i >0 && i<255 &&j >1 && j<255){
-            isExistIP[i][j]=isused;
-            if(isused)
-                LogPrint("docker","CDockerMan::SetIPBook ip: %s is using\n",ip);
-            else
-                LogPrint("docker","CDockerMan::SetIPBook ip: %s is free\n",ip);
-        }
+        if(i > 0 && i < 255 && j > 0 && j < 255)
+            return true;
+        return false;
     }
 }
 bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
@@ -323,12 +330,13 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
     return true; 
 }
 void CDockerMan::UpdateIPfromServicelist(){
+    serviceIp.Clear();
     for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it){
         auto env =it->second.spec.taskTemplate.containerSpec.env;
         for(auto itenv = env.begin();itenv!=env.end();++itenv){
-            if(itenv->find("N2N_LOCALIP=")!=-1){
+            if(itenv->find("N2N_SERVERIP=")!=-1){
                 string str=itenv->substr(12);
-                SetIPBook(str,2);
+                serviceIp.Insert(str);
             }
         }
     }
@@ -353,7 +361,7 @@ bool CDockerMan::Update(){
     }
     GetVersionAndJoinToken();
 
-    // UpdateIPfromServicelist();
+    UpdateIPfromServicelist();
     LogPrint("docker","CDockerMan::Update Succcessful\n");
     return true;
 }
@@ -385,9 +393,9 @@ bool CDockerMan::UpdateServicesList(){
         LogPrint("docker","CDockerMan::UpdateServicesList ERROR Get METHOD_SERVICES_LISTS failed! \n");
         return false;
     }
+    UpdateIPfromServicelist();
     LogPrint("docker","CDockerMan::UpdateServicesList Succcessful\n");
 
-    // UpdateIPfromServicelist();
     return true;
 }
 bool CDockerMan::UpdateService(std::string serviceid){

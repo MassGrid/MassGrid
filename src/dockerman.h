@@ -7,6 +7,13 @@
 #include "dockerswarm.h"
 #include "dockerservice.h"
 #include "dockertask.h"
+#ifdef EVENT__HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#ifdef _XOPEN_SOURCE_EXTENDED
+#include <arpa/inet.h>
+#endif
+#endif
+#include <set>
 class CDockerMan;
 extern CDockerMan dockerman;
 
@@ -51,6 +58,22 @@ enum HttpType{
     HTTP_POST,
     HTTP_DELETE
 };
+class IpSet{
+
+    std::set<in_addr_t> ip_set{};
+public:
+    static const int MAX_SIZE = 255;
+    const char* ip_start = "10.1."; //10.1.1.1
+
+    std::string GetFreeIP();
+    bool IsFree(std::string str);
+    void Erase(std::string str);
+    bool IsVaild(std::string s);
+    void Clear(){
+        ip_set.clear();
+    }
+    void Insert(std::string str);
+};
 class CDockerMan{
 private:
     // critical section to protect the inner data structures
@@ -58,10 +81,9 @@ private:
 private:
     const char* address = "localhost";
     uint32_t apiPort = 2375;
-    uint32_t swarmPort = 2377;
-    bool isExistIP[255][255]{};
+    uint32_t swarmPort = 2377;  
 public:
-
+    IpSet serviceIp;
     const uint32_t n2nServerPort = 8999;
     union docker_Version version;
     std::map<std::string,Node> mapDockerNodeLists;
@@ -86,9 +108,6 @@ public:
     void SetPort(uint32_t p){apiPort = p;}
     uint32_t GetPort(){return apiPort;}
     void GetVersionAndJoinToken();
-    std::string GetFreeIP();
-    void SetIPBook(std::string ip,bool isused);
-    bool IsFreeIP(std::string ip);
     void UpdateIPfromServicelist();
 };
 
