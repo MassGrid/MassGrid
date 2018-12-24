@@ -3,9 +3,12 @@
 #if !defined(N2N_TRANSFORMS_H_)
 #define N2N_TRANSFORMS_H_
 
-#include "n2n_keyfile.h"
+#include "../src/n2n_keyfile.h"
 #include "n2n_wire.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define N2N_TRANSFORM_ID_INVAL          0       /* marks uninitialised data */
 #define N2N_TRANSFORM_ID_NULL           1
@@ -73,6 +76,10 @@ int transop_twofish_setup( n2n_trans_op_t * ttt,
 int  transop_twofish_init( n2n_trans_op_t * ttt );
 int  transop_aes_init( n2n_trans_op_t * ttt );
 void transop_null_init( n2n_trans_op_t * ttt );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* #if !defined(N2N_TRANSFORMS_H_) */
 

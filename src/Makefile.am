@@ -138,6 +138,7 @@ MASSGRID_CORE_H = \
   dockercluster.h \
   dockerserverman.h \
   dockersupernode.h \
+  dockeredge.h \
   dockerbase.h \
   dockernode.h \
   dockerservice.h \
@@ -251,6 +252,7 @@ libmassgrid_server_a_SOURCES = \
   dockercluster.cpp \
   dockerserverman.cpp \
   dockersupernode.cpp \
+  dockeredge.cpp \
   dockerbase.cpp \
   dockernode.cpp \
   dockerservice.cpp \

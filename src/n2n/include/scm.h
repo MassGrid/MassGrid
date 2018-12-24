@@ -3,6 +3,9 @@
  *
  *
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct SCM_def {
 	char *name;
@@ -22,3 +25,6 @@ int SCM_Remove(struct SCM_def *);
 #define	SVC_FAIL	-1
 #define SVC_CONSOLE	1
 
+#ifdef __cplusplus
+}
+#endif

@@ -5,10 +5,10 @@ include_HEADERS = include/n2n.h include/n2n_wire.h include/sglib.h
 noinst_HEADERS = 
 noinst_HEADERS += src/lzoconf.h
 noinst_HEADERS += src/lzodefs.h
-noinst_HEADERS += src/minilzo.h
+noinst_HEADERS += include/minilzo.h
 noinst_HEADERS += src/n2n_keyfile.h
-noinst_HEADERS += src/n2n_transforms.h
-noinst_HEADERS += src/scm.h
+noinst_HEADERS += include/n2n_transforms.h
+noinst_HEADERS += include/scm.h
 noinst_HEADERS += src/twofish.h
 
 pkgconfigdir = $(libdir)/pkgconfig

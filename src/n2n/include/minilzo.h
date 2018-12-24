@@ -54,7 +54,7 @@
 #endif
 
 #undef LZO_HAVE_CONFIG_H
-#include "lzoconf.h"
+#include "../src/lzoconf.h"
 
 #if !defined(LZO_VERSION) || (LZO_VERSION != MINILZO_VERSION)
 #  error "version mismatch in header files"
