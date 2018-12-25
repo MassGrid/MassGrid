@@ -187,7 +187,7 @@ void Node::ParseNodeResource(const UniValue& data, Config::ResourceObj &resource
                 resources.memoryBytes=tdata.get_int64();
             }
         }
-        if(data[vKeys[i]].isObject()){
+        if(data[vKeys[i]].isArray()){
             if(vKeys[i]=="GenericResources"){
                 for(size_t j=0;j<tdata.size();j++){
                     Config::GenericResources genResources;
