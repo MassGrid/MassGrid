@@ -61,8 +61,8 @@ public:
 
     static void DockerTaskList(const string& taskData, std::map<std::string,Task> &tasks);
 
-    std::string name{};
-    Config::Labels labels{};
+    std::string name{};  
+    Config::Labels labels{}; 
     
     Config::TaskSpec spec{};
     std::string serviceID{};
@@ -70,7 +70,7 @@ public:
     int64_t slot{};
     std::string nodeID{};
     // CNode node;
-     std::vector<Config::GenericResources> genericResources{};
+    std::vector<Config::GenericResources> genericResources{};
     Config::TaskStatus status{};
 
     int desiredState{};

@@ -48,6 +48,35 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         dockercluster.mapDockerServiceLists = mdndata.mapDockerServiceLists;
         dockercluster.sigTime = mdndata.sigTime;
 
+        std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
+        for(;iter != mdndata.mapDockerServiceLists.end();iter++){
+            //  iter->second.spec.ToJsonString();
+            LogPrintf("iter->second.spec.ToJsonString():%s \n",iter->second.spec.ToJsonString()); 
+
+        }
+        
+        
+
+
+
+    //         std::map<std::string,Service> serverlist = dockercluster.mapDockerServiceLists;
+
+    // std::map<std::string,Service>::iterator iter = serverlist.begin();
+
+    // int count = 0;
+    // for(;iter != serverlist.end();iter++){
+    //     QListWidgetItem* item = new QListWidgetItem(ui->serverListWidget);
+    //     item->setText(QString::fromStdString(iter->first));
+    //     // LogPrintf("iter->second.spec.ToJsonString():%s \n",iter->second.spec.ToJsonString()); 
+    //     // LogPrintf("loadServerList item:%s，index:%d\n",iter->first,count);
+    //     ui->serverListWidget->addItem(item);
+    //     count++;
+    // }
+
+
+
+
+
         LogPrintf("CDockerServerman::ProcessMessage mapDockerServiceLists:%d \n",mdndata.mapDockerServiceLists.size());
         LogPrintf("CDockerServerman::ProcessMessage sigTime:%d \n",mdndata.sigTime);
 

@@ -65,7 +65,7 @@ void AddDockerServiceDlg::slot_okbutton()
         accept();
     }
     else{
-        CMessageBox::information(0, tr("Error"), tr("create docker service error"));
+        CMessageBox::information(this, tr("Error"), tr("create docker service error"));
     }
 }
 
@@ -109,32 +109,19 @@ bool AddDockerServiceDlg::createDockerService()
     int64_t strServiceGpu = ui->spinBox_gpucount->value();
     createService.gpu = strServiceGpu;
 
-    // QString n2n_name = ui->lineEdit_n2n_name->text();
-    // if(n2n_name == "")
-    //     n2n_name = "massgrid";
     std::string strn2n_Community = ui->lineEdit_n2n_name->text().toStdString().c_str();
     createService.n2n_community = strn2n_Community;
 
     std::string strssh_pubkey = ui->textEdit_sshpubkey->toPlainText().toStdString().c_str();
     // "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDwKzxP+YJHSU/qgT8X79HnktF8Kpkec7cUEDGkyqwQXOhLMUG2XDDOqQAsRIHjCuCgP0fi8oeYO+/h+c/su6L5sAzs0zMXFUkAYHowe0OpPEVFXkSfd2rGbnFGVyRec2LuzN63X92WNycvG/TP7WobBizp1CXQDGEouSHw38kRYPRnr93YPVDJ6GUwlqEND35WiAEFpQ3n9CbYMiX+Eg3ItVXjXJc9R63oLwKGn9Ko4UDfpHqKhGNJ5KQ2LPIevhlbuP9rm7hCjoqx0krBJxfXVwlGTZE3hpteMpcZPdAKPcyHBx6P/YLEQHqiUNaGMF3hWtIr3CJqDDOMmKj70KOt oasis@xiejiataodeMacBook-Pro.local";
-    // ui->lineEdit_pubkey->text().toStdString().c_str();
     createService.ssh_pubkey = strssh_pubkey;
     
     if(!dockercluster.CreateAndSendSeriveSpec(createService)){
         LogPrintf("dockercluster.CreateAndSendSeriveSpec error\n");
-        CMessageBox::information(0, tr("connect docker"), tr("dockercluster.CreateAndSendSeriveSpec error"));
+        CMessageBox::information(this, tr("connect docker"), tr("dockercluster.CreateAndSendSeriveSpec error"));
         return false;
     }
-    CMessageBox::information(0, tr("connect docker"), tr("createService.sspec sucess"));
+    CMessageBox::information(this, tr("connect docker"), tr("createService.sspec sucess"));
     LogPrintf(" createService.sspec hash %s \n",createService.ToString());
-    // return "dockercluster.CreateAndSendSeriveSpec successfully";
     return true;
 }
-
-// name
-// image
-// n2nName
-// CPU count
-// memory byte
-// GPU name
-// GPU count
