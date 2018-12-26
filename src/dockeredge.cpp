@@ -7,12 +7,6 @@
 #include "n2n/include/minilzo.h"
 
 #include "n2n/include/scm.h"
-#define traceEvent LogPrint
-#define TRACE_ERROR "edge"
-#define TRACE_NORMAL "edge"
-#define TRACE_DEBUG "edge"
-#define TRACE_WARNING "edge"
-#define TRACE_INFO "edge"
 
 int n2n_main(int, char **);
 int n2n_stop(void *);
@@ -44,6 +38,7 @@ struct SCM_def sd;
 #define N2N_PATHNAME_MAXLEN             256
 #define N2N_MAX_TRANSFORMS              16
 #define N2N_EDGE_MGMT_PORT              5644
+#define N2N_SN_PROT                     8999
 
 /** Positions in the transop array where various transforms are stored.
  *
@@ -76,7 +71,12 @@ typedef char n2n_local_ip_t[N2N_EDGE_LOCAL_IP_SIZE];
 #define N2N_EDGE_NUM_SUPERNODES 2
 #define N2N_EDGE_SUP_ATTEMPTS   3       /* Number of failed attmpts before moving on to next supernode. */
 
-
+std::function<void()> fstart = nullptr;
+std::function<void()> fstop = nullptr;
+boost::thread* thrd = NULL;
+std::string strCommunity;
+std::string strLocalAddr;
+std::string strSnAddr;
 /** Main structure type for edge. */
 struct n2n_edge
 {
@@ -161,22 +161,22 @@ static void send_packet2net(n2n_edge_t * eee,
 
 //   buffer = (char *)malloc(MAX_CONFFILE_LINE_LENGTH);
 //   if (!buffer) {
-//     traceEvent( TRACE_ERROR, "Unable to allocate memory");
+//     //traceEvent( TRACE_ERROR, "Unable to allocate memory");
 //     return -1;
 //   }
 
 //   if (stat(filename, &stats)) {
 //     if (errno == ENOENT)
-//       traceEvent(TRACE_ERROR, "parameter file %s not found/unable to access\n", filename);
+//       //traceEvent(TRACE_ERROR, "parameter file %s not found/unable to access\n", filename);
 //     else
-//       traceEvent(TRACE_ERROR, "cannot stat file %s, errno=%d\n",filename, errno);
+//       //traceEvent(TRACE_ERROR, "cannot stat file %s, errno=%d\n",filename, errno);
 //     free(buffer);
 //     return -1;
 //   }
 
 //   fd = fopen(filename, "rb");
 //   if (!fd) {
-//     traceEvent(TRACE_ERROR, "Unable to open parameter file '%s' (%d)...\n",filename,errno);
+//     //traceEvent(TRACE_ERROR, "Unable to open parameter file '%s' (%d)...\n",filename,errno);
 //     free(buffer);
 //     return -1;
 //   }
@@ -202,7 +202,7 @@ static void send_packet2net(n2n_edge_t * eee,
 
 //     /* check for nested @file option */
 //     if (strchr(buffer, '@')) {
-//       traceEvent(TRACE_ERROR, "@file in file nesting is not supported\n");
+//       //traceEvent(TRACE_ERROR, "@file in file nesting is not supported\n");
 //       free(buffer);
 //       return -1;
 //     }
@@ -210,7 +210,7 @@ static void send_packet2net(n2n_edge_t * eee,
 //       strncat(linebuffer, " ", 1);
 //       strncat(linebuffer, buffer, strlen(buffer));
 //     } else {
-//       traceEvent(TRACE_ERROR, "too many argument");
+//       //traceEvent(TRACE_ERROR, "too many argument");
 //       free(buffer);
 //       return -1;
 //     }
@@ -238,7 +238,7 @@ static char ** buildargv(int * effectiveargc, char * const linebuffer) {
   *effectiveargc = 0;
   buffer = (char *)calloc(1, strlen(linebuffer)+2);
   if (!buffer) {
-    LogPrint("edge","Unable to allocate memory");
+    LogPrint("edge","Unable to allocate memory\n");
     return NULL;
   }
   strncpy(buffer, linebuffer,strlen(linebuffer));
@@ -246,7 +246,7 @@ static char ** buildargv(int * effectiveargc, char * const linebuffer) {
   maxargc = INITIAL_MAXARGC;
   argv = (char **)malloc(maxargc * sizeof(char*));
   if (argv == NULL) {
-    traceEvent( TRACE_ERROR, "Unable to allocate memory");
+    // //traceEvent( TRACE_ERROR, "Unable to allocate memory");
     return NULL;
   }
   buff = buffer;
@@ -261,7 +261,7 @@ static char ** buildargv(int * effectiveargc, char * const linebuffer) {
 	maxargc *= 2;
 	argv = (char **)realloc(argv, maxargc * sizeof(char*));
 	if (argv == NULL) {
-	  traceEvent(TRACE_ERROR, "Unable to re-allocate memory");
+	//   //traceEvent(TRACE_ERROR, "Unable to re-allocate memory");
 	  free(buffer);
 	  return NULL;
 	}
@@ -299,7 +299,7 @@ static int edge_init(n2n_edge_t * eee)
 
     eee->tx_transop_idx = N2N_TRANSOP_NULL_IDX; /* No guarantee the others have been setup */
 
-    eee->daemon = 1;    /* By default run in daemon mode. */
+    eee->daemon = 0;    /* By default run in daemon mode. */
     eee->re_resolve_supernode_ip = 0;
     /* keyschedule set to NULLs by memset */
     /* community_name set to NULLs by memset */
@@ -325,7 +325,7 @@ static int edge_init(n2n_edge_t * eee)
 
     if(lzo_init() != LZO_E_OK)
     {
-        traceEvent(TRACE_ERROR, "LZO compression error");
+        //traceEvent(TRACE_ERROR, "LZO compression error");
         return(-1);
     }
 
@@ -377,21 +377,21 @@ static int n2n_tick_transop( n2n_edge_t * eee, time_t now )
     tst = (eee->transop[N2N_TRANSOP_AESCBC_IDX].tick)( &(eee->transop[N2N_TRANSOP_AESCBC_IDX]), now );
     if ( tst.can_tx )
     {
-        traceEvent( TRACE_DEBUG, "can_tx AESCBC (idx=%u)", (unsigned int)N2N_TRANSOP_AESCBC_IDX );
+        //traceEvent( TRACE_DEBUG, "can_tx AESCBC (idx=%u)", (unsigned int)N2N_TRANSOP_AESCBC_IDX );
         trop = N2N_TRANSOP_AESCBC_IDX;
     }
 
     tst = (eee->transop[N2N_TRANSOP_TF_IDX].tick)( &(eee->transop[N2N_TRANSOP_TF_IDX]), now );
     if ( tst.can_tx )
     {
-        traceEvent( TRACE_DEBUG, "can_tx TF (idx=%u)", (unsigned int)N2N_TRANSOP_TF_IDX );
+        //traceEvent( TRACE_DEBUG, "can_tx TF (idx=%u)", (unsigned int)N2N_TRANSOP_TF_IDX );
         trop = N2N_TRANSOP_TF_IDX;
     }
 
     if ( trop != eee->tx_transop_idx )
     {
         eee->tx_transop_idx = trop;
-        traceEvent( TRACE_NORMAL, "Chose new tx_transop_idx=%u", (unsigned int)(eee->tx_transop_idx) );
+        //traceEvent( TRACE_NORMAL, "Chose new tx_transop_idx=%u", (unsigned int)(eee->tx_transop_idx) );
     }
 
     return 0;
@@ -420,7 +420,7 @@ static int edge_init_keyschedule( n2n_edge_t * eee )
 
     if ( numSpecs > 0 )
     {
-        traceEvent( TRACE_NORMAL, "keyfile = %s read -> %d specs.\n", optarg, (signed int)numSpecs);
+        //traceEvent( TRACE_NORMAL, "keyfile = %s read -> %d specs.\n", optarg, (signed int)numSpecs);
 
         for ( i=0; i < (size_t)numSpecs; ++i )
         {
@@ -443,8 +443,8 @@ static int edge_init_keyschedule( n2n_edge_t * eee )
 
             if (0 != retval)
             {
-                traceEvent( TRACE_ERROR, "keyschedule failed to add spec[%u] to transop[%d].\n", 
-                            (unsigned int)i, idx);
+                //traceEvent( TRACE_ERROR, "keyschedule failed to add spec[%u] to transop[%d].\n", 
+                            // (unsigned int)i, idx);
 
                 return retval;
             }
@@ -454,7 +454,7 @@ static int edge_init_keyschedule( n2n_edge_t * eee )
     }
     else
     {
-        traceEvent( TRACE_ERROR, "Failed to process '%s'", eee->keyschedule );
+        //traceEvent( TRACE_ERROR, "Failed to process '%s'", eee->keyschedule );
     }
 
     return retval;
@@ -502,12 +502,12 @@ static ssize_t sendto_sock( int fd, const void * buf, size_t len, const n2n_sock
     if ( sent < 0 )
     {
         char * c = strerror(errno);
-        traceEvent( TRACE_ERROR, "sendto %s failed (%d) %s",
+        LogPrintf("sendto %s failed (%d) %s\n",
                 sock_to_cstr( sockbuf, dest ), errno, c );
     }
     else
     {
-        traceEvent( TRACE_DEBUG, "sendto sent=%d to ", (signed int)sent );
+        //traceEvent( TRACE_DEBUG, "sendto sent=%d to ", (signed int)sent );
     }
 
     return sent;
@@ -544,7 +544,7 @@ static void send_register( n2n_edge_t * eee,
     idx=0;
     encode_REGISTER( pktbuf, &idx, &cmn, &reg );
 
-    traceEvent( TRACE_INFO, "send REGISTER %s",
+    LogPrint( "edge", "send REGISTER %s\n",
                 sock_to_cstr( sockbuf, remote_peer ) );
 
 
@@ -573,7 +573,7 @@ static void send_query_peer( n2n_edge_t * eee,
     idx=0;
     encode_QUERY_PEER( pktbuf, &idx, &cmn, &query );
 
-    traceEvent( TRACE_INFO, "send QUERY_PEER to supernode" );
+    //traceEvent( TRACE_INFO, "send QUERY_PEER to supernode" );
 
     sendto_sock( eee->udp_sock, pktbuf, idx, &(eee->supernode) );
 }
@@ -614,7 +614,7 @@ static void send_register_super( n2n_edge_t * eee,
     idx=0;
     encode_REGISTER_SUPER( pktbuf, &idx, &cmn, &reg );
 
-    traceEvent( TRACE_INFO, "send REGISTER_SUPER to %s",
+    LogPrint( "edge", "send REGISTER_SUPER to %s\n",
                 sock_to_cstr( sockbuf, supernode ) );
 
 
@@ -648,7 +648,7 @@ static void send_register_ack( n2n_edge_t * eee,
     idx=0;
     encode_REGISTER_ACK( pktbuf, &idx, &cmn, &ack );
 
-    traceEvent( TRACE_INFO, "send REGISTER_ACK %s",
+    LogPrint( "edge", "send REGISTER_ACK %s\n",
                 sock_to_cstr( sockbuf, remote_peer ) );
 
 
@@ -718,11 +718,11 @@ void establish_connection( n2n_edge_t * eee,
 
 		sglib_hashed_peer_info_t_add(eee->pending_peers, scan);
 
-        traceEvent( TRACE_DEBUG, "=== new pending %s -> %s",
+        LogPrint( "edge", "=== new pending %s -> %s\n",
                     macaddr_str( mac_buf, scan->mac_addr ),
                     sock_to_cstr( sockbuf, &scan->sock ) );
 
-        traceEvent( TRACE_INFO, "Pending peers list size=%u",
+        LogPrint( "edge", "Pending peers list size=%u\n",
 			(unsigned int)hashed_peer_list_t_size( eee->pending_peers ) );
 
         /* trace Sending REGISTER */
@@ -775,7 +775,7 @@ void set_peer_operational( n2n_edge_t * eee,
     macstr_t mac_buf;
     n2n_sock_str_t sockbuf;
 
-    traceEvent( TRACE_INFO, "set_peer_operational: %s -> %s",
+    LogPrint( "edge", "set_peer_operational: %s -> %s\n",
                 macaddr_str( mac_buf, mac),
                 sock_to_cstr( sockbuf, peer ) );
 
@@ -793,14 +793,14 @@ void set_peer_operational( n2n_edge_t * eee,
         
         scan->sock = *peer;
 
-        traceEvent( TRACE_DEBUG, "=== new peer %s -> %s",
+        LogPrint( "edge", "=== new peer %s -> %s\n",
                     macaddr_str( mac_buf, scan->mac_addr),
                     sock_to_cstr( sockbuf, &scan->sock ) );
 
-        traceEvent( TRACE_INFO, "Pending peers list size=%u",
+        LogPrint( "edge", "Pending peers list size=%u\n",
                     (unsigned int)hashed_peer_list_t_size( eee->pending_peers ) );
 
-        traceEvent( TRACE_INFO, "Operational peers list size=%u",
+        LogPrint( "edge", "Operational peers list size=%u\n",
                     (unsigned int)hashed_peer_list_t_size( eee->known_peers ) );
 
 
@@ -808,7 +808,7 @@ void set_peer_operational( n2n_edge_t * eee,
     }
     else
     {
-        traceEvent( TRACE_DEBUG, "Failed to find sender in pending_peers." );
+        //traceEvent( TRACE_DEBUG, "Failed to find sender in pending_peers." );
     }
 }
 
@@ -889,7 +889,7 @@ static void update_peer_address(n2n_edge_t * eee,
     {
         if ( 0 == from_supernode )
         {
-            traceEvent( TRACE_NORMAL, "Peer changed %s: %s -> %s",
+            LogPrint( "edge", "Peer changed %s: %s -> %s",
                         macaddr_str( mac_buf, scan->mac_addr ),
                         sock_to_cstr(sockbuf1, &(scan->sock)),
                         sock_to_cstr(sockbuf2, peer) );
@@ -961,7 +961,7 @@ static void send_grat_arps(n2n_edge_t * eee,) {
   char buffer[48];
   size_t len;
 
-  traceEvent(TRACE_NORMAL, "Sending gratuitous ARP...");
+  //traceEvent(TRACE_NORMAL, "Sending gratuitous ARP...");
   len = build_gratuitous_arp(buffer, sizeof(buffer));
   send_packet2net(eee, buffer, len);
   send_packet2net(eee, buffer, len); /* Two is better than one :-) */
@@ -980,7 +980,7 @@ static void update_supernode_reg( n2n_edge_t * eee, time_t nowTime )
     if ( eee->sn_wait && ( nowTime > (eee->last_register_req + (eee->holepunch_interval/10) ) ) )
     {
         /* fall through */
-        traceEvent( TRACE_DEBUG, "update_supernode_reg: doing fast retry." );
+        //traceEvent( TRACE_DEBUG, "update_supernode_reg: doing fast retry." );
     }
     else if ( nowTime < (eee->last_register_req + eee->holepunch_interval))
     {
@@ -998,7 +998,7 @@ static void update_supernode_reg( n2n_edge_t * eee, time_t nowTime )
             eee->sn_idx=0;
         }
 
-        traceEvent(TRACE_WARNING, "Supernode not responding - moving to %u of %u", 
+        LogPrintf("update_supernode_reg::Supernode not responding - moving to %u of %u\n", 
                    (unsigned int)eee->sn_idx, (unsigned int)eee->sn_num );
 
         eee->sup_attempts = N2N_EDGE_SUP_ATTEMPTS;
@@ -1013,7 +1013,7 @@ static void update_supernode_reg( n2n_edge_t * eee, time_t nowTime )
         supernode2addr(&(eee->supernode), eee->sn_ip_array[eee->sn_idx] );
     }
 
-    traceEvent(TRACE_DEBUG, "Registering with supernode (%s) (attempts left %u)",
+    LogPrint("edge", "update_supernode_reg::Registering with supernode (%s) (attempts left %u)\n",
                supernode_ip(eee), (unsigned int)eee->sup_attempts);
 
     send_register_super( eee, &(eee->supernode) );
@@ -1044,7 +1044,7 @@ static int find_peer_destination(n2n_edge_t * eee,
     int i;
 	time_t now = time(NULL);
 
-    traceEvent(TRACE_DEBUG, "Searching destination peer for MAC %02X:%02X:%02X:%02X:%02X:%02X",
+    LogPrint("edge", "find_peer_destination::Searching destination peer for MAC %02X:%02X:%02X:%02X:%02X:%02X\n",
                mac_address[0] & 0xFF, mac_address[1] & 0xFF, mac_address[2] & 0xFF,
                mac_address[3] & 0xFF, mac_address[4] & 0xFF, mac_address[5] & 0xFF);
 
@@ -1073,7 +1073,7 @@ static int find_peer_destination(n2n_edge_t * eee,
                     tryscan->last_sent_query = now;
                 }
             } else if(now - tryscan->last_seen > RETRY_INTERVAL) {
-				traceEvent(TRACE_INFO, "retrying to register peer (%s) -> [%s]",
+				LogPrint("edge", "find_peer_destination::retrying to register peer (%s) -> [%s]\n",
 					macaddr_str( mac_buf, mac_address),
 					sock_to_cstr( sockbuf, &tryscan->sock));
                 for(i=0; i<tryscan->num_sockets; i++)
@@ -1084,7 +1084,7 @@ static int find_peer_destination(n2n_edge_t * eee,
         memcpy(destination, &(eee->supernode), sizeof(struct sockaddr_in));
     }
 
-    traceEvent(TRACE_DEBUG, "find_peer_address (%s) -> [%s]",
+    LogPrint("edge", "find_peer_destination::find_peer_address (%s) -> [%s]\n",
                macaddr_str( mac_buf, mac_address ),
                sock_to_cstr( sockbuf, destination ) );
 
@@ -1128,7 +1128,7 @@ static int send_PACKET( n2n_edge_t * eee,
     /* hexdump( pktbuf, pktlen ); */
 
 
-    traceEvent( TRACE_INFO, "send_PACKET to %s", sock_to_cstr( sockbuf, destination ) );
+    LogPrint( "edge", "send_PACKET::send_PACKET to %s\n", sock_to_cstr( sockbuf, destination ) );
 
     sendto_sock( eee->udp_sock, pktbuf, pktlen, destination );
     return 0;
@@ -1186,7 +1186,7 @@ static void send_packet2net(n2n_edge_t * eee,
             /* Note: all elements of the_ip are in network order */
             if( *src != eee->device.ip_addr) {
 		/* This is a packet that needs to be routed */
-		traceEvent(TRACE_INFO, "Discarding routed packet [%s]",
+		LogPrint("edge", "send_packet2net::Discarding routed packet [%s]\n",
                            intoa(ntohl(*src), ip_buf, sizeof(ip_buf)));
 		return;
             } else {
@@ -1224,7 +1224,7 @@ static void send_packet2net(n2n_edge_t * eee,
     tap_pkt += offset;
     len -= offset;
 
-    traceEvent( TRACE_DEBUG, "encoded PACKET header of size=%u transform %u (idx=%u)", 
+    LogPrint("edge", "send_packet2net::encoded PACKET header of size=%u transform %u (idx=%u)\n", 
                 (unsigned int)idx, (unsigned int)pkt.transform, (unsigned int)tx_transop_idx );
 
     idx += eee->transop[tx_transop_idx].fwd( &(eee->transop[tx_transop_idx]),
@@ -1308,13 +1308,13 @@ static void readFromTAPSocket( n2n_edge_t * eee )
 
     if( (len <= 0) || (len > N2N_PKT_BUF_SIZE) )
     {
-        traceEvent(TRACE_WARNING, "read()=%d [%d/%s]",
+        LogPrint("edge", "readFromTAPSocket::read()=%d [%d/%s]\n",
                    (signed int)len, errno, strerror(errno));
     }
     else
     {
         const uint8_t * mac = eth_pkt;
-        traceEvent(TRACE_INFO, "### Rx TAP packet (%4d) for %s",
+        LogPrint("edge", "readFromTAPSocket::### Rx TAP packet (%4d) for %s\n",
                    (signed int)len, macaddr_str(mac_buf, mac) );
 
         if ( eee->drop_multicast &&
@@ -1323,7 +1323,7 @@ static void readFromTAPSocket( n2n_edge_t * eee )
                  )
             )
         {
-            traceEvent(TRACE_DEBUG, "Dropping multicast");
+            LogPrint("edge", "readFromTAPSocket::Dropping multicast\n");
         }
         else
         {
@@ -1352,7 +1352,7 @@ static int handle_PACKET( n2n_edge_t * eee,
 
     now = time(NULL);
 
-    traceEvent( TRACE_DEBUG, "handle_PACKET size %u transform %u", 
+    LogPrint( "edge", "handle_PACKET::handle_PACKET size %u transform %u\n", 
                 (unsigned int)psize, (unsigned int)pkt->transform );
     /* hexdump( payload, psize ); */
 
@@ -1401,7 +1401,7 @@ static int handle_PACKET( n2n_edge_t * eee,
             ++(eee->transop[rx_transop_idx].rx_cnt); /* stats */
 
             /* Write ethernet packet to tap device. */
-            traceEvent( TRACE_INFO, "sending to TAP %u", (unsigned int)eth_size );
+            LogPrint( "edge", "handle_PACKET::sending to TAP %u\n", (unsigned int)eth_size );
             data_sent_len = tuntap_write(&(eee->device), decodebuffer, eth_size);
 
             if (data_sent_len == eth_size)
@@ -1411,7 +1411,7 @@ static int handle_PACKET( n2n_edge_t * eee,
         }
         else
         {
-            traceEvent( TRACE_ERROR, "handle_PACKET dropped unknown transform enum %u", 
+            LogPrintf("handle_PACKET::handle_PACKET dropped unknown transform enum %u\n", 
                         (unsigned int)pkt->transform );
         }
     }
@@ -1443,7 +1443,7 @@ static void readFromMgmtSocket( n2n_edge_t * eee, int * keep_running )
 
     if ( recvlen < 0 )
     {
-        traceEvent(TRACE_ERROR, "mgmt recvfrom failed with %s", strerror(errno) );
+        LogPrintf("readFromMgmtSocket::mgmt recvfrom failed with %s\n", strerror(errno) );
 
         return; /* failed to receive data from UDP */
     }
@@ -1455,7 +1455,7 @@ static void readFromMgmtSocket( n2n_edge_t * eee, int * keep_running )
     {
         if ( 0 == memcmp( udp_buf, "stop", 4 ) )
         {
-            traceEvent( TRACE_ERROR, "stop command received." );
+            LogPrintf("readFromMgmtSocket::stop command received.\n" );
             *keep_running = 0;
             return;
         }
@@ -1492,10 +1492,6 @@ static void readFromMgmtSocket( n2n_edge_t * eee, int * keep_running )
             msg_len=0;
             ++traceLevel;
 
-            traceEvent( TRACE_ERROR, "+verb traceLevel=%u", (unsigned int)traceLevel );
-            msg_len += snprintf( (char *)(udp_buf+msg_len), (N2N_PKT_BUF_SIZE-msg_len),
-                                     "> +OK traceLevel=%u\n", (unsigned int)traceLevel );
-
             sendto( eee->udp_mgmt_sock, udp_buf, msg_len, 0/*flags*/,
                     (struct sockaddr *)&sender_sock, sizeof(struct sockaddr_in) );
 
@@ -1518,7 +1514,6 @@ static void readFromMgmtSocket( n2n_edge_t * eee, int * keep_running )
                                      "> -NOK traceLevel=%u\n", traceLevel );
             }
 
-            traceEvent( TRACE_ERROR, "-verb traceLevel=%u", (unsigned int)traceLevel );
 
             sendto( eee->udp_mgmt_sock, udp_buf, msg_len, 0/*flags*/,
                     (struct sockaddr *)&sender_sock, sizeof(struct sockaddr_in) );
@@ -1532,7 +1527,7 @@ static void readFromMgmtSocket( n2n_edge_t * eee, int * keep_running )
 			msg_len += snprintf( (char *)(udp_buf+msg_len), (N2N_PKT_BUF_SIZE-msg_len),
 								 "> known peers (connected edges):\n");
 
-			traceEvent( TRACE_ERROR, "listing peers on mgmt socket", 0);
+			// traceEvent( TRACE_ERROR, "listing peers on mgmt socket", 0);
 			sendto( eee->udp_mgmt_sock, udp_buf, msg_len, 0,
 				(struct sockaddr *)&sender_sock, sizeof(struct sockaddr_in) );
 
@@ -1587,14 +1582,14 @@ static void readFromMgmtSocket( n2n_edge_t * eee, int * keep_running )
         {
             if ( strlen( eee->keyschedule ) > 0 )
             {
-                if ( edge_init_keyschedule(eee) == 0 )
-                {
-                    msg_len=0;
-                    msg_len += snprintf( (char *)(udp_buf+msg_len), (N2N_PKT_BUF_SIZE-msg_len),
-                                         "> OK\n" );
-                    sendto( eee->udp_mgmt_sock, udp_buf, msg_len, 0/*flags*/,
-                            (struct sockaddr *)&sender_sock, sizeof(struct sockaddr_in) );
-                }
+                // if ( edge_init_keyschedule(eee) == 0 )
+                // {
+                //     msg_len=0;
+                //     msg_len += snprintf( (char *)(udp_buf+msg_len), (N2N_PKT_BUF_SIZE-msg_len),
+                //                          "> OK\n" );
+                //     sendto( eee->udp_mgmt_sock, udp_buf, msg_len, 0/*flags*/,
+                //             (struct sockaddr *)&sender_sock, sizeof(struct sockaddr_in) );
+                // }
                 return;
             }
         }
@@ -1667,7 +1662,7 @@ static void readFromMgmtSocket( n2n_edge_t * eee, int * keep_running )
         }
     }
 
-    traceEvent(TRACE_DEBUG, "mgmt status rq" );
+    //traceEvent(TRACE_DEBUG, "mgmt status rq" );
 
     msg_len=0;
     msg_len += snprintf( (char *)(udp_buf+msg_len), (N2N_PKT_BUF_SIZE-msg_len),
@@ -1713,7 +1708,7 @@ static void readFromMgmtSocket( n2n_edge_t * eee, int * keep_running )
                          "last   super:%lu(%ld sec ago) p2p:%lu(%ld sec ago)\n",
                          eee->last_sup, (now - eee->last_sup), eee->last_p2p, (now - eee->last_p2p) );
 
-    traceEvent(TRACE_DEBUG, "mgmt status sending: %s", udp_buf );
+    //traceEvent(TRACE_DEBUG, "mgmt status sending: %s", udp_buf );
 
 
     sendto( eee->udp_mgmt_sock, udp_buf, msg_len, 0/*flags*/,
@@ -1767,7 +1762,7 @@ static void readFromIPSocket( n2n_edge_t * eee )
 
     if ( recvlen < 0 )
     {
-        traceEvent(TRACE_ERROR, "recvfrom failed with %s", strerror(errno) );
+        LogPrintf("readFromIPSocket::recvfrom failed with %s\n", strerror(errno) );
 
         return; /* failed to receive data from UDP */
     }
@@ -1782,8 +1777,8 @@ static void readFromIPSocket( n2n_edge_t * eee )
      * hop as sender. */
     orig_sender=&sender;
 
-    traceEvent(TRACE_INFO, "### Rx N2N UDP (%d) from %s", 
-               (signed int)recvlen, sock_to_cstr(sockbuf1, &sender) );
+    //traceEvent(TRACE_INFO, "### Rx N2N UDP (%d) from %s", 
+            //    (signed int)recvlen, sock_to_cstr(sockbuf1, &sender) );
 
     /* hexdump( udp_buf, recvlen ); */
 
@@ -1791,7 +1786,7 @@ static void readFromIPSocket( n2n_edge_t * eee )
     idx = 0; /* marches through packet header as parts are decoded. */
     if ( decode_common(&cmn, udp_buf, &rem, &idx) < 0 )
     {
-        traceEvent( TRACE_ERROR, "Failed to decode common section in N2N_UDP" );
+        LogPrintf("Failed to decode common section in N2N_UDP\n" );
         return; /* failed to decode packet */
     }
 
@@ -1806,7 +1801,7 @@ static void readFromIPSocket( n2n_edge_t * eee )
             /* process PACKET */
             decode_PACKET( &pkt, &cmn, udp_buf, &rem, &idx );
 
-            traceEvent(TRACE_INFO, "Rx PACKET from %s (%s)",
+            LogPrint("edge","Rx PACKET from %s (%s)\n",
                        sock_to_cstr(sockbuf1, &sender),
                        sock_to_cstr(sockbuf2, orig_sender) );
 
@@ -1828,12 +1823,12 @@ static void readFromIPSocket( n2n_edge_t * eee )
                 scan->sockets = (n2n_sock_t *)malloc(scan->num_sockets*sizeof(n2n_sock_t));
                 for(j=0; j<scan->num_sockets; j++)
                     scan->sockets[j] = pi.sockets[j];
-                traceEvent(TRACE_INFO, "Rx PEER_INFO on %s",
+                LogPrint("edge", "Rx PEER_INFO on %s\n",
                            macaddr_str(mac_buf1, pi.mac) );
                 for(j=0; j<scan->num_sockets; j++)
                     send_register(eee, scan->sockets+j, scan->mac_addr);
             } else {
-                traceEvent(TRACE_INFO, "Rx PEER_INFO unknown peer %s",
+                LogPrint("edge", "Rx PEER_INFO unknown peer %s\n",
                            macaddr_str(mac_buf1, pi.mac) );
             }
 
@@ -1842,8 +1837,8 @@ static void readFromIPSocket( n2n_edge_t * eee )
             /* Another edge is registering with us */
             decode_REGISTER( &reg, &cmn, udp_buf, &rem, &idx );
 
-            traceEvent(TRACE_INFO,
-                    "Rx REGISTER src=%s dst=%s from peer %s (%s)",
+            LogPrint("edge",
+                    "Rx REGISTER src=%s dst=%s from peer %s (%s)\n",
                     macaddr_str( mac_buf1, reg.srcMac ),
                     macaddr_str( mac_buf2, reg.dstMac ),
                     sock_to_cstr(sockbuf1, &sender),
@@ -1869,7 +1864,7 @@ static void readFromIPSocket( n2n_edge_t * eee )
                 orig_sender = &(ra.sock);
             }
 
-            traceEvent(TRACE_INFO, "Rx REGISTER_ACK src=%s dst=%s from peer %s (%s)",
+            LogPrint("edge", "Rx REGISTER_ACK src=%s dst=%s from peer %s (%s)\n",
                        macaddr_str( mac_buf1, ra.srcMac ),
                        macaddr_str( mac_buf2, ra.dstMac ),
                        sock_to_cstr(sockbuf1, &sender),
@@ -1888,7 +1883,7 @@ static void readFromIPSocket( n2n_edge_t * eee )
                     orig_sender = &(rsa.sock);
                 }
 
-                traceEvent(TRACE_NORMAL, "Rx REGISTER_SUPER_ACK myMAC=%s [%s] (external %s). Attempts %u",
+                LogPrint("edge", "Rx REGISTER_SUPER_ACK myMAC=%s [%s] (external %s). Attempts %u\n",
                            macaddr_str( mac_buf1, rsa.edgeMac ),
                            sock_to_cstr(sockbuf1, &sender),
                            sock_to_cstr(sockbuf2, orig_sender), 
@@ -1898,7 +1893,7 @@ static void readFromIPSocket( n2n_edge_t * eee )
                 {
                     if ( rsa.num_sn > 0 )
                     {
-                        traceEvent(TRACE_NORMAL, "Rx REGISTER_SUPER_ACK backup supernode at %s",
+                        LogPrint("edge", "Rx REGISTER_SUPER_ACK backup supernode at %s\n",
                                    sock_to_cstr(sockbuf1, &(rsa.sn_bak) ) );
                     }
 
@@ -1917,23 +1912,23 @@ static void readFromIPSocket( n2n_edge_t * eee )
                 }
                 else
                 {
-                    traceEvent( TRACE_WARNING, "Rx REGISTER_SUPER_ACK with wrong or old cookie." );
+                    LogPrintf("Rx REGISTER_SUPER_ACK with wrong or old cookie.\n" );
                 }
             }
             else
             {
-                traceEvent( TRACE_WARNING, "Rx REGISTER_SUPER_ACK with no outstanding REGISTER_SUPER." );
+                LogPrintf("Rx REGISTER_SUPER_ACK with no outstanding REGISTER_SUPER.\n" );
             }
             break;
         default:
             /* Not a known message type */
-            traceEvent(TRACE_WARNING, "Unable to handle packet type %d: ignored", (signed int)msg_type);
+            LogPrintf("Unable to handle packet type %d: ignored\n", (signed int)msg_type);
             break;
         } /* end switch(msg_type) */
     } /* if (community match) */
     else
     {
-        traceEvent(TRACE_WARNING, "Received packet with invalid community");
+        LogPrintf("Received packet with invalid community\n");
     }
 
 }
@@ -1998,7 +1993,7 @@ static void supernode2addr(n2n_sock_t * sn, const n2n_sn_name_t addrIn)
         if ( supernode_port )
             sn->port = atoi(supernode_port);
         else
-            traceEvent(TRACE_WARNING, "Bad supernode parameter (-l <host:port>) %s %s:%s",
+            LogPrintf("Bad supernode parameter (-l <host:port>) %s %s:%s\n",
                        addr, supernode_host, supernode_port);
 
         nameerr = getaddrinfo( supernode_host, NULL, &aihints, &ainfo );
@@ -2019,20 +2014,20 @@ static void supernode2addr(n2n_sock_t * sn, const n2n_sn_name_t addrIn)
             else
             {
                 /* Should only return IPv4 addresses due to aihints. */
-                traceEvent(TRACE_WARNING, "Failed to resolve supernode IPv4 address for %s", supernode_host);
+                LogPrintf("Failed to resolve supernode IPv4 address for %s\n", supernode_host);
             }
 
             freeaddrinfo(ainfo); /* free everything allocated by getaddrinfo(). */
             ainfo = NULL;
         } else {
-            traceEvent(TRACE_WARNING, "Failed to resolve supernode host %s, assug numeric", supernode_host);
+            LogPrintf("Failed to resolve supernode host %s, assug numeric\n", supernode_host);
             sn_addr = inet_addr(supernode_host); /* uint32_t */
             memcpy( sn->addr.v4, &(sn_addr), IPV4_SIZE );
             sn->family=AF_INET;
         }
 
     } else
-        traceEvent(TRACE_WARNING, "Wrong supernode parameter (-l <host:port>)");
+        LogPrintf("Wrong supernode parameter (-l <host:port>)\n");
 }
 
 /** Decode local address string (given on command line)
@@ -2073,13 +2068,13 @@ static int set_localip(n2n_edge_t * eee) {
 
     if (eee->local_ip_str[0] == 0) {
         /* Sanity check - cannot use an empty string to set localip */
-        traceEvent( TRACE_ERROR, "localip string is empty" );
+        LogPrintf("localip string is empty\n" );
         return(-1);
     }
 
     socklen_t sa_len = sizeof(sa);
     if ( getsockname(eee->udp_sock, (struct sockaddr *) &sa, &sa_len) == -1 ) {
-        traceEvent( TRACE_ERROR, "getsockname() failed" );
+        LogPrintf("getsockname() failed\n" );
         return(-1);
     }
 
@@ -2098,7 +2093,7 @@ static int set_localip(n2n_edge_t * eee) {
 
         SOCKET fd = socket(AF_INET, SOCK_DGRAM, 0);
         if (fd < 0) {
-            traceEvent(TRACE_WARNING, "socket() failed");
+            LogPrintf( "socket() failed\n");
             return(-1);
         }
 
@@ -2110,20 +2105,20 @@ static int set_localip(n2n_edge_t * eee) {
 
         if ( connect(fd, (struct sockaddr *) &sa_sn, sizeof(sa_sn) ) <0 ) {
             close(fd);
-            traceEvent(TRACE_WARNING, "connect() failed");
+            LogPrintf( "connect() failed\n");
             return(-1);
         }
 
         if ( getsockname(fd, (struct sockaddr *) &sa, &sa_len) <0 ) {
             close(fd);
-            traceEvent(TRACE_WARNING, "getsockname() failed");
+            LogPrintf("getsockname() failed\n");
             return(-1);
         }
 
         if ( AF_INET != sa.sin_family ) {
             /* TODO IPV6 */
             close(fd);
-            traceEvent(TRACE_WARNING, "wrong socket family");
+            LogPrintf("wrong socket family\n");
             return(-1);
         }
 
@@ -2135,12 +2130,12 @@ static int set_localip(n2n_edge_t * eee) {
     }
 
     if (eee->local_sock_ena) {
-        traceEvent(TRACE_NORMAL, "Local Socket is %s",
+        LogPrintf( "Local Socket is %s\n",
                 sock_to_cstr( local_sockbuf, &(eee->local_sock) ) );
         return(0);
     }
 
-    traceEvent(TRACE_WARNING, "Wrong local_ip parameter (-L ip), disabled");
+    LogPrintf("Wrong local_ip parameter (-L ip), disabled\n");
     return(-1);
 }
 
@@ -2230,15 +2225,13 @@ int real_main(int argc, char* argv[])
     char    device_mac[N2N_MACNAMSIZ]="";
     char *  encrypt_key="massgridn2n";
 
-    int     i, effectiveargc=0;
-    char ** effectiveargv=NULL;
-    char  * linebuffer = NULL;
+    int     i;
 
     n2n_edge_t eee; /* single instance for this program */
 
     if (-1 == edge_init(&eee) )
     {
-        traceEvent( TRACE_ERROR, "Failed in edge_init" );
+        LogPrintf("Failed in edge_init\n" );
         exit(1);
     }
 
@@ -2253,305 +2246,35 @@ int real_main(int argc, char* argv[])
     memset(&(eee.supernode), 0, sizeof(eee.supernode));
     eee.supernode.family = AF_INET;
 
-    linebuffer = (char *)malloc(MAX_CMDLINE_BUFFER_LENGTH);
-    if (!linebuffer)
+    scan_address(ip_addr, N2N_NETMASK_STR_SIZE,
+                        ip_mode, N2N_IF_MODE_SIZE,
+                        strLocalAddr.c_str() );
+
+    if ( eee.sn_num < N2N_EDGE_NUM_SUPERNODES )
     {
-        traceEvent( TRACE_ERROR, "Unable to allocate memory");
+        strncpy( (eee.sn_ip_array[eee.sn_num]), strSnAddr.c_str(), N2N_EDGE_SN_HOST_SIZE);
+        LogPrint("edge", "Adding supernode[%u] = %s\n", (unsigned int)eee.sn_num, (eee.sn_ip_array[eee.sn_num]) );
+        ++eee.sn_num;
+    }
+    else
+    {
+        LogPrintf( "Too many supernodes!\n" );
         exit(1);
     }
-    snprintf(linebuffer, MAX_CMDLINE_BUFFER_LENGTH, "%s",argv[0]);
 
-#ifdef WIN32
-    for(i=0; i < (int)strlen(linebuffer); i++)
-        if(linebuffer[i] == '\\') linebuffer[i] = '/';
-#endif
-
-    for(i = 1; i < argc; ++i)
-    {
-        // if(argv[i][0] == '@')
-        // {
-        //     if (readConfFile(&argv[i][1], linebuffer)<0) exit(1); /* <<<<----- check */
-        // }
-        // else 
-        if ((strlen(linebuffer)+strlen(argv[i])+2) < MAX_CMDLINE_BUFFER_LENGTH)
-        {
-            strncat(linebuffer, " ", 1);
-            strncat(linebuffer, argv[i], strlen(argv[i]));
-        }
-        else
-        {
-            traceEvent( TRACE_ERROR, "too many argument");
-            exit(1);
-        }
-    }
-    /*  strip trailing spaces */
-    while(strlen(linebuffer) && linebuffer[strlen(linebuffer)-1]==' ')
-        linebuffer[strlen(linebuffer)-1]= '\0';
-
-    /* build the new argv from the linebuffer */
-    effectiveargv = buildargv(&effectiveargc, linebuffer);
-
-#ifdef WIN32
-    /* unfortunately, any cmdline quoting used originally is gone, so we can
-     * not use the getopt to process the install
-     */
-    if (!_strnicmp(effectiveargv[1], "--install", 9)) {
-        char *p = strchr(linebuffer,' ') + 1; /* skip the argv[0] */
-        char *scm_args = strchr(p,' ') + 1; /* skip the "--install" */
-
-        printf("Installing service with args '%s'\n", scm_args);
-        /* request service installation */
-        char *path = SCM_Install(&sd,scm_args);
-        if (!path) {
-            printf("Service installation failed\n");
-            return 2;
-        }
-        printf("Service '%s' installed, binary path '%s'\n", sd.name,path);
-        printf("You should now start the service using the service manager.\n");
-        return 1;
-    }
-#endif
-
-    if (linebuffer)
-    {
-        free(linebuffer);
-        linebuffer = NULL;
-    }
-
-    /* {int k;for(k=0;k<effectiveargc;++k)  printf("%s\n",effectiveargv[k]);} */
-
-    optarg = NULL;
-    while((opt = getopt_long(effectiveargc,
-                             effectiveargv,
-                             "K:k:a:bc:Eu:g:m:M:s:d:l:L:i:p:fvhrt:R", long_options, NULL)) != EOF)
-    {
-        switch (opt)
-        {
-        // case'K':
-        // {
-        //     if ( encrypt_key )
-        //     {
-        //         fprintf(stderr, "Error: -K and -k options are mutually exclusive.\n");
-        //         exit(1);
-        //     }
-        //     else
-        //     {
-        //         strncpy( eee.keyschedule, optarg, N2N_PATHNAME_MAXLEN-1 );
-        //         eee.keyschedule[N2N_PATHNAME_MAXLEN-1]=0; /* strncpy does not add NULL if the source has no NULL. */
-        //         traceEvent(TRACE_DEBUG, "keyfile = '%s'\n", eee.keyschedule);
-        //         fprintf(stderr, "keyfile = '%s'\n", eee.keyschedule);
-        //     }
-        //     break;
-        // }
-        case 'a': /* IP address and mode of TUNTAP interface */
-        {
-            scan_address(ip_addr, N2N_NETMASK_STR_SIZE,
-                         ip_mode, N2N_IF_MODE_SIZE,
-                         optarg );
-            break;
-        }
-        case 'c': /* community as a string */
-        {
-            memset( eee.community_name, 0, N2N_COMMUNITY_SIZE );
-            strncpy( (char *)eee.community_name, optarg, N2N_COMMUNITY_SIZE);
-            break;
-        }
-        case 'E': /* multicast ethernet addresses accepted. */
-        {
-            eee.drop_multicast=0;
-            traceEvent(TRACE_DEBUG, "Enabling ethernet multicast traffic\n");
-            break;
-        }
-
-#ifndef WIN32
-        // case 'u': /* unprivileged uid */
-        // {
-        //     userid = atoi(optarg);
-        //     break;
-        // }
-        // case 'g': /* unprivileged uid */
-        // {
-        //     groupid = atoi(optarg);
-        //     break;
-        // }
-#endif
-#ifdef N2N_HAVE_DAEMON
-        case 'f' : /* do not fork as daemon */
-        {
-            eee.daemon=0;
-            break;
-        }
-#endif /* #ifdef N2N_HAVE_DAEMON */
-
-        case 'm' : /* TUNTAP MAC address */
-        {
-            strncpy(device_mac,optarg,N2N_MACNAMSIZ);
-            break;
-        }
-
-        case 'M' : /* TUNTAP MTU */
-        {
-            mtu = atoi(optarg);
-            break;
-        }
-
-        // case 'k': /* encrypt key */
-        // {
-        //     if (strlen(eee.keyschedule) > 0 )
-        //     {
-        //         fprintf(stderr, "Error: -K and -k options are mutually exclusive.\n");
-        //         exit(1);
-        //     } else {
-        //         traceEvent(TRACE_DEBUG, "encrypt_key = '%s'\n", encrypt_key);
-        //         encrypt_key = strdup(optarg);
-        //     }
-        //     break;
-        // }
-        case 'r': /* enable packet routing across n2n endpoints */
-        {
-            eee.allow_routing = 1;
-            break;
-        }
-
-        case 'l': /* supernode-list */
-        {
-            if ( eee.sn_num < N2N_EDGE_NUM_SUPERNODES )
-            {
-                strncpy( (eee.sn_ip_array[eee.sn_num]), optarg, N2N_EDGE_SN_HOST_SIZE);
-                traceEvent(TRACE_DEBUG, "Adding supernode[%u] = %s\n", (unsigned int)eee.sn_num, (eee.sn_ip_array[eee.sn_num]) );
-                ++eee.sn_num;
-            }
-            else
-            {
-                fprintf(stderr, "Too many supernodes!\n" );
-                exit(1);
-            }
-            break;
-        }
-
-        case 'i': /* holepunch-interval */
-        {
-            eee.holepunch_interval = atoi(optarg);
-            eee.holepunch_interval = MAX( eee.holepunch_interval, REGISTER_SUPER_INTERVAL_MIN );
-            eee.holepunch_interval = MIN( eee.holepunch_interval, REGISTER_SUPER_INTERVAL_MAX );
-            break;
-        }
-        case 'L': /* local ip */
-        {
-            eee.local_sock_ena = 1;
-            strncpy( eee.local_ip_str, optarg, N2N_EDGE_LOCAL_IP_SIZE);
-            if ( N2N_EDGE_LOCAL_IP_SIZE > 0 )
-                eee.local_ip_str[N2N_EDGE_LOCAL_IP_SIZE - 1] = '\0';
-            traceEvent(TRACE_DEBUG, "Storing local_ip_str = %s\n", (eee.local_ip_str) );
-            break;
-        }
-
-#if defined(N2N_CAN_NAME_IFACE)
-        case 'd': /* TUNTAP name */
-        {
-            strncpy(tuntap_dev_name, optarg, N2N_IFNAMSIZ);
-            break;
-        }
-#endif
-
-        case 'b':
-        {
-            eee.re_resolve_supernode_ip = 1;
-            break;
-        }
-
-        case 'p':
-        {
-            local_port = atoi(optarg);
-            break;
-        }
-        
-        case 't':
-        {
-            mgmt_port = atoi(optarg);
-            break;
-        }
-
-        case 's': /* Subnet Mask */
-        {
-            if (0 != got_s)
-            {
-                traceEvent(TRACE_WARNING, "Multiple subnet masks supplied.");
-            }
-            strncpy(netmask, optarg, N2N_NETMASK_STR_SIZE);
-            got_s = 1;
-            break;
-        }
-
-        case 'v': /* verbose */
-        {
-            ++traceLevel; /* do 2 -v flags to increase verbosity to DEBUG level*/
-            break;
-        }
-
-#ifdef WIN32
-       case 'R': /* Remove */
-       {
-               // request service removal
-               if (SCM_Remove(&sd)==0) {
-                       printf("Deleted service '%s'\n",sd.name);
-               } else {
-                       printf("Service removal failed\n");
-               }
-               return 1;
-       }
-#endif
-
-        } /* end switch */
-    }
-
-
-#ifdef N2N_HAVE_DAEMON
-    if ( eee.daemon )
-    {
-        useSyslog=1; /* traceEvent output now goes to syslog. */
-        if ( -1 == daemon( 0, 0 ) )
-        {
-            traceEvent( TRACE_ERROR, "Failed to become daemon." );
-            exit(-5);
-        }
-    }
-#endif /* #ifdef N2N_HAVE_DAEMON */
-
-
-    traceEvent( TRACE_NORMAL, "Starting n2n edge %s %s", n2n_sw_version, n2n_sw_buildDate );
-
+    memset( eee.community_name, 0, N2N_COMMUNITY_SIZE );
+    strncpy( (char *)eee.community_name, strCommunity.c_str(), N2N_COMMUNITY_SIZE);
 
     for (i=0; i< N2N_EDGE_NUM_SUPERNODES; ++i )
     {
-        traceEvent( TRACE_NORMAL, "supernode %u => %s\n", i, (eee.sn_ip_array[i]) );
+        LogPrint( "edge", "supernode %u => %s\n", i, (eee.sn_ip_array[i]) );
     }
 
     supernode2addr( &(eee.supernode), eee.sn_ip_array[eee.sn_idx] );
 
-
-    for ( i=0; i<effectiveargc; ++i )
-    {
-        free( effectiveargv[i] );
-    }
-    free( effectiveargv );
-    effectiveargv = 0;
-    effectiveargc = 0;
-
-    if(!(
-#ifdef __linux__
-           (tuntap_dev_name[0] != 0) &&
-#endif
-           (eee.community_name[0] != 0) &&
-           (ip_addr[0] != 0)
-           ) )
-    {
-        // help();
-    }
-
     if ( (NULL == encrypt_key ) && ( 0 == strlen(eee.keyschedule)) )
     {
-        traceEvent(TRACE_WARNING, "Encryption is disabled in edge.");
+        //traceEvent(TRACE_WARNING, "Encryption is disabled in edge.");
         
         eee.null_transop = 1;
     }
@@ -2565,44 +2288,28 @@ int real_main(int argc, char* argv[])
 
     if ( 0 == strcmp( "dhcp", ip_mode ) )
     {
-        traceEvent(TRACE_NORMAL, "Dynamic IP address assignment enabled.");
+        //traceEvent(TRACE_NORMAL, "Dynamic IP address assignment enabled.");
 
         eee.dyn_ip_mode = 1;
     }
     else
     {
-        traceEvent(TRACE_NORMAL, "ip_mode='%s'", ip_mode);        
+        LogPrint("edge", "ip_mode='%s'\n", ip_mode);        
     }
 
     if(tuntap_open(&(eee.device), tuntap_dev_name, ip_mode, ip_addr, netmask, device_mac, mtu) < 0){
-        LogPrintf("dockeredge::ThreadEdgeStart  ERROR: ioctl() [Operation not permitted][-1]");
+        LogPrintf("dockeredge::ThreadEdgeStart  ERROR: ioctl() [Operation not permitted][-1]\n");
         return(-1);
     }
-#ifndef WIN32
-    if ( (userid != 0) || (groupid != 0 ) ) {
-        traceEvent(TRACE_NORMAL, "Interface up. Dropping privileges to uid=%d, gid=%d", 
-                   (signed int)userid, (signed int)groupid);
-
-        /* Finished with the need for root privileges. Drop to unprivileged user. */
-        setreuid( userid, userid );
-        setregid( groupid, groupid );
-    }
-#endif
 
     if(local_port > 0)
-        traceEvent(TRACE_NORMAL, "Binding to local port %d", (signed int)local_port);
+        LogPrint("edge", "Binding to local port %d\n", (signed int)local_port);
 
     if ( encrypt_key ) {
         if(edge_init_twofish( &eee, (uint8_t *)(encrypt_key), strlen(encrypt_key) ) < 0) {
             fprintf(stderr, "Error: twofish setup failed.\n" );
             return(-1);
         }
-    } else if ( strlen(eee.keyschedule) > 0 ) {
-        if (edge_init_keyschedule( &eee ) != 0 ) {
-            fprintf(stderr, "Error: keyschedule setup failed.\n" );
-            return(-1);
-        }
-
     }
     /* else run in NULL mode */
 
@@ -2610,14 +2317,14 @@ int real_main(int argc, char* argv[])
     eee.udp_sock = open_socket(local_port, 1 /*bind ANY*/ );
     if(eee.udp_sock < 0)
     {
-        traceEvent( TRACE_ERROR, "Failed to bind main UDP port %u", (signed int)local_port );
+        LogPrintf("Failed to bind main UDP port %u\n", (signed int)local_port );
         return(-1);
     }
 
 
     if(eee.local_sock_ena) {
         if ( set_localip(&eee) != 0) {
-            traceEvent( TRACE_ERROR, "set localip failed" );
+            LogPrintf("set localip failed\n" );
             return(-1);
         }
     }
@@ -2626,15 +2333,11 @@ int real_main(int argc, char* argv[])
 
     if(eee.udp_mgmt_sock < 0)
     {
-        traceEvent( TRACE_ERROR, "Failed to bind management UDP port %u", (unsigned int)N2N_EDGE_MGMT_PORT );
+        LogPrintf("Failed to bind management UDP port %u\n", (unsigned int)N2N_EDGE_MGMT_PORT );
         return(-1);
     }
 
-
-    traceEvent(TRACE_NORMAL, "edge started");
-
     update_supernode_reg(&eee, time(NULL) );
-
     return run_loop(&eee);
 }
 
@@ -2646,7 +2349,9 @@ static int run_loop(n2n_edge_t * eee )
     time_t lastTransop=0;
 	time_t lastStatCalc=0;
 	time_t lastStatCalcDiff;
-
+    keep_running=1;
+    if(fstart)
+        fstart();
 
 #ifdef WIN32
     startTunReadThread(eee);
@@ -2658,113 +2363,119 @@ static int run_loop(n2n_edge_t * eee )
      * socket. When input is present the data is read and processed by either
      * readFromIPSocket() or readFromTAPSocket()
      */
+    try{
+        while(keep_running)
+        {
+            int rc, max_sock = 0;
+            fd_set socket_mask;
+            struct timeval wait_time;
+            time_t nowTime;
 
-    while(keep_running)
-    {
-        int rc, max_sock = 0;
-        fd_set socket_mask;
-        struct timeval wait_time;
-        time_t nowTime;
-
-        FD_ZERO(&socket_mask);
-        FD_SET(eee->udp_sock, &socket_mask);
-        FD_SET(eee->udp_mgmt_sock, &socket_mask);
-        max_sock = max( eee->udp_sock, eee->udp_mgmt_sock );
+            FD_ZERO(&socket_mask);
+            FD_SET(eee->udp_sock, &socket_mask);
+            FD_SET(eee->udp_mgmt_sock, &socket_mask);
+            max_sock = max( eee->udp_sock, eee->udp_mgmt_sock );
 #ifndef WIN32
-        FD_SET(eee->device.fd, &socket_mask);
-        max_sock = max( max_sock, eee->device.fd );
+            FD_SET(eee->device.fd, &socket_mask);
+            max_sock = max( max_sock, eee->device.fd );
 #endif
 
-        wait_time.tv_sec = SOCKET_TIMEOUT_INTERVAL_SECS; wait_time.tv_usec = 0;
+            wait_time.tv_sec = SOCKET_TIMEOUT_INTERVAL_SECS; wait_time.tv_usec = 0;
 
-        rc = select(max_sock+1, &socket_mask, NULL, NULL, &wait_time);
-        nowTime=time(NULL);
+            rc = select(max_sock+1, &socket_mask, NULL, NULL, &wait_time);
+            nowTime=time(NULL);
 
-        /* Make sure ciphers are updated before the packet is treated. */
-        if ( ( nowTime - lastTransop ) > TRANSOP_TICK_INTERVAL )
-        {
-            lastTransop = nowTime;
-
-            n2n_tick_transop( eee, nowTime );
-        }
-
-        if(rc > 0)
-        {
-            /* Any or all of the FDs could have input; check them all. */
-
-            if(FD_ISSET(eee->udp_sock, &socket_mask))
+            /* Make sure ciphers are updated before the packet is treated. */
+            if ( ( nowTime - lastTransop ) > TRANSOP_TICK_INTERVAL )
             {
-                /* Read a cooked socket from the internet socket. Writes on the TAP
-                 * socket. */
-                readFromIPSocket(eee);
+                lastTransop = nowTime;
+
+                n2n_tick_transop( eee, nowTime );
             }
 
-            if(FD_ISSET(eee->udp_mgmt_sock, &socket_mask))
+            if(rc > 0)
             {
-                /* Read a cooked socket from the internet socket. Writes on the TAP
-                 * socket. */
-                readFromMgmtSocket(eee, &keep_running);
-            }
+                /* Any or all of the FDs could have input; check them all. */
+
+                if(FD_ISSET(eee->udp_sock, &socket_mask))
+                {
+                    /* Read a cooked socket from the internet socket. Writes on the TAP
+                    * socket. */
+                    readFromIPSocket(eee);
+                }
+
+                if(FD_ISSET(eee->udp_mgmt_sock, &socket_mask))
+                {
+                    /* Read a cooked socket from the internet socket. Writes on the TAP
+                    * socket. */
+                    readFromMgmtSocket(eee, &keep_running);
+                }
 
 #ifndef WIN32
-            if(FD_ISSET(eee->device.fd, &socket_mask))
-            {
-                /* Read an ethernet frame from the TAP socket. Write on the IP
-                 * socket. */
-                readFromTAPSocket(eee);
+                if(FD_ISSET(eee->device.fd, &socket_mask))
+                {
+                    /* Read an ethernet frame from the TAP socket. Write on the IP
+                    * socket. */
+                    readFromTAPSocket(eee);
+                }
+    #endif
             }
-#endif
-        }
 
-        /* Finished processing select data. */
+            /* Finished processing select data. */
 
 
-        update_supernode_reg(eee, nowTime);
+            update_supernode_reg(eee, nowTime);
 
-        numPurged = 0;
-        if ((nowTime - eee->last_purge) >= PURGE_REGISTRATION_FREQUENCY) {
-            numPurged += hashed_purge_expired_registrations(eee->known_peers);
-            numPurged += hashed_purge_expired_registrations(eee->pending_peers);
-            eee->last_purge = nowTime;
-        }
-        if ( numPurged > 0 )
-        {
-            traceEvent( TRACE_NORMAL, "Peer removed: pending=%u, operational=%u",
-                        (unsigned int)hashed_peer_list_t_size( eee->pending_peers ), 
-                        (unsigned int)hashed_peer_list_t_size( eee->known_peers ) );
-        }
+            numPurged = 0;
+            if ((nowTime - eee->last_purge) >= PURGE_REGISTRATION_FREQUENCY) {
+                numPurged += hashed_purge_expired_registrations(eee->known_peers);
+                numPurged += hashed_purge_expired_registrations(eee->pending_peers);
+                eee->last_purge = nowTime;
+            }
+            if ( numPurged > 0 )
+            {
+                LogPrint( "edge", "Peer removed: pending=%u, operational=%u\n",
+                            (unsigned int)hashed_peer_list_t_size( eee->pending_peers ), 
+                            (unsigned int)hashed_peer_list_t_size( eee->known_peers ) );
+            }
 
-        if ( eee->dyn_ip_mode && 
-             (( nowTime - lastIfaceCheck ) > IFACE_UPDATE_INTERVAL ) )
-        {
-            traceEvent(TRACE_NORMAL, "Re-checking dynamic IP address.");
-            tuntap_get_address( &(eee->device) );
-            lastIfaceCheck = nowTime;
-        }
+            if ( eee->dyn_ip_mode && 
+                (( nowTime - lastIfaceCheck ) > IFACE_UPDATE_INTERVAL ) )
+            {
+                LogPrint("edge", "Re-checking dynamic IP address.\n");
+                tuntap_get_address( &(eee->device) );
+                lastIfaceCheck = nowTime;
+            }
 
-		lastStatCalcDiff = nowTime - lastStatCalc;
-		if(lastStatCalcDiff > STAT_CALC_INTERVAL) {
-			// traceEvent(TRACE_NORMAL, "recalc bps.");
-			eee->tx_bps_p2p = eee->tx_bit_p2p / (size_t)lastStatCalcDiff;
-			eee->tx_bit_p2p = 0;
-			eee->tx_bps_sup = eee->tx_bit_sup / (size_t)lastStatCalcDiff;
-			eee->tx_bit_sup = 0;
-			eee->rx_bps_p2p = eee->rx_bit_p2p / (size_t)lastStatCalcDiff;
-			eee->rx_bit_p2p = 0;
-			eee->rx_bps_sup = eee->rx_bit_sup / (size_t)lastStatCalcDiff;
-			eee->rx_bit_sup = 0;
-			lastStatCalc = nowTime;
-		}
+            lastStatCalcDiff = nowTime - lastStatCalc;
+            if(lastStatCalcDiff > STAT_CALC_INTERVAL) {
+                // //traceEvent(TRACE_NORMAL, "recalc bps.");
+                eee->tx_bps_p2p = eee->tx_bit_p2p / (size_t)lastStatCalcDiff;
+                eee->tx_bit_p2p = 0;
+                eee->tx_bps_sup = eee->tx_bit_sup / (size_t)lastStatCalcDiff;
+                eee->tx_bit_sup = 0;
+                eee->rx_bps_p2p = eee->rx_bit_p2p / (size_t)lastStatCalcDiff;
+                eee->rx_bit_p2p = 0;
+                eee->rx_bps_sup = eee->rx_bit_sup / (size_t)lastStatCalcDiff;
+                eee->rx_bit_sup = 0;
+                lastStatCalc = nowTime;
+            }
 
-    } /* while */
+            boost::this_thread::interruption_point();
+        } /* while */
+    }catch(boost::thread_interrupted&){
 
+    LogPrintf("EdgePreStop thread_interrupted\n");
+    }
     send_deregister( eee, &(eee->supernode));
 
     closesocket(eee->udp_sock);
     tuntap_close(&(eee->device));
 
     edge_deinit( eee );
-
+    if(fstop)
+        fstop();
+    LogPrintf("EdgeStop\n");
     return(0);
 }
 
@@ -2777,16 +2488,41 @@ int n2n_stop(void *param1) {
        return 0;
 }
 
-int ThreadEdgeStart(int argc, char* argv[])
+void EdgeStart()
 {
-        sd.name = "edge",
-        sd.desc = "edge - n2n VPN Edge node",
-        sd.main = n2n_main,
-        sd.stop = n2n_stop;
-        if (SCM_Start(&sd,argc,argv)!=SVC_OK) {
-                return 1;
-        }
-
-        return 0;
+    LogPrintf("EdgeStart\n");
+    sd.name = "edge",
+    sd.desc = "edge - n2n VPN Edge node",
+    sd.main = n2n_main,
+    sd.stop = n2n_stop;
+    SCM_Start(&sd,0,NULL)!=SVC_OK;
 }
-
+bool ThreadEdgeStart(std::string community,std::string localaddr,std::string snaddr,std::function<void()>start,std::function<void()>stop){
+    LogPrintf("ThreadEdgeStart\n");
+    strCommunity = community;
+    strLocalAddr = localaddr;
+    strSnAddr = snaddr;
+    fstart = start;
+    fstop = stop;
+    if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
+        LogPrintf("ThreadEdgeStart existed thread,Please Stop first\n");
+        return false;
+    }
+    thrd = fthreadGroup->create_thread(std::bind(&EdgeStart));
+    if(thrd){
+        LogPrintf("ThreadEdgeStarted\n");
+        return true;
+    }
+    LogPrintf("ThreadEdgeStart Failed\n");
+    return false;
+}
+void ThreadEdgeStop(){
+    LogPrintf("ThreadEdgeStop\n");
+    if(!thrd)return;
+    if(fthreadGroup->is_thread_in(thrd)){
+        fthreadGroup->remove_thread(thrd);
+        n2n_stop(NULL);
+        LogPrintf("ThreadEdgeStop:: interrupt thread->id %d\n",thrd->get_id());
+        thrd = NULL;
+    }
+}

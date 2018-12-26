@@ -21,6 +21,7 @@
 #include "init.h"
 #include "../wallet/wallet.h"
 #include "dockercluster.h"
+#include "dockeredge.h"
 
 #include <fstream>
 #include <iomanip>
@@ -50,7 +51,7 @@ UniValue dockercreate(const UniValue& params, bool fHelp)
 #endif // ENABLE_WALLET
          strCommand != "list" && strCommand != "list-conf" && strCommand != "count" &&
          strCommand != "debug" && strCommand != "current" && strCommand != "winner" && strCommand != "winners" && strCommand != "genkey" &&
-         strCommand != "connect" && strCommand != "status" && strCommand != "getdndata"&& strCommand != "create"))
+         strCommand != "connect" && strCommand != "disconnect" && strCommand != "status" && strCommand != "getdndata"&& strCommand != "create"))
             throw std::runtime_error(
                 "masternode \"command\"...\n"
                 "Set of commands to execute masternode related actions\n"
@@ -84,8 +85,8 @@ UniValue dockercreate(const UniValue& params, bool fHelp)
 
     if(strCommand == "create")
     {
-        if (params.size() < 10)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Request more parameter");
+        if (params.size() != 10)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
         std::string strAddr = params[1].get_str();
         if(!dockercluster.SetConnectDockerAddress(strAddr))
             throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
@@ -105,7 +106,6 @@ UniValue dockercreate(const UniValue& params, bool fHelp)
 
         int64_t strServiceCpu = params[4].get_int64();
         createService.cpu = strServiceCpu;
-        LogPrintf("cpu %lld \n",createService.cpu);
         int64_t strServiceMemoey_byte = params[5].get_int64();
         createService.memory_byte = strServiceMemoey_byte;
         
@@ -122,37 +122,34 @@ UniValue dockercreate(const UniValue& params, bool fHelp)
         createService.ssh_pubkey = strssh_pubkey;
         
         if(!dockercluster.CreateAndSendSeriveSpec(createService))
-            return "dockercluster.CreateAndSendSeriveSpec error";
-        LogPrintf(" createService.sspec hash %s \n",createService.ToString());
-        return "dockercluster.CreateAndSendSeriveSpec successfully";
+            return "CreateSpec Error";
+        return "CreateSpec Successfully hash: "+createService.ToString();
     }
 
-    if (strCommand == "count")
+    if (strCommand == "connect")
     {
-        if (params.size() > 2)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Too many parameters");
+        if (params.size() != 4)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
 
-        if (params.size() == 1)
-            return mnodeman.size();
+        std::string strCommunity = params[1].get_str();
 
-        std::string strMode = params[1].get_str();
+        std::string strLocalAddr = params[2].get_str();
 
-        if (strMode == "enabled")
-            return mnodeman.CountEnabled();
+        std::string strSnAddr = params[3].get_str();
 
-        int nCount;
-        masternode_info_t mnInfo;
-        mnodeman.GetNextMasternodeInQueueForPayment(true, nCount, mnInfo);
-
-        if (strMode == "qualify")
-            return nCount;
-
-        if (strMode == "all")
-            return strprintf("Total: %d ( Enabled: %d / Qualify: %d)",
-                mnodeman.size(),
-                mnodeman.CountEnabled(), nCount);
+        if(ThreadEdgeStart(strCommunity,strLocalAddr,strSnAddr)){
+            return "edge Start Successfully";
+        }
+        else
+            return "edge Start Failed";
     }
 
+    if (strCommand == "disconnect"){
+        if (params.size() != 1)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
+        ThreadEdgeStop();
+        return "edge Stop Successfully";
+    }
     if (strCommand == "current" || strCommand == "winner")
     {
         int nCount;

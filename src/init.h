@@ -7,7 +7,7 @@
 #define MASSGRID_INIT_H
 
 #include <string>
-
+#include <boost/thread.hpp>
 class CScheduler;
 class CWallet;
 
@@ -18,6 +18,7 @@ class thread_group;
 
 extern CWallet* pwalletMain;
 
+extern boost::thread_group* fthreadGroup;
 void StartShutdown();
 bool ShutdownRequested();
 /** Interrupt threads */

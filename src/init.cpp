@@ -95,6 +95,7 @@ extern void ThreadSendAlert(CConnman& connman);
 #ifdef ENABLE_WALLET
 CWallet* pwalletMain = NULL;
 #endif
+boost::thread_group* fthreadGroup = NULL;
 bool fFeeEstimatesInitialized = false;
 bool fRestartRequested = false;  // true: restart false: shutdown
 static const bool DEFAULT_PROXYRANDOMIZE = true;
@@ -1263,6 +1264,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     LogPrintf("Using at most %i connections (%i file descriptors available)\n", nMaxConnections, nFD);
     std::ostringstream strErrors;
 
+    fthreadGroup = &threadGroup;
     LogPrintf("Using %u threads for script verification\n", nScriptCheckThreads);
     if (nScriptCheckThreads) {
         for (int i=0; i<nScriptCheckThreads-1; i++)

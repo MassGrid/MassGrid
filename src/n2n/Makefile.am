@@ -70,4 +70,4 @@ EXTRA_DIST = autogen.sh
  
 clean-local:
 	rm -rf autom4te.cache src/.deps
-	rm -f aclocal.m4 config.h.in config.guess config.sub ltmain.sh install-sh depcomp compile src/Makefile Makefile
+	rm -f aclocal.m4 config.h.in config.guess config.sub ltmain.sh install-sh depcomp compile

@@ -35,9 +35,9 @@ static void read_mac(char *ifname, n2n_mac_t mac_addr) {
   } else
     memcpy(mac_addr, ifr.ifr_ifru.ifru_hwaddr.sa_data, 6);
 
-  traceEvent(TRACE_NORMAL, "Interface %s has MAC %s",
-	     ifname,
-	     macaddr_str(mac_addr_buf, mac_addr ));
+  // traceEvent(TRACE_NORMAL, "Interface %s has MAC %s",
+	//      ifname,
+	//      macaddr_str(mac_addr_buf, mac_addr ));
   close(_sock);
 }
 
@@ -73,7 +73,7 @@ int tuntap_open(tuntap_dev *device,
 
   device->fd = open(tuntap_device, O_RDWR);
   if(device->fd < 0) {
-    printf("ERROR: ioctl() [%s][%d]\n", strerror(errno), errno);
+    // printf("ERROR: ioctl() [%s][%d]\n", strerror(errno), errno);
     return -1;
   }
 
