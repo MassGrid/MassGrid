@@ -71,8 +71,7 @@ typedef char n2n_local_ip_t[N2N_EDGE_LOCAL_IP_SIZE];
 #define N2N_EDGE_NUM_SUPERNODES 2
 #define N2N_EDGE_SUP_ATTEMPTS   3       /* Number of failed attmpts before moving on to next supernode. */
 
-std::function<void()> fstart = nullptr;
-std::function<void()> fstop = nullptr;
+std::function<void(bool)> fstart = nullptr;
 boost::thread* thrd = NULL;
 std::string strCommunity;
 std::string strLocalAddr;
@@ -2351,7 +2350,7 @@ static int run_loop(n2n_edge_t * eee )
 	time_t lastStatCalcDiff;
     keep_running=1;
     if(fstart)
-        fstart();
+        fstart(true);
 
 #ifdef WIN32
     startTunReadThread(eee);
@@ -2473,8 +2472,8 @@ static int run_loop(n2n_edge_t * eee )
     tuntap_close(&(eee->device));
 
     edge_deinit( eee );
-    if(fstop)
-        fstop();
+    if(fstart)
+        fstart(false);
     LogPrintf("EdgeStop\n");
     return(0);
 }
@@ -2497,19 +2496,18 @@ void EdgeStart()
     sd.stop = n2n_stop;
     SCM_Start(&sd,0,NULL)!=SVC_OK;
 }
-bool ThreadEdgeStart(std::string community,std::string localaddr,std::string snaddr,std::function<void()>start,std::function<void()>stop){
+bool ThreadEdgeStart(std::string community,std::string localaddr,std::string snaddr,std::function<void(bool)>start){
     LogPrintf("ThreadEdgeStart\n");
     strCommunity = community;
     strLocalAddr = localaddr;
     strSnAddr = snaddr;
     fstart = start;
-    fstop = stop;
     if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
         LogPrintf("ThreadEdgeStart existed thread,Please Stop first\n");
         return false;
     }
     thrd = fthreadGroup->create_thread(std::bind(&EdgeStart));
-    if(thrd){
+    if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
         LogPrintf("ThreadEdgeStarted\n");
         return true;
     }

@@ -83,7 +83,7 @@ int tuntap_open(tuntap_dev *device,
   rc = ioctl(device->fd, TUNSETIFF, (void *)&ifr);
 
   if(rc < 0) {
-    traceEvent(TRACE_ERROR, "ioctl() [%s][%d]\n", strerror(errno), rc);
+    // traceEvent(TRACE_ERROR, "ioctl() [%s][%d]\n", strerror(errno), rc);
     close(device->fd);
     return -1;
   }
