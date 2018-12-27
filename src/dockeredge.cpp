@@ -1981,6 +1981,7 @@ static void supernode2addr(n2n_sock_t * sn, const n2n_sn_name_t addrIn)
 
     supernode_host = strtok(addr, ":");
 
+    sn->port = N2N_SN_PROT;
     if(supernode_host)
     {
         in_addr_t sn_addr;
@@ -1992,8 +1993,8 @@ static void supernode2addr(n2n_sock_t * sn, const n2n_sn_name_t addrIn)
         if ( supernode_port )
             sn->port = atoi(supernode_port);
         else
-            LogPrintf("Bad supernode parameter (-l <host:port>) %s %s:%s\n",
-                       addr, supernode_host, supernode_port);
+            LogPrintf("Bad supernode parameter (-l <host:port>) %s %s:\n",
+                       addr, supernode_host);
 
         nameerr = getaddrinfo( supernode_host, NULL, &aihints, &ainfo );
 
