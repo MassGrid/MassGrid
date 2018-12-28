@@ -105,7 +105,8 @@ class Service:public DockerBase{
     static void ParseEndpoint(const UniValue& data,Config::Endpoint &endpoint);
     static void ParseVirtualIPs(const UniValue& data,Config::VirtualIP &virtualip);
     static void ParseUpdateStatus(const UniValue& data,Config::UpdateStatus &updateStatus);
-    
+        
+    static UniValue ServVerToJson(Config::Version &version);
     static UniValue SpecLabelsToJson(Config::Labels &labels);
     static UniValue TaskTemplateToJson(Config::TaskSpec &taskTemplate);
     static UniValue ResourceToJson(Config::Resource &resource);
@@ -132,8 +133,8 @@ class Service:public DockerBase{
     static UniValue ArryToJson(std::vector<std::string> &strArry);
 
 public:
-    static std::string DockerServSpecToJson(Service &service);
-    static UniValue SpecToJson(Config::ServiceSpec &spec);
+    static UniValue DockerServToJson(Service &services);
+    static UniValue SerSpecToJson(Config::ServiceSpec &spec);
 public:
     
     Config::ServiceSpec spec{};
@@ -200,9 +201,7 @@ public:
     }
     void Update();
     std::string ToString();
-    std::string ToJsonString(){
-            return spec.ToJsonString();
-        }
+    std::string ToJsonString();
 };
 
 class dockerservicefilter:public filterbase{

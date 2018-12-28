@@ -176,7 +176,7 @@ UniValue docker(const UniValue& params, bool fHelp)
             if(dockercluster.mapDockerServiceLists.size()){
                 for(auto it = dockercluster.mapDockerServiceLists.begin();it != dockercluster.mapDockerServiceLists.end();++it){
                     UniValue obj(UniValue::VOBJ);
-                    obj.push_back(Pair(it->first,Service::SpecToJson(it->second.spec)));
+                    obj.push_back(Pair(it->first,Service::DockerServToJson(it->second)));
                     varr.push_back(obj);
                 }
                 return varr;

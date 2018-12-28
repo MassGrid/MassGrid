@@ -159,16 +159,31 @@ void Service::DockerServiceInspect(const string& serviceData,std::map<std::strin
         LogPrint("docker","Service::DockerServiceInspect unkonw exception\n");
     }
 }
-std::string Service::DockerServSpecToJson(Service &service)
+UniValue Service::DockerServToJson(Service &service)
 {
 
     UniValue data(UniValue::VOBJ);
     {
-        UniValue objSpec(UniValue::VOBJ);
-        objSpec=SpecToJson(service.spec);
-        data.push_back(Pair("Spec",objSpec));
+        data.push_back(Pair("ID",service.ID));
+        data.push_back(Pair("CreatedAt",service.createdAt));
+        data.push_back(Pair("UpdatedAt",service.updatedAt));
     }
-    return data.write();
+    {
+        UniValue obj(UniValue::VOBJ);
+        
+        obj=ServVerToJson(service.version);
+        data.push_back(Pair("Version", obj));
+
+        obj=SerSpecToJson(service.spec);
+        data.push_back(Pair("Spec",obj));
+        
+        obj=EndpointToJson(service.endpoint);
+        data.push_back(Pair("Endpoint", obj));
+        
+        obj=UpdateStatusToJson(service.updateStatus);
+        data.push_back(Pair("UpdateStatus", obj));
+    }
+    return data;
 }
 bool Service::DcokerServiceJson(const UniValue& data, Service& service)
 {
@@ -207,6 +222,12 @@ bool Service::DcokerServiceJson(const UniValue& data, Service& service)
     service=Service(id,version,createdTime,updateTime,spec,previousSpec,endpoint,updateStatus,protocolVersion);
     return true;
 }
+UniValue Service::ServVerToJson(Config::Version &version)
+{
+    UniValue data(UniValue::VOBJ);
+    data.push_back(Pair("Index", version.index));
+    return data;
+}
 
 void Service::ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
 {
@@ -240,7 +261,7 @@ void Service::ParseSpec(const UniValue& data,Config::ServiceSpec &spc)
         }
     }
 }
-UniValue Service::SpecToJson(Config::ServiceSpec &spec)
+UniValue Service::SerSpecToJson(Config::ServiceSpec &spec)
 {
     UniValue data(UniValue::VOBJ);
     data.push_back(Pair("Name",spec.name));
@@ -1026,9 +1047,15 @@ UniValue Service::ArryToJson(std::vector<std::string> &strArry)
     }
     return arry;
 }
+std::string Service::ToJsonString()
+{
+    UniValue data(UniValue::VOBJ);
+    data=Service::DockerServToJson(*this);
+    return data.write();
+}
 std::string Config::ServiceSpec::ToJsonString()
 {
     UniValue data(UniValue::VOBJ);
-    data=Service::SpecToJson(*this);
+    data=Service::SerSpecToJson(*this);
     return data.write();
 }
