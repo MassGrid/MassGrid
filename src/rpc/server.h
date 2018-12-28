@@ -271,7 +271,7 @@ extern UniValue verifytxoutproof(const UniValue& params, bool fHelp);
 extern UniValue spork(const UniValue& params, bool fHelp);
 extern UniValue masternode(const UniValue& params, bool fHelp);
 extern UniValue masternodelist(const UniValue& params, bool fHelp);
-extern UniValue dockercreate(const UniValue& params, bool fHelp);
+extern UniValue docker(const UniValue& params, bool fHelp);
 extern UniValue masternodebroadcast(const UniValue& params, bool fHelp);
 extern UniValue gobject(const UniValue& params, bool fHelp);
 extern UniValue voteraw(const UniValue& params, bool fHelp);

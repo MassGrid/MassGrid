@@ -203,9 +203,6 @@ public:
     std::string ToJsonString(){
             return spec.ToJsonString();
         }
-    UniValue TaskSpecToJsonString(){
-        return TaskTemplateToJson(spec.taskTemplate);
-    }
 };
 
 class dockerservicefilter:public filterbase{

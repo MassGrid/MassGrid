@@ -521,9 +521,6 @@ void MasternodeList::loadServerDetail(QModelIndex index)
         int64_t nanoCPUs = task.spec.resources.limits.nanoCPUs;
         int64_t memoryBytes = task.spec.resources.limits.memoryBytes;
 
-        UniValue value = service.TaskSpecToJsonString();
-        std::string tmpTask = value.write();
-
         std::string gpuName ;
         int64_t gpuCount = 0;
 

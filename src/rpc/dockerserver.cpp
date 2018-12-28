@@ -31,7 +31,7 @@
 void EnsureWalletIsUnlocked();
 #endif // ENABLE_WALLET
 
-UniValue dockercreate(const UniValue& params, bool fHelp)
+UniValue docker(const UniValue& params, bool fHelp)
 {
     std::string strCommand;
     if (params.size() >= 1) {
@@ -46,45 +46,69 @@ UniValue dockercreate(const UniValue& params, bool fHelp)
     if (fHelp  ||
         (
 #ifdef ENABLE_WALLET
-            strCommand != "start-alias" && strCommand != "start-all" && strCommand != "start-missing" &&
-         strCommand != "start-disabled" && strCommand != "outputs" &&
+            strCommand != "create" &&
 #endif // ENABLE_WALLET
-         strCommand != "list" && strCommand != "list-conf" && strCommand != "count" &&
-         strCommand != "debug" && strCommand != "current" && strCommand != "winner" && strCommand != "winners" && strCommand != "genkey" &&
-         strCommand != "connect" && strCommand != "disconnect" && strCommand != "status" && strCommand != "getdndata"&& strCommand != "create"))
+            strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata"))
             throw std::runtime_error(
-                "masternode \"command\"...\n"
-                "Set of commands to execute masternode related actions\n"
+                "docker \"command\"...\n"
+                "Set of commands to execute docker related actions\n"
                 "\nArguments:\n"
                 "1. \"command\"        (string or set of strings, required) The command to execute\n"
                 "\nAvailable commands:\n"
-                "  count        - Print number of all known masternodes (optional: 'ps', 'enabled', 'all', 'qualify')\n"
-                "  current      - Print info on current masternode winner to be paid the next block (calculated locally)\n"
-                "  genkey       - Generate new masternodeprivkey\n"
+                "   getdndata    - \"dockernode (IP:Port)\" (string, required)  Print number of all of yours docker services\n"
+                
+                "   connect      - Connect to docker network\n"
+                "   disconnect   - Disconnect to docker network\n"
 #ifdef ENABLE_WALLET
-                "  outputs      - Print masternode compatible outputs\n"
-                "  start-alias  - Start single remote masternode by assigned alias configured in masternode.conf\n"
-                "  start-<mode> - Start remote masternodes configured in masternode.conf (<mode>: 'all', 'missing', 'disabled')\n"
+                "   create       - create a docker service Arguments: \n"
+                "                  \"dockernode (IP:Port)\" (string, required)\n"
+                "                  \"service name\" (string, required)\n"
+                "                  \"Image\"(string, required)\n"
+                "                  \"CPU count\"(int, required)\n"
+                "                  \"Memory Byte\"(int, required)\n"
+                "                  \"GPU Kind\"(string, required)\n"
+                "                  \"GPU count\"(int, required)\n"
+                "                  \"NetWork Community\"(string, required)\n"
+                "                  \"SSH_PUBKEY\"(string, required)\n"
+                + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"MassGrid\" \"wany/cuda9.1-base\" 1000000000 1024000000 \"NVIDIA_GPUP104\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\"")
 #endif // ENABLE_WALLET
-                "  status       - Print masternode status information\n"
-                "  list         - Print list of all known masternodes (see masternodelist for more info)\n"
-                "  list-conf    - Print masternode.conf in JSON format\n"
-                "  winner       - Print info on next masternode winner to vote for\n"
-                "  winners      - Print list of masternode winners\n"
+                + HelpExampleCli("docker", "getdndata \"119.3.66.159:19443\"")
+                + HelpExampleCli("docker", "connect \"massgridn2n\" \"10.1.1.4\" \"119.3.66.159:19443\"")
+                + HelpExampleCli("docker", "disconnect")
                 );
 
-    if (strCommand == "list")
+
+    
+    if (strCommand == "connect")
     {
-        UniValue newParams(UniValue::VARR);
-        // forward params but skip "list"
-        for(auto it = dockercluster.mapDockerServiceLists.begin();it != dockercluster.mapDockerServiceLists.end();++it){
-            newParams.push_back(it->first);
+        if (params.size() != 4)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
+
+        std::string strCommunity = params[1].get_str();
+
+        std::string strLocalAddr = params[2].get_str();
+
+        std::string strSnAddr = params[3].get_str();
+
+        if(ThreadEdgeStart(strCommunity,strLocalAddr,strSnAddr)){
+            return "edge Start Successfully";
         }
-        return newParams;
+        else
+            return "edge Start Failed";
     }
 
+    if (strCommand == "disconnect"){
+        if (params.size() != 1)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
+        ThreadEdgeStop();
+        return "edge Stop Successfully";
+    }
+
+#ifdef ENABLE_WALLET
     if(strCommand == "create")
     {
+        if (!masternodeSync.IsSynced())
+            return "Need to Synced First";
         if (params.size() != 10)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
         std::string strAddr = params[1].get_str();
@@ -120,310 +144,45 @@ UniValue dockercreate(const UniValue& params, bool fHelp)
 
         std::string strssh_pubkey = params[9].get_str();
         createService.ssh_pubkey = strssh_pubkey;
-        
+        EnsureWalletIsUnlocked();
         if(!dockercluster.CreateAndSendSeriveSpec(createService))
             return "CreateSpec Error";
         return "CreateSpec Successfully hash: "+createService.ToString();
     }
 
-    if (strCommand == "connect")
-    {
-        if (params.size() != 4)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
 
-        std::string strCommunity = params[1].get_str();
-
-        std::string strLocalAddr = params[2].get_str();
-
-        std::string strSnAddr = params[3].get_str();
-
-        if(ThreadEdgeStart(strCommunity,strLocalAddr,strSnAddr)){
-            return "edge Start Successfully";
-        }
-        else
-            return "edge Start Failed";
-    }
-
-    if (strCommand == "disconnect"){
-        if (params.size() != 1)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
-        ThreadEdgeStop();
-        return "edge Stop Successfully";
-    }
-    if (strCommand == "current" || strCommand == "winner")
-    {
-        int nCount;
-        int nHeight;
-        masternode_info_t mnInfo;
-        CBlockIndex* pindex = NULL;
-        {
-            LOCK(cs_main);
-            pindex = chainActive.Tip();
-        }
-        nHeight = pindex->nHeight + (strCommand == "current" ? 1 : 10);
-        mnodeman.UpdateLastPaid(pindex);
-
-        if(!mnodeman.GetNextMasternodeInQueueForPayment(nHeight, true, nCount, mnInfo))
-            return "unknown";
-
-        UniValue obj(UniValue::VOBJ);
-
-        obj.push_back(Pair("height",        nHeight));
-        obj.push_back(Pair("IP:port",       mnInfo.addr.ToString()));
-        obj.push_back(Pair("protocol",      (int64_t)mnInfo.nProtocolVersion));
-        obj.push_back(Pair("outpoint",      mnInfo.vin.prevout.ToStringShort()));
-        obj.push_back(Pair("payee",         CMassGridAddress(mnInfo.pubKeyCollateralAddress.GetID()).ToString()));
-        obj.push_back(Pair("lastseen",      mnInfo.nTimeLastPing));
-        obj.push_back(Pair("activeseconds", mnInfo.nTimeLastPing - mnInfo.sigTime));
-        return obj;
-    }
-
-#ifdef ENABLE_WALLET
-    if (strCommand == "start-alias")
-    {
-        if (params.size() < 2)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Please specify an alias");
-
-        {
-            LOCK(pwalletMain->cs_wallet);
-            EnsureWalletIsUnlocked();
-        }
-
-        std::string strAlias = params[1].get_str();
-
-        bool fFound = false;
-
-        UniValue statusObj(UniValue::VOBJ);
-        statusObj.push_back(Pair("alias", strAlias));
-
-        BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
-            if(mne.getAlias() == strAlias) {
-                fFound = true;
-                std::string strError;
-                CMasternodeBroadcast mnb;
-
-                bool fResult = CMasternodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputIndex(), strError, mnb);
-
-                statusObj.push_back(Pair("result", fResult ? "successful" : "failed"));
-                if(fResult) {
-                    mnodeman.UpdateMasternodeList(mnb, *g_connman);
-                    mnb.Relay(*g_connman);
-                } else {
-                    statusObj.push_back(Pair("errorMessage", strError));
-                }
-                mnodeman.NotifyMasternodeUpdates(*g_connman);
-                break;
-            }
-        }
-
-        if(!fFound) {
-            statusObj.push_back(Pair("result", "failed"));
-            statusObj.push_back(Pair("errorMessage", "Could not find alias in config. Verify with list-conf."));
-        }
-
-        return statusObj;
-
-    }
-
-    if (strCommand == "start-all" || strCommand == "start-missing" || strCommand == "start-disabled")
-    {
-        {
-            LOCK(pwalletMain->cs_wallet);
-            EnsureWalletIsUnlocked();
-        }
-
-        if((strCommand == "start-missing" || strCommand == "start-disabled") && !masternodeSync.IsMasternodeListSynced()) {
-            throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "You can't use this command until masternode list is synced");
-        }
-
-        int nSuccessful = 0;
-        int nFailed = 0;
-
-        UniValue resultsObj(UniValue::VOBJ);
-
-        BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
-            std::string strError;
-
-            COutPoint outpoint = COutPoint(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputIndex().c_str())));
-            CMasternode mn;
-            bool fFound = mnodeman.Get(outpoint, mn);
-            CMasternodeBroadcast mnb;
-
-            if(strCommand == "start-missing" && fFound) continue;
-            if(strCommand == "start-disabled" && fFound && mn.IsEnabled()) continue;
-
-            bool fResult = CMasternodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputIndex(), strError, mnb);
-
-            UniValue statusObj(UniValue::VOBJ);
-            statusObj.push_back(Pair("alias", mne.getAlias()));
-            statusObj.push_back(Pair("result", fResult ? "successful" : "failed"));
-
-            if (fResult) {
-                nSuccessful++;
-                mnodeman.UpdateMasternodeList(mnb, *g_connman);
-                mnb.Relay(*g_connman);
-            } else {
-                nFailed++;
-                statusObj.push_back(Pair("errorMessage", strError));
-            }
-
-            resultsObj.push_back(Pair("status", statusObj));
-        }
-        mnodeman.NotifyMasternodeUpdates(*g_connman);
-
-        UniValue returnObj(UniValue::VOBJ);
-        returnObj.push_back(Pair("overall", strprintf("Successfully started %d masternodes, failed to start %d, total %d", nSuccessful, nFailed, nSuccessful + nFailed)));
-        returnObj.push_back(Pair("detail", resultsObj));
-
-        return returnObj;
-    }
 #endif // ENABLE_WALLET
-
-    if (strCommand == "genkey")
-    {
-        CKey secret;
-        secret.MakeNewKey(false);
-
-        return CMassGridSecret(secret).ToString();
-    }
-
-    if (strCommand == "list-conf")
-    {
-        UniValue resultObj(UniValue::VOBJ);
-
-        BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
-            COutPoint outpoint = COutPoint(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputIndex().c_str())));
-            CMasternode mn;
-            bool fFound = mnodeman.Get(outpoint, mn);
-
-            std::string strStatus = fFound ? mn.GetStatus() : "MISSING";
-
-            UniValue mnObj(UniValue::VOBJ);
-            mnObj.push_back(Pair("alias", mne.getAlias()));
-            mnObj.push_back(Pair("address", mne.getIp()));
-            mnObj.push_back(Pair("privateKey", mne.getPrivKey()));
-            mnObj.push_back(Pair("txHash", mne.getTxHash()));
-            mnObj.push_back(Pair("outputIndex", mne.getOutputIndex()));
-            mnObj.push_back(Pair("status", strStatus));
-            resultObj.push_back(Pair("masternode", mnObj));
-        }
-
-        return resultObj;
-    }
-
-#ifdef ENABLE_WALLET
-    if (strCommand == "outputs") {
-        // Find possible candidates
-        std::vector<COutput> vPossibleCoins;
-        pwalletMain->AvailableCoins(vPossibleCoins, true, NULL, false, ONLY_1000);
-
-        UniValue obj(UniValue::VOBJ);
-        BOOST_FOREACH(COutput& out, vPossibleCoins) {
-            obj.push_back(Pair(out.tx->GetHash().ToString(), strprintf("%d", out.i)));
-        }
-
-        return obj;
-    }
-#endif // ENABLE_WALLET
-
-    if (strCommand == "status")
-    {
-        if (!fMasterNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
-
-        UniValue mnObj(UniValue::VOBJ);
-
-        mnObj.push_back(Pair("outpoint", activeMasternode.outpoint.ToStringShort()));
-        mnObj.push_back(Pair("service", activeMasternode.service.ToString()));
-
-        CMasternode mn;
-        if(mnodeman.Get(activeMasternode.outpoint, mn)) {
-            mnObj.push_back(Pair("payee", CMassGridAddress(mn.pubKeyCollateralAddress.GetID()).ToString()));
-        }
-
-        mnObj.push_back(Pair("status", activeMasternode.GetStatus()));
-        return mnObj;
-    }
-
-    if (strCommand == "winners")
-    {
-        int nHeight;
-        {
-            LOCK(cs_main);
-            CBlockIndex* pindex = chainActive.Tip();
-            if(!pindex) return NullUniValue;
-
-            nHeight = pindex->nHeight;
-        }
-
-        int nLast = 10;
-        std::string strFilter = "";
-
-        if (params.size() >= 2) {
-            nLast = atoi(params[1].get_str());
-        }
-
-        if (params.size() == 3) {
-            strFilter = params[2].get_str();
-        }
-
-        if (params.size() > 3)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Correct usage is 'masternode winners ( \"count\" \"filter\" )'");
-
-        UniValue obj(UniValue::VOBJ);
-
-        for(int i = nHeight - nLast; i < nHeight + 20; i++) {
-            std::string strPayment = GetRequiredPaymentsString(i);
-            if (strFilter !="" && strPayment.find(strFilter) == std::string::npos) continue;
-            obj.push_back(Pair(strprintf("%d", i), strPayment));
-        }
-
-        return obj;
-    }
+    
     if (strCommand == "getdndata"){
-        std::string strFilter,strPrivkey;
-        CKey key;
-        CPubKey pubkey;
-        if (params.size() >= 2) {
-            strFilter = params[1].get_str();
+        if (!masternodeSync.IsSynced())
+            return "Need to Synced First";
+        
+        if (params.size() != 2)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
+        std::string strIPPort;
+        strIPPort = params[1].get_str();
+        dockercluster.sigTime=GetAdjustedTime();
+        if(!dockercluster.SetConnectDockerAddress(strIPPort)){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "SetConnectDockerAddress error");
         }
-        if (params.size() >= 3) {
-            strPrivkey = params[2].get_str();
+        if(!dockercluster.ProcessDockernodeConnections()){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "ProcessDockernodeConnections error");
         }
-        if(!CMessageSigner::GetKeysFromSecret(strPrivkey,key,pubkey)){
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "privkey error");
-        }
-            
-            dockercluster.DefaultPubkey=pubkey;
-            dockercluster.sigTime=GetAdjustedTime();
-            if(!dockercluster.SetConnectDockerAddress(strFilter)){
-                throw JSONRPCError(RPC_INVALID_PARAMETER, "SetConnectDockerAddress error");
-            }
-            if(!dockercluster.ProcessDockernodeConnections()){
-                throw JSONRPCError(RPC_INVALID_PARAMETER, "ProcessDockernodeConnections error");
-            }
-            dockercluster.AskForDNData();
+        dockercluster.AskForDNData();
 
-        std::string straddress;
-        if (params.size() == 4) {
-            straddress = params[3].get_str();
+        UniValue varr(UniValue::VARR);
+        for(int i=0;i<20;++i){
+            MilliSleep(100);
+            if(dockercluster.mapDockerServiceLists.size()){
+                for(auto it = dockercluster.mapDockerServiceLists.begin();it != dockercluster.mapDockerServiceLists.end();++it){
+                    UniValue obj(UniValue::VOBJ);
+                    obj.push_back(Pair(it->first,Service::SpecToJson(it->second.spec)));
+                    varr.push_back(obj);
+                }
+                return varr;
+            }
         }
-        CMassGridAddress address(straddress);
-        if (pwalletMain && address.IsValid())
-        {
-            CKeyID keyID;
-            if (!address.GetKeyID(keyID))
-                throw runtime_error(
-                    strprintf("%s does not refer to a key",straddress));
-            CPubKey vchPubKey;
-            if (!pwalletMain->GetPubKey(keyID, vchPubKey))
-                throw runtime_error(
-                    strprintf("no full public key for address %s",straddress));
-            if (!vchPubKey.IsFullyValid())
-                throw runtime_error(" Invalid public key: "+straddress);
-            LogPrintf("result pubkey %s\n",vchPubKey.ToString().substr(0,65));
-        }
-
+        return "getdndata Failed";
     }
     return NullUniValue;
 }
