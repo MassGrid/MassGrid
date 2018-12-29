@@ -10,7 +10,7 @@
 #include <boost/thread.hpp>
 class CScheduler;
 class CWallet;
-
+// class boost::thread_group;
 namespace boost
 {
 class thread_group;

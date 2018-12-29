@@ -424,6 +424,13 @@ QTabWidget::pane{
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QPushButton" name="startN2NBtn">
+               <property name="text">
+                <string>Start N2N</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
           </layout>

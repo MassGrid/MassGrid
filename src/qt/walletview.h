@@ -6,7 +6,6 @@
 #define MASSGRID_QT_WALLETVIEW_H
 
 #include "amount.h"
-#include "masternodelist.h"
 
 #include <QStackedWidget>
 
@@ -22,12 +21,14 @@ class WalletModel;
 class AddressBookPage;
 class QLineEdit;
 class QComboBox;
+class MasternodeList;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QModelIndex;
 class QProgressDialog;
 QT_END_NAMESPACE
+
 
 /*
   WalletView class. This class represents the view to a single wallet.

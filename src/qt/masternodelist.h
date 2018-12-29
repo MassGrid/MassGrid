@@ -41,6 +41,9 @@ public:
     void StartAlias(std::string strAlias);
     void StartAll(std::string strCommand = "start-all");
 
+    static void getEdgeRet(bool flag);
+    void showEdgeRet(bool flag);
+
 private:
     QMenu *contextMenu;
     int64_t nTimeFilterUpdated;
@@ -88,5 +91,6 @@ private Q_SLOTS:
     void loadServerDetail(QModelIndex);
     void slot_updateServiceBtn();
     void slot_createServiceBtn();
+    void slot_startN2NBtn();
 };
 #endif // MASTERNODELIST_H

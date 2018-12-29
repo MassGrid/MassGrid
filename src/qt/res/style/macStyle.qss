@@ -679,7 +679,10 @@ QSlider::sub-page:horizontal{
 QWidget#MasternodeList QPushButton#startAllButton,
 QWidget#MasternodeList QPushButton#startButton,
 QWidget#MasternodeList QPushButton#startMissingButton,
-QWidget#MasternodeList QPushButton#UpdateButton
+QWidget#MasternodeList QPushButton#UpdateButton,
+QWidget#MasternodeList QPushButton#updateServiceBtn,
+QWidget#MasternodeList QPushButton#createServiceBtn,
+QWidget#MasternodeList QPushButton#startN2NBtn
 {
         background-color: rgb(239, 169, 4);
         color: rgb(255, 255, 255);
@@ -691,7 +694,11 @@ QWidget#MasternodeList QPushButton#UpdateButton
 QWidget#MasternodeList QPushButton::!enabled#startAllButton,
 QWidget#MasternodeList QPushButton::!enabled#startButton,
 QWidget#MasternodeList QPushButton::!enabled#startMissingButton,
-QWidget#MasternodeList QPushButton::!enabled#UpdateButton
+QWidget#MasternodeList QPushButton::!enabled#UpdateButton,
+QWidget#MasternodeList QPushButton::!enabled#updateServiceBtn,
+QWidget#MasternodeList QPushButton::!enabled#createServiceBtn,
+QWidget#MasternodeList QPushButton::!enabled#startN2NBtn,
+
 {
     background-color: rgb(125, 125, 125);
 }

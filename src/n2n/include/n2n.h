@@ -52,7 +52,7 @@ extern "C" {
 
 /* Moved here to define _CRT_SECURE_NO_WARNINGS before all the including takes place */
 #ifdef WIN32
-#include "win32/n2n_win32.h"
+#include "../win32/n2n_win32.h"
 #undef N2N_HAVE_DAEMON
 #undef N2N_HAVE_SETUID
 #endif
@@ -124,7 +124,7 @@ typedef struct n2n_REGISTER_SUPER n2n_REGISTER_SUPER_t;
 #include <stdarg.h>
 
 #ifdef WIN32
-#include "win32/wintap.h"
+#include "../win32/wintap.h"
 #endif /* #ifdef WIN32 */
 
 /* include sglib for hash tables */

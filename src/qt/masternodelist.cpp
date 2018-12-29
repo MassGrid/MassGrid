@@ -21,6 +21,7 @@
 #include "util.h"
 #include "adddockerservicedlg.h"
 #include "massgridgui.h"
+#include "dockeredge.h"
 
 int GetOffsetFromUtc()
 {
@@ -81,6 +82,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
     connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
     connect(ui->createServiceBtn, SIGNAL(clicked()), this, SLOT(slot_createServiceBtn()));
+    connect(ui->startN2NBtn, SIGNAL(clicked()), this, SLOT(slot_startN2NBtn()));    
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
@@ -615,4 +617,20 @@ void MasternodeList::refreshServerList()
         QTimer::singleShot(3500,this,SLOT(refreshServerList()));
         return ;
     }
+}
+
+void MasternodeList::slot_startN2NBtn()
+{
+    ThreadEdgeStart("massgridn2n","10.1.1.6","119.3.66.159:8999",getEdgeRet);
+}
+
+void MasternodeList::getEdgeRet(bool flag)
+{
+    LogPrintf("============>MasternodeList::getEdgeRet flag:",flag);
+    // g_masternodelist->showEdgeRet(flag);
+}
+
+void MasternodeList::showEdgeRet(bool flag)
+{
+    LogPrintf("============>MasternodeList::showEdgeRet flag:",flag);
 }

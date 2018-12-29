@@ -21,6 +21,7 @@
 #include "walletmodel.h"
 #include "transactionfilterproxy.h"
 #include "transactionrecord.h"
+#include "masternodelist.h"
 
 #include "ui_interface.h"
 
