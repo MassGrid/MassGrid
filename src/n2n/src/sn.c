@@ -58,7 +58,6 @@ static int try_broadcast( n2n_sn_t * sss,
                           size_t pktsize );
 
 
-
 /** Initialise the supernode structure */
 static int init_sn( n2n_sn_t * sss )
 {
@@ -800,6 +799,7 @@ int main( int argc, char * const argv[] )
     return run_loop(&sss);
 }
 
+size_t hashed_purge_expired_registrations(peer_info_t ** peer_list);
 
 /** Long lived processing entry point. Split out from main to simply
  *  daemonisation on some platforms. */

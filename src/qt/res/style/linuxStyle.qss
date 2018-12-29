@@ -686,7 +686,9 @@ QSlider::sub-page:horizontal{
 QWidget#MasternodeList QPushButton#startAllButton,
 QWidget#MasternodeList QPushButton#startButton,
 QWidget#MasternodeList QPushButton#startMissingButton,
-QWidget#MasternodeList QPushButton#UpdateButton
+QWidget#MasternodeList QPushButton#UpdateButton,
+QWidget#MasternodeList QPushButton#updateServiceBtn,
+QWidget#MasternodeList QPushButton#createServiceBtn
 {
         background-color: rgb(239, 169, 4);
         color: rgb(255, 255, 255);
@@ -698,7 +700,9 @@ QWidget#MasternodeList QPushButton#UpdateButton
 QWidget#MasternodeList QPushButton::!enabled#startAllButton,
 QWidget#MasternodeList QPushButton::!enabled#startButton,
 QWidget#MasternodeList QPushButton::!enabled#startMissingButton,
-QWidget#MasternodeList QPushButton::!enabled#UpdateButton
+QWidget#MasternodeList QPushButton::!enabled#UpdateButton,
+QWidget#MasternodeList QPushButton::!enabled#updateServiceBtn,
+QWidget#MasternodeList QPushButton::!enabled#createServiceBtn
 {
     background-color: rgb(125, 125, 125);
 }
@@ -818,4 +822,21 @@ QStackedWidget#SendCoinsEntry QMenu::item:selected:enabled{
 
 QStackedWidget#SendCoinsEntry QMenu::item:selected:!enabled{
     background:transparent;
+}
+
+QWidget#AddDockerServiceDlg QPushButton#cancelButton{
+    min-width:20px;
+    min-height:20px;
+    max-width:20px;
+    max-height:20px;
+    border:7px solid rgb(255,255,255,0);
+    image: url(:/res/pic/closeBtn.png);
+}
+
+QWidget#AddDockerServiceDlg QPushButton#okButton{
+width:120;
+height:40;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
 }
