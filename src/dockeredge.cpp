@@ -71,7 +71,7 @@ typedef char n2n_local_ip_t[N2N_EDGE_LOCAL_IP_SIZE];
 #define N2N_EDGE_SUP_ATTEMPTS   3       /* Number of failed attmpts before moving on to next supernode. */
 
 std::function<void(bool)> fstart = nullptr;
-// boost::thread* thrd = NULL;
+boost::thread* thrd = NULL;
 std::string strCommunity;
 std::string strLocalAddr;
 std::string strSnAddr;
@@ -2497,30 +2497,30 @@ void EdgeStart()
     SCM_Start(&sd,0,NULL)!=SVC_OK;
 }
 bool ThreadEdgeStart(std::string community,std::string localaddr,std::string snaddr,std::function<void(bool)>start){
-    // LogPrintf("ThreadEdgeStart\n");
-    // strCommunity = community;
-    // strLocalAddr = localaddr;
-    // strSnAddr = snaddr;
-    // fstart = start;
-    // if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
-    //     LogPrintf("ThreadEdgeStart existed thread,Please Stop first\n");
-    //     return false;
-    // }
-    // thrd = fthreadGroup->create_thread(std::bind(EdgeStart));
-    // if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
-    //     LogPrintf("ThreadEdgeStarted\n");
-    //     return true;
-    // }
-    // LogPrintf("ThreadEdgeStart Failed\n");
+    LogPrintf("ThreadEdgeStart\n");
+    strCommunity = community;
+    strLocalAddr = localaddr;
+    strSnAddr = snaddr;
+    fstart = start;
+    if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
+        LogPrintf("ThreadEdgeStart existed thread,Please Stop first\n");
+        return false;
+    }
+    thrd = fthreadGroup->create_thread(std::bind(EdgeStart));
+    if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
+        LogPrintf("ThreadEdgeStarted\n");
+        return true;
+    }
+    LogPrintf("ThreadEdgeStart Failed\n");
     return false;
 }
 void ThreadEdgeStop(){
-    // LogPrintf("ThreadEdgeStop\n");
-    // if(!thrd)return;
-    // if(fthreadGroup->is_thread_in(thrd)){
-    //     fthreadGroup->remove_thread(thrd);
-    //     n2n_stop(NULL);
-    //     // LogPrintf("ThreadEdgeStop:: interrupt thread->id %d\n",thrd->get_id());
-    //     thrd = NULL;
-    // }
+    LogPrintf("ThreadEdgeStop\n");
+    if(!thrd) return;
+    if(fthreadGroup->is_thread_in(thrd)){
+        fthreadGroup->remove_thread(thrd);
+        n2n_stop(NULL);
+        // LogPrintf("ThreadEdgeStop:: interrupt thread->id %d\n",thrd->get_id());
+        thrd = NULL;
+    }
 }
