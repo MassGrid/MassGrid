@@ -7,6 +7,7 @@
 #include "dockerswarm.h"
 #include "dockerservice.h"
 #include "dockertask.h"
+#include "net.h"
 #ifdef EVENT__HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #ifdef _XOPEN_SOURCE_EXTENDED
@@ -16,7 +17,9 @@
 #include <set>
 class CDockerMan;
 extern CDockerMan dockerman;
-
+void threadServiceControl();
+void InitSerListQueue(std::map<std::string,Service> &services);
+void UpdateSerListQueue(std::map<std::string,Service> &services,std::string id);
 static const char* strMethod[] = {
     "METHOD_NODES_LISTS",
     "METHOD_NODES_INSPECT",
@@ -110,5 +113,20 @@ public:
     void GetVersionAndJoinToken();
     void UpdateIPfromServicelist();
 };
-
+class ServiceListInfo{
+public:
+    ServiceListInfo(){};
+    ServiceListInfo(int _timespan):timespan(_timespan){}
+    ServiceListInfo(int64_t _timestamp,std::string _serviceid,int _timespan=10800):
+    timestamp(_timestamp),serviceid(_serviceid),timespan(_timespan){}
+    ~ServiceListInfo(){};
+public:
+    int64_t timestamp;
+    std::string serviceid;
+    int64_t timespan; //3*60*60
+public:
+    bool operator < (const ServiceListInfo &a) const { 
+        return timestamp>a.timestamp;//最大值优先 
+    }
+};
 #endif //DOCKERMAN_H

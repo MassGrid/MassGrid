@@ -62,6 +62,8 @@
 #include "messagesigner.h"
 #include "netfulfilledman.h"
 
+#include "dockerman.h"
+
 #include "spork.h"
 #include "util.h"
 
@@ -2008,6 +2010,8 @@ threadGroup.create_thread(boost::bind(&ThreadCheckInstantSend, boost::ref(*g_con
     if(fMasterNode)
 threadGroup.create_thread(&ThreadSnStart);
 
+    if(fMasterNode)
+        threadGroup.create_thread(&threadServiceControl);
     if (!CheckDiskSpace())
         return false;
 

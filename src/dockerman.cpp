@@ -3,14 +3,19 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "dockerman.h"
 #include "http.h"
+#include "init.h"
+#include "utiltime.h"
 #include <set>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <algorithm>
+#include <queue>
+static CCriticalSection cs_serInfoQueue;
 CDockerMan dockerman;
 std::map<std::string,Node> mapNodeLists;    //temp
 std::map<std::string,Service> mapServiceLists;
 std::map<std::string,Task> mapTaskLists;
+std::priority_queue<ServiceListInfo, std::vector<ServiceListInfo> > serviceInfoQue;
 std::string IpSet::GetFreeIP(){
     for(int i = 1;i < MAX_SIZE;++i)
         for(int j = 5;j < MAX_SIZE;j+=5){
@@ -210,6 +215,9 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         {
             mapServiceLists.clear();
             Service::DockerServiceList(responsedata,mapServiceLists);
+            
+            InitSerListQueue(mapServiceLists);
+
             dockertaskfilter taskfilter;
             taskfilter.DesiredState_running=true;
             
@@ -240,6 +248,9 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 taskfilter.DesiredState_running=true;
                 bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
                 this->mapDockerServiceLists=mapServiceLists;
+                
+                UpdateSerListQueue(mapServiceLists,jsondata["ID"].get_str());
+
                 if(!ret)
                     return false;
             }
@@ -255,6 +266,15 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             auto it = mapServiceLists.begin();
             if((it = mapServiceLists.find(id)) != mapServiceLists.end()){
                 mapServiceLists.erase(it);
+                auto env =it->second.spec.taskTemplate.containerSpec.env;
+                for(auto itenv = env.begin();itenv!=env.end();++itenv){
+                    if(itenv->find("N2N_SERVERIP=")!=-1){
+                        string str=itenv->substr(13);
+                        dockerman.serviceIp.Erase(str);
+                        break;
+                    }
+                }
+                this->mapDockerServiceLists=mapServiceLists;
                 LogPrint("docker","CDockerMan::ProcessMessage erase ServiceId %s\n",id);
             }
             else{
@@ -451,6 +471,61 @@ void CDockerMan::GetVersionAndJoinToken(){
             JoinToken = swarm.joinWorkerTokens+" "+it->second.managerStatus.addr;   //set JoinToken
             managerAddr = it->second.managerStatus.addr.substr(0,it->second.managerStatus.addr.find_last_of(":"));
             return;
+        }
+    }
+}
+
+void InitSerListQueue(std::map<std::string,Service> &services)
+{
+    LOCK(cs_serInfoQueue);
+    while(!serviceInfoQue.empty()) serviceInfoQue.pop();
+    for(auto &service: services){
+        ServiceListInfo serverinfo(7200);//7200
+        serverinfo.serviceid=service.second.ID;
+        serverinfo.timestamp=service.second.createdAt+serverinfo.timespan;
+        serviceInfoQue.push(serverinfo);
+    }
+}
+void UpdateSerListQueue(std::map<std::string,Service> &services,std::string id)
+{
+    LOCK(cs_serInfoQueue);
+    for(auto &service: services){
+        if(service.second.ID == id){
+            ServiceListInfo serverinfo(7200);//7200
+            serverinfo.serviceid=service.second.ID;
+            serverinfo.timestamp=service.second.createdAt+serverinfo.timespan;
+            serviceInfoQue.push(serverinfo);
+        }
+    }
+}
+void threadServiceControl()
+{
+    RenameThread("massgrid-sctrl");
+    LogPrintf("ThreadServiceControl Start\n");
+
+    while(true)
+    {
+        int64_t now_time=GetAdjustedTime();
+        LogPrint("docker","threadServiceControl:: now time %lu\n",now_time);
+        {
+            LOCK(cs_serInfoQueue);
+            while(!serviceInfoQue.empty()){
+                    ServiceListInfo slist=serviceInfoQue.top();
+                    if(now_time >= slist.timestamp){
+                        if(dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,slist.serviceid,"")){
+                            serviceInfoQue.pop();
+                            LogPrint("docker","threadServiceControl:: delete serverice id= %s  timpstamp= %lu\n",slist.serviceid,slist.timestamp);
+                        }
+                    }else{
+                        LogPrint("docker","threadServiceControl:: serviceInfoQue size= %d, the earliest serverice time= %lu id= %s\n",serviceInfoQue.size(),slist.timestamp,slist.serviceid);
+                        break;
+                    }
+            }
+        }
+        // Check for stop or if block needs to be rebuilt
+        for(int i=0;i<300;i++){
+            boost::this_thread::interruption_point();
+            MilliSleep(1000);
         }
     }
 }

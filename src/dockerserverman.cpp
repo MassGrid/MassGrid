@@ -184,7 +184,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     otherresources.discreateResourceSpec.value = createService.gpu;
     spec.taskTemplate.resources.reservations.genericResources.push_back(otherresources);
 
-    spec.taskTemplate.restartPolicy.condition = "on-failure";
+    spec.taskTemplate.restartPolicy.condition = "none";
     spec.taskTemplate.containerSpec.command.push_back("start.sh");
 
     if(createService.n2n_community.empty())
