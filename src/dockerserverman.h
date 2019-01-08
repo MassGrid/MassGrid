@@ -9,9 +9,9 @@
 #include "base58.h"
 #include "primitives/transaction.h"
 
-#define DOCKER_MAX_CPU_NUM 4000000000
-#define DOCKER_MAX_MEMORY_BYTE 4143001600
-#define DOCKER_MAX_GPU_NUM 12
+#define DOCKER_MAX_CPU_NUM 1000000000
+#define DOCKER_MAX_MEMORY_BYTE 2048000000
+#define DOCKER_MAX_GPU_NUM 1
 class CDockerServerman;
 extern CDockerServerman dockerServerman;
 

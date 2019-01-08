@@ -178,12 +178,11 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
 }
 
 bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata){
-    LogPrint("docker","CDockerMan::ProcessMessage Started Method: %s  Messages %s\n",strMethod[mtd],responsedata);
+    LogPrint("docker","CDockerMan::ProcessMessage Started Method: %s ProcessMessage: %d Messages %s\n",strMethod[mtd],ret,responsedata);
     std::string strMessage;
     std::string id;
     HttpType type;
     if(ret != 200 && ret !=201){
-        LogPrintf("CDockerMan::ProcessMessage ERROR ProcessMessage: %d  Messages %s\n",ret,responsedata);
         return false;
     }
     UniValue jsondata(UniValue::VOBJ);
@@ -231,6 +230,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         {
             if(jsondata.exists("ID")){
                 id=jsondata["ID"].get_str();
+                LogPrintf("CDockerMan::ProcessMessage ServiceCreate: %d Successful\n",id);
                 PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
             }
             else{
