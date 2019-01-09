@@ -70,7 +70,7 @@ private:
     SendCoinsDialog *sendCoinsPage;
     AddressBookPage *usedSendingAddressesPage;
     AddressBookPage *usedReceivingAddressesPage;
-    MasternodeList *masternodeListPage;
+    // MasternodeList *g_masternodeListPage;
 
     TransactionView *transactionView;
 

@@ -22,6 +22,9 @@
 #include "adddockerservicedlg.h"
 #include "massgridgui.h"
 #include "dockeredge.h"
+#include "qswitchbutton.h"
+
+extern MasternodeList* g_masternodeListPage;
 
 int GetOffsetFromUtc()
 {
@@ -82,7 +85,6 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
     connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
     connect(ui->createServiceBtn, SIGNAL(clicked()), this, SLOT(slot_createServiceBtn()));
-    connect(ui->startN2NBtn, SIGNAL(clicked()), this, SLOT(slot_startN2NBtn()));    
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
@@ -94,6 +96,13 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     updateNodeList();
     clearDockerDetail();
     ui->tabWidget->tabBar()->setTabEnabled(2,false);
+
+    switchButton = new QSwitchButton(ui->frame_2);
+    switchButton->SetSelected(false);
+    switchButton->SetSize(120,32);
+    switchButton->setEnabled(false);
+
+    connect(switchButton,SIGNAL(clicked(bool)),this,SLOT(slot_changeN2Nstatus(bool)));
 }
 
 MasternodeList::~MasternodeList()
@@ -137,7 +146,7 @@ void MasternodeList::showDockerDetail(QModelIndex index)
         refreshServerList();
             return ;
     }
-    CMessageBox::information(0, tr("connect docker"),tr("connect failed"));
+    CMessageBox::information(this, tr("connect docker"),tr("connect failed"));
 }
 
 void MasternodeList::StartAlias(std::string strAlias)
@@ -330,8 +339,6 @@ void MasternodeList::updateNodeList()
         QTableWidgetItem *pubkeyItem = new QTableWidgetItem(QString::fromStdString(CMassGridAddress(mn.pubKeyCollateralAddress.GetID()).ToString()));
         QTableWidgetItem *nodeCount = new QTableWidgetItem(QString::number(mn.lastPing.mdocker.nodeCount)+"/"+QString::number(mn.lastPing.mdocker.activeNodeCount));
         QTableWidgetItem *joinToken = new QTableWidgetItem(QString::fromStdString(mn.lastPing.mdocker.joinToken));
-
-        // LogPrintf("MasternodeList::updateNodeList token:%s",mn.lastPing.mdocker.joinToken);
         
         if (strCurrentFilter != "")
         {
@@ -510,7 +517,6 @@ void MasternodeList::loadServerDetail(QModelIndex index)
     std::string userName = service.spec.taskTemplate.containerSpec.user;
 
     map<std::string,Task> mapDockerTasklists = service.mapDockerTasklists;
-
     map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
 
     for(;iter != mapDockerTasklists.end();iter++){
@@ -571,6 +577,10 @@ void MasternodeList::loadServerDetail(QModelIndex index)
     ui->label_name->setText(QString::fromStdString(name));
     ui->label_image->setText(QString::fromStdString(image));
     ui->label_user->setText(QString::fromStdString(userName));
+
+    if( (!n2n_localip.isEmpty()) && (!n2n_SPIP.isEmpty()) ){
+        switchButton->setEnabled(true);
+    }
 }
 
 void MasternodeList::slot_updateServiceBtn()
@@ -610,27 +620,54 @@ void MasternodeList::slot_createServiceBtn()
 
 void MasternodeList::refreshServerList()
 {
+    static int countIndex = 0 ;
     int count = loadServerList();
     int currentIndex = ui->tabWidget->currentIndex();
-    if(!count && (currentIndex == 2) ){
+    if(!count && (currentIndex == 2) && (countIndex <= 5) ){
         LogPrintf("refreshServerList:reload docker servicelist after 3.5s\n");
         QTimer::singleShot(3500,this,SLOT(refreshServerList()));
+        countIndex ++ ;
         return ;
     }
+    countIndex = 0;
 }
 
-void MasternodeList::slot_startN2NBtn()
+void MasternodeList::slot_changeN2Nstatus(bool isSelected)
 {
-    ThreadEdgeStart("massgridn2n","10.1.1.6","119.3.66.159:8999",getEdgeRet);
+    if(isSelected){
+        QString n2n_SPIP = ui->label_n2n_serverip->text();
+        QString n2n_localip = ui->label_n2n_localip->text();
+        QString n2n_name = ui->label_n2n_name->text();
+        QStringList list = n2n_localip.split(".");
+
+        if(list.size() != 4){
+            switchButton->SetSelected(false);
+            CMessageBox::information(this, tr("Edge Error"),tr("remote ip error!"));
+            return ;
+        }
+
+        int ipNum = QString(list.at(3)).toInt();
+        ipNum ++ ;
+        n2n_localip = QString("%1.%2.%3.%4").arg(list.at(0)).arg(list.at(1)).arg(list.at(2)).arg(QString::number(ipNum));
+        LogPrintf("slot_changeN2Nstatus n2n_localip:%d\n",n2n_localip.toStdString().c_str());
+
+        bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString().c_str(),
+                                               n2n_SPIP.toStdString().c_str(),
+                                               n2n_localip.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
+        if(!startThreadFlag)
+            ThreadEdgeStop();
+    }
+    else{
+        ThreadEdgeStop();
+    }
 }
 
 void MasternodeList::getEdgeRet(bool flag)
 {
-    LogPrintf("============>MasternodeList::getEdgeRet flag:",flag);
-    // g_masternodelist->showEdgeRet(flag);
+    g_masternodeListPage->showEdgeRet(flag);
 }
 
 void MasternodeList::showEdgeRet(bool flag)
 {
-    LogPrintf("============>MasternodeList::showEdgeRet flag:",flag);
+    switchButton->SetSelected(flag);
 }

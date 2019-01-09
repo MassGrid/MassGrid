@@ -82,8 +82,9 @@ QT_MOC_CPP = \
   qt/moc_walletmodel.cpp \
   qt/moc_walletview.cpp \
   qt/moc_cupdatethread.cpp \
+  qt/moc_qswitchbutton.cpp \
   qt/moc_mainwintitle.cpp \
-  qt/moc_adddockerservicedlg.cpp
+  qt/moc_adddockerservicedlg.cpp 
 
 
 MASSGRID_MM = \
@@ -166,8 +167,9 @@ MASSGRID_QT_H = \
   qt/walletmodeltransaction.h \
   qt/walletview.h \
   qt/cupdatethread.h \
-  qt/winshutdownmonitor.h
-
+  qt/qswitchbutton.h \
+  qt/winshutdownmonitor.h 
+  
 RES_ICONS = \
   qt/res/icons/massgrid.ico \
   qt/res/icons/massgrid.png \
@@ -291,7 +293,8 @@ MASSGRID_QT_CPP += \
   qt/walletmodel.cpp \
   qt/walletmodeltransaction.cpp \
   qt/walletview.cpp\
-  qt/cupdatethread.cpp
+  qt/cupdatethread.cpp\
+  qt/qswitchbutton.cpp
 endif
 
 RES_MOVIES = $(wildcard qt/res/movies/spinner-*.png)

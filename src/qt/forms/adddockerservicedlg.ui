@@ -61,6 +61,70 @@ QFrame#frame_8{
 min-height:40px;
 max-height:40px;
 }
+QFrame#frame_3,
+QFrame#frame_4{
+border:hidden;
+}
+
+
+
+
+QWidget#AddDockerServiceDlg QPushButton#cancelButton{
+    min-width:20px;
+    min-height:20px;
+    max-width:20px;
+    max-height:20px;
+    border:7px solid rgb(255,255,255,0);
+    image: url(:/res/pic/closeBtn.png);
+}
+
+QWidget#AddDockerServiceDlg QPushButton#okButton{
+width:120;
+height:40;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+}
+
+
+QComboBox{
+    background-color:rgb(172,99,43); 
+    color:white;
+    height:30px;
+    width:120px;
+    border:1px solid rgb(174,103,46);
+    background-repeat: no-repeat;
+    background-position: center left;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    selection-color: black;
+    selection-background-color: darkgray;
+}
+QComboBox::drop-down
+{
+    width: 30px;
+    height:30px;
+    image: url(:/res/pic/xjt.png)；
+
+}
+
+QComboBox QAbstractItemView
+{
+    width:140px;
+  outline: 0px;
+  color: rgb(255, 255, 255);
+    selection-color: rgb(255, 255, 255);
+    selection-background-color: rgb(239, 169, 4);
+    background-color: rgb(198, 125, 26);
+}
+QComboBox QAbstractItemView::item
+{
+    height: 40px;
+   background-color: rgb(198, 125, 26);
+    border:hidden;
+    color: rgb(255, 255, 255);
+}&quot;);
+
  
 
 QFrame#frame_4,
@@ -78,6 +142,18 @@ QFrame#frame_3
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>11</number>
+         </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <property name="leftMargin">
@@ -132,6 +208,18 @@ QFrame#frame_3
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,1">
+           <property name="leftMargin">
+            <number>11</number>
+           </property>
+           <property name="topMargin">
+            <number>11</number>
+           </property>
+           <property name="rightMargin">
+            <number>11</number>
+           </property>
+           <property name="bottomMargin">
+            <number>11</number>
+           </property>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
@@ -180,6 +268,12 @@ QFrame#frame_3
              </item>
              <item>
               <widget class="QFrame" name="frame_2">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
@@ -207,7 +301,14 @@ QFrame#frame_3
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_n2n_name"/>
+                 <widget class="QLineEdit" name="lineEdit_n2n_name">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -353,10 +454,16 @@ QFrame#frame_3
                 <item>
                  <widget class="QSpinBox" name="spinBox_gpucount">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="maximum">
+                   <number>6</number>
+                  </property>
+                  <property name="value">
+                   <number>1</number>
                   </property>
                  </widget>
                 </item>
@@ -379,7 +486,7 @@ QFrame#frame_3
                  <number>0</number>
                 </property>
                 <property name="rightMargin">
-                 <number>0</number>
+                 <number>5</number>
                 </property>
                 <property name="bottomMargin">
                  <number>0</number>
@@ -394,23 +501,23 @@ QFrame#frame_3
                 <item>
                  <widget class="QSpinBox" name="spinBox_memorybyte">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
                   <property name="maximum">
-                   <number>999999999</number>
+                   <number>8</number>
                   </property>
                   <property name="value">
-                   <number>1024</number>
+                   <number>1</number>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="label_4">
                   <property name="text">
-                   <string>Mb</string>
+                   <string>GB</string>
                   </property>
                  </widget>
                 </item>
@@ -448,16 +555,19 @@ QFrame#frame_3
                 <item>
                  <widget class="QSpinBox" name="spinBox_cpucount">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
                   <property name="minimum">
-                   <number>1000000</number>
+                   <number>1</number>
                   </property>
                   <property name="maximum">
-                   <number>1000000000</number>
+                   <number>2</number>
+                  </property>
+                  <property name="value">
+                   <number>1</number>
                   </property>
                  </widget>
                 </item>
@@ -531,9 +641,6 @@ QFrame#frame_3
            </item>
            <item>
             <widget class="QPushButton" name="okButton">
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
              <property name="text">
               <string>Ok</string>
              </property>

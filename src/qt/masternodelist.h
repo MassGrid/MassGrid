@@ -22,6 +22,7 @@ namespace Ui {
 class ClientModel;
 class WalletModel;
 class QTableWidgetItem;
+class QSwitchButton;
 
 QT_BEGIN_NAMESPACE
 class QModelIndex;
@@ -73,6 +74,8 @@ private:
     QString strCurrentFilter;
 
     std::string m_curAddr_Port;
+    
+    QSwitchButton *switchButton;
 
 private:
     int loadServerList();
@@ -91,6 +94,6 @@ private Q_SLOTS:
     void loadServerDetail(QModelIndex);
     void slot_updateServiceBtn();
     void slot_createServiceBtn();
-    void slot_startN2NBtn();
+    void slot_changeN2Nstatus(bool);
 };
 #endif // MASTERNODELIST_H

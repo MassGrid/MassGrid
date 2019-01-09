@@ -97,10 +97,10 @@ bool AddDockerServiceDlg::createDockerService()
 
     createService.image = strServiceImage;
 
-    int64_t strServiceCpu = ui->spinBox_cpucount->value();
+    int64_t strServiceCpu = ui->spinBox_cpucount->value()*100000000;
     createService.cpu = strServiceCpu;
     LogPrintf("cpu %lld \n",createService.cpu);
-    int64_t strServiceMemoey_byte = ui->spinBox_memorybyte->value();
+    int64_t strServiceMemoey_byte = ui->spinBox_memorybyte->value()*100000000;
     createService.memory_byte = strServiceMemoey_byte;
     
     std::string strServiceGpuName = ui->comboBox_gpuname->currentText().toStdString().c_str();

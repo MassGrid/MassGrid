@@ -798,19 +798,3 @@ QDialog#SendCoinsDialog QToolButton#sendButton
 font: 18pt;
 }
 
-QWidget#AddDockerServiceDlg QPushButton#cancelButton{
-    min-width:20px;
-    min-height:20px;
-    max-width:20px;
-    max-height:20px;
-    border:7px solid rgb(255,255,255,0);
-    image: url(:/res/pic/closeBtn.png);
-}
-
-QWidget#AddDockerServiceDlg QPushButton#okButton{
-width:120;
-height:40;
-background-color: rgb(239, 169, 4);
-color: rgb(255, 255, 255);
-border:hidden;
-}
