@@ -2350,8 +2350,6 @@ static int run_loop(n2n_edge_t * eee )
 	time_t lastStatCalcDiff;
     keep_running=1;
 
-    LogPrintf("=========>start func 1\n");
-
     if(fstart)
         fstart(true);
 
@@ -2481,7 +2479,6 @@ static int run_loop(n2n_edge_t * eee )
 
 int n2n_main(int argc, char **argv) {
         int flag = real_main(argc,argv);
-        LogPrintf("=========>start func 2\n");
         if(fstart)
             fstart(false);
         return flag;
@@ -2506,7 +2503,6 @@ bool ThreadEdgeStart(std::string community,std::string localaddr,std::string sna
     strCommunity = community;
     strLocalAddr = localaddr;
     strSnAddr = snaddr;
-    LogPrintf("=========>start func 3\n");
     fstart = start;
     if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
         LogPrintf("ThreadEdgeStart existed thread,Please Stop first\n");

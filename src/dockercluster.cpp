@@ -16,9 +16,6 @@ Cluster dockercluster;
 bool Cluster::SetConnectDockerAddress(std::string address_port){
     setDefaultPubkey(GetDefaultPubkey());   
 
-    LogPrintf("====>SetConnectDockerAddress: addr:%s\n",DefaultReceiveAddress());
-    LogPrintf("====>SetConnectDockerAddress: pubkey str:%s\n",DefaultPubkey.ToString());
-
     LogPrint("docker","Cluster::SetConnectDockerAddress Started\n");
     if (!Lookup(address_port.c_str(), connectDockerAddr, 0, false)){
         LogPrintf("Cluster::SetConnectDockerAddress Incorrect DockerNode address %s", address_port);

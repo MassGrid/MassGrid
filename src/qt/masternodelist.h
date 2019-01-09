@@ -54,7 +54,6 @@ public Q_SLOTS:
     void updateMyMasternodeInfo(QString strAlias, QString strAddr, const COutPoint& outpoint);
     void updateMyNodeList(bool fForce = false);
     void updateNodeList();
-    // void updateDockerView();
     void refreshServerList();
 
 Q_SIGNALS:
@@ -80,7 +79,6 @@ private:
 private:
     int loadServerList();
     void clearDockerDetail();
-    // void loadServerDetail();
 
 private Q_SLOTS:
     void showContextMenu(const QPoint &);

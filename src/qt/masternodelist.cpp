@@ -146,7 +146,7 @@ void MasternodeList::showDockerDetail(QModelIndex index)
         refreshServerList();
             return ;
     }
-    CMessageBox::information(this, tr("connect docker"),tr("connect failed"));
+    CMessageBox::information(this, tr("Docker option"),tr("connect docker network failed!"));
 }
 
 void MasternodeList::StartAlias(std::string strAlias)
@@ -642,7 +642,7 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
 
         if(list.size() != 4){
             switchButton->SetSelected(false);
-            CMessageBox::information(this, tr("Edge Error"),tr("remote ip error!"));
+            CMessageBox::information(this, tr("Edge option"),tr("Get remote ip error!"));
             return ;
         }
 
@@ -654,6 +654,7 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
         bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString().c_str(),
                                                n2n_SPIP.toStdString().c_str(),
                                                n2n_localip.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
+                                              
         if(!startThreadFlag)
             ThreadEdgeStop();
     }
