@@ -135,12 +135,18 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     else
         spec.name = createService.ToString().substr(0,15);
 
-    if(!(createService.memory_byte > 0 && createService.memory_byte < DOCKER_MAX_MEMORY_BYTE))
+    if(!(createService.memory_byte > 0 && createService.memory_byte <= DOCKER_MAX_MEMORY_BYTE)){
+        LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec memory_byte %d,  DOCKER_MAX_MEMORY_BYTE %d\n",createService.memory_byte,DOCKER_MAX_MEMORY_BYTE);
         return false;
-    if(!(createService.cpu > 0 && createService.cpu < DOCKER_MAX_CPU_NUM))
+    }
+    if(!(createService.cpu > 0 && createService.cpu <= DOCKER_MAX_CPU_NUM)){
+        LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec cpu %d,  DOCKER_MAX_CPU_NUM,%d\n",createService.cpu,DOCKER_MAX_CPU_NUM);
         return false;
-    if(!(createService.gpu > 0 && createService.gpu < DOCKER_MAX_GPU_NUM))
+    }
+    if(!(createService.gpu > 0 && createService.gpu <= DOCKER_MAX_GPU_NUM)){
+        LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec gpu %d,  DOCKER_MAX_GPU_NUM %d\n",createService.gpu,DOCKER_MAX_GPU_NUM);
         return false;
+    }
     
     spec.labels["com.massgrid.pubkey"] = createService.pubKeyClusterAddress.ToString().substr(0,65);
     spec.mode.replicated.replicas = 1;
