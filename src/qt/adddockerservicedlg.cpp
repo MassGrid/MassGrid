@@ -3,10 +3,17 @@
 #include "../dockercluster.h"
 #include "../rpc/protocol.h"
 #include "cmessagebox.h"
+#include "init.h"
+#include "wallet/wallet.h"
+#include "../walletview.h"
+#include "walletmodel.h"
+#include "askpassphrasedialog.h"
+#include "massgridgui.h"
 
 AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AddDockerServiceDlg)
+    ui(new Ui::AddDockerServiceDlg),
+    m_walletModel(NULL)
 {
     ui->setupUi(this);
 
@@ -74,16 +81,49 @@ void AddDockerServiceDlg::setaddr_port(const std::string& addr_port)
     m_addr_port = addr_port; 
 }
 
+void AddDockerServiceDlg::setWalletModel(WalletModel* walletmodel)
+{
+    m_walletModel = walletmodel;
+}
+
 bool AddDockerServiceDlg::createDockerService()
 {
     if(!m_addr_port.size()){
         LogPrintf("connect docker address error!\n");
         return false ;
     }
-    if(!dockercluster.SetConnectDockerAddress(m_addr_port))
-        throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
-    if(!dockercluster.ProcessDockernodeConnections())
-        throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Connect to Masternode failed");
+
+    bool lockedFlag = pwalletMain->IsLocked();
+
+    if(lockedFlag){
+        CMessageBox::information(this, tr("Wallet option"), tr("This option need to unlock your wallet"));
+
+        if(!m_walletModel)
+            return false;
+        // Unlock wallet when requested by wallet model
+        if (m_walletModel->getEncryptionStatus() == WalletModel::Locked)
+        {
+            AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, 0);
+            dlg.setModel(m_walletModel);
+            QPoint pos = MassGridGUI::winPos();
+            QSize size = MassGridGUI::winSize();
+            dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
+            if(dlg.exec() != QDialog::Accepted){
+                return false;
+            }
+        }
+    }
+
+    if(!dockercluster.SetConnectDockerAddress(m_addr_port)){
+        LogPrintf("get invalid IP!\n");
+        return false;
+    }
+        // throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
+    if(!dockercluster.ProcessDockernodeConnections()){
+        LogPrintf("Connect to Masternode failed!\n");
+         return false;
+    }
 
     DockerCreateService createService{};
 
@@ -116,12 +156,13 @@ bool AddDockerServiceDlg::createDockerService()
     // "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDwKzxP+YJHSU/qgT8X79HnktF8Kpkec7cUEDGkyqwQXOhLMUG2XDDOqQAsRIHjCuCgP0fi8oeYO+/h+c/su6L5sAzs0zMXFUkAYHowe0OpPEVFXkSfd2rGbnFGVyRec2LuzN63X92WNycvG/TP7WobBizp1CXQDGEouSHw38kRYPRnr93YPVDJ6GUwlqEND35WiAEFpQ3n9CbYMiX+Eg3ItVXjXJc9R63oLwKGn9Ko4UDfpHqKhGNJ5KQ2LPIevhlbuP9rm7hCjoqx0krBJxfXVwlGTZE3hpteMpcZPdAKPcyHBx6P/YLEQHqiUNaGMF3hWtIr3CJqDDOMmKj70KOt oasis@xiejiataodeMacBook-Pro.local";
     createService.ssh_pubkey = strssh_pubkey;
     
+    //pnode 
+
     if(!dockercluster.CreateAndSendSeriveSpec(createService)){
         LogPrintf("dockercluster.CreateAndSendSeriveSpec error\n");
-        CMessageBox::information(this, tr("connect docker"), tr("dockercluster.CreateAndSendSeriveSpec error"));
+        CMessageBox::information(this, tr("Docker option"), tr("Create and send SeriveSpec failed!"));
         return false;
     }
-    CMessageBox::information(this, tr("connect docker"), tr("createService.sspec sucess"));
-    LogPrintf(" createService.sspec hash %s \n",createService.ToString());
+    CMessageBox::information(this, tr("Docker option"), tr("Create and send SeriveSpec success!"));
     return true;
 }

@@ -614,6 +614,9 @@ void MasternodeList::slot_createServiceBtn()
     QSize size = MassGridGUI::winSize();
     dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
     dlg.setaddr_port(m_curAddr_Port);
+
+    dlg.setWalletModel(walletModel);
+
     dlg.exec();
     QTimer::singleShot(2000,this,SLOT(refreshServerList()));
 }
@@ -646,15 +649,14 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
             return ;
         }
 
-        int ipNum = QString(list.at(3)).toInt();
+        int ipNum = QString(list.last()).toInt();
         ipNum ++ ;
         n2n_localip = QString("%1.%2.%3.%4").arg(list.at(0)).arg(list.at(1)).arg(list.at(2)).arg(QString::number(ipNum));
-        LogPrintf("slot_changeN2Nstatus n2n_localip:%d\n",n2n_localip.toStdString().c_str());
 
         bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString().c_str(),
                                                n2n_SPIP.toStdString().c_str(),
                                                n2n_localip.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
-                                              
+                                               
         if(!startThreadFlag)
             ThreadEdgeStop();
     }
