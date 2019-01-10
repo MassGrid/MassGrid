@@ -115,9 +115,9 @@ public:
 };
 class ServiceListInfo{
 public:
-    ServiceListInfo(){};
+    ServiceListInfo(){timespan=10800;}
     ServiceListInfo(int _timespan):timespan(_timespan){}
-    ServiceListInfo(int64_t _timestamp,std::string _serviceid,int _timespan=10800):
+    ServiceListInfo(int64_t _timestamp,std::string _serviceid,int _timespan):
     timestamp(_timestamp),serviceid(_serviceid),timespan(_timespan){}
     ~ServiceListInfo(){};
 public:
