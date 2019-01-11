@@ -512,10 +512,9 @@ void threadServiceControl()
             while(!serviceInfoQue.empty()){
                     ServiceListInfo slist=serviceInfoQue.top();
                     if(now_time >= slist.timestamp){
-                        if(dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,slist.serviceid,"")){
-                            serviceInfoQue.pop();
-                            LogPrint("docker","threadServiceControl:: delete serverice id= %s  timpstamp= %lu\n",slist.serviceid,slist.timestamp);
-                        }
+                        dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,slist.serviceid,"");
+                        serviceInfoQue.pop();
+                        LogPrint("docker","threadServiceControl:: delete serverice id= %s  timpstamp= %lu\n",slist.serviceid,slist.timestamp);
                     }else{
                         LogPrint("docker","threadServiceControl:: serviceInfoQue size= %d, the earliest serverice time= %lu id= %s\n",serviceInfoQue.size(),slist.timestamp,slist.serviceid);
                         break;
