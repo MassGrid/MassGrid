@@ -151,10 +151,10 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     spec.labels["com.massgrid.pubkey"] = createService.pubKeyClusterAddress.ToString().substr(0,65);
     spec.mode.replicated.replicas = 1;
     
-    if(!createService.image.empty())
+    if(!createService.image.empty() && createService.image.substr(0,9) == "massgrid/")
         spec.taskTemplate.containerSpec.image = createService.image;
     else
-        spec.taskTemplate.containerSpec.image = "wany/cuda9.1-base";
+        spec.taskTemplate.containerSpec.image = "massgrid/10.0-base-ubuntu16.04";
     spec.taskTemplate.containerSpec.user= "root";
     
     spec.taskTemplate.resources.limits.memoryBytes = createService.memory_byte;

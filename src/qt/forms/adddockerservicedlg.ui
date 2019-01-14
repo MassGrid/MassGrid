@@ -345,7 +345,7 @@ QFrame#frame_3
                  <widget class="QComboBox" name="comboBox_gpuname">
                   <item>
                    <property name="text">
-                    <string>NVIDIA_GPUP104</string>
+                    <string>NVIDIA_GPUP104_100</string>
                    </property>
                   </item>
                  </widget>

@@ -11,7 +11,7 @@
 
 #define DOCKER_MAX_CPU_NUM 1000000000
 #define DOCKER_MAX_MEMORY_BYTE 2048000000
-#define DOCKER_MAX_GPU_NUM 1
+#define DOCKER_MAX_GPU_NUM 2
 class CDockerServerman;
 extern CDockerServerman dockerServerman;
 
