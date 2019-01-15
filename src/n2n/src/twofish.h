@@ -46,7 +46,7 @@
 #endif
 
 #ifdef WIN32
-#include "win32/n2n_win32.h"
+#include "n2n_win32.h"
 #endif
 
 #ifndef _MSC_VER

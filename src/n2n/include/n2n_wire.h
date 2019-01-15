@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 #if defined(WIN32)
-#include "win32/n2n_win32.h"
+#include "n2n_win32.h"
 
 #if defined(__MINGW32__)
 #include <stdint.h>

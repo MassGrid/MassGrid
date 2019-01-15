@@ -19,7 +19,7 @@
    Boston, MA 02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include <libn2n-config.h>
 #endif
 
 #include "getopt.h"

@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../scm.h"
+#include "scm.h"
 
 /* Service status: our current status, and handle on service manager */
 SERVICE_STATUS svcStatus;

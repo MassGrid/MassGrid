@@ -1,4 +1,4 @@
-AC_PREREQ([2.69])
+AC_PREREQ([2.60])
 define(_LIBN2N_VERSION_MAJOR, 2)
 define(_LIBN2N_VERSION_MINOR, 1)
 define(_LIBN2N_VERSION_REVISION, 0)
@@ -45,7 +45,6 @@ fi
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h inttypes.h libintl.h limits.h netdb.h netinet/in.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/socket.h sys/time.h syslog.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
 AC_TYPE_UID_T
 AC_TYPE_INT16_T
 AC_TYPE_INT32_T

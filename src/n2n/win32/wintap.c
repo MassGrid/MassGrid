@@ -2,7 +2,7 @@
   (C) 2007-09 - Luca Deri <deri@ntop.org>
 */
 
-#include "../n2n.h"
+#include "n2n.h"
 #include "n2n_win32.h"
 
 /* 1500 bytes payload + 14 bytes ethernet header + 4 bytes VLAN tag */

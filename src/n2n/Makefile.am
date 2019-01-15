@@ -28,12 +28,15 @@ libn2n_la_SOURCES = src/n2n.c \
                 src/tuntap_osx.c \
                 src/version.c
 if WINDOWS
-    libn2n_la_SOURCES += win32/win-scm.c
+    libn2n_la_SOURCES += win32/win-scm.c \
+                    win32/getopt1.c \
+                    win32/getopt.c \
+                    win32/wintap.c \
+	                win32/n2n_win32.c
 else 
     libn2n_la_SOURCES += src/unix-scm.c
 endif
-libn2n_la_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src
-libn2n_la_LIBADD =
+libn2n_la_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src -Wall -Wextra -Wno-unused-function -lws2_32
 
 bin_PROGRAMS =
 noinst_PROGRAMS =
@@ -41,17 +44,17 @@ if USE_BENCHMARK
 noinst_PROGRAMS += benchmark benchmark_hashtable
 benchmark_SOURCES = src/benchmark.c
 benchmark_LDADD = libn2n.la
-benchmark_CFLAGS = -I$(top_srcdir)/include -static 
+benchmark_CFLAGS = -I$(top_srcdir)/include -static -Wall -Wextra -Wno-unused-function
 benchmark_hashtable_SOURCES = src/benchmark_hashtable.c
-benchmark_hashtable_LDADD = libn2n.la
-benchmark_hashtable_CFLAGS = -I$(top_srcdir)/include -static
+benchmark_hashtable_LDADD = libn2n.la 
+benchmark_hashtable_CFLAGS = -I$(top_srcdir)/include -static -Wall -Wextra -Wno-unused-function
 endif
 
 if USE_TEST
 noinst_PROGRAMS += n2n_test
 n2n_test_SOURCES = src/n2n_test.c
 n2n_test_LDADD = libn2n.la
-n2n_test_CFLAGS = -I$(top_srcdir)/include -static
+n2n_test_CFLAGS = -I$(top_srcdir)/include -static -Wall -Wextra -Wno-unused-function
 TESTS = n2n_test
 endif
 
@@ -59,10 +62,10 @@ if USE_EXECUTABLE
 bin_PROGRAMS += edge supernode
 edge_SOURCES = src/edge.c
 edge_LDADD = libn2n.la $(CRYPTO_LIBS)
-edge_CFLAGS = -I$(top_srcdir)/include -static
+edge_CFLAGS = -I$(top_srcdir)/include -static -Wall -Wextra -Wno-unused-function
 supernode_SOURCES = src/sn.c
 supernode_LDADD = libn2n.la
-supernode_CFLAGS = -I$(top_srcdir)/include -static
+supernode_CFLAGS = -I$(top_srcdir)/include -static -Wall -Wextra -Wno-unused-function
 endif
 
 EXTRA_DIST = autogen.sh
