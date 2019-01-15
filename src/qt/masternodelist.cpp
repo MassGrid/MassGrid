@@ -519,6 +519,10 @@ void MasternodeList::loadServerDetail(QModelIndex index)
     map<std::string,Task> mapDockerTasklists = service.mapDockerTasklists;
     map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
 
+
+    LogPrintf("----->mapDockerTasklists size:%d \n",mapDockerTasklists.size());
+
+
     for(;iter != mapDockerTasklists.end();iter++){
         std::string id = iter->first;
         Task task = iter->second;

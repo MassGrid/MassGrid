@@ -22,6 +22,10 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     ui->label_titleName->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
+
+    ui->spinBox_gpucount->setEnabled(false);
+    ui->spinBox_memorybyte->setEnabled(false);
+    ui->spinBox_cpucount->setEnabled(false);
 }
 
 AddDockerServiceDlg::~AddDockerServiceDlg()
@@ -73,6 +77,7 @@ void AddDockerServiceDlg::slot_okbutton()
     }
     else{
         CMessageBox::information(this, tr("Error"), tr("create docker service error"));
+        close();
     }
 }
 
@@ -119,7 +124,7 @@ bool AddDockerServiceDlg::createDockerService()
         LogPrintf("get invalid IP!\n");
         return false;
     }
-        // throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
+    // throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
     if(!dockercluster.ProcessDockernodeConnections()){
         LogPrintf("Connect to Masternode failed!\n");
          return false;
@@ -133,7 +138,7 @@ bool AddDockerServiceDlg::createDockerService()
     std::string strServiceName = ui->lineEdit_name->text().toStdString().c_str();
     createService.serviceName = strServiceName;
 
-    std::string strServiceImage = ui->comboBox_image->currentText().toStdString().c_str();
+    std::string strServiceImage = QString("massgrid/" + ui->comboBox_image->currentText()).toStdString().c_str();
 
     createService.image = strServiceImage;
 
