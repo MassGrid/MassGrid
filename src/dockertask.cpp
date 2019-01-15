@@ -86,7 +86,7 @@ bool Task::DcokerTaskJson(const UniValue& data,Task& task)
     Config::Labels lab;
     Config::TaskSpec spec;
     std::string serviceid;
-    uint slot;
+    int32_t slot;
     std::string nodeid;
     Config::TaskStatus taskstatus;
     Config::eStatus desiredstate;

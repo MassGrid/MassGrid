@@ -459,7 +459,7 @@ void CDockerMan::GetVersionAndJoinToken(){
             for(int i = 0, j = 3;i < destination.size() && j >= 0;++i){
                 try
                 {
-                    version.unv[j] = boost::lexical_cast<uint>(destination[i]);
+                    version.unv[j] = boost::lexical_cast<uint32_t>(destination[i]);
                 }
                 catch(const boost::bad_lexical_cast &)
                 {

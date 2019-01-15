@@ -83,7 +83,7 @@ public:
     Config::Labels lab,
     Config::TaskSpec spec,
     std::string serviceid,
-    uint slot,
+    int64_t slot,
     std::string nodeid,
     Config::TaskStatus taskstatus,
     Config::eStatus desiredstate,
