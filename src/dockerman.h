@@ -15,7 +15,6 @@
 #endif
 #endif
 #include <set>
-typedef unsigned long in_addr_t;
 class CDockerMan;
 extern CDockerMan dockerman;
 void threadServiceControl();

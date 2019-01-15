@@ -13,7 +13,7 @@ noinst_HEADERS += src/twofish.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libn2n.pc
-
+libn2n_la_CFLAGS = 
 libn2n_la_SOURCES = src/n2n.c \
                 src/n2n_keyfile.c \
                 src/wire.c \
@@ -33,10 +33,11 @@ if WINDOWS
                     win32/getopt.c \
                     win32/wintap.c \
 	                win32/n2n_win32.c
+    libn2n_la_CFLAGS += -lws2_32
 else 
     libn2n_la_SOURCES += src/unix-scm.c
 endif
-libn2n_la_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src -Wall -Wextra -Wno-unused-function -lws2_32
+libn2n_la_CFLAGS += -I$(top_srcdir)/include -I$(top_srcdir)/src -Wall -Wextra -Wno-unused-function
 
 bin_PROGRAMS =
 noinst_PROGRAMS =
