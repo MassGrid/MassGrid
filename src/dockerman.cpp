@@ -480,7 +480,7 @@ void InitSerListQueue(std::map<std::string,Service> &services)
     LOCK(cs_serInfoQueue);
     while(!serviceInfoQue.empty()) serviceInfoQue.pop();
     for(auto &service: services){
-        ServiceListInfo serverinfo(7200);//7200
+        ServiceListInfo serverinfo(14400);//7200
         serverinfo.serviceid=service.second.ID;
         serverinfo.timestamp=service.second.createdAt+serverinfo.timespan;
         serviceInfoQue.push(serverinfo);
@@ -491,7 +491,7 @@ void UpdateSerListQueue(std::map<std::string,Service> &services,std::string id)
     LOCK(cs_serInfoQueue);
     for(auto &service: services){
         if(service.second.ID == id){
-            ServiceListInfo serverinfo(7200);//7200
+            ServiceListInfo serverinfo(14400);//7200
             serverinfo.serviceid=service.second.ID;
             serverinfo.timestamp=service.second.createdAt+serverinfo.timespan;
             serviceInfoQue.push(serverinfo);

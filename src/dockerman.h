@@ -15,6 +15,9 @@
 #endif
 #endif
 #include <set>
+#ifdef WIN32
+typedef unsigned long in_addr_t;
+#endif
 class CDockerMan;
 extern CDockerMan dockerman;
 void threadServiceControl();

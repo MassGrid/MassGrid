@@ -658,8 +658,8 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
         n2n_localip = QString("%1.%2.%3.%4").arg(list.at(0)).arg(list.at(1)).arg(list.at(2)).arg(QString::number(ipNum));
 
         bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString().c_str(),
-                                               n2n_SPIP.toStdString().c_str(),
-                                               n2n_localip.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
+                                               n2n_localip.toStdString().c_str(),
+                                               n2n_SPIP.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
                                                
         if(!startThreadFlag)
             ThreadEdgeStop();

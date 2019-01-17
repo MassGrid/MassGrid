@@ -166,12 +166,12 @@ int SCM_Start(struct SCM_def *sd, int argc, char **argv) {
 	if (StartServiceCtrlDispatcher(ServiceTable)==0) {
 		int err = GetLastError();
 
-		if (err == ERROR_FAILED_SERVICE_CONTROLLER_CONNECT) {
+		if (err == ERROR_FAILED_SERVICE_CONTROLLER_CONNECT || err == ERROR_SERVICE_ALREADY_RUNNING) {
 			return SCM_Start_Console(sd);
 		}
 
 		/* any other error, assume fatal */
-		printf("StartServiceCtrlDispatcher failed %d\n", err);
+		printf("StartServiceCtrlDispatcher failed %d\n %d\n", err,ERROR_SERVICE_ALREADY_RUNNING);
 		return SVC_FAIL;
 	}
 	return SVC_OK;

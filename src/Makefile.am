@@ -221,7 +221,7 @@ obj/build.h: FORCE
 libmassgrid_util_a-clientversion.$(OBJEXT): obj/build.h
 
 # server: shared between massgridd and massgrid-qt
-libmassgrid_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(MASSGRID_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
+libmassgrid_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(MASSGRID_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS) -fpermissive
 libmassgrid_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libmassgrid_server_a_SOURCES = \
   activemasternode.cpp \

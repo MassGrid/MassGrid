@@ -75,6 +75,7 @@ boost::thread* thrd = NULL;
 std::string strCommunity;
 std::string strLocalAddr;
 std::string strSnAddr;
+int   keep_running=1;
 /** Main structure type for edge. */
 struct n2n_edge
 {
@@ -1933,18 +1934,21 @@ static void readFromIPSocket( n2n_edge_t * eee )
 
 /* ***************************************************** */
 
-
+boost::thread threadTun;
 #ifdef WIN32
-static DWORD tunReadThread(LPVOID lpArg )
+static void tunReadThread(n2n_edge_t* eee )
 {
-    n2n_edge_t *eee = (n2n_edge_t*)lpArg;
+    try{
 
-    while(1)
-    {
-        readFromTAPSocket(eee);
+        while(1)
+        {
+            readFromTAPSocket(eee);
+        
+            boost::this_thread::interruption_point();
+        } /* while */
+    }catch(boost::thread_interrupted&){
+        LogPrintf("dockeredge::tunReadThread exit\n");
     }
-
-    return((DWORD)NULL);
 }
 
 
@@ -1952,15 +1956,19 @@ static DWORD tunReadThread(LPVOID lpArg )
  *  file descriptors. */
 static void startTunReadThread(n2n_edge_t *eee)
 {
-    HANDLE hThread;
-    DWORD dwThreadId;
+    // HANDLE hThread;
+    // DWORD dwThreadId;
+    
+    // hThread = CreateThread(NULL,         /* security attributes */
+    //                        0,            /* use default stack size */
+    //                        (LPTHREAD_START_ROUTINE)tunReadThread, /* thread function */
+    //                        (void*)eee,   /* argument to thread function */
+    //                        0,            /* thread creation flags */
+    //                        &dwThreadId); /* thread id out */
+    // CloseHandle(hThread);
 
-    hThread = CreateThread(NULL,         /* security attributes */
-                           0,            /* use default stack size */
-                           (LPTHREAD_START_ROUTINE)tunReadThread, /* thread function */
-                           (void*)eee,   /* argument to thread function */
-                           0,            /* thread creation flags */
-                           &dwThreadId); /* thread id out */
+    LogPrintf("dockeredge::tunReadThread started\n");
+    threadTun = boost::thread(boost::bind(&tunReadThread,eee));
 }
 #endif
 
@@ -2206,6 +2214,7 @@ int real_main(int argc, char* argv[]);
 /** Entry point to program from kernel. */
 int real_main(int argc, char* argv[])
 {
+    LogPrint("edge","real_main start\n" );
     int     opt;
     int     local_port = 0 /* any port */;
     int     mgmt_port = N2N_EDGE_MGMT_PORT; /* 5644 by default */
@@ -2340,9 +2349,9 @@ int real_main(int argc, char* argv[])
     return run_loop(&eee);
 }
 
-int   keep_running=1;
 static int run_loop(n2n_edge_t * eee )
 {
+    LogPrint("edge","run_loop start\n");
     size_t numPurged;
     time_t lastIfaceCheck=0;
     time_t lastTransop=0;
@@ -2464,7 +2473,10 @@ static int run_loop(n2n_edge_t * eee )
             boost::this_thread::interruption_point();
         } /* while */
     }catch(boost::thread_interrupted&){
-
+#ifdef WIN32
+    threadTun.interrupt();
+    threadTun.join();
+#endif
     LogPrintf("EdgePreStop thread_interrupted\n");
     }
     send_deregister( eee, &(eee->supernode));
@@ -2519,10 +2531,9 @@ bool ThreadEdgeStart(std::string community,std::string localaddr,std::string sna
 void ThreadEdgeStop(){
     LogPrintf("ThreadEdgeStop\n");
     if(!thrd) return;
+    thrd->interrupt();
     if(fthreadGroup->is_thread_in(thrd)){
         fthreadGroup->remove_thread(thrd);
-        n2n_stop(NULL);
-        // LogPrintf("ThreadEdgeStop:: interrupt thread->id %d\n",thrd->get_id());
         thrd = NULL;
     }
 }
