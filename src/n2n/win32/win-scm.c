@@ -124,7 +124,7 @@ int SCM_Start_Console(struct SCM_def *sd) {
 	sd->main(sd->argc,sd->argv);
 	return SVC_OK;
 }
-
+int flag=1;
 int SCM_Start(struct SCM_def *sd, int argc, char **argv) {
 	SERVICE_TABLE_ENTRY ServiceTable[] = {
 		{ "", ServiceMain },
@@ -163,16 +163,18 @@ int SCM_Start(struct SCM_def *sd, int argc, char **argv) {
 	 * however, it will take an noticably long time to do so, thus we
 	 * try to short circuit this delay above.
 	 */
-	if (StartServiceCtrlDispatcher(ServiceTable)==0) {
+	if (flag && StartServiceCtrlDispatcher(ServiceTable)==0 ) {
 		int err = GetLastError();
-
-		if (err == ERROR_FAILED_SERVICE_CONTROLLER_CONNECT || err == ERROR_SERVICE_ALREADY_RUNNING) {
+		flag = 0;
+		if (err == ERROR_FAILED_SERVICE_CONTROLLER_CONNECT) {
 			return SCM_Start_Console(sd);
 		}
 
 		/* any other error, assume fatal */
 		printf("StartServiceCtrlDispatcher failed %d\n %d\n", err,ERROR_SERVICE_ALREADY_RUNNING);
 		return SVC_FAIL;
+	}else{
+		return SCM_Start_Console(sd);
 	}
 	return SVC_OK;
 }
