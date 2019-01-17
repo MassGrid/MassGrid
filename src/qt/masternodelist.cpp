@@ -706,6 +706,7 @@ void MasternodeList::refreshServerList()
 
 void MasternodeList::slot_changeN2Nstatus(bool isSelected)
 {
+    switchButton->setEnabled(false);
     if(isSelected){
         QString n2n_SPIP = ui->label_n2n_serverip->text();
         QString n2n_localip = ui->label_n2n_localip->text();
@@ -742,4 +743,5 @@ void MasternodeList::getEdgeRet(bool flag)
 void MasternodeList::showEdgeRet(bool flag)
 {
     switchButton->SetSelected(flag);
+    switchButton->setEnabled(true);
 }
