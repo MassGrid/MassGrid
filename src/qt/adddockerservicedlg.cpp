@@ -9,6 +9,8 @@
 #include "walletmodel.h"
 #include "askpassphrasedialog.h"
 #include "massgridgui.h"
+#include <QFileDialog>
+#include <QFile>
 
 AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     QDialog(parent),
@@ -20,6 +22,8 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     connect(ui->okButton, SIGNAL(clicked()), this, SLOT(slot_okbutton()));
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+    connect(ui->openPubKeyButton,SIGNAL(clicked()),this,SLOT(slot_openPubKeyFile()));
+    
     ui->label_titleName->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
 
@@ -79,6 +83,23 @@ void AddDockerServiceDlg::slot_okbutton()
         CMessageBox::information(this, tr("Error"), tr("create docker service error"));
         close();
     }
+}
+
+void AddDockerServiceDlg::slot_openPubKeyFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,tr("open Pubkey file"),"",tr("Pubkey File (*.pub)"));
+
+    if(fileName.isEmpty()){
+        return ;
+    }
+
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        CMessageBox::information(this, tr("Error"), tr("open Pubkey file error!"));
+        return ;
+    }
+    ui->textEdit_sshpubkey->setText(file.readAll());
+    
 }
 
 void AddDockerServiceDlg::setaddr_port(const std::string& addr_port)
@@ -161,7 +182,6 @@ bool AddDockerServiceDlg::createDockerService()
     // "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDwKzxP+YJHSU/qgT8X79HnktF8Kpkec7cUEDGkyqwQXOhLMUG2XDDOqQAsRIHjCuCgP0fi8oeYO+/h+c/su6L5sAzs0zMXFUkAYHowe0OpPEVFXkSfd2rGbnFGVyRec2LuzN63X92WNycvG/TP7WobBizp1CXQDGEouSHw38kRYPRnr93YPVDJ6GUwlqEND35WiAEFpQ3n9CbYMiX+Eg3ItVXjXJc9R63oLwKGn9Ko4UDfpHqKhGNJ5KQ2LPIevhlbuP9rm7hCjoqx0krBJxfXVwlGTZE3hpteMpcZPdAKPcyHBx6P/YLEQHqiUNaGMF3hWtIr3CJqDDOMmKj70KOt oasis@xiejiataodeMacBook-Pro.local";
     createService.ssh_pubkey = strssh_pubkey;
     
-    //pnode 
 
     if(!dockercluster.CreateAndSendSeriveSpec(createService)){
         LogPrintf("dockercluster.CreateAndSendSeriveSpec error\n");

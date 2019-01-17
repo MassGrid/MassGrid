@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>666</width>
-    <height>466</height>
+    <width>766</width>
+    <height>475</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,24 +52,17 @@
         <property name="styleSheet">
          <string notr="true">QFrame#frame,
 QFrame#frame_2,
-QFrame#frame_3,
-QFrame#frame_4,
 QFrame#frame_5,
 QFrame#frame_6,
 QFrame#frame_7,
 QFrame#frame_8{
-min-height:40px;
-max-height:40px;
-}
-QFrame#frame_3,
-QFrame#frame_4{
-border:hidden;
+    min-height:40px;
+    max-height:40px;
+    border-color: rgb(186, 186, 186);
+    border:1px solid rgb(186, 186, 186);
 }
 
-
-
-
-QWidget#AddDockerServiceDlg QPushButton#cancelButton{
+QPushButton#cancelButton{
     min-width:20px;
     min-height:20px;
     max-width:20px;
@@ -78,7 +71,7 @@ QWidget#AddDockerServiceDlg QPushButton#cancelButton{
     image: url(:/res/pic/closeBtn.png);
 }
 
-QWidget#AddDockerServiceDlg QPushButton#okButton{
+QPushButton#okButton{
 width:120;
 height:40;
 background-color: rgb(239, 169, 4);
@@ -86,12 +79,20 @@ color: rgb(255, 255, 255);
 border:hidden;
 }
 
+QFrame#frame_4,
+QFrame#frame_3
+{
+    min-height:40px;
+    max-height:40px;
+    border: 1px solid;                         
+	border-color: rgb(255, 255, 255,0);
+}
 
-QComboBox{
-    background-color:rgb(172,99,43); 
-    color:white;
-    height:30px;
-    width:120px;
+
+QComboBox
+{
+    width: 160px;
+    height: 30px;
     border:1px solid rgb(174,103,46);
     background-repeat: no-repeat;
     background-position: center left;
@@ -100,40 +101,30 @@ QComboBox{
     selection-color: black;
     selection-background-color: darkgray;
 }
+
 QComboBox::drop-down
 {
     width: 30px;
     height:30px;
-    image: url(:/res/pic/xjt.png)；
-
+    image: url(:/res/pic/xjt.png);
 }
-
 QComboBox QAbstractItemView
 {
-    width:140px;
-  outline: 0px;
-  color: rgb(255, 255, 255);
+    height:100px;
+    border: 0px;
+    color: rgb(255, 255, 255);
     selection-color: rgb(255, 255, 255);
     selection-background-color: rgb(239, 169, 4);
     background-color: rgb(198, 125, 26);
 }
 QComboBox QAbstractItemView::item
 {
-    height: 40px;
-   background-color: rgb(198, 125, 26);
+    height: 30px;
+    background-color: rgb(198, 125, 26);
     border:hidden;
     color: rgb(255, 255, 255);
-}&quot;);
-
- 
-
-QFrame#frame_4,
-QFrame#frame_3
-{
-     border: 1px solid;                         
-	border-color: rgb(255, 255, 255,0);
- 
-}</string>
+}
+</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -346,6 +337,12 @@ QFrame#frame_3
                 </item>
                 <item>
                  <widget class="QComboBox" name="comboBox_gpuname">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <item>
                    <property name="text">
                     <string>NVIDIA_GPUP104_100</string>
@@ -386,6 +383,12 @@ QFrame#frame_3
                 </item>
                 <item>
                  <widget class="QComboBox" name="comboBox_image">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <item>
                    <property name="text">
                     <string>10.0-base-ubuntu16.04</string>
@@ -606,11 +609,47 @@ QFrame#frame_3
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>SSH-PubKey:</string>
+                <layout class="QHBoxLayout" name="horizontalLayout_11">
+                 <property name="topMargin">
+                  <number>0</number>
                  </property>
-                </widget>
+                 <item>
+                  <widget class="QLabel" name="label_6">
+                   <property name="text">
+                    <string>SSH-PubKey:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_3">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="openPubKeyButton">
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton#openPubKeyButton{
+width:130;
+height:28;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>open pubKey file</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item>
                 <widget class="QTextEdit" name="textEdit_sshpubkey"/>

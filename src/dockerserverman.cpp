@@ -7,7 +7,9 @@
 #include "wallet/wallet.h"
 #include "dockercluster.h"
 #include <boost/lexical_cast.hpp>
+// #include "./qt/"
 CDockerServerman dockerServerman;
+// setDNDataStatus(DNDATASTATUS::Free);
 
 void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman){
     
@@ -42,6 +44,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         vRecv >> mdndata;
         if(mdndata.version < DOCKERREQUEST_API_MINSUPPORT_VERSION){
             LogPrintf("CDockerServerman::ProcessMessage --mdndata version %d is too old %d\n", mdndata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
+            setDNDataStatus(DNDATASTATUS::Received);
             return;
         }
          
@@ -51,8 +54,12 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
         for(;iter != mdndata.mapDockerServiceLists.end();iter++){
             LogPrintf("iter->second.spec.ToJsonString():%s \n",iter->second.spec.ToJsonString()); 
-
+            if(iter->second.mapDockerTasklists.size()){
+                LogPrintf("===>server man task map state:%d\n",iter->second.mapDockerTasklists.begin()->second.status.state);
+            }
         }
+        
+        setDNDataStatus(DNDATASTATUS::Received);
         LogPrintf("CDockerServerman::ProcessMessage mapDockerServiceLists:%d sigTime:%d\n",mdndata.mapDockerServiceLists.size(),mdndata.sigTime);
 
     }else if(strCommand == NetMsgType::CREATESERVICE){

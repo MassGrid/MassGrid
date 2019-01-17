@@ -1,13 +1,12 @@
-//#include "QSwitchButton.h"
 #include "qswitchbutton.h"
 #include <QPainter>
 #include <QRectF>
 
 QSwitchButton::QSwitchButton(QWidget *parent)
     : QLabel(parent), isSelected(true), buttonWidth(100), buttonHeight(40)
-    , backgroundColorSelected("#E7E3E7"/*Qt::white*/), backgroundColorNotSelected("#E7E3E7")
+    , backgroundColorSelected("#E7E3E7"), backgroundColorNotSelected("#E7E3E7")
     , sliderColorSelected("#EFA904"), sliderColorNotSelected("#7B797B")
-    , rectRound(5/*30*/), isAntiAliasing(true), buttonStyle(Rectage), isEnable(true)
+    , rectRound(5), isAntiAliasing(true), buttonStyle(Rectage), isEnable(true)
 {
     resize(buttonWidth, buttonHeight);
     setMouseTracking(true);
@@ -111,7 +110,7 @@ void QSwitchButton::paintEvent(QPaintEvent* event)
         painter.setRenderHint(QPainter::SmoothPixmapTransform);
     }
 
-    if (!isEnable)  //未启用
+    if (!isEnable)  
     {
         painter.setPen(QPen(QColor("#F4F4F4")));
         painter.setBrush(QBrush(QColor("#F4F4F4")));
@@ -198,18 +197,17 @@ void QSwitchButton::DrawSliderRect(QPainter* painter, const QRectF& rect)
     {
     case Rectage:
         painter->drawRoundRect(rect, rectRound, rectRound);
-//        painter->drawText(rect,)
         pen = painter->pen();
         pen.setColor(Qt::black);
         painter->setPen(pen);
-        painter->drawText(rect,Qt::AlignCenter,IsSelected()?tr("ON"):tr("OFF"));
+        painter->drawText(rect,Qt::AlignCenter,IsSelected()?tr("OFF"):tr("ON"));
         break;
     case Ellipse:
         painter->drawEllipse(rect);
         pen = painter->pen();
         pen.setColor(Qt::black);
         painter->setPen(pen);
-        painter->drawText(rect,Qt::AlignCenter,IsSelected()?tr("ON"):tr("OFF"));
+        painter->drawText(rect,Qt::AlignCenter,IsSelected()?tr("OFF"):tr("ON"));
         break;
     default:
         break;

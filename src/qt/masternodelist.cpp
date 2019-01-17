@@ -23,8 +23,16 @@
 #include "massgridgui.h"
 #include "dockeredge.h"
 #include "qswitchbutton.h"
+#include "dockerserverman.h"
+#include "masternode-sync.h"
 
 extern MasternodeList* g_masternodeListPage;
+extern CDockerServerman dockerServerman;
+
+const char* strTaskStateTmp[]={"new", "allocated","pending","assigned", 
+                        "accepted","preparing","ready","starting",
+                        "running","complete","shutdown","failed",
+                        "rejected","remove","orphaned"};
 
 int GetOffsetFromUtc()
 {
@@ -101,7 +109,8 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     switchButton->SetSelected(false);
     switchButton->SetSize(120,32);
     switchButton->setEnabled(false);
-
+    ui->label_17->setVisible(false);
+    ui->label_taskErr->setVisible(false);
     connect(switchButton,SIGNAL(clicked(bool)),this,SLOT(slot_changeN2Nstatus(bool)));
 }
 
@@ -132,21 +141,31 @@ void MasternodeList::showContextMenu(const QPoint &point)
 
 void MasternodeList::showDockerDetail(QModelIndex index)
 {
+
+    if (!masternodeSync.IsSynced()){
+        CMessageBox::information(this, tr("Docker option"),tr("Can't open docker detail page without synced!"));
+        return;
+    } 
+    
     int row = index.row();
     const std::string& address_port = ui->tableWidgetMasternodes->item(row,0)->text().toStdString().c_str();
+    clearDockerDetail();
 
     m_curAddr_Port = address_port;
     const std::string& addr = DefaultReceiveAddress();
     CPubKey pubkey = pwalletMain->CreatePubKey(addr);
+    
     if(dockercluster.SetConnectDockerAddress(address_port) && dockercluster.ProcessDockernodeConnections()){
         dockercluster.AskForDNData();
         ui->serviceTableWidget->setRowCount(0);
         clearDockerDetail();
         ui->tabWidget->setCurrentIndex(2);
+        ui->createServiceBtn->setEnabled(false);
         refreshServerList();
-            return ;
     }
-    CMessageBox::information(this, tr("Docker option"),tr("connect docker network failed!"));
+    else{
+        CMessageBox::information(this, tr("Docker option"),tr("connect docker network failed!"));
+    }
 }
 
 void MasternodeList::StartAlias(std::string strAlias)
@@ -500,8 +519,7 @@ int MasternodeList::loadServerList()
         ui->serviceTableWidget->setItem(count, 1, idItem);
         count++;
     }
-    if(!count)
-        clearDockerDetail();
+    dockerServerman.setDNDataStatus(CDockerServerman::Free);
     return count;
 }
 
@@ -519,9 +537,7 @@ void MasternodeList::loadServerDetail(QModelIndex index)
     map<std::string,Task> mapDockerTasklists = service.mapDockerTasklists;
     map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
 
-
     LogPrintf("----->mapDockerTasklists size:%d \n",mapDockerTasklists.size());
-
 
     for(;iter != mapDockerTasklists.end();iter++){
         std::string id = iter->first;
@@ -529,6 +545,15 @@ void MasternodeList::loadServerDetail(QModelIndex index)
         QString name = QString::fromStdString(task.name);
         QString serviceID = QString::fromStdString(task.serviceID);
         int64_t slot = task.slot;
+
+        //std::string
+        int taskstatus = -1;
+        taskstatus = task.status.state;
+        QString taskStatusStr = QString::fromStdString(strTaskStateTmp[taskstatus]);
+
+        LogPrintf("masternodelist taskstatus:%d\n",taskstatus);
+
+        std::string taskErr = task.status.err;
 
         int64_t nanoCPUs = task.spec.resources.limits.nanoCPUs;
         int64_t memoryBytes = task.spec.resources.limits.memoryBytes;
@@ -542,11 +567,22 @@ void MasternodeList::loadServerDetail(QModelIndex index)
             gpuCount = task.spec.resources.reservations.genericResources[0].discreateResourceSpec.value;
         }
 
-        ui->label_taskName->setText(name);
-        ui->label_cpuCount->setText(QString::number(nanoCPUs));
-        ui->label_memoryBytes->setText(QString::number(memoryBytes));
+        ui->label_taskName->setText(QString::fromStdString(id));
+        ui->label_cpuCount->setText(QString::number(nanoCPUs/100000000));
+        ui->label_memoryBytes->setText(QString::number(memoryBytes/100000000));
         ui->label_GPUName->setText(QString::fromStdString(gpuName));
         ui->label_GPUCount->setText(QString::number(gpuCount));
+        ui->label_taskStatus->setText(taskStatusStr);
+
+        if(!taskStatusStr.isEmpty()){
+            ui->label_17->setVisible(false);
+            ui->label_taskErr->setVisible(false);
+        }
+        else{
+            ui->label_17->setVisible(true);
+            ui->label_taskErr->setVisible(true);
+            ui->label_taskErr->setText(taskStatusStr);
+        }
     }
     
     std::vector<std::string> env = service.spec.taskTemplate.containerSpec.env;
@@ -608,6 +644,8 @@ void MasternodeList::clearDockerDetail()
     ui->label_memoryBytes->setText("");
     ui->label_GPUName->setText("");
     ui->label_GPUCount->setText("");
+    ui->label_taskStatus->setText("");
+    ui->label_taskErr->setText("");
 }
 
 void MasternodeList::slot_createServiceBtn()
@@ -621,22 +659,49 @@ void MasternodeList::slot_createServiceBtn()
 
     dlg.setWalletModel(walletModel);
 
+    // if(dlg.exec() == QDialog::accept()){
+    //     ui->createServiceBtn->setEnabled(false);
+    //     QTimer::singleShot(2000,this,SLOT(refreshServerList()));
+    // }
     dlg.exec();
-    QTimer::singleShot(2000,this,SLOT(refreshServerList()));
+    refreshServerList();
 }
 
 void MasternodeList::refreshServerList()
 {
-    static int countIndex = 0 ;
-    int count = loadServerList();
+    static int refreshCount = 0 ;
     int currentIndex = ui->tabWidget->currentIndex();
-    if(!count && (currentIndex == 2) && (countIndex <= 5) ){
-        LogPrintf("refreshServerList:reload docker servicelist after 3.5s\n");
-        QTimer::singleShot(3500,this,SLOT(refreshServerList()));
-        countIndex ++ ;
+
+    if(currentIndex != 2)
+        return ;
+
+    if(dockerServerman.getDNDataStatus() ==  CDockerServerman::Ask){
+        refreshCount ++;
+        if(refreshCount > 20){
+            refreshCount = 0;
+            ui->createServiceBtn->setEnabled(true);
+
+            return ;
+        }
+        QTimer::singleShot(3000,this,SLOT(refreshServerList()));
+        LogPrintf("MasternodeList get DNData Status:CDockerServerman::Ask\n");
         return ;
     }
-    countIndex = 0;
+    else if(dockerServerman.getDNDataStatus() ==  CDockerServerman::Received){
+        int count = loadServerList();
+        if(!count){
+            clearDockerDetail();
+            ui->createServiceBtn->setEnabled(true);
+        }
+        else
+            ui->createServiceBtn->setEnabled(false);
+        LogPrintf("MasternodeList get DNData Status:CDockerServerman::Received\n");
+        return ;
+    }
+    if(dockerServerman.getDNDataStatus() ==  CDockerServerman::Free){
+        ui->createServiceBtn->setEnabled(true);
+        LogPrintf("MasternodeList get DNData Status:CDockerServerman::Free\n");
+    }
 }
 
 void MasternodeList::slot_changeN2Nstatus(bool isSelected)

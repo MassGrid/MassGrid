@@ -40,6 +40,7 @@ protected:
 
 private Q_SLOTS:
     void slot_okbutton();
+    void slot_openPubKeyFile();
 };
 
 #endif // ADDDOCKERSERVICEDLG_H

@@ -15,15 +15,27 @@
 class CDockerServerman;
 extern CDockerServerman dockerServerman;
 
-
 class CDockerServerman{
 private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 public:
-
+    enum DNDATASTATUS{
+        Free = 0,
+        Ask,
+        Received
+    };
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
     bool CheckAndCreateServiveSpec(DockerCreateService Spec);
     bool CheckAndUpdateServiceSpec(DockerUpdateService Spec);
+    DNDATASTATUS dndataStatus;
+
+    void setDNDataStatus(DNDATASTATUS type){
+        dndataStatus = type;
+    }
+    DNDATASTATUS getDNDataStatus(){
+        return dndataStatus;
+    }
+
 };
 #endif  //DOCKERSERVERMAN_H

@@ -11,10 +11,15 @@
 #include "wallet/wallet.h"
 #include "util.h"
 #include "pubkey.h"
+#include "dockerserverman.h"
+
 Cluster dockercluster;
 
+extern CDockerServerman dockerServerman;
+
 bool Cluster::SetConnectDockerAddress(std::string address_port){
-    setDefaultPubkey(GetDefaultPubkey());   
+    setDefaultPubkey(GetDefaultPubkey()); 
+    dockerServerman.setDNDataStatus(CDockerServerman::Free);  
 
     LogPrint("docker","Cluster::SetConnectDockerAddress Started\n");
     if (!Lookup(address_port.c_str(), connectDockerAddr, 0, false)){
@@ -44,6 +49,8 @@ void Cluster::AskForDNData()
 
     LOCK(cs);
     LogPrintf("AskForDNData pukey %s\n",DefaultPubkey.ToString().substr(0,65));
+
+    dockerServerman.setDNDataStatus(CDockerServerman::Ask);
     g_connman->PushMessage(connectNode, NetMsgType::GETDNDATA, DefaultPubkey);
 }
 
