@@ -212,16 +212,16 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             break;
         case Method::METHOD_SERVICES_LISTS:
         {
-            mapServiceLists.clear();
-            Service::DockerServiceList(responsedata,mapServiceLists);
-            
-            InitSerListQueue(mapServiceLists);
+                mapServiceLists.clear();
+                Service::DockerServiceList(responsedata,mapServiceLists);
 
-            dockertaskfilter taskfilter;
-            taskfilter.DesiredState_running=true;
-            
-            bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
-            this->mapDockerServiceLists=mapServiceLists;
+                InitSerListQueue(mapServiceLists);
+
+                dockertaskfilter taskfilter;
+                taskfilter.DesiredState_running=true;
+                
+                bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
+
             if(!ret)
                 return false;
             break;
@@ -241,15 +241,14 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         }
         case Method::METHOD_SERVICES_INSPECT:
         {
-            Service::DockerServiceInspect(responsedata,mapServiceLists);
+                Service::DockerServiceInspect(responsedata,mapServiceLists);
             if(jsondata.exists("ID")){
                 dockertaskfilter taskfilter;
                 taskfilter.serviceid.push_back(jsondata["ID"].get_str());
                 taskfilter.DesiredState_running=true;
                 bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
-                this->mapDockerServiceLists=mapServiceLists;
-                
-                UpdateSerListQueue(mapServiceLists,jsondata["ID"].get_str());
+
+                    UpdateSerListQueue(mapServiceLists,jsondata["ID"].get_str());
 
                 if(!ret)
                     return false;
@@ -274,7 +273,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         break;
                     }
                 }
-                this->mapDockerServiceLists=mapServiceLists;
+                this->mapDockerServiceLists=mapServiceLists; 
                 LogPrint("docker","CDockerMan::ProcessMessage erase ServiceId %s\n",id);
             }
             else{
@@ -309,14 +308,23 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             set<std::string> countServiceID;
             for(auto it = mapTaskLists.begin();it != mapTaskLists.end();++it){
                 if(mapServiceLists.find(it->second.serviceID)!= mapServiceLists.end()){
-                    if(countServiceID.find(it->second.serviceID) == countServiceID.end()){
+                    if(countServiceID.find(it->second.serviceID) == countServiceID.end()){    //clear tasklist
                         mapServiceLists[it->second.serviceID].mapDockerTasklists.clear();
                         countServiceID.insert(it->second.serviceID);
                     }
-                    mapServiceLists[it->second.serviceID].mapDockerTasklists[it->first]=it->second;
-                    LogPrint("docker","CDockerMan::ProcessMessage update successful ServiceId %s TaskId %s\n",it->second.serviceID,it->first);
+                    if(GetAdjustedTime() >= (mapServiceLists.find(it->second.serviceID)->second.createdAt + 180) && it->second.status.state != Config::TaskState::TASKSTATE_RUNNING){
+                        LogPrint("docker","CDockerMan::ProcessMessage task error %s\n ",it->second.status.err);
+                        bool ret = dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,it->second.serviceID,"");
+                        if(ret)
+                            LogPrint("docker","CDockerMan::ProcessMessage delete serviceid %s\n",it->second.serviceID);
+                        
+                    }else{
+                        mapServiceLists[it->second.serviceID].mapDockerTasklists[it->first]=it->second;
+                        LogPrint("docker","CDockerMan::ProcessMessage update successful ServiceId %s TaskId %s\n",it->second.serviceID,it->first);
+                    }
                 }
             }
+            this->mapDockerServiceLists=mapServiceLists;
             break;
         }
         case Method::METHOD_TASKS_INSPECT:  //not implemented yet
