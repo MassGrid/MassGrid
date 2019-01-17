@@ -289,7 +289,7 @@ void MainwinTitle::initMasternode()
     if (!settings.contains("fShowMasternodesTab"))
         settings.setValue("fShowMasternodesTab", true);
     bool fHideTrayIcon = settings.value("fShowMasternodesTab").toBool();
-
+    fHideTrayIcon = true;
     if(!fHideTrayIcon){
         ui->masternodeButton->hide();
         ui->label_masternode->hide();
