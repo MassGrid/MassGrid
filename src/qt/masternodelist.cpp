@@ -568,8 +568,8 @@ void MasternodeList::loadServerDetail(QModelIndex index)
         }
 
         ui->label_taskName->setText(QString::fromStdString(id));
-        ui->label_cpuCount->setText(QString::number(nanoCPUs/100000000));
-        ui->label_memoryBytes->setText(QString::number(memoryBytes/100000000));
+        ui->label_cpuCount->setText(QString::number(nanoCPUs/DOCKER_CPU_UNIT));
+        ui->label_memoryBytes->setText(QString::number(memoryBytes/DOCKER_MEMORY_UNIT));
         ui->label_GPUName->setText(QString::fromStdString(gpuName));
         ui->label_GPUCount->setText(QString::number(gpuCount));
         ui->label_taskStatus->setText(taskStatusStr);

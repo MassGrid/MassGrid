@@ -286,6 +286,7 @@ void MainwinTitle::initMasternode()
     QSettings settings;
 
     // Window
+    settings.setValue("fShowMasternodesTab", true);
     if (!settings.contains("fShowMasternodesTab"))
         settings.setValue("fShowMasternodesTab", true);
     bool fHideTrayIcon = settings.value("fShowMasternodesTab").toBool();

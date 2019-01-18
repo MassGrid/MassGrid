@@ -8,6 +8,8 @@
 #include <dockertask.h>
 #include "base58.h"
 #include "primitives/transaction.h"
+#define DOCKER_CPU_UNIT 1000000000
+#define DOCKER_MEMORY_UNIT 1000000000
 class Cluster;
 class CPubKey;
 extern Cluster dockercluster;
