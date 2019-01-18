@@ -91,7 +91,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     connect(ui->serviceTableWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(loadServerDetail(QModelIndex)));
     
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
-    connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
+    // connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
     connect(ui->createServiceBtn, SIGNAL(clicked()), this, SLOT(slot_createServiceBtn()));
 
     timer = new QTimer(this);
@@ -677,7 +677,7 @@ void MasternodeList::refreshServerList()
 
     if(dockerServerman.getDNDataStatus() ==  CDockerServerman::Ask){
         refreshCount ++;
-        if(refreshCount > 20){
+        if(refreshCount > 100){
             refreshCount = 0;
             ui->createServiceBtn->setEnabled(true);
 

@@ -99,7 +99,7 @@ QTabWidget::pane{
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
@@ -417,18 +417,24 @@ QTabWidget::pane{
               <number>10</number>
              </property>
              <item>
-              <widget class="QPushButton" name="updateServiceBtn">
-               <property name="text">
-                <string>update List</string>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QPushButton" name="createServiceBtn">
                <property name="text">
                 <string>create Service</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
              <item>
               <widget class="QFrame" name="frame_2">
