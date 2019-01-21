@@ -219,7 +219,7 @@ bool Service::DcokerServiceJson(const UniValue& data, Service& service)
             }
         }
     }
-    service=Service(id,version,createdTime,updateTime,spec,previousSpec,endpoint,updateStatus,protocolVersion);
+    service=Service(id,version,createdTime,updateTime,GetAdjustedTime(),spec,previousSpec,endpoint,updateStatus,protocolVersion);
     return true;
 }
 UniValue Service::ServVerToJson(Config::Version &version)

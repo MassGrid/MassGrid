@@ -150,7 +150,7 @@ public:
 public:    
     Service() = default;
     
-    Service(std::string id,Config::Version version ,uint64_t createdTime ,uint64_t updateTime,
+    Service(std::string id,Config::Version version ,uint64_t createdTime ,uint64_t updateTime,uint64_t requestTime,
     Config::ServiceSpec spec,
     Config::ServiceSpec previousSpec,
     Config::Endpoint endpoint,
@@ -158,12 +158,13 @@ public:
     int protocolVersion=DEFAULT_CSERVICE_API_VERSION):spec(spec),
     previousSpec(previousSpec),endpoint(endpoint),
     updateStatus(updateStatus),
-    DockerBase(id,version,createdTime,updateTime,protocolVersion){}
+    DockerBase(id,version,createdTime,updateTime,requestTime,protocolVersion){}
     Service(const Service& from){
         ID=from.ID;
         version=from.version;
         createdAt=from.createdAt;
         updatedAt=from.updatedAt;
+        requestTimeStamp=from.requestTimeStamp;
         nProtocolVersion=from.nProtocolVersion;
         spec=from.spec;
         previousSpec=from.previousSpec;
@@ -176,6 +177,7 @@ public:
         version=from.version;
         createdAt=from.createdAt;
         updatedAt=from.updatedAt;
+        requestTimeStamp=from.requestTimeStamp;
         nProtocolVersion=from.nProtocolVersion;
         spec=from.spec;
         previousSpec=from.previousSpec;
@@ -192,6 +194,7 @@ public:
         READWRITE(version);
         READWRITE(createdAt);
         READWRITE(updatedAt);
+        // READWRITE(requestTimeStamp);
         READWRITE(nProtocolVersion);
         READWRITE(spec);
         READWRITE(previousSpec);

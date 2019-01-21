@@ -250,16 +250,18 @@ public:
     std::string ID{};
     uint64_t createdAt{};
     uint64_t updatedAt{};
+    uint64_t requestTimeStamp{};
     
 public:
     DockerBase() =default;
 
-    DockerBase(std::string id,Config::Version version,uint64_t createdTime ,uint64_t updateTime,int protocolVersion=DEFAULT_CDOCKER_API_VERSION):
+    DockerBase(std::string id,Config::Version version,uint64_t createdTime ,uint64_t updateTime,uint64_t requestTime,int protocolVersion=DEFAULT_CDOCKER_API_VERSION):
     nProtocolVersion(protocolVersion),
     version(version),
     ID(id),
     createdAt(createdTime),
-    updatedAt(updateTime){}
+    updatedAt(updateTime),
+    requestTimeStamp(requestTime){}
 
 
     ADD_SERIALIZE_METHODS;
@@ -270,6 +272,7 @@ public:
         READWRITE(version);
         READWRITE(createdAt);
         READWRITE(updatedAt);
+        READWRITE(requestTimeStamp);
         READWRITE(nProtocolVersion);
     }
 

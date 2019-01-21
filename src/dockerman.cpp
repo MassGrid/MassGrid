@@ -63,7 +63,7 @@ bool IpSet::IsVaild(std::string s){
         return false;
     }
 }
-bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
+bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool isClearService){
     LogPrint("docker","CDockerMan::PushMessage Started Method: %s\n",strMethod[mtd]);
     std::string url;
     HttpType type;
@@ -177,7 +177,7 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
     return ProcessMessage(mtd,http.url,ret,reponseData);
 }
 
-bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata){
+bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService){
     LogPrint("docker","CDockerMan::ProcessMessage Started Method: %s ProcessMessage: %d Messages %s\n",strMethod[mtd],ret,responsedata);
     std::string strMessage;
     std::string id;
@@ -212,15 +212,17 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             break;
         case Method::METHOD_SERVICES_LISTS:
         {
+            if(isClearService)
                 mapServiceLists.clear();
-                Service::DockerServiceList(responsedata,mapServiceLists);
+            Service::DockerServiceList(responsedata,mapServiceLists);
 
+            if(isClearService)
                 InitSerListQueue(mapServiceLists);
 
-                dockertaskfilter taskfilter;
-                taskfilter.DesiredState_running=true;
-                
-                bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
+            dockertaskfilter taskfilter;
+            taskfilter.DesiredState_running=true;
+            
+            bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
 
             if(!ret)
                 return false;

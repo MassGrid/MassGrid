@@ -7,9 +7,7 @@
 #include "wallet/wallet.h"
 #include "dockercluster.h"
 #include <boost/lexical_cast.hpp>
-// #include "./qt/"
 CDockerServerman dockerServerman;
-// setDNDataStatus(DNDATASTATUS::Free);
 
 void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman){
     
@@ -23,12 +21,19 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         CPubKey pubkey;
         vRecv >> pubkey;
         LogPrint("docker", "CDockerServerman::ProcessMessage GETDNDATA -- pubkey =%s\n", pubkey.ToString().substr(0,65));
-        
+
         mdndata.mapDockerServiceLists.clear();
+
+        dockerservicefilter serfilter;
+        serfilter.label.push_back("com.massgrid.pubkey="+pubkey.ToString().substr(0,65));
+        if(!dockerman.PushMessage(Method::METHOD_SERVICES_LISTS,"",serfilter.ToJsonString(),false)){
+            LogPrint("docker","CDockerServerman::ProcessMessage GETDNDATA service list failed -- pubkey =%s\n", pubkey.ToString().substr(0,65));
+        }
         for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
             if(it->second.spec.labels.find("com.massgrid.pubkey") != it->second.spec.labels.end() && 
                     it->second.spec.labels["com.massgrid.pubkey"] == pubkey.ToString().substr(0,65)){
                 mdndata.mapDockerServiceLists.insert(*it);
+                LogPrint("docker","CDockerServerman::ProcessMessage GETDNDATA found service id %s\n",it->first);
             }
         }
         mdndata.version = DOCKERREQUEST_API_VERSION;
@@ -50,17 +55,15 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
          
         dockercluster.mapDockerServiceLists = mdndata.mapDockerServiceLists;
         dockercluster.sigTime = mdndata.sigTime;
-
+        LogPrint("docker","CDockerServerman::ProcessMessage DNDATA mapDockerServiceLists.size() %d sigTime:%d\n",mdndata.mapDockerServiceLists.size(),mdndata.sigTime);
         std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
         for(;iter != mdndata.mapDockerServiceLists.end();iter++){
-            LogPrintf("iter->second.spec.ToJsonString():%s \n",iter->second.spec.ToJsonString()); 
             if(iter->second.mapDockerTasklists.size()){
-                LogPrintf("===>server man task map state:%d\n",iter->second.mapDockerTasklists.begin()->second.status.state);
+                LogPrintf("CDockerServerman::ProcessMessage DNDATA mapDockerTasklists.size()%d serviceid %s\n",iter->second.mapDockerTasklists.size(),iter->first);
             }
         }
         
         setDNDataStatus(DNDATASTATUS::Received);
-        LogPrintf("CDockerServerman::ProcessMessage mapDockerServiceLists:%d sigTime:%d\n",mdndata.mapDockerServiceLists.size(),mdndata.sigTime);
 
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("docker","CDockerServerman::ProcessMessage CREATESERVICE Started\n");
