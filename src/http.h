@@ -15,19 +15,20 @@ class HttpRequest
 {  
     public:
         HttpRequest(){};
-        HttpRequest(std::string _ip,int _port,std::string _url,std::string _strdata):
-        ip(_ip),port(_port),url(_url),strData(_strdata){}
+        HttpRequest(std::string _ip,int _port,std::string _url,std::string _strdata,std::string _strSocket):
+        ip(_ip),port(_port),url(_url),strData(_strdata),strSocket(_strSocket){}
         ~HttpRequest(){};
         int HttpGet();          
-        int HttpGet(const string &ip,const int &port,const string &page,const string &strData);
+        int HttpGet(const string &ip,const int &port,const string &page,const string &strData,std::string strSocket);
         int HttpDelete();          
-        int HttpDelete(const string &ip,const int &port,const string &page,const string &strData);
+        int HttpDelete(const string &ip,const int &port,const string &page,const string &strData,std::string strSocket);
         int HttpPost();
-        int HttpPost(const string &ip,const int &port,const string &page,const string &strData);
+        int HttpPost(const string &ip,const int &port,const string &page,const string &strData,std::string strSocket);
         std::string getReponseData(){return strResponse;}
         
-    private:  
-        int HttpRequestExec(const string &strMethod, const string &ip, const int &port,const string &page, const string &strData);
+    private:
+        int UnixSocket(const string &strMethod,const string &page, const string &strData,boost::asio::streambuf &strUnixHead,const string strSocket);
+        int HttpRequestExec(const string &strMethod, const string &ip, const int &port,const string &page, const string &strData,const string strSocket);
         int HttpHeadCreate(const string &strMethod, const string &strHostPort, const string &page, const string &strData, boost::asio::streambuf &request); 
         int GetContentSize(boost::asio::streambuf &response);
     public:
@@ -35,10 +36,9 @@ class HttpRequest
         int port;
         std::string url;
         std::string strData;
+        std::string strSocket;
     private:
         std::string strResponse;
-
-
 };
 std::string getJson(std::string str);
 #endif  

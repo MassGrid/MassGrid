@@ -154,7 +154,7 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata){
             LogPrint("docker","CDockerMan::PushMessage not support this methed");
             return false;
     }
-    HttpRequest http(address,apiPort,url,pushdata);
+    HttpRequest http(address,apiPort,url,pushdata,"/var/run/docker.sock");
     LogPrint("docker","CDockerMan::RequestMessages Methed %s Send:%s\n",url,pushdata);
     int ret;
     if(type == HttpType::HTTP_GET){

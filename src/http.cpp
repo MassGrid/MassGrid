@@ -1,33 +1,31 @@
 #include "http.h"
 #include <cstdio>
 #include "util.h"
-int HttpRequest::HttpGet(const string &ip,const int &port,const string &page,const string &strData)  
+int HttpRequest::HttpGet(const string &ip,const int &port,const string &page,const string &strData,const string strSocket)  
 {  
-    return HttpRequestExec("GET", ip, port, page, strData);  
-}
+    return HttpRequestExec("GET", ip, port, page, strData,strSocket);  
+}  
 
-int HttpRequest::HttpDelete(const string &ip,const int &port,const string &page,const string &strData)  
+int HttpRequest::HttpDelete(const string &ip,const int &port,const string &page,const string &strData,const string strSocket)  
 {  
-    return HttpRequestExec("DELETE", ip, port, page, strData);  
+    return HttpRequestExec("DELETE", ip, port, page, strData,strSocket);  
 }  
   
-int HttpRequest::HttpPost(const string &ip,const int &port,const string &page,const string &strData)  
+int HttpRequest::HttpPost(const string &ip,const int &port,const string &page,const string &strData,const string strSocket)  
 {  
-    return HttpRequestExec("POST", ip, port, page, strData);  
+    return HttpRequestExec("POST", ip, port, page, strData,strSocket);  
 }  
 int HttpRequest::HttpGet()  
 {  
-    return HttpRequestExec("GET", ip, port, url, strData);  
-}
-
+    return HttpRequestExec("GET", ip, port, url, strData,strSocket);  
+}  
 int HttpRequest::HttpDelete()  
 {  
-    return HttpRequestExec("DELETE", ip, port, url, strData);  
-}  
-
+    return HttpRequestExec("DELETE", ip, port, url, strData,strSocket);  
+}
 int HttpRequest::HttpPost()  
-{  
-    return HttpRequestExec("POST", ip, port, url, strData);
+{ 
+    return HttpRequestExec("POST", ip, port, url, strData,strSocket);
 } 
 int HttpRequest::GetContentSize(boost::asio::streambuf &response)
 {
@@ -36,9 +34,88 @@ int HttpRequest::GetContentSize(boost::asio::streambuf &response)
     std::getline(response_data, head);
     int contLength=std::stol(head.c_str(),nullptr,16);
     return contLength;
-} 
+}
+int HttpRequest::UnixSocket(const string &strMethod,const string &page, const string &strData,boost::asio::streambuf &strUnixHead,const string strSocket)
+{
+    LogPrint("dockerapi","HttpRequest::HttpRequestExec using Unix socket\n");
+    unsigned int status_code;
+    try
+    {
+        boost::asio::io_service io_service;
+        // Multiplex io
+        if(io_service.stopped())
+            io_service.reset();
+        boost::asio::local::stream_protocol::socket socket(io_service);
+        boost::asio::local::stream_protocol::endpoint ep(strSocket);
+        socket.connect(ep);
+
+        // Send the request.
+        boost::asio::write(socket, strUnixHead);
+
+        // Read the response status line. The response streambuf will automatically
+        // grow to accommodate the entire line. The growth may be limited by passing
+        // a maximum size to the streambuf constructor.
+        boost::asio::streambuf response;
+        boost::asio::read_until(socket, response, "\r\n");
+
+        // Check that response is OK.
+        std::istream response_stream(&response);
+        std::string http_version;
+        response_stream >> http_version;
+        response_stream >> status_code;
+        std::string status_message;
+        std::getline(response_stream, status_message);
+        if (!response_stream || http_version.substr(0, 5) != "HTTP/"){
+            strResponse = "Invalid response";
+            return -2;
+        }
+        // If the server returns non-200, thinks it is wrong, it does not support jumps such as 301/302.
+        if (status_code < 0){
+            strResponse = "Response returned with status code != 200 ";
+            return status_code;
+        }
+
+        // header
+        std::string header;
+        std::vector<string> headers;        
+        int contLength=0;
+        while (std::getline(response_stream, header) && header != "\r"){
+            headers.push_back(header);
+            if(header.find("Content-Length")!=string::npos){
+                sscanf(header.c_str(),"%*s %d",&contLength);
+            }
+        }
+        // Read all remaining data
+        boost::system::error_code error;
+        while (boost::asio::read(socket, response,boost::asio::transfer_at_least(1), error))
+        {           
+        }
+
+        //Responsive data
+        if (response.size()>0){
+            std::istream response_stream(&response);
+            if(contLength==0){
+                contLength=GetContentSize(response);
+            }
+            std::istreambuf_iterator<char> eos;
+            std::string data = string(std::istreambuf_iterator<char>(response_stream), eos);
+            if(contLength==0 || contLength>data.size()) contLength=data.size();
+            strResponse=data.substr(0,contLength);//getJson(data);
+            return status_code;           
+        }
+
+        if (error != boost::asio::error::eof){
+            strResponse = error.message();
+            return -3;
+        }
+    }catch(std::exception& e){
+        strResponse = e.what();
+        return -4;  
+    }      
+    return status_code;  
+}
 //Execute http request  
-int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, const int &port,const string &page, const string &strData)
+int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, const int &port,const string &page, const string &strData,const string strSocket)
 {
     //Determine whether the URL is valid 
     if(ip.empty()||ip.size()==0){  
@@ -61,6 +138,12 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
         
         return -8;
     }
+    if(strSocket.size()>0){
+        int ret=UnixSocket(strMethod,page,strData,strHttpHead,strSocket);
+        if(ret>=0)
+            return ret;
+    }
+    LogPrint("dockerapi","HttpRequest::HttpRequestExec unix-socket  error, using http\n");
     try
     {
         boost::asio::io_service io_service;
@@ -113,15 +196,6 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
                 sscanf(header.c_str(),"%*s %d",&contLength);
             }
         }
-
-        // std::cout<<"HttpHeader:\n**************\n";
-        // std::cout<<http_version.c_str()<<" "<<status_code<<" "<<status_message.c_str()<<std::endl;
-        // for(int i=0;i<headers.size();i++)
-        // {
-        //     std::cout<<headers[i].c_str()<<std::endl;
-        // }
-        // std::cout<<"**************\n";
-
         // Read all remaining data
         boost::system::error_code error;
         while (boost::asio::read(socket, response,boost::asio::transfer_at_least(1), error))
