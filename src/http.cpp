@@ -38,7 +38,8 @@ int HttpRequest::GetContentSize(boost::asio::streambuf &response)
 int HttpRequest::UnixSocket(const string &strMethod,const string &page, const string &strData,boost::asio::streambuf &strUnixHead,const string strSocket)
 {
     LogPrint("dockerapi","HttpRequest::HttpRequestExec using Unix socket\n");
-    unsigned int status_code;
+    unsigned int status_code=0;
+#ifndef WIN32
     try
     {
         boost::asio::io_service io_service;
@@ -111,7 +112,8 @@ int HttpRequest::UnixSocket(const string &strMethod,const string &page, const st
     }catch(std::exception& e){
         strResponse = e.what();
         return -4;  
-    }      
+    }
+#endif
     return status_code;  
 }
 //Execute http request  
@@ -138,11 +140,13 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
         
         return -8;
     }
+#ifndef WIN32
     if(strSocket.size()>0){
         int ret=UnixSocket(strMethod,page,strData,strHttpHead,strSocket);
         if(ret>=0)
             return ret;
     }
+#endif
     LogPrint("dockerapi","HttpRequest::HttpRequestExec unix-socket  error, using http\n");
     try
     {
