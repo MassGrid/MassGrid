@@ -248,6 +248,7 @@ extern const char *GETDNDATA;
 extern const char *DNDATA;
 extern const char *CREATESERVICE;
 extern const char *UPDATESERVICE;
+extern const char *DELETESERVICE;
 };
 
 /* Get a vector of all valid message types (see above) */

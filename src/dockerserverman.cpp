@@ -47,8 +47,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         LogPrint("docker","CDockerServerman::ProcessMessage DNDATA Started\n");
         DockerGetData mdndata;
         vRecv >> mdndata;
-        if(mdndata.version < DOCKERREQUEST_API_MINSUPPORT_VERSION){
-            LogPrintf("CDockerServerman::ProcessMessage --mdndata version %d is too old %d\n", mdndata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
+        if(mdndata.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || mdndata.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
+            LogPrintf("CDockerServerman::ProcessMessage --mdndata version %d not support need [%d - %d]\n", mdndata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
             setDNDataStatus(DNDATASTATUS::Received);
             return;
         }
@@ -71,8 +71,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         DockerCreateService createService;
         vRecv >> createService;
         LogPrint("docker","CDockerServerman::ProcessMessage CREATESERVICE createService hash %s\n",createService.ToString());
-        if(createService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION){
-            LogPrintf("CDockerServerman::ProcessMessage --createService version %d is too old %d\n", createService.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
+        if(createService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || createService.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
+            LogPrintf("CDockerServerman::ProcessMessage --createService version %d not support need [%d - %d]\n", createService.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
             return;
         }
         if(CheckAndCreateServiveSpec(createService)){
@@ -95,8 +95,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         if (!fMasterNode) return;
         DockerUpdateService updateService;
         vRecv >> updateService;
-        if(updateService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION){
-            LogPrintf("CDockerServerman::ProcessMessage --updateService version %d is too old %d\n", updateService.version,DOCKERREQUEST_API_MINSUPPORT_VERSION);
+        if(updateService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || updateService.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
+            LogPrintf("CDockerServerman::ProcessMessage --mdndata version %d not support need [%d - %d]\n", updateService.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
             return;
         }
         if(CheckAndUpdateServiceSpec(updateService)){
@@ -114,6 +114,30 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             LogPrintf("CDockerServerman::ProcessMessage -- CREATESERVICE Sent DNDATA to peer %d\n", pfrom->id);
             connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
         }
+    }else if(strCommand == NetMsgType::DELETESERVICE){
+        LogPrint("docker","CDockerServerman::ProcessMessage DELETESERVICE Started\n");
+        if (!fMasterNode) return;
+        DockerDeleteService delService;
+        vRecv >> delService;
+        LogPrint("docker","CDockerServerman::ProcessMessage DELETESERVICE delService hash %s\n",delService.ToString());
+        if(delService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || delService.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
+            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE version %d not support need [%d - %d]\n", delService.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+            return;
+        }
+        if(delService.sigTime > GetAdjustedTime() + 60 * 5 && delService.sigTime < GetAdjustedTime() - 60 * 5){
+            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE sigTime is out of vaild timespan = %d\n",delService.sigTime);
+            return;
+        }
+        if(!delService.CheckSignature(delService.pubKeyClusterAddress)){
+            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE --CheckSignature Failed pubkey= %s\n",delService.pubKeyClusterAddress.ToString().substr(0,65));
+            return;
+        }
+        bool ret = dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,delService.serviceid,"");
+        if(!ret){
+            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE --deleteService Failed serviceid= %s\n",delService.serviceid);
+        }else
+            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE --deleteService successful serviceid= %s\n",delService.serviceid);
+
     }
 }
 bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createService){

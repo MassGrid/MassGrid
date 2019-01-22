@@ -46,7 +46,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     if (fHelp  ||
         (
 #ifdef ENABLE_WALLET
-            strCommand != "create" &&
+            strCommand != "create" && strCommand != "delete" &&
 #endif // ENABLE_WALLET
             strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata"))
             throw std::runtime_error(
@@ -70,7 +70,11 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "                  \"GPU count\"(int, required)\n"
                 "                  \"NetWork Community\"(string, required)\n"
                 "                  \"SSH_PUBKEY\"(string, required)\n"
+                "   delete       - delete a docker service Arguments: \n"
+                "                  \"dockernode (IP:Port)\" (string, required)\n"
+                "                  \"serviceid (string, required)\n"
                 + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" 1000000000 1024000000 \"NVIDIA_GPUP104_100\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\"")
+                + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"q3ij9d0ptebqv26vzsz73fqla\"")
 #endif // ENABLE_WALLET
                 + HelpExampleCli("docker", "getdndata \"119.3.66.159:19443\"")
                 + HelpExampleCli("docker", "connect \"massgridn2n\" \"10.1.1.4\" \"119.3.66.159\"")
@@ -149,7 +153,36 @@ UniValue docker(const UniValue& params, bool fHelp)
             return "CreateSpec Error";
         return "CreateSpec Successfully hash: "+createService.ToString();
     }
+    if(strCommand == "delete"){
+        if (!masternodeSync.IsSynced())
+            return "Need to Synced First";
+        if (params.size() != 2)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
+        std::string strAddr = params[1].get_str();
+        if(!dockercluster.SetConnectDockerAddress(strAddr))
+            throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
+        if(!dockercluster.ProcessDockernodeConnections())
+            throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Connect to Masternode failed");
+        
+        DockerDeleteService delService{};
 
+        delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
+        
+        std::string strServiceid = params[2].get_str();
+        delService.serviceid = strServiceid;
+        EnsureWalletIsUnlocked();
+        CKey vchSecret;
+        if (!pwalletMain->GetKey(delService.pubKeyClusterAddress.GetID(), vchSecret)){
+            LogPrintf("delService Sign Error1\n");
+            return false;
+        }
+        if(!delService.Sign(vchSecret,delService.pubKeyClusterAddress)){
+            LogPrintf("delService Sign Error2\n");
+            return false;
+        }
+        g_connman->PushMessage(dockercluster.connectNode, NetMsgType::DELETESERVICE, delService);
+        return "delete service Successfully id: "+delService.serviceid;
+    }
 
 #endif // ENABLE_WALLET
     

@@ -307,6 +307,41 @@ public:
         return GetHash().ToString();
     }
 };
+class DockerDeleteService{
+public:
+
+    uint64_t version = DOCKERREQUEST_API_VERSION;
+    std::vector<unsigned char> vchSig{};
+    CPubKey pubKeyClusterAddress{};
+    std::string serviceid{};
+    int64_t sigTime{}; //dkct message times
+
+    ADD_SERIALIZE_METHODS;
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(vchSig);
+        READWRITE(version);
+        READWRITE(pubKeyClusterAddress);
+        READWRITE(serviceid);
+        READWRITE(sigTime);
+
+    }
+    uint256 GetHash() const
+    {
+        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
+        ss << version;
+        ss << pubKeyClusterAddress;
+        ss << serviceid;
+        ss << sigTime;
+
+        return ss.GetHash();
+    }
+    bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
+    bool CheckSignature(CPubKey& pubKeyMasternode);
+    std::string ToString(){
+        return GetHash().ToString();
+    }    
+};
 class DockerUpdateService:public DockerCreateService
 {
 public:
