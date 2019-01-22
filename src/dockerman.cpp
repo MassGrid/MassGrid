@@ -220,7 +220,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 InitSerListQueue(mapServiceLists);
 
             dockertaskfilter taskfilter;
-            taskfilter.DesiredState_running=true;
+            // taskfilter.DesiredState_running=true;
             
             bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
 
@@ -247,10 +247,10 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             if(jsondata.exists("ID")){
                 dockertaskfilter taskfilter;
                 taskfilter.serviceid.push_back(jsondata["ID"].get_str());
-                taskfilter.DesiredState_running=true;
+                // taskfilter.DesiredState_running=true;
                 bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
 
-                    UpdateSerListQueue(mapServiceLists,jsondata["ID"].get_str());
+                UpdateSerListQueue(mapServiceLists,jsondata["ID"].get_str());
 
                 if(!ret)
                     return false;
@@ -314,8 +314,8 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         mapServiceLists[it->second.serviceID].mapDockerTasklists.clear();
                         countServiceID.insert(it->second.serviceID);
                     }
-                    if(GetAdjustedTime() >= (mapServiceLists.find(it->second.serviceID)->second.createdAt + 180) && it->second.status.state != Config::TaskState::TASKSTATE_RUNNING){
-                        LogPrint("docker","CDockerMan::ProcessMessage task error %s\n ",it->second.status.err);
+                    if(it->second.status.state > Config::TaskState::TASKSTATE_RUNNING){
+                        LogPrint("docker","CDockerMan::ProcessMessage task id: %s, time: %lu, error: %s, message: %s\n ",it->second.serviceID,it->second.createdAt,it->second.status.err,it->second.status.message);
                         bool ret = dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,it->second.serviceID,"");
                         if(ret)
                             LogPrint("docker","CDockerMan::ProcessMessage delete serviceid %s\n",it->second.serviceID);
