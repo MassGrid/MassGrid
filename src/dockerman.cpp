@@ -314,7 +314,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         mapServiceLists[it->second.serviceID].mapDockerTasklists.clear();
                         countServiceID.insert(it->second.serviceID);
                     }
-                    if(it->second.status.state > Config::TaskState::TASKSTATE_RUNNING){
+                    if(GetAdjustedTime() >= (mapServiceLists.find(it->second.serviceID)->second.createdAt + 180) && it->second.status.state != Config::TaskState::TASKSTATE_RUNNING){
                         LogPrint("docker","CDockerMan::ProcessMessage task id: %s, time: %lu, error: %s, message: %s\n ",it->second.serviceID,it->second.createdAt,it->second.status.err,it->second.status.message);
                         bool ret = dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,it->second.serviceID,"");
                         if(ret)
