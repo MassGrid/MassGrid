@@ -63,6 +63,7 @@
 #include "netfulfilledman.h"
 
 #include "dockerman.h"
+#include "dockeredge.h"
 
 #include "spork.h"
 #include "util.h"
@@ -200,6 +201,7 @@ static boost::scoped_ptr<ECCVerifyHandle> globalVerifyHandle;
 
 void Interrupt(boost::thread_group& threadGroup)
 {
+    ThreadEdgeStop();
     InterruptHTTPServer();
     InterruptHTTPRPC();
     InterruptRPC();

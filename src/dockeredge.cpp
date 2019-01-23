@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <sys/stat.h>
 #include "n2n/include/minilzo.h"
-
+#include <boost/thread/thread.hpp>
 #include "n2n/include/scm.h"
 
 int n2n_main(int, char **);
@@ -2383,10 +2383,10 @@ static int run_loop(n2n_edge_t * eee )
             FD_ZERO(&socket_mask);
             FD_SET(eee->udp_sock, &socket_mask);
             FD_SET(eee->udp_mgmt_sock, &socket_mask);
-            max_sock = max( eee->udp_sock, eee->udp_mgmt_sock );
+            max_sock = max_( eee->udp_sock, eee->udp_mgmt_sock );
 #ifndef WIN32
             FD_SET(eee->device.fd, &socket_mask);
-            max_sock = max( max_sock, eee->device.fd );
+            max_sock = max_( max_sock, eee->device.fd );
 #endif
 
             wait_time.tv_sec = SOCKET_TIMEOUT_INTERVAL_SECS; wait_time.tv_usec = 0;
@@ -2520,20 +2520,27 @@ bool ThreadEdgeStart(std::string community,std::string localaddr,std::string sna
         LogPrintf("ThreadEdgeStart existed thread,Please Stop first\n");
         return false;
     }
-    thrd = fthreadGroup->create_thread(std::bind(EdgeStart));
+    thrd=new boost::thread(&EdgeStart);
     if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
         LogPrintf("ThreadEdgeStarted\n");
         return true;
     }
+
     LogPrintf("ThreadEdgeStart Failed\n");
     return false;
+}
+void threadTunStop(){
+#ifdef WIN32
+    threadTun.interrupt();
+    threadTun.join();
+#endif
 }
 void ThreadEdgeStop(){
     LogPrintf("ThreadEdgeStop\n");
     if(!thrd) return;
+    threadTunStop();
     thrd->interrupt();
-    if(fthreadGroup->is_thread_in(thrd)){
-        fthreadGroup->remove_thread(thrd);
-        thrd = NULL;
-    }
+    thrd->join();
+    delete thrd;
+    thrd=NULL;
 }

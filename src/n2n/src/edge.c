@@ -2756,10 +2756,10 @@ static int run_loop(n2n_edge_t * eee )
         FD_ZERO(&socket_mask);
         FD_SET(eee->udp_sock, &socket_mask);
         FD_SET(eee->udp_mgmt_sock, &socket_mask);
-        max_sock = max( eee->udp_sock, eee->udp_mgmt_sock );
+        max_sock = max_( eee->udp_sock, eee->udp_mgmt_sock );
 #ifndef WIN32
         FD_SET(eee->device.fd, &socket_mask);
-        max_sock = max( max_sock, eee->device.fd );
+        max_sock = max_( max_sock, eee->device.fd );
 #endif
 
         wait_time.tv_sec = SOCKET_TIMEOUT_INTERVAL_SECS; wait_time.tv_usec = 0;

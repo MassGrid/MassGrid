@@ -237,12 +237,12 @@ typedef struct n2n_edge         n2n_edge_t;
 
 /* ************************************** */
 
-#ifndef max
-#define max(a, b) ((a < b) ? b : a)
+#ifndef max_
+#define max_(a, b) ((a < b) ? b : a)
 #endif
 
-#ifndef min
-#define min(a, b) ((a > b) ? b : a)
+#ifndef min_
+#define min_(a, b) ((a > b) ? b : a)
 #endif
 
 /* ************************************** */
