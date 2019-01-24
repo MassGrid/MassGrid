@@ -194,7 +194,8 @@ public:
         READWRITE(version);
         READWRITE(createdAt);
         READWRITE(updatedAt);
-        // READWRITE(requestTimeStamp);
+        if(version > 10030)
+            READWRITE(requestTimeStamp);
         READWRITE(nProtocolVersion);
         READWRITE(spec);
         READWRITE(previousSpec);
