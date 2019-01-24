@@ -25,6 +25,11 @@
 #include "qswitchbutton.h"
 #include "dockerserverman.h"
 #include "masternode-sync.h"
+#include <QLabel>
+#include <QStringList>
+
+#define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
+#define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
 
 extern MasternodeList* g_masternodeListPage;
 extern CDockerServerman dockerServerman;
@@ -33,6 +38,7 @@ const char* strTaskStateTmp[]={"new", "allocated","pending","assigned",
                         "accepted","preparing","ready","starting",
                         "running","complete","shutdown","failed",
                         "rejected","remove","orphaned"};
+// QStringList strTaskStateTmpList;
 
 int GetOffsetFromUtc()
 {
@@ -76,6 +82,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->tableWidgetMasternodes->setColumnWidth(4, columnLastSeenWidth);
 
     ui->serviceTableWidget->setColumnWidth(0, 150);
+    ui->serviceTableWidget->setColumnWidth(1, 150);
 
     ui->serviceTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->serviceTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -91,8 +98,9 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     connect(ui->serviceTableWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(loadServerDetail(QModelIndex)));
     
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
-    // connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
+    connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
     connect(ui->createServiceBtn, SIGNAL(clicked()), this, SLOT(slot_createServiceBtn()));
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)),this,SLOT(slot_curTabPageChanged(int)));
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
@@ -109,9 +117,12 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     switchButton->SetSelected(false);
     switchButton->SetSize(120,32);
     switchButton->setEnabled(false);
-    ui->label_17->setVisible(false);
-    ui->label_taskErr->setVisible(false);
     connect(switchButton,SIGNAL(clicked(bool)),this,SLOT(slot_changeN2Nstatus(bool)));
+
+    // strTaskStateTmpList <<tr("new")<<tr("allocated")<<tr("pending")<<tr("assigned")
+    //                     <<tr("accepted")<<tr("preparing")<<tr("ready")<< tr("starting")<< tr("running")
+    //                     <<tr("complete")<<tr("shutdown")<<tr("failed")<<tr("rejected")<<tr("remove")<< tr("orphaned");
+
 }
 
 MasternodeList::~MasternodeList()
@@ -141,7 +152,6 @@ void MasternodeList::showContextMenu(const QPoint &point)
 
 void MasternodeList::showDockerDetail(QModelIndex index)
 {
-
     if (!masternodeSync.IsSynced()){
         CMessageBox::information(this, tr("Docker option"),tr("Can't open docker detail page without synced!"));
         return;
@@ -149,23 +159,12 @@ void MasternodeList::showDockerDetail(QModelIndex index)
     
     int row = index.row();
     const std::string& address_port = ui->tableWidgetMasternodes->item(row,0)->text().toStdString().c_str();
-    clearDockerDetail();
 
     m_curAddr_Port = address_port;
-    const std::string& addr = DefaultReceiveAddress();
-    CPubKey pubkey = pwalletMain->CreatePubKey(addr);
-    
-    if(dockercluster.SetConnectDockerAddress(address_port) && dockercluster.ProcessDockernodeConnections()){
-        dockercluster.AskForDNData();
-        ui->serviceTableWidget->setRowCount(0);
-        clearDockerDetail();
-        ui->tabWidget->setCurrentIndex(2);
-        ui->createServiceBtn->setEnabled(false);
-        refreshServerList();
-    }
-    else{
-        CMessageBox::information(this, tr("Docker option"),tr("connect docker network failed!"));
-    }
+
+    setCurUpdateMode(DockerUpdateMode::WhenNormal);
+
+    updateServiceList();
 }
 
 void MasternodeList::StartAlias(std::string strAlias)
@@ -290,16 +289,16 @@ void MasternodeList::updateMyNodeList(bool fForce)
     if(!fLockAcquired) {
         return;
     }
-    static int64_t nTimeMyListUpdated = 0;
+    // static int64_t nTimeMyListUpdated = 0;
 
     // automatically update my masternode list only once in MY_MASTERNODELIST_UPDATE_SECONDS seconds,
     // this update still can be triggered manually at any time via button click
 
-    int64_t nSecondsTillUpdate = nTimeMyListUpdated + MY_MASTERNODELIST_UPDATE_SECONDS - GetTime();
+    int64_t nSecondsTillUpdate = m_nTimeMyListUpdated + MY_MASTERNODELIST_UPDATE_SECONDS - GetTime();
     ui->secondsLabel->setText(QString::number(nSecondsTillUpdate));
 
     if(nSecondsTillUpdate > 0 && !fForce) return;
-    nTimeMyListUpdated = GetTime();
+    m_nTimeMyListUpdated = GetTime();
 
     ui->tableWidgetMasternodes->setSortingEnabled(false);
     BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
@@ -323,18 +322,18 @@ void MasternodeList::updateNodeList()
         return;
     }
 
-    static int64_t nTimeListUpdated = GetTime();
+    // static int64_t m_nTimeListUpdated = GetTime();
 
     // to prevent high cpu usage update only once in MASTERNODELIST_UPDATE_SECONDS seconds
     // or MASTERNODELIST_FILTER_COOLDOWN_SECONDS seconds after filter was last changed
     int64_t nSecondsToWait = fFilterUpdated
                             ? nTimeFilterUpdated - GetTime() + MASTERNODELIST_FILTER_COOLDOWN_SECONDS
-                            : nTimeListUpdated - GetTime() + MASTERNODELIST_UPDATE_SECONDS;
+                            : m_nTimeListUpdated - GetTime() + MASTERNODELIST_UPDATE_SECONDS;
 
     if(fFilterUpdated) ui->countLabel->setText(QString::fromStdString(strprintf("Please wait... %d", nSecondsToWait)));
     if(nSecondsToWait > 0) return;
 
-    nTimeListUpdated = GetTime();
+    m_nTimeListUpdated = GetTime();
     fFilterUpdated = false;
 
     QString strToFilter;
@@ -498,6 +497,64 @@ void MasternodeList::on_UpdateButton_clicked()
     updateMyNodeList(true);
 }
 
+void MasternodeList::slot_curTabPageChanged(int curPage)
+{
+    startTimer(false);
+    if(curPage <=1){
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
+        connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
+        connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
+        m_nTimeListUpdated = GetTime();
+        m_nTimeMyListUpdated = GetTime();
+    }
+    else if(curPage == 2){
+        connect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
+        // switchButton->SetSelected(false);
+        setCurUpdateMode(DockerUpdateMode::WhenNormal);
+    }
+    startTimer(true);
+}
+
+void MasternodeList::startTimer(bool start)
+{
+    if(start){
+        timer->start(1000);
+    }
+    else{
+        timer->stop();
+    }
+}
+
+//timeout
+void MasternodeList::updateDockerList(bool fForce)
+{
+    int64_t nSecondsTillUpdate = 0;
+    
+    if(m_updateMode == DockerUpdateMode::AfterCreate){
+        nSecondsTillUpdate = m_nTimeDockerListUpdated + DOCKER_AFTERCREATE_UPDATE_SECONDS - GetTime();
+        ui->serviceSec->setText(QString::number(nSecondsTillUpdate));
+    }
+    else{
+        nSecondsTillUpdate = m_nTimeDockerListUpdated + DOCKER_WHENNORMAL_UPDATE_SECONDS - GetTime();
+        QTime time(nSecondsTillUpdate/3600,nSecondsTillUpdate/60,nSecondsTillUpdate%60);
+
+        ui->serviceSec->setText(time.toString("mm:ss"));
+    }
+
+    if(nSecondsTillUpdate > 0 && !fForce) return;
+    m_nTimeDockerListUpdated = GetTime();
+
+    // setCurUpdateMode(DockerUpdateMode::WhenNormal);
+
+    if(getCurUpdateMode() == DockerUpdateMode::AfterCreate)
+            askDNData();
+        // refreshServerList();
+    else if(DockerUpdateMode::WhenNormal)
+        updateServiceList();
+}
+
 int MasternodeList::loadServerList()
 {
     ui->serviceTableWidget->setRowCount(0);
@@ -510,6 +567,22 @@ int MasternodeList::loadServerList()
         QString id = QString::fromStdString(iter->first);
         Service service = serverlist[iter->first];
         QString name = QString::fromStdString(service.spec.name);
+        map<std::string,Task> mapDockerTasklists = service.mapDockerTasklists;
+
+        int taskStatus = -1;
+        QString taskStatusStr = tr("Waiting");
+        if(mapDockerTasklists.size() > 0){
+            Task task = mapDockerTasklists.begin()->second;
+            taskStatus = task.status.state;
+            taskStatusStr = taskStatus == 8 ? tr("Create completed") : tr("Creating...");
+            //QString::fromStdString(strTaskStateTmp[taskStatus]);
+        }
+
+        QLabel *label = new QLabel(ui->serviceTableWidget);
+
+        label->setText(taskStatusStr);
+        label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        label->setStyleSheet(taskStatus == 8 ? "color:green;" : "color:red;");
 
         QTableWidgetItem *nameItem = new QTableWidgetItem(name);
         QTableWidgetItem *idItem = new QTableWidgetItem(id);
@@ -517,6 +590,8 @@ int MasternodeList::loadServerList()
         ui->serviceTableWidget->insertRow(count);
         ui->serviceTableWidget->setItem(count, 0, nameItem);
         ui->serviceTableWidget->setItem(count, 1, idItem);
+        // ui->serviceTableWidget->setItem(count, 2, statusItem);
+        ui->serviceTableWidget->setCellWidget(count,2,label);
         count++;
     }
     dockerServerman.setDNDataStatus(CDockerServerman::Free);
@@ -526,7 +601,28 @@ int MasternodeList::loadServerList()
 void MasternodeList::loadServerDetail(QModelIndex index)
 {
     QString key = ui->serviceTableWidget->item(index.row(),1)->text();
-    Service service = dockercluster.mapDockerServiceLists[key.toStdString().c_str()];
+    loadDockerDetail(key.toStdString());
+}
+
+void MasternodeList::loadDockerDetail(const std::string & key)
+{
+    Service service = dockercluster.mapDockerServiceLists[key.c_str()];
+    map<std::string,Task> mapDockerTasklists = service.mapDockerTasklists;
+
+    // LogPrintf("loadDockerDetail service:%s\n",service.ToJsonString());
+
+    int taskStatus = -1;
+    updateTaskDetail(mapDockerTasklists,taskStatus);
+
+    DockerUpdateMode mode = taskStatus == 8 ? DockerUpdateMode::WhenNormal : DockerUpdateMode::AfterCreate;
+
+    updateServiceDetail(service);
+    setCurUpdateMode(mode);
+}
+
+void MasternodeList::updateServiceDetail(Service& service)
+{    
+    uint64_t createdAt = service.createdAt;
 
     std::string name = service.spec.name;
     std::string address = service.spec.labels["com.massgrid.pubkey"];
@@ -534,57 +630,6 @@ void MasternodeList::loadServerDetail(QModelIndex index)
     std::string image = service.spec.taskTemplate.containerSpec.image;
     std::string userName = service.spec.taskTemplate.containerSpec.user;
 
-    map<std::string,Task> mapDockerTasklists = service.mapDockerTasklists;
-    map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
-
-    LogPrintf("----->mapDockerTasklists size:%d \n",mapDockerTasklists.size());
-
-    for(;iter != mapDockerTasklists.end();iter++){
-        std::string id = iter->first;
-        Task task = iter->second;
-        QString name = QString::fromStdString(task.name);
-        QString serviceID = QString::fromStdString(task.serviceID);
-        int64_t slot = task.slot;
-
-        //std::string
-        int taskstatus = -1;
-        taskstatus = task.status.state;
-        QString taskStatusStr = QString::fromStdString(strTaskStateTmp[taskstatus]);
-
-        LogPrintf("masternodelist taskstatus:%d\n",taskstatus);
-
-        std::string taskErr = task.status.err;
-
-        int64_t nanoCPUs = task.spec.resources.limits.nanoCPUs;
-        int64_t memoryBytes = task.spec.resources.limits.memoryBytes;
-
-        std::string gpuName ;
-        int64_t gpuCount = 0;
-
-        int genericResourcesSize = task.spec.resources.reservations.genericResources.size();
-        if(genericResourcesSize >0){
-            gpuName = task.spec.resources.reservations.genericResources[0].discreateResourceSpec.kind;
-            gpuCount = task.spec.resources.reservations.genericResources[0].discreateResourceSpec.value;
-        }
-
-        ui->label_taskName->setText(QString::fromStdString(id));
-        ui->label_cpuCount->setText(QString::number(nanoCPUs/DOCKER_CPU_UNIT));
-        ui->label_memoryBytes->setText(QString::number(memoryBytes/DOCKER_MEMORY_UNIT));
-        ui->label_GPUName->setText(QString::fromStdString(gpuName));
-        ui->label_GPUCount->setText(QString::number(gpuCount));
-        ui->label_taskStatus->setText(taskStatusStr);
-
-        if(!taskStatusStr.isEmpty()){
-            ui->label_17->setVisible(false);
-            ui->label_taskErr->setVisible(false);
-        }
-        else{
-            ui->label_17->setVisible(true);
-            ui->label_taskErr->setVisible(true);
-            ui->label_taskErr->setText(taskStatusStr);
-        }
-    }
-    
     std::vector<std::string> env = service.spec.taskTemplate.containerSpec.env;
     int count = env.size();
     QString n2n_name;
@@ -604,11 +649,12 @@ void MasternodeList::loadServerDetail(QModelIndex index)
         }
         else if(envStr.contains("SSH_PUBKEY")){
             int size = envStr.split(" ").size();
-            if(size >= 3)
-            ssh_pubkey =  envStr.split(" ").at(2);
+            if(size >= 2)
+            ssh_pubkey =  envStr.split(" ").at(1).mid(0,10);
         }
     }
 
+    ui->label_serviceTimeout->setText(QDateTime::fromTime_t(createdAt).addSecs(14400).toString("yyyy-MM-dd hh:mm:ss t"));
     ui->label_n2n_serverip->setText(n2n_SPIP);
     ui->label_n2n_name->setText(n2n_name);
     ui->label_n2n_localip->setText(n2n_localip);
@@ -623,9 +669,97 @@ void MasternodeList::loadServerDetail(QModelIndex index)
     }
 }
 
+void MasternodeList::updateTaskDetail(std::map<std::string,Task> &mapDockerTasklists,int& taskStatus)
+{
+    map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
+
+    LogPrintf("mapDockerTasklists size:%d \n",mapDockerTasklists.size());
+
+    for(;iter != mapDockerTasklists.end();iter++){
+        std::string id = iter->first;
+        Task task = iter->second;
+        QString name = QString::fromStdString(task.name);
+        QString serviceID = QString::fromStdString(task.serviceID);
+        int64_t slot = task.slot;
+
+        //std::string
+        // int taskstatus = -1;
+        taskStatus = task.status.state;
+        QString taskStatusStr = QString::fromStdString(strTaskStateTmp[taskStatus]);
+
+        QString taskErr = QString::fromStdString(task.status.err);
+
+        int64_t nanoCPUs = task.spec.resources.limits.nanoCPUs;
+        int64_t memoryBytes = task.spec.resources.limits.memoryBytes;
+
+        std::string gpuName ;
+        int64_t gpuCount = 0;
+
+        int genericResourcesSize = task.spec.resources.reservations.genericResources.size();
+        if(genericResourcesSize >0){
+            gpuName = task.spec.resources.reservations.genericResources[0].discreateResourceSpec.kind;
+            gpuCount = task.spec.resources.reservations.genericResources[0].discreateResourceSpec.value;
+        }
+
+        QString taskRuntime = QString::fromStdString(task.spec.runtime);
+
+        ui->label_taskName->setText(QString::fromStdString(id));
+        ui->label_cpuCount->setText(QString::number(nanoCPUs/DOCKER_CPU_UNIT));
+        ui->label_memoryBytes->setText(QString::number(memoryBytes/DOCKER_MEMORY_UNIT));
+        ui->label_GPUName->setText(QString::fromStdString(gpuName));
+        ui->label_GPUCount->setText(QString::number(gpuCount));
+
+        ui->label_taskStatus->setText(taskStatusStr);
+
+        if(taskStatus == 8){
+            ui->label_16->setStyleSheet("color:green;");
+            ui->label_taskStatus->setStyleSheet("color:green;");
+        }
+        else if(taskStatus != -1){
+            ui->label_16->setStyleSheet("color:red;");
+            ui->label_taskStatus->setStyleSheet("color:red;");
+        }
+        else{
+            ui->label_16->setStyleSheet("color:black;");
+            ui->label_taskStatus->setStyleSheet("color:black;");
+        }
+        
+        if(!taskErr.isEmpty()){
+            ui->label_17->setVisible(true);
+            ui->textEdit_taskErr->setVisible(true);
+            ui->textEdit_taskErr->setText(taskErr);
+        }
+    }
+}
+
 void MasternodeList::slot_updateServiceBtn()
 {
-    loadServerList();
+    setCurUpdateMode(DockerUpdateMode::WhenNormal);
+    updateDockerList(true);
+}
+
+void MasternodeList::updateServiceList()
+{
+    const std::string& addr = DefaultReceiveAddress();
+    CPubKey pubkey = pwalletMain->CreatePubKey(addr);
+
+    clearDockerDetail();
+    
+    if(dockercluster.SetConnectDockerAddress(m_curAddr_Port) && dockercluster.ProcessDockernodeConnections()){
+        askDNData();
+    }
+    else{
+        CMessageBox::information(this, tr("Docker option"),tr("connect docker network failed!"));
+        // reback to masternode list page
+    }
+}
+
+void MasternodeList::askDNData()
+{
+    dockercluster.AskForDNData();
+    ui->tabWidget->setCurrentIndex(2);
+    ui->createServiceBtn->setEnabled(false);
+    refreshServerList();
 }
 
 void MasternodeList::clearDockerDetail()
@@ -634,6 +768,7 @@ void MasternodeList::clearDockerDetail()
     ui->label_n2n_localip->setText("");
     ui->label_image->setText("");
     ui->label_user->setText("");
+    ui->label_serviceTimeout->setText("");
     ui->label_n2n_serverip->setText("");
     ui->label_n2n_name->setText("");
     ui->label_n2n_localip->setText("");
@@ -645,7 +780,10 @@ void MasternodeList::clearDockerDetail()
     ui->label_GPUName->setText("");
     ui->label_GPUCount->setText("");
     ui->label_taskStatus->setText("");
-    ui->label_taskErr->setText("");
+    ui->textEdit_taskErr->setText("");
+    ui->label_17->setVisible(false);
+    ui->textEdit_taskErr->setVisible(false);
+    ui->serviceTableWidget->setRowCount(0);
 }
 
 void MasternodeList::slot_createServiceBtn()
@@ -659,12 +797,11 @@ void MasternodeList::slot_createServiceBtn()
 
     dlg.setWalletModel(walletModel);
 
-    // if(dlg.exec() == QDialog::accept()){
-    //     ui->createServiceBtn->setEnabled(false);
-    //     QTimer::singleShot(2000,this,SLOT(refreshServerList()));
-    // }
-    dlg.exec();
-    refreshServerList();
+    if(dlg.exec() == QDialog::Accepted){
+        ui->createServiceBtn->setEnabled(false);
+        setCurUpdateMode(DockerUpdateMode::AfterCreate);
+        refreshServerList();  
+    }
 }
 
 void MasternodeList::refreshServerList()
@@ -675,33 +812,46 @@ void MasternodeList::refreshServerList()
     if(currentIndex != 2)
         return ;
 
-    if(dockerServerman.getDNDataStatus() ==  CDockerServerman::Ask){
-        refreshCount ++;
-        if(refreshCount > 100){
-            refreshCount = 0;
-            ui->createServiceBtn->setEnabled(true);
+    if(dockerServerman.getDNDataStatus() == CDockerServerman::Ask){
 
-            return ;
-        }
-        QTimer::singleShot(3000,this,SLOT(refreshServerList()));
+        if(DockerUpdateMode::WhenNormal)
+            QTimer::singleShot(2000,this,SLOT(refreshServerList()));
         LogPrintf("MasternodeList get DNData Status:CDockerServerman::Ask\n");
         return ;
     }
-    else if(dockerServerman.getDNDataStatus() ==  CDockerServerman::Received){
+    else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
+            dockerServerman.getDNDataStatus() == CDockerServerman::Free){
         int count = loadServerList();
         if(!count){
             clearDockerDetail();
             ui->createServiceBtn->setEnabled(true);
+            setCurUpdateMode(DockerUpdateMode::WhenNormal);
         }
-        else
+        else{
             ui->createServiceBtn->setEnabled(false);
+            QString key = ui->serviceTableWidget->item(0,1)->text();
+            loadDockerDetail(key.toStdString());
+        }
         LogPrintf("MasternodeList get DNData Status:CDockerServerman::Received\n");
         return ;
     }
-    if(dockerServerman.getDNDataStatus() ==  CDockerServerman::Free){
-        ui->createServiceBtn->setEnabled(true);
-        LogPrintf("MasternodeList get DNData Status:CDockerServerman::Free\n");
+}
+
+void MasternodeList::setCurUpdateMode(DockerUpdateMode mode)
+{
+    m_updateMode = mode;
+    if(mode == DockerUpdateMode::AfterCreate){
+        ui->updateServiceBtn->setEnabled(false);
     }
+    else{
+        ui->updateServiceBtn->setEnabled(true);
+    }
+    m_nTimeDockerListUpdated = GetTime();
+}
+
+MasternodeList::DockerUpdateMode MasternodeList::getCurUpdateMode()
+{
+    return m_updateMode;
 }
 
 void MasternodeList::slot_changeN2Nstatus(bool isSelected)

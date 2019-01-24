@@ -79,8 +79,9 @@ bool QSwitchButton::IsAntiAliasing()
 void QSwitchButton::SetSelected(bool is_selected)
 {
     isSelected = is_selected;
-
     repaint();
+    Q_EMIT clicked();
+    Q_EMIT clicked(isSelected);
 }
 
 bool QSwitchButton::IsSelected()

@@ -23,6 +23,8 @@ class ClientModel;
 class WalletModel;
 class QTableWidgetItem;
 class QSwitchButton;
+class Task;
+class Service;
 
 QT_BEGIN_NAMESPACE
 class QModelIndex;
@@ -36,6 +38,11 @@ class MasternodeList : public QWidget
 public:
     explicit MasternodeList(const PlatformStyle *platformStyle, QWidget *parent = 0);
     ~MasternodeList();
+
+    enum DockerUpdateMode{
+        AfterCreate = 0,
+        WhenNormal
+    };
 
     void setClientModel(ClientModel *clientModel);
     void setWalletModel(WalletModel *walletModel);
@@ -60,6 +67,7 @@ Q_SIGNALS:
 
 private:
     QTimer *timer;
+    QTimer *m_serviceTimer;
     Ui::MasternodeList *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;
@@ -73,12 +81,23 @@ private:
     QString strCurrentFilter;
 
     std::string m_curAddr_Port;
+
+    DockerUpdateMode m_updateMode;
+    int timeOutSec;
     
     QSwitchButton *switchButton;
+
+    int64_t m_nTimeDockerListUpdated;
+    int64_t m_nTimeListUpdated;
+    int64_t m_nTimeMyListUpdated;
 
 private:
     int loadServerList();
     void clearDockerDetail();
+    void setCurUpdateMode(DockerUpdateMode mode);
+    DockerUpdateMode getCurUpdateMode();
+    void startTimer(bool start);
+    void askDNData();
 
 private Q_SLOTS:
     void showContextMenu(const QPoint &);
@@ -91,7 +110,14 @@ private Q_SLOTS:
     void showDockerDetail(QModelIndex);
     void loadServerDetail(QModelIndex);
     void slot_updateServiceBtn();
+    void updateServiceList();
+
+    void loadDockerDetail(const std::string& key);
+    void updateServiceDetail(Service& service);
+    void updateTaskDetail(std::map<std::string,Task> &mapDockerTasklists,int& taskStatus);
     void slot_createServiceBtn();
     void slot_changeN2Nstatus(bool);
+    void slot_curTabPageChanged(int);
+    void updateDockerList(bool fForce = false);
 };
 #endif // MASTERNODELIST_H

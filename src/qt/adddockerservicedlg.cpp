@@ -24,7 +24,7 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     connect(ui->openPubKeyButton,SIGNAL(clicked()),this,SLOT(slot_openPubKeyFile()));
     
-    ui->label_titleName->setText(this->windowTitle());
+    ui->label_titleName->setText(tr("Create Service"));
     this->setAttribute(Qt::WA_TranslucentBackground);
 
     ui->spinBox_gpucount->setEnabled(false);

@@ -1697,20 +1697,6 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         pwalletMain = new CWallet(strWalletFile);
         DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
 
-        //if address not null ,change the default pubkey
-        std::string defaultAddr = DefaultReceiveAddress();
-        if(defaultAddr.size()){
-            CTxDestination newAddress = CMassGridAddress(defaultAddr).Get();
-            if(!pwalletMain->mapAddressBook.count(newAddress)){
-                SetDefaultReceiveAddress("");
-            }
-            else{
-                CPubKey pubkey = pwalletMain->CreatePubKey(defaultAddr);
-                SetDefaultPubkey(pubkey);
-                pwalletMain->vchDefaultKey = pubkey;
-            }
-        }
-
         if (nLoadWalletRet != DB_LOAD_OK)
         {
             if (nLoadWalletRet == DB_CORRUPT)
@@ -1790,7 +1776,27 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
                 return InitError(strprintf(_("Error loading %s: You can't enable HD on a already existing non-HD wallet"), strWalletFile));
         }
 
+        //if address not null ,change the default pubkey
+        std::string defaultAddr = DefaultReceiveAddress();
 
+        LogPrintf("=====>DefaultReceiveAddress:%s\n",defaultAddr);
+
+        if(defaultAddr.size()){
+            CTxDestination newAddress = CMassGridAddress(defaultAddr).Get();
+            if(!pwalletMain->mapAddressBook.count(newAddress)){
+                SetDefaultReceiveAddress(CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
+                LogPrintf("init get address:%s\n",CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
+            }
+            else{
+                CPubKey pubkey = pwalletMain->CreatePubKey(defaultAddr);
+                pwalletMain->SetDefaultKey(pubkey);
+            }
+        }
+        else{
+            SetDefaultReceiveAddress(CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
+            LogPrintf("init get address:%s\n",CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
+        }
+        SetDefaultPubkey(pwalletMain->vchDefaultKey);
 
         // Warn user every time he starts non-encrypted HD wallet
         if (GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET) && !pwalletMain->IsLocked()) {
