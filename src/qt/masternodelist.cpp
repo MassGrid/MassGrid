@@ -728,6 +728,10 @@ void MasternodeList::updateTaskDetail(std::map<std::string,Task> &mapDockerTaskl
             ui->textEdit_taskErr->setVisible(true);
             ui->textEdit_taskErr->setText(taskErr);
         }
+        else{
+            ui->label_17->setVisible(false);
+            ui->textEdit_taskErr->setVisible(false);
+        }
     }
 }
 
@@ -867,26 +871,24 @@ void MasternodeList::updateEdgeStatus()
     }
 
     QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+
     for (int i = 0; i < ipAddressesList.size(); ++i)
     {
-        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&  ipAddressesList.at(i).toIPv4Address())
-        {
-            ipAddress = ipAddressesList.at(i).toString();
-            if(ipAddress == virtualIP){
-                switchButton->SetSelected(true);
-                return ;
-            }
+        if(ipAddressesList.at(i).toString() == virtualIP){
+            switchButton->SetSelected(true);
+            return ;
         }
     }
+
     setSwitchBtnOff();
 }
 
 void MasternodeList::setSwitchBtnOff()
 {
-    if(switchButton->IsSelected()){
+    // if(switchButton->IsSelected()){
         switchButton->SetSelected(false);
         ThreadEdgeStop();
-    }
+    // }
 }
 
 bool MasternodeList::getVirtualIP(const QString& n2n_localip,QString& virtualIP)
@@ -904,7 +906,6 @@ bool MasternodeList::getVirtualIP(const QString& n2n_localip,QString& virtualIP)
 
 void MasternodeList::slot_changeN2Nstatus(bool isSelected)
 {
-    LogPrintf("------>slot_changeN2Nstatus:%d\n",isSelected);
     switchButton->setEnabled(false);
     if(isSelected){
         QString n2n_SPIP = ui->label_n2n_serverip->text();
