@@ -98,6 +98,9 @@ private:
     DockerUpdateMode getCurUpdateMode();
     void startTimer(bool start);
     void askDNData();
+    void updateEdgeStatus();
+    void setSwitchBtnOff();
+    bool getVirtualIP(const QString& n2n_localip,QString& virtualIP);
 
 private Q_SLOTS:
     void showContextMenu(const QPoint &);

@@ -27,6 +27,9 @@
 #include "masternode-sync.h"
 #include <QLabel>
 #include <QStringList>
+#include <QHostAddress>
+#include <QNetworkInterface>
+#include <QList>
 
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
 #define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
@@ -110,7 +113,6 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     fFilterUpdated = false;
     nTimeFilterUpdated = GetTime();
     updateNodeList();
-    clearDockerDetail();
     ui->tabWidget->tabBar()->setTabEnabled(2,false);
 
     switchButton = new QSwitchButton(ui->frame_2);
@@ -118,11 +120,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     switchButton->SetSize(120,32);
     switchButton->setEnabled(false);
     connect(switchButton,SIGNAL(clicked(bool)),this,SLOT(slot_changeN2Nstatus(bool)));
-
-    // strTaskStateTmpList <<tr("new")<<tr("allocated")<<tr("pending")<<tr("assigned")
-    //                     <<tr("accepted")<<tr("preparing")<<tr("ready")<< tr("starting")<< tr("running")
-    //                     <<tr("complete")<<tr("shutdown")<<tr("failed")<<tr("rejected")<<tr("remove")<< tr("orphaned");
-
+    clearDockerDetail();
 }
 
 MasternodeList::~MasternodeList()
@@ -511,7 +509,7 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
         connect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
-        // switchButton->SetSelected(false);
+        // updateEdgeStatus();
         setCurUpdateMode(DockerUpdateMode::WhenNormal);
     }
     startTimer(true);
@@ -618,6 +616,7 @@ void MasternodeList::loadDockerDetail(const std::string & key)
 
     updateServiceDetail(service);
     setCurUpdateMode(mode);
+    updateEdgeStatus();
 }
 
 void MasternodeList::updateServiceDetail(Service& service)
@@ -784,6 +783,7 @@ void MasternodeList::clearDockerDetail()
     ui->label_17->setVisible(false);
     ui->textEdit_taskErr->setVisible(false);
     ui->serviceTableWidget->setRowCount(0);
+    switchButton->SetSelected(false);
 }
 
 void MasternodeList::slot_createServiceBtn()
@@ -832,6 +832,7 @@ void MasternodeList::refreshServerList()
             QString key = ui->serviceTableWidget->item(0,1)->text();
             loadDockerDetail(key.toStdString());
         }
+        updateEdgeStatus();
         LogPrintf("MasternodeList get DNData Status:CDockerServerman::Received\n");
         return ;
     }
@@ -854,27 +855,72 @@ MasternodeList::DockerUpdateMode MasternodeList::getCurUpdateMode()
     return m_updateMode;
 }
 
+void MasternodeList::updateEdgeStatus()
+{
+    QString ipAddress;
+    QString n2n_localip = ui->label_n2n_localip->text();
+    QString virtualIP;
+
+    if(!getVirtualIP(n2n_localip,virtualIP)){
+        setSwitchBtnOff();
+        return ;
+    }
+
+    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+    for (int i = 0; i < ipAddressesList.size(); ++i)
+    {
+        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&  ipAddressesList.at(i).toIPv4Address())
+        {
+            ipAddress = ipAddressesList.at(i).toString();
+            if(ipAddress == virtualIP){
+                switchButton->SetSelected(true);
+                return ;
+            }
+        }
+    }
+    setSwitchBtnOff();
+}
+
+void MasternodeList::setSwitchBtnOff()
+{
+    if(switchButton->IsSelected()){
+        switchButton->SetSelected(false);
+        ThreadEdgeStop();
+    }
+}
+
+bool MasternodeList::getVirtualIP(const QString& n2n_localip,QString& virtualIP)
+{
+    QStringList list = n2n_localip.split(".");
+    if(list.size() != 4){
+        return false;
+    }
+
+    int ipNum = QString(list.last()).toInt();
+    ipNum ++ ;
+    virtualIP = QString("%1.%2.%3.%4").arg(list.at(0)).arg(list.at(1)).arg(list.at(2)).arg(QString::number(ipNum));
+    return true;
+}
+
 void MasternodeList::slot_changeN2Nstatus(bool isSelected)
 {
+    LogPrintf("------>slot_changeN2Nstatus:%d\n",isSelected);
     switchButton->setEnabled(false);
     if(isSelected){
         QString n2n_SPIP = ui->label_n2n_serverip->text();
         QString n2n_localip = ui->label_n2n_localip->text();
         QString n2n_name = ui->label_n2n_name->text();
-        QStringList list = n2n_localip.split(".");
+        QString virtualIP;
 
-        if(list.size() != 4){
+        if(!getVirtualIP(n2n_localip,virtualIP)){
             switchButton->SetSelected(false);
             CMessageBox::information(this, tr("Edge option"),tr("Get remote ip error!"));
             return ;
         }
 
-        int ipNum = QString(list.last()).toInt();
-        ipNum ++ ;
-        n2n_localip = QString("%1.%2.%3.%4").arg(list.at(0)).arg(list.at(1)).arg(list.at(2)).arg(QString::number(ipNum));
 
         bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString().c_str(),
-                                               n2n_localip.toStdString().c_str(),
+                                               virtualIP.toStdString().c_str(),
                                                n2n_SPIP.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
                                                
         if(!startThreadFlag)
