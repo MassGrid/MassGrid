@@ -174,7 +174,7 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
             return false;
     }
     std::string reponseData=http.getReponseData();
-    return ProcessMessage(mtd,http.url,ret,reponseData);
+    return ProcessMessage(mtd,http.url,ret,reponseData,isClearService);
 }
 
 bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService){
@@ -243,7 +243,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         }
         case Method::METHOD_SERVICES_INSPECT:
         {
-                Service::DockerServiceInspect(responsedata,mapServiceLists);
+            Service::DockerServiceInspect(responsedata,mapServiceLists);
             if(jsondata.exists("ID")){
                 dockertaskfilter taskfilter;
                 taskfilter.serviceid.push_back(jsondata["ID"].get_str());
