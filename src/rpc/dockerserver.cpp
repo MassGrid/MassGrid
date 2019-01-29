@@ -156,7 +156,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     if(strCommand == "delete"){
         if (!masternodeSync.IsSynced())
             return "Need to Synced First";
-        if (params.size() != 2)
+        if (params.size() != 3)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
         std::string strAddr = params[1].get_str();
         if(!dockercluster.SetConnectDockerAddress(strAddr))
