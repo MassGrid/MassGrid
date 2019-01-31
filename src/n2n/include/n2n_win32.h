@@ -26,7 +26,7 @@
 #include "wintap.h"
 
 #ifdef _MSC_VER
-#include "getopt.h"
+#include "getopts.h"
 
 /* Other Win environments are expected to support stdint.h */
 

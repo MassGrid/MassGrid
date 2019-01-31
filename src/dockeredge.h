@@ -4,4 +4,5 @@
 bool ThreadEdgeStart(std::string community,std::string localaddr,std::string snaddr,std::function<void(bool)>start = nullptr);
 void ThreadEdgeStop();
 void threadTunStop();
+bool IsThreadRunning();
 #endif //DOCKEREDGE_H

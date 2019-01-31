@@ -179,9 +179,11 @@ bool AddDockerServiceDlg::createDockerService()
     createService.n2n_community = strn2n_Community;
 
     std::string strssh_pubkey = ui->textEdit_sshpubkey->toPlainText().toStdString().c_str();
-    // "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDwKzxP+YJHSU/qgT8X79HnktF8Kpkec7cUEDGkyqwQXOhLMUG2XDDOqQAsRIHjCuCgP0fi8oeYO+/h+c/su6L5sAzs0zMXFUkAYHowe0OpPEVFXkSfd2rGbnFGVyRec2LuzN63X92WNycvG/TP7WobBizp1CXQDGEouSHw38kRYPRnr93YPVDJ6GUwlqEND35WiAEFpQ3n9CbYMiX+Eg3ItVXjXJc9R63oLwKGn9Ko4UDfpHqKhGNJ5KQ2LPIevhlbuP9rm7hCjoqx0krBJxfXVwlGTZE3hpteMpcZPdAKPcyHBx6P/YLEQHqiUNaGMF3hWtIr3CJqDDOMmKj70KOt oasis@xiejiataodeMacBook-Pro.local";
     createService.ssh_pubkey = strssh_pubkey;
-    
+
+    if(!strssh_pubkey.size()){
+        CMessageBox::information(this, tr("Docker option"), tr("SSH public key is empty!"));
+    }
 
     if(!dockercluster.CreateAndSendSeriveSpec(createService)){
         LogPrintf("dockercluster.CreateAndSendSeriveSpec error\n");

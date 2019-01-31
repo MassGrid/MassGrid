@@ -689,6 +689,7 @@ QWidget#MasternodeList QPushButton#startMissingButton,
 QWidget#MasternodeList QPushButton#UpdateButton,
 QWidget#MasternodeList QPushButton#updateServiceBtn,
 QWidget#MasternodeList QPushButton#createServiceBtn,
+QWidget#MasternodeList QPushButton#deleteServiceBtn,
 QWidget#MasternodeList QPushButton#startN2NBtn
 {
         background-color: rgb(239, 169, 4);
@@ -703,6 +704,7 @@ QWidget#MasternodeList QPushButton::!enabled#startButton,
 QWidget#MasternodeList QPushButton::!enabled#startMissingButton,
 QWidget#MasternodeList QPushButton::!enabled#UpdateButton,
 QWidget#MasternodeList QPushButton::!enabled#updateServiceBtn,
+QWidget#MasternodeList QPushButton::!enabled#deleteServiceBtn,
 QWidget#MasternodeList QPushButton::!enabled#createServiceBtn
 {
     background-color: rgb(125, 125, 125);

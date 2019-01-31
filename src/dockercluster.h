@@ -36,6 +36,7 @@ public:
         void AskForDNData();
         bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
         bool UpdateAndSendSeriveSpec(DockerUpdateService sspec);    //send message
+        bool DeleteAndSendServiceSpec(DockerDeleteService delServic);
         // bool CheckAndUpdate(DockerUpdateService sspec);      //update infomation after check from receive
 
 };

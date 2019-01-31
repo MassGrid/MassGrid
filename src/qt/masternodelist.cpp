@@ -85,7 +85,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->tableWidgetMasternodes->setColumnWidth(4, columnLastSeenWidth);
 
     ui->serviceTableWidget->setColumnWidth(0, 150);
-    ui->serviceTableWidget->setColumnWidth(1, 150);
+    ui->serviceTableWidget->setColumnWidth(1, 100);
 
     ui->serviceTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->serviceTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -98,10 +98,12 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     contextMenu->addAction(startAliasAction);
     connect(ui->tableWidgetMyMasternodes, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
     connect(ui->tableWidgetMasternodes, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDockerDetail(QModelIndex)));
-    connect(ui->serviceTableWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(loadServerDetail(QModelIndex)));
+    connect(ui->serviceTableWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(loadServerDetail(QModelIndex)));
     
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
     connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
+    connect(ui->deleteServiceBtn, SIGNAL(clicked()), this, SLOT(slot_deleteServiceBtn()));
+    
     connect(ui->createServiceBtn, SIGNAL(clicked()), this, SLOT(slot_createServiceBtn()));
     connect(ui->tabWidget, SIGNAL(currentChanged(int)),this,SLOT(slot_curTabPageChanged(int)));
 
@@ -118,7 +120,6 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     switchButton = new QSwitchButton(ui->frame_2);
     switchButton->SetSelected(false);
     switchButton->SetSize(120,32);
-    switchButton->setEnabled(false);
     connect(switchButton,SIGNAL(clicked(bool)),this,SLOT(slot_changeN2Nstatus(bool)));
     clearDockerDetail();
 }
@@ -509,7 +510,6 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
         connect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
-        // updateEdgeStatus();
         setCurUpdateMode(DockerUpdateMode::WhenNormal);
     }
     startTimer(true);
@@ -600,6 +600,8 @@ void MasternodeList::loadServerDetail(QModelIndex index)
 {
     QString key = ui->serviceTableWidget->item(index.row(),1)->text();
     loadDockerDetail(key.toStdString());
+    ui->deleteServiceBtn->setEnabled(true);
+    switchButton->setEnabled(true);
 }
 
 void MasternodeList::loadDockerDetail(const std::string & key)
@@ -616,7 +618,6 @@ void MasternodeList::loadDockerDetail(const std::string & key)
 
     updateServiceDetail(service);
     setCurUpdateMode(mode);
-    updateEdgeStatus();
 }
 
 void MasternodeList::updateServiceDetail(Service& service)
@@ -662,10 +663,6 @@ void MasternodeList::updateServiceDetail(Service& service)
     ui->label_name->setText(QString::fromStdString(name));
     ui->label_image->setText(QString::fromStdString(image));
     ui->label_user->setText(QString::fromStdString(userName));
-
-    if( (!n2n_localip.isEmpty()) && (!n2n_SPIP.isEmpty()) ){
-        switchButton->setEnabled(true);
-    }
 }
 
 void MasternodeList::updateTaskDetail(std::map<std::string,Task> &mapDockerTasklists,int& taskStatus)
@@ -741,10 +738,41 @@ void MasternodeList::slot_updateServiceBtn()
     updateDockerList(true);
 }
 
+void MasternodeList::slot_deleteServiceBtn()
+{
+    int curindex = ui->serviceTableWidget->currentRow();
+    
+    if(curindex <0 )
+        return ;
+    std::string strServiceid = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
+
+    deleteService(strServiceid);
+    // loadDockerDetail(key.toStdString());
+    QTimer::singleShot(2000,this,SLOT(slot_updateServiceBtn()));
+}
+
+bool MasternodeList::deleteService(const std::string& strServiceid)
+{
+    if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+        return false;
+    }
+
+    DockerDeleteService delService{};
+
+    delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
+    delService.serviceid = strServiceid;
+
+    if(!dockercluster.DeleteAndSendServiceSpec(delService)){
+        CMessageBox::information(this, tr("Docker option"),tr("Delete docker service failed!"));
+    }
+    return true;
+}
+
 void MasternodeList::updateServiceList()
 {
     const std::string& addr = DefaultReceiveAddress();
-    CPubKey pubkey = pwalletMain->CreatePubKey(addr);
+    CPubKey pubkey = pwalletMain->CreatePubKey(addr); 
 
     clearDockerDetail();
     
@@ -752,7 +780,7 @@ void MasternodeList::updateServiceList()
         askDNData();
     }
     else{
-        CMessageBox::information(this, tr("Docker option"),tr("connect docker network failed!"));
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
         // reback to masternode list page
     }
 }
@@ -787,7 +815,8 @@ void MasternodeList::clearDockerDetail()
     ui->label_17->setVisible(false);
     ui->textEdit_taskErr->setVisible(false);
     ui->serviceTableWidget->setRowCount(0);
-    switchButton->SetSelected(false);
+    ui->deleteServiceBtn->setEnabled(false);
+    switchButton->setEnabled(false);
 }
 
 void MasternodeList::slot_createServiceBtn()
@@ -836,7 +865,7 @@ void MasternodeList::refreshServerList()
             QString key = ui->serviceTableWidget->item(0,1)->text();
             loadDockerDetail(key.toStdString());
         }
-        updateEdgeStatus();
+        updateEdgeStatus(count);
         LogPrintf("MasternodeList get DNData Status:CDockerServerman::Received\n");
         return ;
     }
@@ -859,36 +888,17 @@ MasternodeList::DockerUpdateMode MasternodeList::getCurUpdateMode()
     return m_updateMode;
 }
 
-void MasternodeList::updateEdgeStatus()
+void MasternodeList::updateEdgeStatus(int count)
 {
-    QString ipAddress;
-    QString n2n_localip = ui->label_n2n_localip->text();
-    QString virtualIP;
-
-    if(!getVirtualIP(n2n_localip,virtualIP)){
-        setSwitchBtnOff();
-        return ;
+    if(IsThreadRunning() && count){
+        switchButton->SetSelected(true);
     }
-
-    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
-
-    for (int i = 0; i < ipAddressesList.size(); ++i)
-    {
-        if(ipAddressesList.at(i).toString() == virtualIP){
-            switchButton->SetSelected(true);
-            return ;
+    else{
+        if(switchButton->IsSelected()){
+            switchButton->SetSelected(false);
+            ThreadEdgeStop();
         }
     }
-
-    setSwitchBtnOff();
-}
-
-void MasternodeList::setSwitchBtnOff()
-{
-    // if(switchButton->IsSelected()){
-        switchButton->SetSelected(false);
-        ThreadEdgeStop();
-    // }
 }
 
 bool MasternodeList::getVirtualIP(const QString& n2n_localip,QString& virtualIP)
@@ -919,13 +929,13 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
             return ;
         }
 
-
         bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString().c_str(),
                                                virtualIP.toStdString().c_str(),
                                                n2n_SPIP.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
                                                
-        if(!startThreadFlag)
+        if(!startThreadFlag){
             ThreadEdgeStop();
+        }
     }
     else{
         ThreadEdgeStop();

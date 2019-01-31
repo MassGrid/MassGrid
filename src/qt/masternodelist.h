@@ -93,13 +93,13 @@ private:
 
 private:
     int loadServerList();
+    bool deleteService(const std::string& serviceid);
     void clearDockerDetail();
     void setCurUpdateMode(DockerUpdateMode mode);
     DockerUpdateMode getCurUpdateMode();
     void startTimer(bool start);
     void askDNData();
-    void updateEdgeStatus();
-    void setSwitchBtnOff();
+    void updateEdgeStatus(int count =0);
     bool getVirtualIP(const QString& n2n_localip,QString& virtualIP);
 
 private Q_SLOTS:
@@ -113,6 +113,7 @@ private Q_SLOTS:
     void showDockerDetail(QModelIndex);
     void loadServerDetail(QModelIndex);
     void slot_updateServiceBtn();
+    void slot_deleteServiceBtn();
     void updateServiceList();
 
     void loadDockerDetail(const std::string& key);

@@ -22,7 +22,7 @@
 #include <libn2n-config.h>
 #endif
 
-#include "getopt.h"
+#include "getopts.h"
 
 #if !defined __STDC__ || !__STDC__
 /* This is a separate conditional since some stdc systems

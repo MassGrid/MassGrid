@@ -2544,3 +2544,11 @@ void ThreadEdgeStop(){
     delete thrd;
     thrd=NULL;
 }
+
+bool IsThreadRunning(){
+    if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
+        LogPrintf("Edge thread is running\n");
+        return true;
+    }
+    return false;
+}

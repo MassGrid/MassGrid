@@ -114,6 +114,34 @@ bool Cluster::UpdateAndSendSeriveSpec(DockerUpdateService sspec){
     return true;
 }
 
+bool Cluster::DeleteAndSendServiceSpec(DockerDeleteService delService)
+{
+    if (!masternodeSync.IsSynced()){
+        LogPrintf("Need to Synced First\n");
+        return false;
+    }
+    // if (params.size() != 3)
+    //     throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
+    // std::string strAddr = params[1].get_str();
+    // if(!dockercluster.SetConnectDockerAddress(strAddr))
+    //     throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
+    // if(!dockercluster.ProcessDockernodeConnections())
+    //     throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Connect to Masternode failed");
+    
+    // EnsureWalletIsUnlocked();
+    CKey vchSecret;
+    if (!pwalletMain->GetKey(delService.pubKeyClusterAddress.GetID(), vchSecret)){
+        LogPrintf("delService Sign Error1\n");
+        return false;
+    }
+    if(!delService.Sign(vchSecret,delService.pubKeyClusterAddress)){
+        LogPrintf("delService Sign Error2\n");
+        return false;
+    }
+    g_connman->PushMessage(dockercluster.connectNode, NetMsgType::DELETESERVICE, delService);
+    return true;
+}
+
 void Cluster::setDefaultPubkey(CPubKey pubkey)
 {
     DefaultPubkey = pubkey;
