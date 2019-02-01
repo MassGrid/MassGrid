@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>925</width>
-    <height>509</height>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1435,7 +1435,7 @@ border: hidden;
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>547</width>
+                     <width>500</width>
                      <height>150</height>
                     </rect>
                    </property>
@@ -1501,7 +1501,7 @@ border: hidden;
                      </font>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true"/>
+                     <string notr="true">border:hidden;</string>
                     </property>
                     <property name="text">
                      <string>Select &amp;Recipient</string>
@@ -2608,7 +2608,7 @@ color: rgb(255, 255, 255);</string>
          <zorder>verticalSpacer_10</zorder>
          <zorder></zorder>
          <zorder>verticalSpacer_7</zorder>
-         <zorder></zorder>
+         <zorder>horizontalSpacer_12</zorder>
         </widget>
        </item>
       </layout>
@@ -2635,7 +2635,7 @@ color: rgb(255, 255, 255);</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupCustomFee"/>
   <buttongroup name="groupFee"/>
+  <buttongroup name="groupCustomFee"/>
  </buttongroups>
 </ui>

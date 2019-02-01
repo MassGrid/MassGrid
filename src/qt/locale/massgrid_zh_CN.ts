@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="zh_CN">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AddDockerServiceDlg</name>
     <message>
@@ -138,6 +138,10 @@
     <message>
         <source>GB</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>SSH public key is empty!</source>
+        <translation>公钥不能为空！</translation>
     </message>
 </context>
 <context>
@@ -1088,15 +1092,15 @@
         <source>Form</source>
         <translation>表单</translation>
     </message>
-    <message utf8="true">
+    <message>
         <source>文件</source>
         <translation type="obsolete">文件</translation>
     </message>
-    <message utf8="true">
+    <message>
         <source>设置</source>
         <translation type="obsolete">设置</translation>
     </message>
-    <message utf8="true">
+    <message>
         <source>帮助</source>
         <translation type="obsolete">帮助</translation>
     </message>
@@ -1859,7 +1863,7 @@ Address: %4
     </message>
     <message>
         <source>create Service</source>
-        <translation>创建服务</translation>
+        <translation type="vanished">创建服务</translation>
     </message>
     <message>
         <source>Docker Server Detail</source>
@@ -1905,7 +1909,7 @@ Address: %4
         <source>CPU Count:</source>
         <translation>CPU数量:</translation>
     </message>
-    <message utf8="true">
+    <message>
         <source>Memory Bytes：</source>
         <translation>内存大小:</translation>
     </message>
@@ -1923,7 +1927,7 @@ Address: %4
     </message>
     <message>
         <source>connect docker network failed!</source>
-        <translation>连接虚拟机网络失败！</translation>
+        <translation type="vanished">连接虚拟机网络失败！</translation>
     </message>
     <message>
         <source>Edge option</source>
@@ -1967,7 +1971,7 @@ Address: %4
     </message>
     <message>
         <source>Waiting</source>
-        <translation type="obsolete">等待中...</translation>
+        <translation>等待中...</translation>
     </message>
     <message>
         <source>0</source>
@@ -2004,6 +2008,22 @@ Address: %4
     <message>
         <source>Waiting...</source>
         <translation>等待中...</translation>
+    </message>
+    <message>
+        <source>Create Service</source>
+        <translation>创建服务</translation>
+    </message>
+    <message>
+        <source>Delete Service</source>
+        <translation>删除服务</translation>
+    </message>
+    <message>
+        <source>Connect docker network failed!</source>
+        <translation>连接虚拟机网络失败！</translation>
+    </message>
+    <message>
+        <source>Delete docker service failed!</source>
+        <translation>删除虚拟机服务失败！</translation>
     </message>
 </context>
 <context>
@@ -3870,7 +3890,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
         <source>Select &amp;Recipient</source>
         <translation>选择收款人</translation>
     </message>
-    <message utf8="true">
+    <message>
         <source>交易费用</source>
         <translation>交易费用</translation>
     </message>

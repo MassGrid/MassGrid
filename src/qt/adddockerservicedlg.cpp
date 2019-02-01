@@ -119,6 +119,16 @@ bool AddDockerServiceDlg::createDockerService()
         return false ;
     }
 
+    DockerCreateService createService{};
+
+    std::string strssh_pubkey = ui->textEdit_sshpubkey->toPlainText().toStdString().c_str();
+    createService.ssh_pubkey = strssh_pubkey;
+
+    if(!strssh_pubkey.size()){
+        CMessageBox::information(this, tr("Docker option"), tr("SSH public key is empty!"));
+        return false;
+    }
+
     bool lockedFlag = pwalletMain->IsLocked();
 
     if(lockedFlag){
@@ -151,8 +161,6 @@ bool AddDockerServiceDlg::createDockerService()
          return false;
     }
 
-    DockerCreateService createService{};
-
     createService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
     createService.vin = CTxIn();
     
@@ -177,13 +185,6 @@ bool AddDockerServiceDlg::createDockerService()
 
     std::string strn2n_Community = ui->lineEdit_n2n_name->text().toStdString().c_str();
     createService.n2n_community = strn2n_Community;
-
-    std::string strssh_pubkey = ui->textEdit_sshpubkey->toPlainText().toStdString().c_str();
-    createService.ssh_pubkey = strssh_pubkey;
-
-    if(!strssh_pubkey.size()){
-        CMessageBox::information(this, tr("Docker option"), tr("SSH public key is empty!"));
-    }
 
     if(!dockercluster.CreateAndSendSeriveSpec(createService)){
         LogPrintf("dockercluster.CreateAndSendSeriveSpec error\n");
