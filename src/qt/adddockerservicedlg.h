@@ -33,14 +33,25 @@ private:
 
 private:
     bool createDockerService();
+    void showStep(int);
+
+    bool doStep1();
+    bool doStep3();
+    bool doStep4();
 protected:
     void mousePressEvent(QMouseEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
 
 private Q_SLOTS:
-    void slot_okbutton();
+    bool slot_okbutton();
     void slot_openPubKeyFile();
+    bool doStep2();
+    void slot_nextStep();
+    void slot_imageCurrentChanged(int);
+    void slot_close();
+    void slot_timeOut();
+
 };
 
 #endif // ADDDOCKERSERVICEDLG_H

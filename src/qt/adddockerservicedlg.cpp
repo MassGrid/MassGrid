@@ -11,6 +11,7 @@
 #include "massgridgui.h"
 #include <QFileDialog>
 #include <QFile>
+#include <QTimer>
 
 AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     QDialog(parent),
@@ -19,9 +20,9 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->okButton, SIGNAL(clicked()), this, SLOT(slot_okbutton()));
+    // connect(ui->okButton, SIGNAL(clicked()), this, SLOT(slot_okbutton()));
     setWindowFlags(Qt::FramelessWindowHint);
-    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(slot_close()));
     connect(ui->openPubKeyButton,SIGNAL(clicked()),this,SLOT(slot_openPubKeyFile()));
     
     ui->label_titleName->setText(tr("Create Service"));
@@ -30,6 +31,18 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     ui->spinBox_gpucount->setEnabled(false);
     ui->spinBox_memorybyte->setEnabled(false);
     ui->spinBox_cpucount->setEnabled(false);
+
+    connect(ui->nextButton_1,SIGNAL(clicked()),this,SLOT(slot_nextStep()));
+    connect(ui->nextButton_2,SIGNAL(clicked()),this,SLOT(slot_nextStep()));
+    connect(ui->nextButton_3,SIGNAL(clicked()),this,SLOT(slot_nextStep()));
+    connect(ui->nextButton_4,SIGNAL(clicked()),this,SLOT(slot_nextStep()));
+
+    ui->stackedWidget->setCurrentIndex(0);
+    connect(ui->comboBox_image_2,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_imageCurrentChanged(int)));
+
+    ui->spinBox_gpucount->setValue(0);
+    ui->spinBox_memorybyte->setValue(0);
+    ui->spinBox_cpucount->setValue(0);
 }
 
 AddDockerServiceDlg::~AddDockerServiceDlg()
@@ -74,15 +87,102 @@ void AddDockerServiceDlg::mouseReleaseEvent(QMouseEvent *e)
     this->move(QPoint(this->x()+dx, this->y()+dy));
 }
 
-void AddDockerServiceDlg::slot_okbutton()
+bool AddDockerServiceDlg::slot_okbutton()
 {
-    if(createDockerService()){
-        accept();
+    // if(createDockerService()){
+    //     accept();
+    //     LogPrintf("---->slot_okbutton: create docer service sucess!");
+    // }
+    // else{
+    //     CMessageBox::information(this, tr("Error"), tr("create docker service error"));
+    //     close();
+    // }
+    return createDockerService();
+}
+
+void AddDockerServiceDlg::slot_close()
+{
+    if(ui->stackedWidget->currentIndex() == 2){
+        CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("退出"),
+        tr("转账已完成，服务创建中，现在退出将在15-60分钟内收到退款，是否仍旧退出？"),
+        CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+        if(btnRetVal == CMessageBox::Cancel)
+            return;
     }
-    else{
-        CMessageBox::information(this, tr("Error"), tr("create docker service error"));
-        close();
+    close();
+}
+
+void AddDockerServiceDlg::slot_nextStep()
+{
+    int index = ui->stackedWidget->currentIndex();
+
+    switch (index)
+    {
+        case 0 :
+            if(!doStep1()){
+                return ;
+            }
+            ui->label_step2->setEnabled(true);
+            ui->line_2->setEnabled(true);
+            break;
+        case 1 : 
+            if(!doStep2()){
+                return ;
+            }
+            ui->line_3->setEnabled(true);
+            ui->label_step3->setEnabled(true);
+            break;
+        case 2 :
+            if(!doStep3()){
+                return ;
+            }
+            ui->label_step4->setEnabled(true);
+            break;
+        case 3 :
+            if(!doStep4()){
+                return ;
+            }
+            close();
+            return;    
+        default:
+            break;
     }
+    ui->stackedWidget->setCurrentIndex(index+1);
+    showStep(index+1);
+}
+
+bool AddDockerServiceDlg::doStep1()
+{
+    if(ui->spinBox_gpucount->value() > 0 && ui->spinBox_memorybyte->value() > 0 && ui->spinBox_cpucount->value() > 0 ){
+        ui->lineEdit__TotalCoin->setText(ui->lineEdit_totalCoin->text());
+        return true;
+    }
+    else
+    {
+        CMessageBox::information(this, tr("错误"), tr("配置不能为空！"));
+        return false;
+    }
+}
+
+bool AddDockerServiceDlg::doStep2()
+{
+    ui->nextButton_3->setEnabled(false);
+    QTimer::singleShot(1000,this,SLOT(slot_timeOut()));
+    return true;
+}
+
+bool AddDockerServiceDlg::doStep3()
+{
+    return slot_okbutton();
+    // return true;
+}
+
+bool AddDockerServiceDlg::doStep4()
+{
+    // slot_okbutton();
+    // return true;
+    accept();
 }
 
 void AddDockerServiceDlg::slot_openPubKeyFile()
@@ -155,7 +255,6 @@ bool AddDockerServiceDlg::createDockerService()
         LogPrintf("get invalid IP!\n");
         return false;
     }
-    // throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
     if(!dockercluster.ProcessDockernodeConnections()){
         LogPrintf("Connect to Masternode failed!\n");
          return false;
@@ -188,9 +287,69 @@ bool AddDockerServiceDlg::createDockerService()
 
     if(!dockercluster.CreateAndSendSeriveSpec(createService)){
         LogPrintf("dockercluster.CreateAndSendSeriveSpec error\n");
-        CMessageBox::information(this, tr("Docker option"), tr("Create and send SeriveSpec failed!"));
+        // CMessageBox::information(this, tr("Docker option"), tr("Create and send SeriveSpec failed!"));
         return false;
     }
-    CMessageBox::information(this, tr("Docker option"), tr("Create and send SeriveSpec success!"));
     return true;
+}
+
+void AddDockerServiceDlg::slot_imageCurrentChanged(int index)
+{
+    LogPrintf("slot_imageCurrentChanged index:%d\n",index);
+    if(index == 0){
+        ui->spinBox_gpucount->setValue(0);
+        ui->spinBox_memorybyte->setValue(0);
+        ui->spinBox_cpucount->setValue(0);
+        ui->lineEdit_totalCoin->setText("0");
+    }
+    else if(index == 1){
+        ui->spinBox_gpucount->setValue(2);
+        ui->spinBox_memorybyte->setValue(2);
+        ui->spinBox_cpucount->setValue(1);
+        ui->lineEdit_totalCoin->setText("10");
+    }
+    else{
+        ui->spinBox_gpucount->setValue(8);
+        ui->spinBox_memorybyte->setValue(8);
+        ui->spinBox_cpucount->setValue(4);
+        ui->lineEdit_totalCoin->setText("20");
+    }
+}
+
+void AddDockerServiceDlg::showStep(int index)
+{
+
+}
+
+void AddDockerServiceDlg::slot_timeOut()
+{
+    static int index = 20;
+    int total = ui->lineEdit__TotalCoin->text().toInt();
+    if(total != 10){
+        if(index > 0 ){
+            ui->label_timeout->setText(QString::number(--index));
+            QTimer::singleShot(1000,this,SLOT(slot_timeOut()));
+            return ;
+        }
+        else{
+            index = 20;
+            disconnect(ui->nextButton_3,SIGNAL(clicked()),this,SLOT(slot_nextStep()));
+            connect(ui->nextButton_3,SIGNAL(clicked()),this,SLOT(doStep2()));
+            CMessageBox::information(this, tr("错误"), tr("服务创建请求超时，请等待1分钟后重新操作!"));
+            ui->nextButton_3->setEnabled(true);
+            ui->nextButton_3->setText("重新创建");
+            index = 20;
+        }
+    }
+    else{
+        if(index > 10 ){
+            ui->label_timeout->setText(QString::number(--index));
+            QTimer::singleShot(1000,this,SLOT(slot_timeOut()));
+            return ;
+        }
+        else{
+            index = 20;
+            slot_nextStep();
+        }
+    }
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>836</width>
+    <width>850</width>
     <height>503</height>
    </rect>
   </property>
@@ -92,6 +92,9 @@ QTabWidget::pane{
      </item>
      <item>
       <widget class="QTabWidget" name="tabWidget">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
@@ -99,7 +102,7 @@ QTabWidget::pane{
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
@@ -335,6 +338,11 @@ QTabWidget::pane{
              <property name="toolTip">
               <string>Filter masternode list</string>
              </property>
+             <property name="styleSheet">
+              <string notr="true">border: 1px solid #757575;                                                        
+background-color: rgba(255, 255, 255,0);
+</string>
+             </property>
             </widget>
            </item>
            <item>
@@ -411,40 +419,6 @@ QTabWidget::pane{
             </widget>
            </item>
            <item>
-            <layout class="QGridLayout" name="gridLayout_3">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QPushButton" name="createServiceBtn">
-               <property name="text">
-                <string>Create Service</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QPushButton" name="updateServiceBtn">
-               <property name="text">
-                <string>Update List</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QPushButton" name="deleteServiceBtn">
-               <property name="text">
-                <string>Delete Service</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
             <widget class="QFrame" name="frame_4">
              <property name="minimumSize">
               <size>
@@ -477,6 +451,40 @@ QTabWidget::pane{
               <property name="bottomMargin">
                <number>2</number>
               </property>
+              <item>
+               <layout class="QGridLayout" name="gridLayout_3">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="createServiceBtn">
+                  <property name="text">
+                   <string>Create Service</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="updateServiceBtn">
+                  <property name="text">
+                   <string>Update List</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="deleteServiceBtn">
+                  <property name="text">
+                   <string>Delete Service</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
               <item>
                <widget class="QLabel" name="label_serviceText">
                 <property name="text">
@@ -1019,6 +1027,76 @@ color:red;</string>
           </layout>
          </item>
         </layout>
+       </widget>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Order Manager</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QFrame" name="frame_5">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTableWidget" name="OrdertableWidget">
+           <column>
+            <property name="text">
+             <string>Container Name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Create Time</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Expiration Time</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Pay State</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Service State</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Operation</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_2">
+        <attribute name="title">
+         <string/>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string/>
+        </attribute>
        </widget>
       </widget>
      </item>

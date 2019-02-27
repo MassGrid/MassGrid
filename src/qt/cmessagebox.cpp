@@ -17,7 +17,7 @@ CMessageBox::CMessageBox(QWidget *parent,QString title,QString text) :
     ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     ui->label_titleName->setText(title);
     ui->helpMessageLabel->setText(text);
-
+    ui->helpMessageLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     if(parent!=0){
         QPoint pos = MassGridGUI::winPos();

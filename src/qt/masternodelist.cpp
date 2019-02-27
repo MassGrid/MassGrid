@@ -78,11 +78,15 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->tableWidgetMyMasternodes->setColumnWidth(4, columnActiveWidth);
     ui->tableWidgetMyMasternodes->setColumnWidth(5, columnLastSeenWidth);
 
-    ui->tableWidgetMasternodes->setColumnWidth(0, columnAddressWidth);
-    ui->tableWidgetMasternodes->setColumnWidth(1, columnProtocolWidth);
-    ui->tableWidgetMasternodes->setColumnWidth(2, columnStatusWidth);
-    ui->tableWidgetMasternodes->setColumnWidth(3, columnActiveWidth);
-    ui->tableWidgetMasternodes->setColumnWidth(4, columnLastSeenWidth);
+    // ui->tableWidgetMasternodes->setColumnWidth(0, columnAddressWidth);
+    // ui->tableWidgetMasternodes->setColumnWidth(1, columnProtocolWidth);
+    // ui->tableWidgetMasternodes->setColumnWidth(2, columnStatusWidth);
+    // ui->tableWidgetMasternodes->setColumnWidth(3, columnActiveWidth);
+    // ui->tableWidgetMasternodes->setColumnWidth(4, columnLastSeenWidth);
+
+    ui->tableWidgetMasternodes->hideColumn(5);
+    ui->tableWidgetMasternodes->hideColumn(7);
+    ui->tableWidgetMasternodes->verticalHeader()->setVisible(false); 
 
     ui->serviceTableWidget->setColumnWidth(0, 150);
     ui->serviceTableWidget->setColumnWidth(1, 100);
@@ -122,11 +126,48 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     switchButton->SetSize(120,32);
     connect(switchButton,SIGNAL(clicked(bool)),this,SLOT(slot_changeN2Nstatus(bool)));
     clearDockerDetail();
+    resetTableWidgetTitle();
+
+    QTimer::singleShot(3000,this,SLOT(update()));
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 MasternodeList::~MasternodeList()
 {
     delete ui;
+}
+
+void MasternodeList::resizeEvent(QResizeEvent *event)
+{
+    // ui->peerWidget->setColumnWidth(PeerTableModel::NetNodeId, 0);
+    // ui->peerWidget->setColumnWidth(PeerTableModel::Address, 170);
+    // ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, 170);
+    // ui->peerWidget->setColumnWidth(PeerTableModel::Ping, 80); 
+    resetTableWidgetTitle();
+    QWidget::resizeEvent(event);
+}
+
+void MasternodeList::resetTableWidgetTitle()
+{
+    int itemwidth = ui->OrdertableWidget->width()/6;
+    ui->OrdertableWidget->setColumnWidth(0,itemwidth);
+    ui->OrdertableWidget->setColumnWidth(1,itemwidth);
+    ui->OrdertableWidget->setColumnWidth(2,itemwidth);
+    ui->OrdertableWidget->setColumnWidth(3,itemwidth);
+    ui->OrdertableWidget->setColumnWidth(4,itemwidth);
+    ui->OrdertableWidget->setColumnWidth(5,itemwidth);
+
+    int itemwidth2 = ui->tableWidgetMasternodes->width()/6;
+    ui->tableWidgetMasternodes->setColumnWidth(0, itemwidth2);
+    ui->tableWidgetMasternodes->setColumnWidth(1, itemwidth2);
+    ui->tableWidgetMasternodes->setColumnWidth(2, itemwidth2);
+    ui->tableWidgetMasternodes->setColumnWidth(3, itemwidth2);
+    ui->tableWidgetMasternodes->setColumnWidth(4, itemwidth2);
+    ui->tableWidgetMasternodes->setColumnWidth(5, itemwidth2);
+    ui->tableWidgetMasternodes->setColumnWidth(6, itemwidth2);
+    ui->tableWidgetMasternodes->setColumnWidth(7, itemwidth2);
+    ui->tableWidgetMasternodes->hideColumn(5);
+    ui->tableWidgetMasternodes->hideColumn(7);
 }
 
 void MasternodeList::setClientModel(ClientModel *model)
@@ -376,7 +417,9 @@ void MasternodeList::updateNodeList()
         ui->tableWidgetMasternodes->setItem(0, 4, lastSeenItem);
         ui->tableWidgetMasternodes->setItem(0, 5, pubkeyItem);
         ui->tableWidgetMasternodes->setItem(0, 6, nodeCount);
-        ui->tableWidgetMasternodes->setItem(0, 7, joinToken);                
+        ui->tableWidgetMasternodes->setItem(0, 7, joinToken); 
+        for(int i=0;i<8;i++)
+            ui->tableWidgetMasternodes->item(0,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
     }
 
     ui->countLabel->setText(QString::number(ui->tableWidgetMasternodes->rowCount()));
@@ -499,6 +542,7 @@ void MasternodeList::on_UpdateButton_clicked()
 void MasternodeList::slot_curTabPageChanged(int curPage)
 {
     startTimer(false);
+    resetTableWidgetTitle();
     if(curPage <=1){
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
         connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
@@ -512,6 +556,7 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
         setCurUpdateMode(DockerUpdateMode::WhenNormal);
     }
+
     startTimer(true);
 }
 
@@ -557,7 +602,7 @@ int MasternodeList::loadServerList()
 {
     ui->serviceTableWidget->setRowCount(0);
 
-    std::map<std::string,Service> serverlist = dockercluster.mapDockerServiceLists;
+    std::map<std::string,Service>   = dockercluster.mapDockerServiceLists;
     std::map<std::string,Service>::iterator iter = serverlist.begin();
 
     int count = 0;

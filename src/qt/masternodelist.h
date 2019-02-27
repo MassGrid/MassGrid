@@ -101,6 +101,12 @@ private:
     void askDNData();
     void updateEdgeStatus(int count =0);
     bool getVirtualIP(const QString& n2n_localip,QString& virtualIP);
+    void initOrderTablewidget();
+    void resetTableWidgetTitle();
+
+protected:
+    void resizeEvent(QResizeEvent *event);
+
 
 private Q_SLOTS:
     void showContextMenu(const QPoint &);
