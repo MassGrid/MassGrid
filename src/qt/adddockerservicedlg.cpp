@@ -261,7 +261,7 @@ bool AddDockerServiceDlg::createDockerService()
     }
 
     createService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-    createService.vin = CTxIn();
+    createService.txid = uint256();
     
     std::string strServiceName = ui->lineEdit_name->text().toStdString().c_str();
     createService.serviceName = strServiceName;
@@ -271,16 +271,16 @@ bool AddDockerServiceDlg::createDockerService()
     createService.image = strServiceImage;
 
     int64_t strServiceCpu = ui->spinBox_cpucount->value()*DOCKER_CPU_UNIT;
-    createService.cpu = strServiceCpu;
-    LogPrintf("cpu %lld \n",createService.cpu);
+    createService.item.cpu.Count = strServiceCpu;
+    LogPrintf("cpu %lld \n",createService.item.cpu.Count);
     int64_t strServiceMemoey_byte = ui->spinBox_memorybyte->value()*DOCKER_MEMORY_UNIT;
-    createService.memory_byte = strServiceMemoey_byte;
+    createService.item.mem.Count = strServiceMemoey_byte;
     
     std::string strServiceGpuName = ui->comboBox_gpuname->currentText().toStdString().c_str();
-    createService.gpuname = strServiceGpuName;
+    createService.item.gpu.Name = strServiceGpuName;
 
     int64_t strServiceGpu = ui->spinBox_gpucount->value();
-    createService.gpu = strServiceGpu;
+    createService.item.gpu.Count = strServiceGpu;
 
     std::string strn2n_Community = ui->lineEdit_n2n_name->text().toStdString().c_str();
     createService.n2n_community = strn2n_Community;

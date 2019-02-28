@@ -91,8 +91,7 @@ enum WalletFeature
 enum AvailableCoinsType
 {
     ALL_COINS,
-    ONLY_NONDENOMINATED,
-    ONLY_1000 // find masternode outputs including locked ones (use with caution)
+    ONLY_50000 // find masternode outputs including locked ones (use with caution)
 
 };
 
@@ -417,7 +416,16 @@ public:
         fDebitCached = false;
         fChangeCached = false;
     }
-
+    #define ATTRIBUTE_MEMBER_FUNC(arg) \
+        public: \
+        void Set##arg(const std::string v) { \
+        mapValue[#arg] = v; \
+        } \
+        std::string Get##arg() { \
+        if(!mapValue.count(#arg)) \
+            return std::string(); \
+        return mapValue[#arg]; \
+        }
     void BindWallet(CWallet *pwalletIn)
     {
         pwallet = pwalletIn;
@@ -454,6 +462,27 @@ public:
     bool IsTrusted() const;
 
     bool WriteToDisk(CWalletDB *pwalletdb);
+    bool HasCreatedService();
+    bool HasTlemented();
+
+    bool GetOutPoint(CScript& script,COutPoint& out) const;
+
+    ATTRIBUTE_MEMBER_FUNC(serviceid);
+    ATTRIBUTE_MEMBER_FUNC(verison);
+    ATTRIBUTE_MEMBER_FUNC(createtime);
+    ATTRIBUTE_MEMBER_FUNC(deletetime);
+    ATTRIBUTE_MEMBER_FUNC(price);
+    ATTRIBUTE_MEMBER_FUNC(cpuname);
+    ATTRIBUTE_MEMBER_FUNC(cpucount);
+    ATTRIBUTE_MEMBER_FUNC(memname);
+    ATTRIBUTE_MEMBER_FUNC(memcount);
+    ATTRIBUTE_MEMBER_FUNC(gpuname);
+    ATTRIBUTE_MEMBER_FUNC(gpucount);
+    ATTRIBUTE_MEMBER_FUNC(masternodeaddress);
+    ATTRIBUTE_MEMBER_FUNC(custeraddress);
+    ATTRIBUTE_MEMBER_FUNC(provideraddress);
+    ATTRIBUTE_MEMBER_FUNC(tlementtxid);
+
 
     int64_t GetTxTime() const;
     int GetRequestCount() const;

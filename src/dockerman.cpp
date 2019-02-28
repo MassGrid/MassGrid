@@ -1,21 +1,42 @@
 // Copyright (c) 2014-2017 The MassGrid developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+#include <set>
+#include <algorithm>
+#include <queue>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include "dockerman.h"
 #include "http.h"
 #include "init.h"
 #include "utiltime.h"
-#include <set>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-#include <algorithm>
-#include <queue>
-static CCriticalSection cs_serInfoQueue;
+#include "timermodule.h"
 CDockerMan dockerman;
-std::map<std::string,Node> mapNodeLists;    //temp
-std::map<std::string,Service> mapServiceLists;
-std::map<std::string,Task> mapTaskLists;
-std::priority_queue<ServiceListInfo, std::vector<ServiceListInfo> > serviceInfoQue;
+map<Item,std::pair<CAmount,int>> CDockerMan::GetPriceListFromNodelist(){
+    std::map<std::string, Node> nodelist; 
+    {
+        LOCK(cs);
+        nodelist = mapDockerNodeLists;
+    }
+
+    map<Item,std::pair<CAmount,int>> list;
+    for(auto it=nodelist.begin();it!=nodelist.end();++it){
+        if(it->second.isuseable == false)
+            continue;
+        Item item(it->second.engineInfo.cpu.Name,it->second.engineInfo.cpu.Count,it->second.engineInfo.mem.Name,it->second.engineInfo.mem.Count,it->second.engineInfo.gpu.Name,it->second.engineInfo.gpu.Count);
+        if(list.count(item)){
+            list[item].second++;
+        }else
+        {
+            CAmount price = dockerPriceConfig.getPrice(item.cpu.Type,item.cpu.Name) * item.cpu.Count +
+                dockerPriceConfig.getPrice(item.mem.Type,item.mem.Name) * item.mem.Count +
+                dockerPriceConfig.getPrice(item.gpu.Type,item.gpu.Name) * item.gpu.Count;
+            list[item] = std::make_pair(price,1);
+        }
+        LogPrint("docker","item :%s price %d sum %d\n",item.ToString(),list[item].first,list[item].second);
+    }
+    return list;
+}
 std::string IpSet::GetFreeIP(){
     for(int i = 1;i < MAX_SIZE;++i)
         for(int j = 5;j < MAX_SIZE;j+=5){
@@ -63,6 +84,8 @@ bool IpSet::IsVaild(std::string s){
         return false;
     }
 }
+
+
 bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool isClearService){
     LogPrint("docker","CDockerMan::PushMessage Started Method: %s\n",strMethod[mtd]);
     std::string url;
@@ -192,35 +215,41 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
     {
         case Method::METHOD_NODES_LISTS:
         {
-            mapNodeLists.clear();
-            Node::DockerNodeList(responsedata,mapNodeLists);
-            this->mapDockerNodeLists=mapNodeLists;
+            if(isClearService)
+                mapDockerNodeLists.clear();
+            Node::NodeListUpdateAll(responsedata,mapDockerNodeLists);
+            GetVersionAndJoinToken();
             break;
         }
         case Method::METHOD_NODES_INSPECT:  // not use
         {
-            Node::DockerNodeList(responsedata,mapDockerNodeLists);
+            Node::NodeListUpdate(responsedata,mapDockerNodeLists);
             break;
         }
         case Method::METHOD_NODES_DELETE:   // not implemented yet
         {
             id=url.substr(url.find_last_of("/")+1);
-            mapDockerNodeLists.erase(mapDockerNodeLists.find(id));
+            mapDockerNodeLists.erase(id);
             break;
         }
         case Method::METHOD_NODES_UPDATE:   // not implemented yet
             break;
         case Method::METHOD_SERVICES_LISTS:
         {
-            if(isClearService)
-                mapServiceLists.clear();
-            Service::DockerServiceList(responsedata,mapServiceLists);
+            //update servicelist
 
             if(isClearService)
-                InitSerListQueue(mapServiceLists);
+                mapDockerServiceLists.clear();
+            Service::ServiceListUpdateAll(responsedata,mapDockerServiceLists);
+
+            if(isClearService){
+                //update service ipset
+                UpdateIPfromServicelist(mapDockerServiceLists);
+                //Update service Timer
+                timerModule.UpdateQueAll(mapDockerServiceLists);
+            }
 
             dockertaskfilter taskfilter;
-            // taskfilter.DesiredState_running=true;
             
             bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
 
@@ -243,17 +272,16 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         }
         case Method::METHOD_SERVICES_INSPECT:
         {
-            Service::DockerServiceInspect(responsedata,mapServiceLists);
             if(jsondata.exists("ID")){
+                Service::ServiceListUpdate(responsedata,mapDockerServiceLists);
                 dockertaskfilter taskfilter;
                 taskfilter.serviceid.push_back(jsondata["ID"].get_str());
                 // taskfilter.DesiredState_running=true;
-                bool ret = PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
+                PushMessage(Method::METHOD_TASKS_LISTS,"",taskfilter.ToJsonString());
 
-                UpdateSerListQueue(mapServiceLists,jsondata["ID"].get_str());
+                timerModule.UpdateQue(mapDockerServiceLists,jsondata["ID"].get_str());
 
-                if(!ret)
-                    return false;
+                return true;
             }
             else{
                 LogPrint("docker","CDockerMan::ProcessMessage Not exist this ServiceId\n");
@@ -264,10 +292,11 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         case Method::METHOD_SERVICES_DELETE:
         {
             id=url.substr(url.find_last_of("/")+1);
-            auto it = mapServiceLists.begin();
-            if((it = mapServiceLists.find(id)) != mapServiceLists.end()){
-                auto env =it->second.spec.taskTemplate.containerSpec.env;
-                mapServiceLists.erase(it);
+            auto it = mapDockerServiceLists.begin();
+            if((it = mapDockerServiceLists.find(id)) != mapDockerServiceLists.end()){
+
+                //  delete ip form set
+                auto env =it->second.spec.taskTemplate.containerSpec.env;   
                 for(auto itenv = env.begin();itenv!=env.end();++itenv){
                     if(itenv->find("N2N_SERVERIP=")!=-1){
                         string str=itenv->substr(13);
@@ -275,7 +304,16 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         break;
                     }
                 }
-                this->mapDockerServiceLists=mapServiceLists; 
+                // set node usage
+                if(it->second.mapDockerTaskLists.size()){
+                    string nodeid = it->second.mapDockerTaskLists.begin()->second.nodeID;
+                    if(!nodeid.empty()){
+                        auto it2 = mapDockerNodeLists.find(nodeid);
+                        it2->second.isuseable=true;
+                    }
+                }
+                //  delete service form map
+                mapDockerServiceLists.erase(it);
                 LogPrint("docker","CDockerMan::ProcessMessage erase ServiceId %s\n",id);
             }
             else{
@@ -305,33 +343,48 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         }
         case Method::METHOD_TASKS_LISTS:
         {
-            mapTaskLists.clear();
-            Task::DockerTaskList(responsedata,mapTaskLists);
-            set<std::string> countServiceID;
-            for(auto it = mapTaskLists.begin();it != mapTaskLists.end();++it){
-                if(mapServiceLists.find(it->second.serviceID)!= mapServiceLists.end()){
-                    if(countServiceID.find(it->second.serviceID) == countServiceID.end()){    //clear tasklist
-                        mapServiceLists[it->second.serviceID].mapDockerTasklists.clear();
-                        countServiceID.insert(it->second.serviceID);
-                    }
-                    if(GetAdjustedTime() >= (mapServiceLists.find(it->second.serviceID)->second.createdAt + 180) && it->second.status.state != Config::TaskState::TASKSTATE_RUNNING){
-                        LogPrint("docker","CDockerMan::ProcessMessage task id: %s, time: %lu, error: %s, message: %s\n ",it->second.serviceID,it->second.createdAt,it->second.status.err,it->second.status.message);
-                        bool ret = dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,it->second.serviceID,"");
-                        if(ret)
-                            LogPrint("docker","CDockerMan::ProcessMessage delete serviceid %s\n",it->second.serviceID);
-                        
-                    }else{
-                        mapServiceLists[it->second.serviceID].mapDockerTasklists[it->first]=it->second;
-                        LogPrint("docker","CDockerMan::ProcessMessage update successful ServiceId %s TaskId %s\n",it->second.serviceID,it->first);
+            string serivceid;
+            Service::UpdateTaskList(responsedata,mapDockerServiceLists,serivceid); //updatealldate serviceid is null
+            
+            if(!serivceid.empty() && mapDockerServiceLists.find(serivceid)->second.deleteTime <= GetAdjustedTime()) //when the task is always in pedding
+                timerModule.SetTlement(serivceid); 
+            
+            //set node usage
+            if(serivceid.empty()){
+                for(auto it = mapDockerServiceLists.begin();it!=mapDockerServiceLists.end();++it){
+                    if(it->second.mapDockerTaskLists.size()){
+                        string nodeid =it->second.mapDockerTaskLists.begin()->second.nodeID;
+                        if(!nodeid.empty()&&it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING&&
+                        it->second.mapDockerTaskLists.begin()->second.status.state < Config::TaskState::TASKSTATE_SHUTDOWN){
+                            mapDockerNodeLists[nodeid].isuseable=false;
+                        }else
+                        {
+                            mapDockerNodeLists[nodeid].isuseable=true;
+                        }
                     }
                 }
             }
-            this->mapDockerServiceLists=mapServiceLists;
+            else
+            {
+                auto it = mapDockerServiceLists.find(serivceid);
+                if(it == mapDockerServiceLists.end())
+                    break;
+                if(it->second.mapDockerTaskLists.size()){
+                    string nodeid =it->second.mapDockerTaskLists.begin()->second.nodeID;
+                    if(!nodeid.empty()&&it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING&&
+                            it->second.mapDockerTaskLists.begin()->second.status.state < Config::TaskState::TASKSTATE_SHUTDOWN){
+                        mapDockerNodeLists[nodeid].isuseable=false;
+                    }else
+                    {
+                        mapDockerNodeLists[nodeid].isuseable=true;
+                    }
+                }
+            }
+            
             break;
         }
         case Method::METHOD_TASKS_INSPECT:  //not implemented yet
-        {
-            Task::DockerTaskList(responsedata,mapTaskLists);
+        { 
             break;
         }
         case Method::METHOD_SWARM_INSPECT:
@@ -359,9 +412,9 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
     }
     return true; 
 }
-void CDockerMan::UpdateIPfromServicelist(){
+void CDockerMan::UpdateIPfromServicelist(std::map<std::string,Service>& map){
     serviceIp.Clear();
-    for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it){
+    for(auto it = map.begin();it != map.end();++it){
         auto env =it->second.spec.taskTemplate.containerSpec.env;
         for(auto itenv = env.begin();itenv!=env.end();++itenv){
             if(itenv->find("N2N_SERVERIP=")!=-1){
@@ -389,9 +442,6 @@ bool CDockerMan::Update(){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_SWARM_INSPECT failed! \n");
         return false;
     }
-    GetVersionAndJoinToken();
-
-    UpdateIPfromServicelist();
     LogPrint("docker","CDockerMan::Update Succcessful\n");
     return true;
 }
@@ -410,7 +460,6 @@ bool CDockerMan::UpdateSwarmAndNodeList(){
         LogPrint("docker","CDockerMan::UpdateSwarmAndNodeList ERROR Get METHOD_NODES_LISTS failed! \n");
         return false;
     }
-    GetVersionAndJoinToken();
     LogPrint("docker","CDockerMan::UpdateSwarmAndNodeList Succcessful\n");
     return true;
 }
@@ -423,7 +472,6 @@ bool CDockerMan::UpdateServicesList(){
         LogPrint("docker","CDockerMan::UpdateServicesList ERROR Get METHOD_SERVICES_LISTS failed! \n");
         return false;
     }
-    UpdateIPfromServicelist();
     LogPrint("docker","CDockerMan::UpdateServicesList Succcessful\n");
 
     return true;
@@ -432,7 +480,7 @@ bool CDockerMan::UpdateService(std::string serviceid){
     LOCK(cs);
     dockerservicefilter serfilter;
     LogPrint("docker","CDockerMan::UpdateService start\n");
-    if(!PushMessage(Method::METHOD_SERVICES_INSPECT,serviceid,serfilter.ToJsonString())){
+    if(!PushMessage(Method::METHOD_SERVICES_INSPECT,serviceid,serfilter.ToJsonString(),false)){
         LogPrint("docker","CDockerMan::UpdateService ERROR Get METHOD_SERVICES_LISTS failed! \n");
         return false;
     }
@@ -456,7 +504,7 @@ uint64_t CDockerMan::GetDockerServiceCount(){
 uint64_t CDockerMan::GetDockerTaskCount(){
     int size=0;
     for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it ){
-        size += it->second.mapDockerTasklists.size();
+        size += it->second.mapDockerTaskLists.size();
     }
     return size;
 }
@@ -477,64 +525,12 @@ void CDockerMan::GetVersionAndJoinToken(){
                 }
                 --j; 
             }
-
-            JoinToken = swarm.joinWorkerTokens+" "+it->second.managerStatus.addr;   //set JoinToken
-            managerAddr = it->second.managerStatus.addr.substr(0,it->second.managerStatus.addr.find_last_of(":"));
+            swarm.ip_port = it->second.managerStatus.addr;
             return;
         }
     }
 }
+std::string CDockerMan::GetMasterIp(){
+    return swarm.ip_port.substr(0,swarm.ip_port.find_first_of(":"));
 
-void InitSerListQueue(std::map<std::string,Service> &services)
-{
-    LOCK(cs_serInfoQueue);
-    while(!serviceInfoQue.empty()) serviceInfoQue.pop();
-    for(auto &service: services){
-        ServiceListInfo serverinfo(14400);//7200
-        serverinfo.serviceid=service.second.ID;
-        serverinfo.timestamp=service.second.createdAt+serverinfo.timespan;
-        serviceInfoQue.push(serverinfo);
-    }
-}
-void UpdateSerListQueue(std::map<std::string,Service> &services,std::string id)
-{
-    LOCK(cs_serInfoQueue);
-    for(auto &service: services){
-        if(service.second.ID == id){
-            ServiceListInfo serverinfo(14400);//7200
-            serverinfo.serviceid=service.second.ID;
-            serverinfo.timestamp=service.second.createdAt+serverinfo.timespan;
-            serviceInfoQue.push(serverinfo);
-        }
-    }
-}
-void threadServiceControl()
-{
-    RenameThread("massgrid-sctrl");
-    LogPrintf("ThreadServiceControl Start\n");
-
-    while(true)
-    {
-        int64_t now_time=GetAdjustedTime();
-        LogPrint("docker","threadServiceControl:: now time %lu\n",now_time);
-        {
-            LOCK(cs_serInfoQueue);
-            while(!serviceInfoQue.empty()){
-                    ServiceListInfo slist=serviceInfoQue.top();
-                    if(now_time >= slist.timestamp){
-                        dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,slist.serviceid,"");
-                        serviceInfoQue.pop();
-                        LogPrint("docker","threadServiceControl:: delete serverice id= %s  timpstamp= %lu\n",slist.serviceid,slist.timestamp);
-                    }else{
-                        LogPrint("docker","threadServiceControl:: serviceInfoQue size= %d, the earliest serverice time= %lu id= %s\n",serviceInfoQue.size(),slist.timestamp,slist.serviceid);
-                        break;
-                    }
-            }
-        }
-        // Check for stop or if block needs to be rebuilt
-        for(int i=0;i<300;i++){
-            boost::this_thread::interruption_point();
-            MilliSleep(1000);
-        }
-    }
 }

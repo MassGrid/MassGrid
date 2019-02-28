@@ -54,29 +54,34 @@ std::string dockertaskfilter::ToJsonString(){
 
     return data.write();
 }
-void Task::DockerTaskList(const string& taskData, std::map<std::string,Task> &tasks)
+void Task::TaskListUpdateAll(const string& taskData, std::map<std::string,Task> &tasks)
 {
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(taskData)){
-            LogPrint("docker","Task::DockerTaskList docker json error\n");
+            LogPrint("docker","Task::TaskListUpdateAll docker json error\n");
             return;
         }
 
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
+            string id = find_value(data,"ID").get_str();
+            int index = find_value(data,"Index").get_int();
+            auto it = tasks.find(id);
+            if(it!=tasks.end() && it->second.version.index == index)    //if the elem existed and needn't update
+                continue;
             Task task;
-            bool fSuccess = DcokerTaskJson(data,task);
+            bool fSuccess = Task::DecodeFromJson(data,task);
             if(fSuccess)
                 tasks[task.ID]=task;
         }
     }catch(std::exception& e){
-        LogPrint("docker","Task::DockerTaskList JSON read error,%s\n",string(e.what()).c_str());
+        LogPrint("docker","Task::TaskListUpdateAll JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        LogPrint("docker","Task::DockerTaskList unkonw exception\n");
+        LogPrint("docker","Task::TaskListUpdateAll unkonw exception\n");
     }
 }
-bool Task::DcokerTaskJson(const UniValue& data,Task& task)
+bool Task::DecodeFromJson(const UniValue& data,Task& task)
 {
     std::string id;
     Config::Version version;

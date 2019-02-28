@@ -134,7 +134,9 @@ MASSGRID_CORE_H = \
   masternode-sync.h \
   masternodeman.h \
   masternodeconfig.h \
+  dockerpriceconfig.h \
   dockerman.h \
+  timermodule.h \
   dockercluster.h \
   dockerserverman.h \
   dockersupernode.h \
@@ -247,8 +249,10 @@ libmassgrid_server_a_SOURCES = \
   masternode-payments.cpp \
   masternode-sync.cpp \
   masternodeconfig.cpp \
+  dockerpriceconfig.cpp \
   masternodeman.cpp \
   dockerman.cpp \
+  timermodule.cpp \
   dockercluster.cpp \
   dockerserverman.cpp \
   dockersupernode.cpp \

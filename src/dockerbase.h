@@ -20,9 +20,9 @@ using namespace std;
 #define DEFAULT_CSWARM_API_VERSION 10031
 #define DEFAULT_CNODE_API_VERSION 10031
 
-#define DOCKERREQUEST_API_VERSION 10031
-#define DOCKERREQUEST_API_MINSUPPORT_VERSION 10031
-#define DOCKERREQUEST_API_MAXSUPPORT_VERSION 10040
+#define DOCKERREQUEST_API_VERSION 10041
+#define DOCKERREQUEST_API_MINSUPPORT_VERSION 10041
+#define DOCKERREQUEST_API_MAXSUPPORT_VERSION 10050
 
 
 union docker_Version
@@ -293,4 +293,5 @@ public:
 uint64_t getDockerTime(const std::string& timeStr);
 uint64_t TimeestampStr(const char *nTimeStr);
 std::string unixTime2Str(uint64_t unixtime);
+
 #endif //dockerbase

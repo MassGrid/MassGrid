@@ -987,6 +987,10 @@ bool CWallet::AddToWallet(const CWalletTx& wtxIn, bool fFromLoadWallet, CWalletD
                 wtx.fFromMe = wtxIn.fFromMe;
                 fUpdated = true;
             }
+            if(wtxIn.mapValue != wtx.mapValue){
+                wtx.mapValue = wtxIn.mapValue;
+                fUpdated = true;
+            }
         }
 
         //// debug print
@@ -1402,6 +1406,29 @@ bool CWallet::IsFromMe(const CTransaction& tx) const
     return (GetDebit(tx, ISMINE_ALL) > 0);
 }
 
+bool CWalletTx::GetOutPoint(CScript& script,COutPoint& out) const{
+    for(int i=0;i < vout.size();++i){
+        if(vout[i].scriptPubKey == script){
+            out = COutPoint(GetHash(),i);
+            return true;
+        }
+        if(i == vout.size() - 1){
+            return false;
+        }
+    }
+}
+bool CWalletTx::HasCreatedService(){
+    std::string str = Getserviceid();
+    if(str.empty())
+        return false;
+    return true;
+}
+bool CWalletTx::HasTlemented(){
+    std::string str = Gettlementtxid();
+    if(str.empty())
+        return false;
+    return true;
+}
 CAmount CWallet::GetDebit(const CTransaction& tx, const isminefilter& filter) const
 {
     CAmount nDebit = 0;
@@ -2214,7 +2241,7 @@ void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const
 
             for (unsigned int i = 0; i < pcoin->vout.size(); i++) {
                 bool found = false;
-                if(nCoinType == ONLY_1000) {
+                if(nCoinType == ONLY_50000) {
                     found = pcoin->vout[i].nValue == 50000*COIN;
                 } else {
                     found = true;
@@ -2223,7 +2250,7 @@ void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const
 
                 isminetype mine = IsMine(pcoin->vout[i]);
                 if (!(IsSpent(wtxid, i)) && mine != ISMINE_NO &&
-                    (!IsLockedCoin((*it).first, i) || nCoinType == ONLY_1000) &&
+                    (!IsLockedCoin((*it).first, i) || nCoinType == ONLY_50000) &&
                     (pcoin->vout[i].nValue > 0 || fIncludeZeroValue) &&
                     (!coinControl || !coinControl->HasSelected() || coinControl->fAllowOtherInputs || coinControl->IsSelected(COutPoint((*it).first, i))))
                         vCoins.push_back(COutput(pcoin, i, nDepth,
@@ -2649,7 +2676,7 @@ bool CWallet::GetMasternodeOutpointAndKeys(COutPoint& outpointRet, CPubKey& pubK
 
     // Find possible candidates
     std::vector<COutput> vPossibleCoins;
-    AvailableCoins(vPossibleCoins, true, NULL, false, ONLY_1000);
+    AvailableCoins(vPossibleCoins, true, NULL, false, ONLY_50000);
     if(vPossibleCoins.empty()) {
         LogPrintf("CWallet::GetMasternodeOutpointAndKeys -- Could not locate any valid masternode vin\n");
         return false;
@@ -2894,9 +2921,7 @@ bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wt
 
                 if (!SelectCoins(nValueToSelect, setCoins, nValueIn, coinControl, nCoinType, fUseInstantSend))
                 {
-                    if (nCoinType == ONLY_NONDENOMINATED) {
-                        strFailReason = _("Unable to locate enough PrivateSend non-denominated funds for this transaction.");
-                    } else if (nValueIn < nValueToSelect) {
+                    if (nValueIn < nValueToSelect) {
                         strFailReason = _("Insufficient funds.");
                         if (fUseInstantSend) {
                             // could be not true but most likely that's the reason

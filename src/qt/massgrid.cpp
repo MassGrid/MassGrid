@@ -27,6 +27,7 @@
 #include "walletmodel.h"
 #endif
 #include "masternodeconfig.h"
+#include "dockerpriceconfig.h"
 
 #include "init.h"
 #include "rpc/server.h"
@@ -699,6 +700,12 @@ int main(int argc, char *argv[])
     if(!masternodeConfig.read(strErr)) {
         CMessageBox::critical(0, QObject::tr("MassGrid"),
                               QObject::tr("Error reading masternode configuration file: %1").arg(strErr.c_str()));
+        return EXIT_FAILURE;
+    }
+    // parse dockerprice.conf
+    if(!dockerPriceConfig.read(strErr)) {
+        CMessageBox::critical(0, QObject::tr("MassGrid"),
+                              QObject::tr("Error reading dockerprice configuration file: %1").arg(strErr.c_str()));
         return EXIT_FAILURE;
     }
 

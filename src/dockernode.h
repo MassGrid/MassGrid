@@ -1,5 +1,8 @@
 #ifndef DOCKERNODE_H
 #define DOCKERNODE_H
+#include <sstream>  
+#include <ostream>  
+#include <iostream>  
 #include "dockerbase.h"
 namespace Config{
     enum Role{
@@ -56,8 +59,107 @@ namespace Config{
         ADD_SERIALIZE_PROPERTIES(Leader,reachability,addr);
     }; 
 };
+class info{
+public:
+    string Type;
+    string Name;
+    int Count;
+    bool operator < (const info &a) const{
+        if(Type != a.Type)
+            return Type < a.Type;
+        if(Name != a.Name)
+            return Name < a.Name;
+        if(Count != a.Count)
+            return Count < a.Count;
+    }
+    bool operator != (const info &a) const{
+        if(Type != a.Type)
+            return true;
+        if(Name != a.Name)
+            return Name < a.Name;
+        if(Count != a.Count)
+            return true;
+        return false;
+    }
+
+    bool operator == (const info &a) const{
+        if(*this != a)
+            return false;
+        return true;
+    }
+    ADD_SERIALIZE_METHODS;
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(Type);
+        READWRITE(Name);
+        READWRITE(Count);
+    }
+    std::string ToString(){
+        std::ostringstream out;
+        out << "Type :" <<Type << "Name :" <<Name <<"Count: "<<Count<<endl;
+        return out.str();
+    }
+};
+class Item{
+public:
+    info cpu;
+    info mem;
+    info gpu;
+public:
+    Item(){
+        cpu.Type = "cpu";
+        cpu.Name = "intel_i3";
+        cpu.Count = 1;
+        mem.Type = "mem";
+        mem.Name = "ddr";
+        mem.Count = 1;
+        gpu.Type = "gpu";
+        gpu.Name = "nvidia_p106_400_3g";
+        gpu.Count = 1;
+
+    }
+    Item(string cpuname,int cpucount,string memname,int memcount,string gpuname,int gpucount){
+        cpu.Type = "cpu";
+        cpu.Name = cpuname;
+        cpu.Count = cpucount;
+        mem.Type = "mem";
+        mem.Name = memname;
+        mem.Count = memcount;
+        gpu.Type = "gpu";
+        gpu.Name = gpuname;
+        gpu.Count = gpucount;
+    }
+    void Set(string cpuname,int cpucount,string memname,int memcount,string gpuname,int gpucount){
+        cpu.Name = cpuname;
+        cpu.Count = cpucount;
+        mem.Name = memname;
+        mem.Count = memcount;
+        gpu.Name = gpuname;
+        gpu.Count = gpucount;
+    }
+    std::string ToString(){
+        return cpu.ToString()+mem.ToString()+gpu.ToString();
+    }
+    bool operator < (const Item &a) const {
+        if(cpu != a.cpu)
+            return cpu < a.cpu;
+        
+        if(mem != a.mem)
+            return mem < a.mem;
+
+        if(gpu != a.gpu)
+            return gpu < a.gpu;
+    }
+    ADD_SERIALIZE_METHODS;
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(cpu);
+        READWRITE(mem);
+        READWRITE(gpu);
+    }
+};
 class Node:public DockerBase{
-    static bool DockerNodeJson(const UniValue& data, Node& node);
+    static bool DecodeFromJson(const UniValue& data, Node& node);
     static void ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec);
     static void ParseNodeLabels(const UniValue& data,std::map<std::string,std::string> &labels);
     static void ParseNodeDescription(const UniValue& data,Config::NodeDescription &decp);
@@ -78,17 +180,20 @@ class Node:public DockerBase{
     static int GetNodeManageStatusType(std::string strType);
 public:
 
-    static void DockerNodeList(const string& nodeData,std::map<std::string,Node> &nodes);
+    static void NodeListUpdateAll(const string& nodeData,std::map<std::string,Node> &nodes);
+    static void NodeListUpdate(const string& nodeData,std::map<std::string,Node> &nodes);
 
     Config::NodeSpec spec{};
     Config::NodeDescription description{};
     Config::NodeStatus status{};
-    Config::ManagerStatus managerStatus{}; 
-
-// function]
+    Config::ManagerStatus managerStatus{};
+    std::string MGDAddress{}; 
+    Item engineInfo{};
+    bool isuseable = true;
+    
 public:
 
-    Node() =default;
+    Node() = default;
     Node(std::string id,Config::Version version ,uint64_t createdTime ,uint64_t updateTime,
     Config::NodeSpec spec,
     Config::NodeDescription description,
@@ -108,6 +213,9 @@ public:
         description=from.description;
         status=from.status;
         managerStatus=from.managerStatus;
+        MGDAddress=from.MGDAddress;
+        engineInfo=from.engineInfo;
+        isuseable=from.isuseable;
     }
 
     Node& operator=(Node const& from){
@@ -120,6 +228,9 @@ public:
         description=from.description;
         status=from.status;
         managerStatus=from.managerStatus;
+        MGDAddress=from.MGDAddress;
+        engineInfo=from.engineInfo;
+        isuseable=from.isuseable;
         return *this;
     }
 
@@ -135,7 +246,10 @@ public:
         READWRITE(spec);
         READWRITE(description);
         READWRITE(status);
-        READWRITE(managerStatus); 
+        READWRITE(managerStatus);
+        READWRITE(MGDAddress);
+        READWRITE(engineInfo); 
+        READWRITE(isuseable); 
     }
 
     int getNodeState(){return status.state;}

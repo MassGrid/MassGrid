@@ -35,7 +35,6 @@ namespace Config{
     };
 };
 class Task :public DockerBase{
-    static bool DcokerTaskJson(const UniValue& data,Task& task);
     static void ParseTaskLabels(const UniValue& data,Config::Labels &labels);
     static void ParseTaskTemplateSpec(const UniValue& data,Config::TaskSpec &taskTemplate);
     static void ParseResource(const UniValue& data,Config::Resource &resource);
@@ -59,7 +58,8 @@ class Task :public DockerBase{
     static int GetTaskStatus(std::string strType);
 public:
 
-    static void DockerTaskList(const string& taskData, std::map<std::string,Task> &tasks);
+    static bool DecodeFromJson(const UniValue& data,Task& task);
+    static void TaskListUpdateAll(const string& taskData, std::map<std::string,Task> &tasks);
 
     std::string name{};  
     Config::Labels labels{}; 

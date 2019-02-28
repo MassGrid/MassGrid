@@ -1,5 +1,7 @@
+#include "boost/lexical_cast.hpp"
 #include "dockernode.h"
 #include "univalue.h"
+#include "dockerpriceconfig.h"
 namespace Config{
     const char* strRole[]={"worker","manager"};
     const char* strNodeStatusState[]={"unknown","down","ready","disconnected"};
@@ -50,64 +52,107 @@ std::string dockernodefilter::ToJsonString(){
     }
     return data.write();
 }
-void Node::DockerNodeList(const string& nodeData,std::map<std::string,Node> &nodes)
+void Node::NodeListUpdateAll(const string& nodeData,std::map<std::string,Node> &nodes)
 {
-    // LogPrint("docker","Node::DockerNodeList docker json node\n");
+    LogPrint("docker","Node::NodeListUpdateAll docker json node\n");
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(nodeData)){
-            LogPrint("docker","Node::DockerNodeList docker json error\n");
+            LogPrint("docker","Node::NodeListUpdateAll docker json error\n");
             return;
         }
 
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
+            string id = find_value(data,"ID").get_str();
+            int index = find_value(data,"Index").get_int();
+            auto it = nodes.find(id);
+            if(it!=nodes.end() && it->second.version.index == index)    //if the elem existed and needn't update
+                continue;
             Node node;
-            bool fSuccess = DockerNodeJson(data,node);
+            bool fSuccess = DecodeFromJson(data,node);
             if(fSuccess)
                 nodes[node.ID]=node;
         }
     }catch(std::exception& e){
-        LogPrint("docker","Node::DockerNodeList JSON read error,%s\n",string(e.what()).c_str());
+        LogPrint("docker","Node::NodeListUpdateAll JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        LogPrint("docker","Node::DockerNodeList unkonw exception\n");
+        LogPrint("docker","Node::NodeListUpdateAll unkonw exception\n");
     }
 }
-bool Node::DockerNodeJson(const UniValue& data, Node& node)
+void Node::NodeListUpdate(const string& nodeData,std::map<std::string,Node> &nodes)
 {
-    std::string id;
-    Config::Version version;
-    uint64_t createdTime;
-    uint64_t updateTime;
-    Config::NodeSpec spec;
-    Config::NodeDescription description;
-    Config::NodeStatus status;
-    Config::ManagerStatus managerStatus;
-    int protocolVersion=DEFAULT_CNODE_API_VERSION;
+    LogPrint("docker","Node::NodeListUpdate docker json node\n");
+    try{
+        UniValue data(UniValue::VOBJ);
+        if(!data.read(nodeData)){
+            LogPrint("docker","Service::NodeListUpdate docker json error\n");
+            return;
+        }
+        string id = find_value(data,"ID").get_str();
+        int index = find_value(data,"Index").get_int();
+        auto it = nodes.find(id);
+        if(it!=nodes.end() && it->second.version.index == index)    //if the elem existed and needn't update
+            return;
+        Node node;
+        bool fSuccess = DecodeFromJson(data,node);
+        if(fSuccess)
+            nodes[node.ID]=node;
+    
+    }catch(std::exception& e){
+        LogPrint("docker","Node::NodeListUpdate JSON read error,%s\n",string(e.what()).c_str());
+    }catch(...){
+        LogPrint("docker","Node::NodeListUpdate unkonw exception\n");
+    }
+}
+bool Node::DecodeFromJson(const UniValue& data, Node& node)
+{
 
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
-            if(vKeys[i]=="ID") id=tdata.get_str();
-            else if(vKeys[i]=="CreatedAt") createdTime=getDockerTime(tdata.get_str());
-            else if(vKeys[i]=="UpdatedAt") updateTime=getDockerTime(tdata.get_str());
+            if(vKeys[i]=="ID") node.ID=tdata.get_str();
+            else if(vKeys[i]=="CreatedAt") node.createdAt=getDockerTime(tdata.get_str());
+            else if(vKeys[i]=="UpdatedAt") node.updatedAt=getDockerTime(tdata.get_str());
         }
         if(data[vKeys[i]].isObject()){
             if(vKeys[i]=="Version"){
-                version.index=find_value(tdata,"Index").get_int();
+                node.version.index=find_value(tdata,"Index").get_int();
             }else if(vKeys[i]=="Spec"){
-                ParseNodeSpec(tdata,spec);
+                ParseNodeSpec(tdata,node.spec);
             }else if(vKeys[i]=="Description"){
-                ParseNodeDescription(tdata,description);
+                ParseNodeDescription(tdata,node.description);
             }else if(vKeys[i]=="Status"){
-                ParseNodeStatus(tdata,status);
+                ParseNodeStatus(tdata,node.status);
             }else if(vKeys[i]=="ManagerStatus"){
-                ParseNodeManageStatus(tdata,managerStatus);
+                ParseNodeManageStatus(tdata,node.managerStatus);
+            }
+        }
+        auto cpuSet = dockerPriceConfig.getNameSet("cpu");
+        auto memSet = dockerPriceConfig.getNameSet("mem");
+        auto gpuSet = dockerPriceConfig.getNameSet("gpu");
+        for(auto it= node.spec.labels.begin();it!=node.spec.labels.end();++it){
+            if(it->first == "com.massgrid.address"){
+                node.MGDAddress = it->second;
+            }else if(it->first == "com.massgrid.cputype"){
+                if(cpuSet.count(it->second))
+                    node.engineInfo.cpu.Name = it->second;
+            }else if(it->first == "com.massgrid.cpucount"){
+                node.engineInfo.cpu.Count = boost::lexical_cast<int>(it->second);
+            }else if(it->first == "com.massgrid.memtype"){
+                if(memSet.count(it->second))
+                    node.engineInfo.mem.Name = it->second;
+            }else if(it->first == "com.massgrid.memcount"){
+                node.engineInfo.mem.Count = boost::lexical_cast<int>(it->second);
+            }else if(it->first == "com.massgrid.gputype"){
+                if(gpuSet.count(it->second))
+                    node.engineInfo.gpu.Name = it->second;
+            }else if(it->first == "com.massgrid.gpucount"){
+                node.engineInfo.gpu.Count = boost::lexical_cast<int>(it->second);
             }
         }
     }
-    node=Node(id,version,createdTime,updateTime,spec,description,status,managerStatus,protocolVersion);
     return true;
 }
 void Node::ParseNodeSpec(const UniValue& data,Config::NodeSpec &spec)

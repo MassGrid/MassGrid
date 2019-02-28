@@ -1,7 +1,8 @@
 #ifndef DOCKERSERVICE_H
 #define DOCKERSERVICE_H
-#include "dockertask.h"
 #include "primitives/transaction.h"
+#include "dockertask.h"
+#include "dockernode.h"
 namespace Config{
 
     struct Replicated{
@@ -80,7 +81,7 @@ namespace Config{
     };
 };
 class Service:public DockerBase{
-    static bool DcokerServiceJson(const UniValue& data, Service& service);
+    static bool DecodeFromJson(const UniValue& data, Service& service);
     static void ParseSpec(const UniValue& data,Config::ServiceSpec &spc);
     static void ParseSpecLabels(const UniValue& data,Config::Labels &labels);
     static void ParseTaskTemplate(const UniValue& data,Config::TaskSpec &taskTemplate);
@@ -142,11 +143,27 @@ public:
 
     Config::Endpoint endpoint{};
     Config::UpdateStatus updateStatus{};
-    
-    map<std::string,Task> mapDockerTasklists{};
 
-    static void DockerServiceList(const string& serviceData,std::map<std::string,Service> &services);
-    static void DockerServiceInspect(const string& serviceData,std::map<std::string,Service> &services);
+    int64_t deleteTime{};
+    int64_t timeUsage{};
+    uint256 txid;
+    CAmount price{};
+    CAmount payment{};
+    Item item{};
+    std::string customer{};
+    double feeRate{};
+
+    
+    map<std::string,Task> mapDockerTaskLists{};
+    int GetTaskState(){
+        if(mapDockerTaskLists.begin()!=mapDockerTaskLists.end()){
+            auto it = mapDockerTaskLists.begin();
+            return it->second.status.state;
+        }
+    }
+    static void UpdateTaskList(const string& taskData,std::map<std::string,Service> &services,std::string& serviceid);
+    static void ServiceListUpdateAll(const string& serviceData,std::map<std::string,Service> &services);
+    static void ServiceListUpdate(const string& serviceData,std::map<std::string,Service> &services);
 public:    
     Service() = default;
     
@@ -170,7 +187,15 @@ public:
         previousSpec=from.previousSpec;
         endpoint=from.endpoint;
         updateStatus=from.updateStatus;
-        mapDockerTasklists=from.mapDockerTasklists;
+        mapDockerTaskLists=from.mapDockerTaskLists;
+        deleteTime=from.deleteTime;
+        timeUsage=from.timeUsage;
+        txid=from.txid;
+        price=from.price;
+        payment=from.payment;
+        customer=from.customer;
+        feeRate=from.feeRate;
+        item=from.item;
     }
     Service& operator=(Service const& from){
         ID=from.ID;
@@ -183,7 +208,15 @@ public:
         previousSpec=from.previousSpec;
         endpoint=from.endpoint;
         updateStatus=from.updateStatus;
-        mapDockerTasklists=from.mapDockerTasklists;
+        mapDockerTaskLists=from.mapDockerTaskLists;
+        deleteTime=from.deleteTime;
+        timeUsage=from.timeUsage;
+        txid=from.txid;
+        price=from.price;
+        payment=from.payment;
+        customer=from.customer;
+        feeRate=from.feeRate;
+        item=from.item;
         return *this;
     }
         ADD_SERIALIZE_METHODS;
@@ -200,7 +233,15 @@ public:
         READWRITE(previousSpec);
         READWRITE(endpoint);
         READWRITE(updateStatus);
-        READWRITE(mapDockerTasklists);
+        READWRITE(mapDockerTaskLists);
+        READWRITE(deleteTime);
+        READWRITE(timeUsage);
+        READWRITE(txid);
+        READWRITE(price);
+        READWRITE(payment);
+        READWRITE(customer);
+        READWRITE(feeRate);
+        READWRITE(item);
     }
     void Update();
     std::string ToString();
@@ -213,196 +254,5 @@ public:
     bool Mode_global = false;
 
     std::string ToJsonString();
-};
-
-class DockerGetData{
-public:
-    uint64_t version = DOCKERREQUEST_API_VERSION;
-    CPubKey pubKeyClusterAddress{};
-    CTxIn vin{};
-    int64_t sigTime{}; //dkct message times
-    std::map<std::string,Service> mapDockerServiceLists{};
-
-    ADD_SERIALIZE_METHODS;
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(vin);
-        READWRITE(version);
-        READWRITE(pubKeyClusterAddress);
-        READWRITE(sigTime);
-        READWRITE(mapDockerServiceLists);
-    }
-    uint256 GetHash() const
-    {
-        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-        ss << vin;
-        ss << version;
-        ss << pubKeyClusterAddress;
-        return ss.GetHash();
-    }
-};
-class DockerCreateService{
-public:
-
-    uint64_t version = DOCKERREQUEST_API_VERSION;
-    std::vector<unsigned char> vchSig{};
-    CPubKey pubKeyClusterAddress{};
-    CTxIn vin{};
-    int64_t sigTime{}; //dkct message times
-    // Config::ServiceSpec sspec{};
-
-    std::string n2n_community{};
-    std::string serviceName{};
-    std::string image{};
-    std::string gpuname{};
-    std::string ssh_pubkey{};
-    int64_t cpu{};
-    int64_t gpu{};
-    int64_t memory_byte{};
-
-
-    ADD_SERIALIZE_METHODS;
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(vchSig);
-        READWRITE(vin);
-        READWRITE(version);
-        READWRITE(pubKeyClusterAddress);
-        READWRITE(sigTime);
-        // READWRITE(sspec);
-        READWRITE(n2n_community);
-        READWRITE(serviceName);
-        READWRITE(image);
-        READWRITE(gpuname);
-        READWRITE(ssh_pubkey);
-        READWRITE(cpu);
-        READWRITE(gpu);
-        READWRITE(memory_byte);
-
-    }
-    uint256 GetHash() const
-    {
-        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-        ss << vin;
-        ss << version;
-        ss << pubKeyClusterAddress;
-        ss << sigTime;
-        ss << n2n_community;
-        ss << serviceName;
-        ss << image;
-        ss << gpuname;
-        ss << ssh_pubkey;
-        ss << cpu;
-        ss << gpu;
-        ss << memory_byte;
-
-        return ss.GetHash();
-    }
-    bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
-    bool CheckSignature(CPubKey& pubKeyMasternode);
-    // std::string ToJsonString(){
-    //         return sspec.ToJsonString();
-    //     }
-    std::string ToString(){
-        return GetHash().ToString();
-    }
-};
-class DockerDeleteService{
-public:
-
-    uint64_t version = DOCKERREQUEST_API_VERSION;
-    std::vector<unsigned char> vchSig{};
-    CPubKey pubKeyClusterAddress{};
-    std::string serviceid{};
-    int64_t sigTime{}; //dkct message times
-
-    ADD_SERIALIZE_METHODS;
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(vchSig);
-        READWRITE(version);
-        READWRITE(pubKeyClusterAddress);
-        READWRITE(serviceid);
-        READWRITE(sigTime);
-
-    }
-    uint256 GetHash() const
-    {
-        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-        ss << version;
-        ss << pubKeyClusterAddress;
-        ss << serviceid;
-        ss << sigTime;
-
-        return ss.GetHash();
-    }
-    bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
-    bool CheckSignature(CPubKey& pubKeyMasternode);
-    std::string ToString(){
-        return GetHash().ToString();
-    }    
-};
-class DockerUpdateService:public DockerCreateService
-{
-public:
-    std::string serviceid;
-    uint64_t version = DOCKERREQUEST_API_VERSION;
-    std::vector<unsigned char> vchSig{};
-    CPubKey pubKeyClusterAddress{};
-    CTxIn vin{};
-    int64_t sigTime{}; 
-
-    std::string n2n_community{};
-    std::string serviceName{};
-    std::string image{};
-    std::string gpuname{};
-    std::string ssh_pubkey{};
-    int64_t cpu{};
-    int64_t gpu{};
-    int64_t memory_byte{};
-
-
-    ADD_SERIALIZE_METHODS;
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(vchSig);
-        READWRITE(vin);
-        READWRITE(version);
-        READWRITE(pubKeyClusterAddress);
-        READWRITE(sigTime);
-        READWRITE(serviceid);
-        READWRITE(n2n_community);
-        READWRITE(serviceName);
-        READWRITE(image);
-        READWRITE(gpuname);
-        READWRITE(ssh_pubkey);
-        READWRITE(cpu);
-        READWRITE(gpu);
-        READWRITE(memory_byte);
-
-    }
-    uint256 GetHash() const
-    {
-        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-        ss << vin;
-        ss << version;
-        ss << pubKeyClusterAddress;
-        ss << serviceid;
-        ss << n2n_community;
-        ss << serviceName;
-        ss << image;
-        ss << gpuname;
-        ss << ssh_pubkey;
-        ss << cpu;
-        ss << gpu;
-        ss << memory_byte;
-
-        return ss.GetHash();
-    }
-    bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);
-    bool CheckSignature(CPubKey& pubKeyMasternode);
-    std::string ToString(){
-        return GetHash().ToString();
-    }
 };
 #endif //__DOCKERSERVICE__

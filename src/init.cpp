@@ -64,6 +64,7 @@
 
 #include "dockerman.h"
 #include "dockeredge.h"
+#include "timermodule.h"
 
 #include "spork.h"
 #include "util.h"
@@ -593,6 +594,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-masternode=<n>", strprintf(_("Enable the client to act as a masternode (0-1, default: %u)"), 0));
     strUsage += HelpMessageOpt("-mnconf=<file>", strprintf(_("Specify masternode configuration file (default: %s)"), "masternode.conf"));
     strUsage += HelpMessageOpt("-mnconflock=<n>", strprintf(_("Lock masternodes from masternode configuration file (default: %u)"), 1));
+    strUsage += HelpMessageOpt("-dpconf=<file>", strprintf(_("Specify dockerprice configuration file (default: %s)"), "dockerprice.conf"));
     strUsage += HelpMessageOpt("-masternodeprivkey=<n>", _("Set the masternode private key"));
 
     strUsage += HelpMessageGroup(_("InstantSend options:"));
@@ -2019,7 +2021,7 @@ threadGroup.create_thread(boost::bind(&ThreadCheckInstantSend, boost::ref(*g_con
 threadGroup.create_thread(&ThreadSnStart);
 
     if(fMasterNode)
-        threadGroup.create_thread(&threadServiceControl);
+        threadGroup.create_thread(&ThreadTimeModule);
     if (!CheckDiskSpace())
         return false;
 

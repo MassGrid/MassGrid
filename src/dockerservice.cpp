@@ -3,116 +3,6 @@
 #include "timedata.h"
 #include "primitives/transaction.h"
 #include <boost/lexical_cast.hpp>
-#include "messagesigner.h"
-bool DockerCreateService::Sign(const CKey& keyClusterAddress, const CPubKey& pubKeyClusterAddress)
-{
-    std::string strError;
-
-    // TODO: add sentinel data
-    sigTime = GetAdjustedTime();
-    std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(version) + n2n_community +
-        serviceName + image + gpuname + ssh_pubkey + boost::lexical_cast<std::string>(cpu) + boost::lexical_cast<std::string>(gpu) +
-        boost::lexical_cast<std::string>(memory_byte) + boost::lexical_cast<std::string>(sigTime);
-
-    if(!CMessageSigner::SignMessage(strMessage, vchSig, keyClusterAddress)) {
-        LogPrintf("DockerCreateService::Sign -- SignMessage() failed\n");
-        return false;
-    }
-
-    if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
-        LogPrintf("DockerCreateService::Sign -- VerifyMessage() failed, error: %s\n", strError);
-        return false;
-    }
-
-    return true;
-}
-
-bool DockerCreateService::CheckSignature(CPubKey& pubKeyClusterAddress)
-{
-    // TODO: add sentinel data
-    std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(version) + n2n_community +
-        serviceName + image + gpuname + ssh_pubkey + boost::lexical_cast<std::string>(cpu) + boost::lexical_cast<std::string>(gpu) +
-        boost::lexical_cast<std::string>(memory_byte) + boost::lexical_cast<std::string>(sigTime);
-
-    std::string strError = "";
-
-    if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
-        LogPrintf("DockerCreateService::CheckSignature -- Got bad signature, error: %s\n", strError);
-        return false;
-    }
-    return true;
-}
-
-bool DockerUpdateService::Sign(const CKey& keyClusterAddress, const CPubKey& pubKeyClusterAddress)
-{
-    std::string strError;
-
-    // TODO: add sentinel data
-    sigTime = GetAdjustedTime();
-    std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(version) + n2n_community +
-        serviceid + serviceName + image + gpuname + ssh_pubkey + boost::lexical_cast<std::string>(cpu) + boost::lexical_cast<std::string>(gpu) +
-        boost::lexical_cast<std::string>(memory_byte) + boost::lexical_cast<std::string>(sigTime);
-
-    if(!CMessageSigner::SignMessage(strMessage, vchSig, keyClusterAddress)) {
-        LogPrintf("DockerUpdateService::Sign -- SignMessage() failed\n");
-        return false;
-    }
-
-    if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
-        LogPrintf("DockerUpdateService::Sign -- VerifyMessage() failed, error: %s\n", strError);
-        return false;
-    }
-
-    return true;
-}
-
-bool DockerUpdateService::CheckSignature(CPubKey& pubKeyClusterAddress)
-{
-    // TODO: add sentinel data
-    std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(version) + n2n_community +
-        serviceid + serviceName + image + gpuname + ssh_pubkey + boost::lexical_cast<std::string>(cpu) + boost::lexical_cast<std::string>(gpu) +
-        boost::lexical_cast<std::string>(memory_byte) + boost::lexical_cast<std::string>(sigTime);
-
-    std::string strError = "";
-
-    if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
-        LogPrintf("DockerUpdateService::CheckSignature -- Got bad signature, error: %s\n", strError);
-        return false;
-    }
-    return true;
-}
-bool DockerDeleteService::Sign(const CKey& keyClusterAddress, const CPubKey& pubKeyClusterAddress)
-{
-    std::string strError;
-
-    // TODO: add sentinel data
-    sigTime = GetAdjustedTime();
-    std::string strMessage = serviceid + boost::lexical_cast<std::string>(version) + boost::lexical_cast<std::string>(sigTime);
-
-    if(!CMessageSigner::SignMessage(strMessage, vchSig, keyClusterAddress)) {
-        LogPrintf("DockerDeleteService::Sign -- SignMessage() failed\n");
-        return false;
-    }
-    if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
-        LogPrintf("DockerDeleteService::Sign -- VerifyMessage() failed, error: %s\n", strError);
-        return false;
-    }
-    return true;
-}
-
-bool DockerDeleteService::CheckSignature(CPubKey& pubKeyClusterAddress)
-{
-    // TODO: add sentinel data
-    std::string strMessage = serviceid + boost::lexical_cast<std::string>(version) + boost::lexical_cast<std::string>(sigTime);
-
-    std::string strError = "";
-
-    if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
-        LogPrintf("DockerDeleteService::CheckSignature -- Got bad signature, error: %s\n", strError);
-        return false;
-    }
-    return true;
-}
 std::string dockerservicefilter::ToJsonString(){
     UniValue data(UniValue::VOBJ);
     if(!id.empty()){
@@ -147,48 +37,96 @@ std::string dockerservicefilter::ToJsonString(){
 
     return data.write();
 }
-void Service::DockerServiceList(const string& serviceData,std::map<std::string,Service> &services)
+void Service::ServiceListUpdateAll(const string& serviceData,std::map<std::string,Service> &services)
 {
-    LogPrint("docker","Service::DockerServiceList docker json node %s\n",serviceData);
+    LogPrint("docker","Service::ServiceListUpdateAll docker json node %s\n",serviceData);
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(serviceData)){
-            LogPrint("docker","Service::DockerServiceList docker json error\n");
+            LogPrint("docker","Service::ServiceListUpdateAll docker json error\n");
             return;
         }
 
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
+            string id = find_value(data,"ID").get_str();
+            int index = find_value(data,"Index").get_int();
+            auto it = services.find(id);
+            if(it!=services.end() && it->second.version.index == index)    //if the elem existed and needn't update
+                continue;
             Service service;
-            bool fSuccess = DcokerServiceJson(data,service);
-            if(fSuccess)
+            bool fSuccess = DecodeFromJson(data,service);
+            if(fSuccess){
                 services[service.ID]=service;
-            // break;
+            }
         }
     }catch(std::exception& e){
-        LogPrint("docker","Service::DockerServiceList JSON read error,%s\n",string(e.what()).c_str());
+        LogPrint("docker","Service::ServiceListUpdateAll JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        LogPrint("docker","Service::DockerServiceList unkonw exception\n");
+        LogPrint("docker","Service::ServiceListUpdateAll unkonw exception\n");
     }
 }
 
-void Service::DockerServiceInspect(const string& serviceData,std::map<std::string,Service> &services)
+void Service::ServiceListUpdate(const string& serviceData,std::map<std::string,Service> &services)
 {
-    LogPrint("docker","Service::DockerServiceInspect docker json node %s\n",serviceData);
+    LogPrint("docker","Service::ServiceListUpdate docker json node %s\n",serviceData);
     try{
         UniValue data(UniValue::VOBJ);
         if(!data.read(serviceData)){
-            LogPrint("docker","Service::DockerServiceInspect docker json error\n");
+            LogPrint("docker","Service::ServiceListUpdate docker json error\n");
             return;
         }
-            Service service;
-            bool fSuccess = DcokerServiceJson(data,service);
-            if(fSuccess)
-                services[service.ID]=service;
+        string id = find_value(data,"ID").get_str();
+        int index = find_value(data,"Index").get_int();
+        auto it = services.find(id);
+        if(it!=services.end() && it->second.version.index == index)    //if the elem existed and needn't update
+            return;
+        Service service;
+        bool fSuccess = DecodeFromJson(data,service);
+        if(fSuccess)
+            services[service.ID]=service;
     }catch(std::exception& e){
-        LogPrint("docker","Service::DockerServiceInspect JSON read error,%s\n",string(e.what()).c_str());
+        LogPrint("docker","Service::ServiceListUpdate JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){
-        LogPrint("docker","Service::DockerServiceInspect unkonw exception\n");
+        LogPrint("docker","Service::ServiceListUpdate unkonw exception\n");
+    }
+}
+void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service> &services,std::string& serviceid){
+    try{
+        UniValue dataArry(UniValue::VARR);
+        if(!dataArry.read(taskData)){
+            LogPrint("docker","Task::TaskListUpdateAll docker json error\n");
+            return;
+        }
+
+        for(size_t i=0;i<dataArry.size();i++){
+            UniValue data(dataArry[i]);
+            serviceid = find_value(data,"ServiceID").get_str();
+            string id = find_value(data,"ID").get_str();
+            int index = find_value(data,"Index").get_int();
+            auto serviceit = services.find(serviceid);
+            if(serviceit != services.end()){
+                std::map<std::string,Task> &tasks = serviceit->second.mapDockerTaskLists;
+                auto it = tasks.find(id);
+                if(it!=tasks.end() && it->second.version.index == index)    //if the elem existed and needn't update
+                    continue;
+                Task task;
+                bool fSuccess = Task::DecodeFromJson(data,task);
+                if(fSuccess){
+                    auto now_time = GetAdjustedTime();
+                    tasks[task.ID]=task;
+                    //health check timeout 
+                    if(now_time >= (serviceit->second.createdAt + 180) && task.status.state != Config::TaskState::TASKSTATE_RUNNING)
+                        serviceit->second.deleteTime=now_time;
+                }
+            }
+        }
+        if(dataArry.size() >1)
+            serviceid.clear();
+    }catch(std::exception& e){
+        LogPrint("docker","Task::TaskListUpdateAll JSON read error,%s\n",string(e.what()).c_str());
+    }catch(...){
+        LogPrint("docker","Task::TaskListUpdateAll unkonw exception\n");
     }
 }
 UniValue Service::DockerServToJson(Service &service)
@@ -217,41 +155,54 @@ UniValue Service::DockerServToJson(Service &service)
     }
     return data;
 }
-bool Service::DcokerServiceJson(const UniValue& data, Service& service)
+bool Service::DecodeFromJson(const UniValue& data, Service& service)
 {
-    std::string id;
-    Config::Version version;
-    uint64_t createdTime;
-    uint64_t updateTime;
-    Config::ServiceSpec spec;
-    Config::ServiceSpec previousSpec;
-    Config::Endpoint endpoint;
-    Config::UpdateStatus updateStatus;
-    int protocolVersion=DEFAULT_CSERVICE_API_VERSION;
-
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(tdata.isStr()){
-            if(vKeys[i]=="ID") id=tdata.get_str();
-            else if(vKeys[i]=="CreatedAt") createdTime=getDockerTime(tdata.get_str());
-            else if(vKeys[i]=="UpdatedAt") updateTime=getDockerTime(tdata.get_str());
+            if(vKeys[i]=="ID") service.ID=tdata.get_str();
+            else if(vKeys[i]=="CreatedAt") service.createdAt=getDockerTime(tdata.get_str());
+            else if(vKeys[i]=="UpdatedAt") service.updatedAt=getDockerTime(tdata.get_str());
         }
         if(tdata.isObject()){
             if(vKeys[i]=="Version"){
-                version.index=find_value(tdata,"Index").get_int();
+                service.version.index=find_value(tdata,"Index").get_int();
             }else if(vKeys[i]=="Spec"){
-                ParseSpec(tdata,spec);
+                ParseSpec(tdata,service.spec);
             }else if(vKeys[i]=="PreviousSpec"){
-                ParseSpec(tdata,previousSpec);
+                ParseSpec(tdata,service.previousSpec);
             }else if(vKeys[i]=="Endpoint"){
-                ParseEndpoint(tdata,endpoint);
+                ParseEndpoint(tdata,service.endpoint);
             }else if(vKeys[i]=="UpdateStatus"){
-                ParseUpdateStatus(tdata,updateStatus);
+                ParseUpdateStatus(tdata,service.updateStatus);
             }
         }
+        for(auto it= service.spec.labels.begin();it!=service.spec.labels.end();++it){
+            if(it->first == "com.massgrid.txid")
+                service.txid = uint256S(it->second);
+            else if(it->first == "com.massgrid.pubkey")
+                service.customer = it->second;
+            else if(it->first == "com.massgrid.price")
+                service.price = boost::lexical_cast<CAmount>(it->second);
+            else if(it->first == "com.massgrid.payment")
+                service.payment = boost::lexical_cast<CAmount>(it->second);
+            else if(it->first == "com.massgrid.cpuname")
+                service.item.cpu.Name = it->second;
+            else if(it->first == "com.massgrid.cpucount")
+                service.item.cpu.Count = boost::lexical_cast<int>(it->second);
+            else if(it->first == "com.massgrid.memname")
+                service.item.mem.Name = it->second;
+            else if(it->first == "com.massgrid.memcount")
+                service.item.mem.Count = boost::lexical_cast<int>(it->second);
+            else if(it->first == "com.massgrid.gpuname")
+                service.item.gpu.Name = it->second;
+            else if(it->first == "com.massgrid.gpucount")
+                service.item.gpu.Count = boost::lexical_cast<int>(it->second);
+        }
+        service.timeUsage = ((double)service.payment /service.price)* 3600;
+        service.deleteTime=service.createdAt + service.timeUsage;
     }
-    service=Service(id,version,createdTime,updateTime,GetAdjustedTime(),spec,previousSpec,endpoint,updateStatus,protocolVersion);
     return true;
 }
 UniValue Service::ServVerToJson(Config::Version &version)

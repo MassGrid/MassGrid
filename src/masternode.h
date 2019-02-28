@@ -5,6 +5,7 @@
 #ifndef MASTERNODE_H
 #define MASTERNODE_H
 
+#include <sstream> 
 #include "key.h"
 #include "validation.h"
 #include "spork.h"
@@ -12,7 +13,6 @@
 #include "dockerservice.h"
 #include "dockertask.h"
 #include "dockerswarm.h"
-#include <strstream> 
 
 using namespace std;
 class CMasternode;
@@ -54,7 +54,7 @@ struct masternode_dockerinfo_t{     //masternode docker info
         READWRITE(joinToken);
     }
     std::string ToString(){
-        ostrstream out;
+        ostringstream out;
         out<<"nodeCount: "<<nodeCount<<" activeNodeCount: "<<activeNodeCount<<" dockerServiceCount: "<<dockerServiceCount<<
         " dockerTaskCount: "<<dockerTaskCount<<" docker_version: "<<docker_version<<" joinToken: "<<joinToken<<endl;
         return std::string(out.str());

@@ -10,6 +10,7 @@
 #include "masternode-payments.h"
 #include "masternode-sync.h"
 #include "masternodeconfig.h"
+#include "dockerpriceconfig.h"
 #include "masternodeman.h"
 #include "dockerman.h"
 #include "dockerserverman.h"
@@ -48,7 +49,7 @@ UniValue docker(const UniValue& params, bool fHelp)
 #ifdef ENABLE_WALLET
             strCommand != "create" && strCommand != "delete" &&
 #endif // ENABLE_WALLET
-            strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata"))
+            strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata"&& strCommand != "listprice"&& strCommand != "setprice"&& strCommand != "setdockerfee"))
             throw std::runtime_error(
                 "docker \"command\"...\n"
                 "Set of commands to execute docker related actions\n"
@@ -124,7 +125,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         DockerCreateService createService{};
 
         createService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-        createService.vin = CTxIn();
+        createService.txid = uint256();
         
         std::string strServiceName = params[2].get_str();
         createService.serviceName = strServiceName;
@@ -132,16 +133,16 @@ UniValue docker(const UniValue& params, bool fHelp)
         std::string strServiceImage = params[3].get_str();
         createService.image = strServiceImage;
 
-        int64_t strServiceCpu = params[4].get_int64();
-        createService.cpu = strServiceCpu;
-        int64_t strServiceMemoey_byte = params[5].get_int64();
-        createService.memory_byte = strServiceMemoey_byte;
+        int64_t serviceCpu = params[4].get_int64();
+        createService.item.cpu.Count = serviceCpu;
+        int64_t serviceMemoey_byte = params[5].get_int64();
+        createService.item.mem.Count = serviceMemoey_byte;
         
         std::string strServiceGpuName = params[6].get_str();
-        createService.gpuname = strServiceGpuName;
+        createService.item.gpu.Name = strServiceGpuName;
 
-        int64_t strServiceGpu = params[7].get_int64();
-        createService.gpu = strServiceGpu;
+        int64_t serviceGpu = params[7].get_int64();
+        createService.item.gpu.Count = serviceGpu;
 
         std::string strn2n_Community = params[8].get_str();
         createService.n2n_community = strn2n_Community;
@@ -169,7 +170,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
         
         std::string strServiceid = params[2].get_str();
-        delService.serviceid = strServiceid;
+        delService.txid = dockercluster.mapDockerServiceLists[strServiceid].txid;
         EnsureWalletIsUnlocked();
         CKey vchSecret;
         if (!pwalletMain->GetKey(delService.pubKeyClusterAddress.GetID(), vchSecret)){
@@ -181,9 +182,64 @@ UniValue docker(const UniValue& params, bool fHelp)
             return false;
         }
         g_connman->PushMessage(dockercluster.connectNode, NetMsgType::DELETESERVICE, delService);
-        return "delete service Successfully id: "+delService.serviceid;
+        return "delete service Successfully id: "+delService.txid.ToString();
     }
-
+    if(strCommand == "listprice"){
+        if (!fMasterNode)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+        UniValue varr(UniValue::VARR);
+        auto entries = dockerPriceConfig.getEntries();
+        for(auto it = entries.begin();it!= entries.end();++it){
+        UniValue obj(UniValue::VOBJ);
+        std::ostringstream streamFull;
+        streamFull << std::setw(18) <<
+                        it->getType() << " " <<
+                        it->getName() << " " <<
+                        it->getPrice();
+        std::string strFull = streamFull.str();
+        obj.push_back(strFull);
+        varr.push_back(obj);
+        }
+        return varr;
+    }
+    if(strCommand == "setprice"){
+        if (!fMasterNode)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+        if (params.size() != 4)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
+        std::string type = params[1].get_str();
+        std::string name = params[2].get_str();
+        std::string strPrice = params[3].get_str();
+        auto entries = dockerPriceConfig.getEntries();
+        for(auto it = entries.begin();it!= entries.end();++it){
+            if(type == it->getType() && name == it->getName()){
+                it->setPrice(strPrice);    
+                return "modified " + it->getType() + " " +it->getName() + " " +std::to_string(it->getPrice());
+            }
+        }
+        dockerPriceConfig.add(type,name,strPrice);
+        return "add new "+type + " " +name + " " +strPrice;
+    }    
+    if (strCommand == "setdockerfee"){
+        if (!fMasterNode)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+        if (params.size() < 2)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Please specify an fee rate");
+        std::string strfeeRate = params[1].get_str();
+        double fee;
+        try
+        {
+            fee = boost::lexical_cast<double>(strfeeRate);
+        }
+        catch(const boost::bad_lexical_cast &)
+        {
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "bad_lexical_cast");
+        }
+        if(fee >=1 || fee <0)
+            return "docker feerate set failed feeRate is :"+std::to_string(fee); 
+        dockerServerman.feeRate = fee;
+        return "docker feerate is" + std::to_string(dockerServerman.feeRate);
+    }
 #endif // ENABLE_WALLET
     
     if (strCommand == "getdndata"){

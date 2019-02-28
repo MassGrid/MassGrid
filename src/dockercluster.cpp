@@ -84,51 +84,12 @@ bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
     return true;
 }
 
-bool Cluster::UpdateAndSendSeriveSpec(DockerUpdateService sspec){
-    
-    LogPrint("docker","Cluster::UpdateAndSendSeriveSpec Started\n");
-
-    LOCK(cs);
-    if(!connectNode){
-        LogPrintf("Cluster::UpdateAndSendSeriveSpec cann't connect dockernode \n");
-        return false;
-    }
-
-    LOCK2(cs_main, pwalletMain->cs_wallet);
-
-    CKey vchSecret;
-    if(pwalletMain->IsLocked()){
-        LogPrintf("Cluster::UpdateAndSendSeriveSpec Sign need to unlock wallet first !\n");
-        return false;
-    }
-    if (!pwalletMain->GetKey(DefaultPubkey.GetID(), vchSecret)){
-        LogPrintf("Cluster::UpdateAndSendSeriveSpec GetPrivkey Error\n");
-        return false;
-    }
-    if(!sspec.Sign(vchSecret,DefaultPubkey)){
-        LogPrintf("Cluster::UpdateAndSendSeriveSpec Sign Error\n");
-        return false;
-    }
-    
-    g_connman->PushMessage(connectNode, NetMsgType::UPDATESERVICE, sspec);
-    return true;
-}
-
 bool Cluster::DeleteAndSendServiceSpec(DockerDeleteService delService)
 {
     if (!masternodeSync.IsSynced()){
         LogPrintf("Need to Synced First\n");
         return false;
     }
-    // if (params.size() != 3)
-    //     throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
-    // std::string strAddr = params[1].get_str();
-    // if(!dockercluster.SetConnectDockerAddress(strAddr))
-    //     throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
-    // if(!dockercluster.ProcessDockernodeConnections())
-    //     throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Connect to Masternode failed");
-    
-    // EnsureWalletIsUnlocked();
     CKey vchSecret;
     if (!pwalletMain->GetKey(delService.pubKeyClusterAddress.GetID(), vchSecret)){
         LogPrintf("delService Sign Error1\n");

@@ -7,6 +7,7 @@
 #include "dockerswarm.h"
 #include "dockerservice.h"
 #include "dockertask.h"
+#include "dockerpriceconfig.h"
 #include "net.h"
 #ifdef EVENT__HAVE_NETINET_IN_H
 #include <netinet/in.h>
@@ -20,9 +21,6 @@ typedef unsigned long in_addr_t;
 #endif
 class CDockerMan;
 extern CDockerMan dockerman;
-void threadServiceControl();
-void InitSerListQueue(std::map<std::string,Service> &services);
-void UpdateSerListQueue(std::map<std::string,Service> &services,std::string id);
 static const char* strMethod[] = {
     "METHOD_NODES_LISTS",
     "METHOD_NODES_INSPECT",
@@ -64,9 +62,22 @@ enum HttpType{
     HTTP_POST,
     HTTP_DELETE
 };
+// class CollectUsefulNode{
+// public:
+//     map<std::string,int> usefulEngine{};
+//     void IncreaseNode(Node& node){
+//         string gputype = node.engine.labels["gputype"];
+//         map[node.engine.labels["gputype"]+"_"+node.engine.labels["gpucount"]] += 1;
+//     }
+//     void DecreaseNode(Node& node){
+//         string gputype = node.engine.labels["gputype"];
+//         if(map[node.engine.labels["gputype"]+"_"+node.engine.labels["gpucount"]] > 0)
+//             map[node.engine.labels["gputype"]+"_"+node.engine.labels["gpucount"]] -= 1;
+//     }
+// };
 class IpSet{
 
-    std::set<in_addr_t> ip_set{};
+    set<in_addr_t> ip_set{};
 public:
     static const int MAX_SIZE = 255;
     const char* ip_start = "10.1."; //10.1.1.1
@@ -87,18 +98,23 @@ private:
 private:
     const char* address = "localhost";
     uint32_t apiPort = 2375;
-    uint32_t swarmPort = 2377;  
+
+    Swarm swarm;
+    std::map<std::string,Node> mapDockerNodeLists;
+    std::map<std::string,Service> mapDockerServiceLists;
 public:
     IpSet serviceIp;
     const uint32_t n2nServerPort = 8999;
     union docker_Version version;
-    std::map<std::string,Node> mapDockerNodeLists;
-    std::map<std::string,Service> mapDockerServiceLists;
-    Swarm swarm;
-    std::string JoinToken;
-    std::string managerAddr;    //no port
+    map<std::string ,Service> GetServiceFromPubkey(CPubKey pubkey){
+        map<std::string ,Service> map{};
+        for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
+            if(it->second.customer == pubkey.ToString().substr(0,65)){
+                map.insert(*it);
+            }
+        }
 
-
+    }
     bool ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService = true);
     bool PushMessage(Method mtd,std::string id,std::string pushdata,bool isClearService = true);
     bool Update(); //update all data;
@@ -106,30 +122,43 @@ public:
     bool UpdateSwarmAndNodeList();
     bool UpdateServicesList();
     bool UpdateService(std::string serviceid);
-
+    std::string GetSwarmJoinToken(){
+        return swarm.joinWorkerTokens + " " + swarm.ip_port;
+    }
+    
+    std::string GetMasterIp();
+    bool GetServiceFromList(std::string serviceid,Service& service){
+        LOCK(cs);
+        if(!mapDockerServiceLists.count(serviceid))
+            return false;
+            service = mapDockerServiceLists[serviceid];
+        return true;
+    }
+    bool GetServiceFromTxId(uint256 txid,Service& service){
+        LOCK(cs);
+        for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it){
+            if(it->second.txid == txid){
+                service = it->second;
+                return true;
+            }
+            return false;
+        }
+    }
+    bool GetNodeFromList(std::string nodeid,Node& node){
+        LOCK(cs);
+        if(!mapDockerNodeLists.count(nodeid))
+            return false;
+            node = mapDockerNodeLists[nodeid];
+        return true;
+    }
     uint64_t GetDockerNodeCount();
     uint64_t GetDockerNodeActiveCount();
     uint64_t GetDockerServiceCount();
-    uint64_t GetDockerTaskCount();    
+    uint64_t GetDockerTaskCount(); 
     void SetPort(uint32_t p){apiPort = p;}
     uint32_t GetPort(){return apiPort;}
     void GetVersionAndJoinToken();
-    void UpdateIPfromServicelist();
-};
-class ServiceListInfo{
-public:
-    ServiceListInfo(){timespan=10800;}
-    ServiceListInfo(int _timespan):timespan(_timespan){}
-    ServiceListInfo(int64_t _timestamp,std::string _serviceid,int _timespan):
-    timestamp(_timestamp),serviceid(_serviceid),timespan(_timespan){}
-    ~ServiceListInfo(){};
-public:
-    int64_t timestamp;
-    std::string serviceid;
-    int64_t timespan; //3*60*60
-public:
-    bool operator < (const ServiceListInfo &a) const { 
-        return timestamp>a.timestamp;//最大值优先 
-    }
+    void UpdateIPfromServicelist(std::map<std::string,Service>& map);
+    map<Item,std::pair<CAmount,int>> GetPriceListFromNodelist();
 };
 #endif //DOCKERMAN_H

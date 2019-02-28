@@ -1,13 +1,14 @@
 #ifndef DOCKERCLUSTER_H
 #define DOCKERCLUSTER_H
 
+#include <vector>
 #include "net.h"
 #include "key.h"
-#include <vector>
-#include <dockerservice.h>
-#include <dockertask.h>
 #include "base58.h"
 #include "primitives/transaction.h"
+#include "dockerservice.h"
+#include "dockertask.h"
+#include "dockerserverman.h"
 #define DOCKER_CPU_UNIT 1000000000
 #define DOCKER_MEMORY_UNIT 1000000000
 class Cluster;
@@ -35,9 +36,6 @@ public:
 
         void AskForDNData();
         bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
-        bool UpdateAndSendSeriveSpec(DockerUpdateService sspec);    //send message
         bool DeleteAndSendServiceSpec(DockerDeleteService delServic);
-        // bool CheckAndUpdate(DockerUpdateService sspec);      //update infomation after check from receive
-
 };
 #endif  //DOCKERCLUSTER_H
