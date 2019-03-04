@@ -19,12 +19,9 @@ private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 public:
-        std::map<std::string,Service> mapDockerServiceLists;
-        int64_t sigTime{};  //update time
-        std::string n2nLocalIp{};
+        DockerGetData dndata;
         CService connectDockerAddr{};
         CNode* connectNode = nullptr;
-        // CTxIn masternodeId{};
 
         CPubKey DefaultPubkey{};
         void setDefaultPubkey(CPubKey pubkey);

@@ -67,7 +67,7 @@ void ServiceDetail::mouseReleaseEvent(QMouseEvent *e)
 void ServiceDetail::setService(Service& service)
 {
     updateServiceDetail(service);
-    map<std::string,Task> mapDockerTasklists = service.mapDockerTasklists;
+    map<std::string,Task> mapDockerTasklists = service.mapDockerTaskLists;
     int taskStatus = -1;
     updateTaskDetail(mapDockerTasklists,taskStatus);
 }

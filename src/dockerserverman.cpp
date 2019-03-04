@@ -121,8 +121,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             return;
         }
          
-        dockercluster.mapDockerServiceLists = mdndata.mapDockerServiceLists;
-        dockercluster.sigTime = mdndata.sigTime;
+        dockercluster.dndata = mdndata;
         LogPrint("docker","CDockerServerman::ProcessMessage DNDATA mapDockerServiceLists.size() %d sigTime:%d\n",mdndata.mapDockerServiceLists.size(),mdndata.sigTime);
         std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
         for(;iter != mdndata.mapDockerServiceLists.end();iter++){
@@ -131,6 +130,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             }
             if (pwalletMain->mapWallet.count(iter->second.txid)){
                 CWalletTx& wtx = pwalletMain->mapWallet[iter->second.txid];
+                if(wtx.HasCreatedService())
+                    continue;
                 wtx.Setserviceid(iter->first);
                 wtx.Setcreatetime(std::to_string(iter->second.createdAt));
                 wtx.Setverison(std::to_string(WALLET_DATABASE_VERSION));

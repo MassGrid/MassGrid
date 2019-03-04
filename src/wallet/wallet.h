@@ -462,6 +462,7 @@ public:
     bool IsTrusted() const;
 
     bool WriteToDisk(CWalletDB *pwalletdb);
+    bool IsMasterNodeTransaction();
     bool HasCreatedService();
     bool HasTlemented();
 

@@ -615,7 +615,7 @@ int MasternodeList::loadServerList()
 {
     ui->serviceTableWidget->setRowCount(0);
 
-    std::map<std::string,Service> serverlist = dockercluster.mapDockerServiceLists;
+    std::map<std::string,Service> serverlist = dockercluster.dndata.mapDockerServiceLists;
     std::map<std::string,Service>::iterator iter = serverlist.begin();
 
     int count = 0;
@@ -677,7 +677,7 @@ void MasternodeList::loadServerDetail(QModelIndex index)
 
 void MasternodeList::loadDockerDetail(const std::string & key)
 {
-    Service service = dockercluster.mapDockerServiceLists[key.c_str()];
+    Service service = dockercluster.dndata.mapDockerServiceLists[key.c_str()];
     map<std::string,Task> mapDockerTasklists = service.mapDockerTaskLists;
 
     // LogPrintf("loadDockerDetail service:%s\n",service.ToJsonString());
@@ -702,7 +702,7 @@ void MasternodeList::openServiceDetail(QModelIndex index)
     QString key = ui->serviceTableWidget->item(index.row(),0)->text();
     // loadDockerDetail(key.toStdString());
 
-    Service service = dockercluster.mapDockerServiceLists[key.toStdString().c_str()];
+    Service service = dockercluster.dndata.mapDockerServiceLists[key.toStdString().c_str()];
     // map<std::string,Task> mapDockerTasklists = service.mapDockerTasklists;
 
     // int taskStatus = -1;
@@ -860,7 +860,7 @@ bool MasternodeList::deleteService(const std::string& strServiceid)
     DockerDeleteService delService{};
 
     delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-    delService.txid = dockercluster.mapDockerServiceLists[strServiceid].txid;
+    delService.txid = dockercluster.dndata.mapDockerServiceLists[strServiceid].txid;
 
     if(!dockercluster.DeleteAndSendServiceSpec(delService)){
         CMessageBox::information(this, tr("Docker option"),tr("Delete docker service failed!"));

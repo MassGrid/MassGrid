@@ -96,7 +96,7 @@ public:
     }
     std::string ToString(){
         std::ostringstream out;
-        out << "Type :" <<Type << "Name :" <<Name <<"Count: "<<Count<<endl;
+        out << "Type :" <<Type << "Name :" <<Name <<"Count: "<<Count;
         return out.str();
     }
 };
@@ -138,7 +138,7 @@ public:
         gpu.Count = gpucount;
     }
     std::string ToString(){
-        return cpu.ToString()+mem.ToString()+gpu.ToString();
+        return cpu.ToString()+" "+mem.ToString()+" "+gpu.ToString();
     }
     bool operator < (const Item &a) const {
         if(cpu != a.cpu)

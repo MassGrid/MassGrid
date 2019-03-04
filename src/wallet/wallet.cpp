@@ -1417,6 +1417,12 @@ bool CWalletTx::GetOutPoint(CScript& script,COutPoint& out) const{
         }
     }
 }
+bool CWalletTx::IsMasterNodeTransaction(){
+    std::string str = Getmasternodeaddress();
+    if(str.empty())
+        return false;
+    return true;
+}
 bool CWalletTx::HasCreatedService(){
     std::string str = Getserviceid();
     if(str.empty())
