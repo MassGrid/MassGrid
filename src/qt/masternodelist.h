@@ -103,6 +103,7 @@ private:
     bool getVirtualIP(const QString& n2n_localip,QString& virtualIP);
     void initOrderTablewidget();
     void resetTableWidgetTitle();
+    void loadOrderTableWidget();
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -121,13 +122,15 @@ private Q_SLOTS:
     void slot_updateServiceBtn();
     void slot_deleteServiceBtn();
     void updateServiceList();
+    void openServiceDetail(QModelIndex);
 
     void loadDockerDetail(const std::string& key);
-    void updateServiceDetail(Service& service);
-    void updateTaskDetail(std::map<std::string,Task> &mapDockerTasklists,int& taskStatus);
+    // void updateServiceDetail(Service& service);
+    // void updateTaskDetail(std::map<std::string,Task> &mapDockerTasklists,int& taskStatus);
     void slot_createServiceBtn();
     void slot_changeN2Nstatus(bool);
     void slot_curTabPageChanged(int);
+    void slot_ordertablecheck();
     void updateDockerList(bool fForce = false);
 };
 #endif // MASTERNODELIST_H

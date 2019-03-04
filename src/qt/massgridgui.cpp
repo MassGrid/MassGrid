@@ -72,6 +72,7 @@
 #include <QEventLoop>
 #include <QSortFilterProxyModel>
 #include <QSettings>
+#include <QSizeGrip>
 
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
@@ -296,6 +297,13 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     // statusFrameLayout->addSpacerItem(spacerItem);
     statusFrameLayout->addWidget(tmpSpacer);
     statusFrameLayout->addWidget(frameBlocks);
+
+    QFrame* tmpFrame = new QFrame(statusFrame);
+    tmpFrame->setFixedSize(15,statusFrame->height());
+    statusFrameLayout->addWidget(tmpFrame);
+
+    sizeGrip = new QSizeGrip(tmpFrame);
+    sizeGrip->move(-3,10);
 
     // statusBar()->addWidget(progressBarLabel);
     // statusBar()->addWidget(progressBar);

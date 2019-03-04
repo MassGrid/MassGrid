@@ -102,7 +102,15 @@ bool AddDockerServiceDlg::slot_okbutton()
 
 void AddDockerServiceDlg::slot_close()
 {
-    if(ui->stackedWidget->currentIndex() == 2){
+    if(ui->stackedWidget->currentIndex() == 1){
+        CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("退出"),
+        tr("正在转账中，退出后可以在订单管理中查询转账结果并进行下一步操作，确认关闭？"),
+        CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+        if(btnRetVal == CMessageBox::Cancel)
+            return;
+    }
+    else if(ui->stackedWidget->currentIndex() == 2){
         CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("退出"),
         tr("转账已完成，服务创建中，现在退出将在15-60分钟内收到退款，是否仍旧退出？"),
         CMessageBox::Ok_Cancel, CMessageBox::Cancel);
@@ -110,6 +118,14 @@ void AddDockerServiceDlg::slot_close()
         if(btnRetVal == CMessageBox::Cancel)
             return;
     }
+    // else if(ui->stackedWidget->currentIndex() == 3){
+    //     CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("退出"),
+    //     tr("服务创建中，？"),
+    //     CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+    //     if(btnRetVal == CMessageBox::Cancel)
+    //         return;
+    // }
     close();
 }
 
@@ -125,6 +141,7 @@ void AddDockerServiceDlg::slot_nextStep()
             }
             ui->label_step2->setEnabled(true);
             ui->line_2->setEnabled(true);
+            ui->label_14->setEnabled(true);
             break;
         case 1 : 
             if(!doStep2()){
@@ -132,12 +149,14 @@ void AddDockerServiceDlg::slot_nextStep()
             }
             ui->line_3->setEnabled(true);
             ui->label_step3->setEnabled(true);
+            ui->label_15->setEnabled(true);
             break;
         case 2 :
             if(!doStep3()){
                 return ;
             }
             ui->label_step4->setEnabled(true);
+            ui->label_17->setEnabled(true);
             break;
         case 3 :
             if(!doStep4()){

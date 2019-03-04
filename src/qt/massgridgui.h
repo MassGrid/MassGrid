@@ -42,6 +42,7 @@ class ModalOverlay;
 class MasternodeList;
 class MainwinTitle;
 class QGridLayout;
+class QSizeGrip;
 
 class CWallet;
 class CUpdateThread;
@@ -153,6 +154,7 @@ private:
     RPCConsole *rpcConsole;
     HelpMessageDialog *helpMessageDialog;
     ModalOverlay *modalOverlay;
+    QSizeGrip *sizeGrip;
 
     /** Keep track of previous number of blocks, to detect progress */
     int prevBlocks;

@@ -168,5 +168,15 @@
         <file>res/pic/splash.png</file>
         <file>res/pic/splash_2.png</file>
         <file>res/pic/splash_testnet.png</file>
+        <file>res/pic/arrow_disabled.png</file>
+        <file>res/pic/arrow_enabled.png</file>
+        <file>res/pic/configure_disabled.png</file>
+        <file>res/pic/configure_enabled.png</file>
+        <file>res/pic/createService_disenabled.png</file>
+        <file>res/pic/createService_enabled.png</file>
+        <file>res/pic/finished_disabled.png</file>
+        <file>res/pic/finished_enabled.png</file>
+        <file>res/pic/pay_disabled.png</file>
+        <file>res/pic/pay_enabled.png</file>
     </qresource>
 </RCC>

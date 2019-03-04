@@ -30,6 +30,7 @@
 #include <QHostAddress>
 #include <QNetworkInterface>
 #include <QList>
+#include "servicedetail.h"
 
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
 #define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
@@ -78,22 +79,22 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->tableWidgetMyMasternodes->setColumnWidth(4, columnActiveWidth);
     ui->tableWidgetMyMasternodes->setColumnWidth(5, columnLastSeenWidth);
 
-    // ui->tableWidgetMasternodes->setColumnWidth(0, columnAddressWidth);
-    // ui->tableWidgetMasternodes->setColumnWidth(1, columnProtocolWidth);
-    // ui->tableWidgetMasternodes->setColumnWidth(2, columnStatusWidth);
-    // ui->tableWidgetMasternodes->setColumnWidth(3, columnActiveWidth);
-    // ui->tableWidgetMasternodes->setColumnWidth(4, columnLastSeenWidth);
-
     ui->tableWidgetMasternodes->hideColumn(5);
     ui->tableWidgetMasternodes->hideColumn(7);
     ui->tableWidgetMasternodes->verticalHeader()->setVisible(false); 
+
+    ui->OrdertableWidget->verticalHeader()->setVisible(false); 
+    ui->OrdertableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->OrdertableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->OrdertableWidget->setAlternatingRowColors(true);
 
     ui->serviceTableWidget->setColumnWidth(0, 150);
     ui->serviceTableWidget->setColumnWidth(1, 100);
 
     ui->serviceTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->serviceTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->serviceTableWidget->horizontalHeader()->setStretchLastSection(true);
+    // ui->serviceTableWidget->horizontalHeader()->setStretchLastSection(true);
+    ui->serviceTableWidget->verticalHeader()->setVisible(false); 
 
     ui->tableWidgetMyMasternodes->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -103,6 +104,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     connect(ui->tableWidgetMyMasternodes, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
     connect(ui->tableWidgetMasternodes, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDockerDetail(QModelIndex)));
     connect(ui->serviceTableWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(loadServerDetail(QModelIndex)));
+    connect(ui->serviceTableWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(openServiceDetail(QModelIndex)));
     
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
     connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
@@ -130,6 +132,8 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
 
     QTimer::singleShot(3000,this,SLOT(update()));
     ui->tabWidget->setCurrentIndex(0);
+
+    loadOrderTableWidget();
 }
 
 MasternodeList::~MasternodeList()
@@ -149,13 +153,15 @@ void MasternodeList::resizeEvent(QResizeEvent *event)
 
 void MasternodeList::resetTableWidgetTitle()
 {
-    int itemwidth = ui->OrdertableWidget->width()/6;
+    int itemwidth = ui->OrdertableWidget->width()/7;
     ui->OrdertableWidget->setColumnWidth(0,itemwidth);
     ui->OrdertableWidget->setColumnWidth(1,itemwidth);
     ui->OrdertableWidget->setColumnWidth(2,itemwidth);
     ui->OrdertableWidget->setColumnWidth(3,itemwidth);
     ui->OrdertableWidget->setColumnWidth(4,itemwidth);
     ui->OrdertableWidget->setColumnWidth(5,itemwidth);
+    ui->OrdertableWidget->setColumnWidth(6,itemwidth);
+    // ui->OrdertableWidget->setColumnWidth(7,itemwidth);
 
     int itemwidth2 = ui->tableWidgetMasternodes->width()/6;
     ui->tableWidgetMasternodes->setColumnWidth(0, itemwidth2);
@@ -168,6 +174,13 @@ void MasternodeList::resetTableWidgetTitle()
     ui->tableWidgetMasternodes->setColumnWidth(7, itemwidth2);
     ui->tableWidgetMasternodes->hideColumn(5);
     ui->tableWidgetMasternodes->hideColumn(7);
+
+    int itemwidth3 = ui->serviceTableWidget->width()/5;
+    ui->serviceTableWidget->setColumnWidth(0, itemwidth3);
+    ui->serviceTableWidget->setColumnWidth(1, itemwidth3);
+    ui->serviceTableWidget->setColumnWidth(2, itemwidth3);
+    ui->serviceTableWidget->setColumnWidth(3, itemwidth3);
+    ui->serviceTableWidget->setColumnWidth(4, itemwidth3);
 }
 
 void MasternodeList::setClientModel(ClientModel *model)
@@ -602,7 +615,7 @@ int MasternodeList::loadServerList()
 {
     ui->serviceTableWidget->setRowCount(0);
 
-    std::map<std::string,Service>  serverlist = dockercluster.mapDockerServiceLists;
+    std::map<std::string,Service> serverlist = dockercluster.mapDockerServiceLists;
     std::map<std::string,Service>::iterator iter = serverlist.begin();
 
     int count = 0;
@@ -611,6 +624,11 @@ int MasternodeList::loadServerList()
         Service service = serverlist[iter->first];
         QString name = QString::fromStdString(service.spec.name);
         map<std::string,Task> mapDockerTasklists = service.mapDockerTaskLists;
+
+        uint64_t createdAt = service.createdAt;
+        // std::string name = service.spec.name;
+        // std::string address = service.spec.labels["com.massgrid.pubkey"];
+        std::string image = service.spec.taskTemplate.containerSpec.image;
 
         int taskStatus = -1;
         QString taskStatusStr = tr("Waiting");
@@ -628,13 +646,21 @@ int MasternodeList::loadServerList()
         label->setStyleSheet(taskStatus == 8 ? "color:green;" : "color:red;");
 
         QTableWidgetItem *nameItem = new QTableWidgetItem(name);
+        QTableWidgetItem *imageItem = new QTableWidgetItem(QString::fromStdString(image));
         QTableWidgetItem *idItem = new QTableWidgetItem(id);
+        QTableWidgetItem *timeoutItem = new QTableWidgetItem(QDateTime::fromTime_t(createdAt).addSecs(14400).toString("yyyy-MM-dd hh:mm:ss"));
 
         ui->serviceTableWidget->insertRow(count);
-        ui->serviceTableWidget->setItem(count, 0, nameItem);
-        ui->serviceTableWidget->setItem(count, 1, idItem);
+        ui->serviceTableWidget->setItem(count, 0, idItem);
+        ui->serviceTableWidget->setItem(count, 1, nameItem);
+        ui->serviceTableWidget->setItem(count, 2, imageItem);
+        ui->serviceTableWidget->setItem(count, 3, timeoutItem);
         // ui->serviceTableWidget->setItem(count, 2, statusItem);
-        ui->serviceTableWidget->setCellWidget(count,2,label);
+        ui->serviceTableWidget->setCellWidget(count,4,label);
+
+        for(int i=0;i<4;i++)
+            ui->serviceTableWidget->item(0,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
+
         count++;
     }
     dockerServerman.setDNDataStatus(CDockerServerman::Free);
@@ -657,125 +683,153 @@ void MasternodeList::loadDockerDetail(const std::string & key)
     // LogPrintf("loadDockerDetail service:%s\n",service.ToJsonString());
 
     int taskStatus = -1;
-    updateTaskDetail(mapDockerTasklists,taskStatus);
+    map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
+    for(;iter != mapDockerTasklists.end();iter++){
+        Task task = iter->second;
+        taskStatus = task.status.state;
+    }
+
+    // updateTaskDetail(mapDockerTasklists,taskStatus);
 
     DockerUpdateMode mode = taskStatus == 8 ? DockerUpdateMode::WhenNormal : DockerUpdateMode::AfterCreate;
 
-    updateServiceDetail(service);
+    // updateServiceDetail(service);
     setCurUpdateMode(mode);
 }
 
-void MasternodeList::updateServiceDetail(Service& service)
-{    
-    uint64_t createdAt = service.createdAt;
-
-    std::string name = service.spec.name;
-    std::string address = service.spec.labels["com.massgrid.pubkey"];
-
-    std::string image = service.spec.taskTemplate.containerSpec.image;
-    std::string userName = service.spec.taskTemplate.containerSpec.user;
-
-    std::vector<std::string> env = service.spec.taskTemplate.containerSpec.env;
-    int count = env.size();
-    QString n2n_name;
-    QString n2n_localip;
-    QString n2n_SPIP;
-    QString ssh_pubkey;
-    for(int i=0;i<count;i++){
-        QString envStr = QString::fromStdString(env[i]);
-        if(envStr.contains("N2N_NAME")){
-            n2n_name = envStr.split("=").at(1);
-        }
-        else if(envStr.contains("N2N_SERVERIP")){
-            n2n_localip = envStr.split("=").at(1);
-        }
-        else if(envStr.contains("N2N_SNIP")){
-            n2n_SPIP = envStr.split("=").at(1);
-        }
-        else if(envStr.contains("SSH_PUBKEY")){
-            int size = envStr.split(" ").size();
-            if(size >= 2)
-            ssh_pubkey =  envStr.split(" ").at(1).mid(0,10);
-        }
-    }
-
-    ui->label_serviceTimeout->setText(QDateTime::fromTime_t(createdAt).addSecs(14400).toString("yyyy-MM-dd hh:mm:ss t"));
-    ui->label_n2n_serverip->setText(n2n_SPIP);
-    ui->label_n2n_name->setText(n2n_name);
-    ui->label_n2n_localip->setText(n2n_localip);
-    ui->label_ssh_pubkey->setText(ssh_pubkey);
-
-    ui->label_name->setText(QString::fromStdString(name));
-    ui->label_image->setText(QString::fromStdString(image));
-    ui->label_user->setText(QString::fromStdString(userName));
-}
-
-void MasternodeList::updateTaskDetail(std::map<std::string,Task> &mapDockerTasklists,int& taskStatus)
+void MasternodeList::openServiceDetail(QModelIndex index)
 {
-    map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
+    QString key = ui->serviceTableWidget->item(index.row(),0)->text();
+    // loadDockerDetail(key.toStdString());
 
-    LogPrintf("mapDockerTasklists size:%d \n",mapDockerTasklists.size());
+    Service service = dockercluster.mapDockerServiceLists[key.toStdString().c_str()];
+    // map<std::string,Task> mapDockerTasklists = service.mapDockerTasklists;
 
-    for(;iter != mapDockerTasklists.end();iter++){
-        std::string id = iter->first;
-        Task task = iter->second;
-        QString name = QString::fromStdString(task.name);
-        QString serviceID = QString::fromStdString(task.serviceID);
-        int64_t slot = task.slot;
+    // int taskStatus = -1;
+    // updateTaskDetail(mapDockerTasklists,taskStatus);
+    // updateServiceDetail(service);
 
-        //std::string
-        // int taskstatus = -1;
-        taskStatus = task.status.state;
-        QString taskStatusStr = QString::fromStdString(strTaskStateTmp[taskStatus]);
+    ServiceDetail dlg(0);
 
-        QString taskErr = QString::fromStdString(task.status.err);
-
-        int64_t nanoCPUs = task.spec.resources.limits.nanoCPUs;
-        int64_t memoryBytes = task.spec.resources.limits.memoryBytes;
-
-        std::string gpuName ;
-        int64_t gpuCount = 0;
-
-        int genericResourcesSize = task.spec.resources.reservations.genericResources.size();
-        if(genericResourcesSize >0){
-            gpuName = task.spec.resources.reservations.genericResources[0].discreateResourceSpec.kind;
-            gpuCount = task.spec.resources.reservations.genericResources[0].discreateResourceSpec.value;
-        }
-
-        QString taskRuntime = QString::fromStdString(task.spec.runtime);
-
-        ui->label_taskName->setText(QString::fromStdString(id));
-        ui->label_cpuCount->setText(QString::number(nanoCPUs/DOCKER_CPU_UNIT));
-        ui->label_memoryBytes->setText(QString::number(memoryBytes/DOCKER_MEMORY_UNIT));
-        ui->label_GPUName->setText(QString::fromStdString(gpuName));
-        ui->label_GPUCount->setText(QString::number(gpuCount));
-
-        ui->label_taskStatus->setText(taskStatusStr);
-
-        if(taskStatus == 8){
-            ui->label_16->setStyleSheet("color:green;");
-            ui->label_taskStatus->setStyleSheet("color:green;");
-        }
-        else if(taskStatus != -1){
-            ui->label_16->setStyleSheet("color:red;");
-            ui->label_taskStatus->setStyleSheet("color:red;");
-        }
-        else{
-            ui->label_16->setStyleSheet("color:black;");
-            ui->label_taskStatus->setStyleSheet("color:black;");
-        }
-        
-        if(!taskErr.isEmpty()){
-            ui->label_17->setVisible(true);
-            ui->textEdit_taskErr->setVisible(true);
-            ui->textEdit_taskErr->setText(taskErr);
-        }
-        else{
-            ui->label_17->setVisible(false);
-            ui->textEdit_taskErr->setVisible(false);
-        }
-    }
+    dlg.setService(service);
+    
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    dlg.exec();
 }
+
+// void MasternodeList::updateServiceDetail(Service& service)
+// {    
+//     uint64_t createdAt = service.createdAt;
+
+//     std::string name = service.spec.name;
+//     std::string address = service.spec.labels["com.massgrid.pubkey"];
+
+//     std::string image = service.spec.taskTemplate.containerSpec.image;
+//     std::string userName = service.spec.taskTemplate.containerSpec.user;
+
+//     std::vector<std::string> env = service.spec.taskTemplate.containerSpec.env;
+//     int count = env.size();
+//     QString n2n_name;
+//     QString n2n_localip;
+//     QString n2n_SPIP;
+//     QString ssh_pubkey;
+//     for(int i=0;i<count;i++){
+//         QString envStr = QString::fromStdString(env[i]);
+//         if(envStr.contains("N2N_NAME")){
+//             n2n_name = envStr.split("=").at(1);
+//         }
+//         else if(envStr.contains("N2N_SERVERIP")){
+//             n2n_localip = envStr.split("=").at(1);
+//         }
+//         else if(envStr.contains("N2N_SNIP")){
+//             n2n_SPIP = envStr.split("=").at(1);
+//         }
+//         else if(envStr.contains("SSH_PUBKEY")){
+//             int size = envStr.split(" ").size();
+//             if(size >= 2)
+//             ssh_pubkey =  envStr.split(" ").at(1).mid(0,10);
+//         }
+//     }
+
+//     ui->label_serviceTimeout->setText(QDateTime::fromTime_t(createdAt).addSecs(14400).toString("yyyy-MM-dd hh:mm:ss t"));
+//     ui->label_n2n_serverip->setText(n2n_SPIP);
+//     ui->label_n2n_name->setText(n2n_name);
+//     ui->label_n2n_localip->setText(n2n_localip);
+//     ui->label_ssh_pubkey->setText(ssh_pubkey);
+
+//     ui->label_name->setText(QString::fromStdString(name));
+//     ui->label_image->setText(QString::fromStdString(image));
+//     ui->label_user->setText(QString::fromStdString(userName));
+// }
+
+// void MasternodeList::updateTaskDetail(std::map<std::string,Task> &mapDockerTasklists,int& taskStatus)
+// {
+//     map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
+
+//     LogPrintf("mapDockerTasklists size:%d \n",mapDockerTasklists.size());
+
+//     for(;iter != mapDockerTasklists.end();iter++){
+//         std::string id = iter->first;
+//         Task task = iter->second;
+//         QString name = QString::fromStdString(task.name);
+//         QString serviceID = QString::fromStdString(task.serviceID);
+//         int64_t slot = task.slot;
+
+//         //std::string
+//         // int taskstatus = -1;
+//         taskStatus = task.status.state;
+//         QString taskStatusStr = QString::fromStdString(strTaskStateTmp[taskStatus]);
+
+//         QString taskErr = QString::fromStdString(task.status.err);
+
+//         int64_t nanoCPUs = task.spec.resources.limits.nanoCPUs;
+//         int64_t memoryBytes = task.spec.resources.limits.memoryBytes;
+
+//         std::string gpuName ;
+//         int64_t gpuCount = 0;
+
+//         int genericResourcesSize = task.spec.resources.reservations.genericResources.size();
+//         if(genericResourcesSize >0){
+//             gpuName = task.spec.resources.reservations.genericResources[0].discreateResourceSpec.kind;
+//             gpuCount = task.spec.resources.reservations.genericResources[0].discreateResourceSpec.value;
+//         }
+
+//         QString taskRuntime = QString::fromStdString(task.spec.runtime);
+
+//         ui->label_taskName->setText(QString::fromStdString(id));
+//         ui->label_cpuCount->setText(QString::number(nanoCPUs/DOCKER_CPU_UNIT));
+//         ui->label_memoryBytes->setText(QString::number(memoryBytes/DOCKER_MEMORY_UNIT));
+//         ui->label_GPUName->setText(QString::fromStdString(gpuName));
+//         ui->label_GPUCount->setText(QString::number(gpuCount));
+
+//         ui->label_taskStatus->setText(taskStatusStr);
+
+//         if(taskStatus == 8){
+//             ui->label_16->setStyleSheet("color:green;");
+//             ui->label_taskStatus->setStyleSheet("color:green;");
+//         }
+//         else if(taskStatus != -1){
+//             ui->label_16->setStyleSheet("color:red;");
+//             ui->label_taskStatus->setStyleSheet("color:red;");
+//         }
+//         else{
+//             ui->label_16->setStyleSheet("color:black;");
+//             ui->label_taskStatus->setStyleSheet("color:black;");
+//         }
+        
+//         if(!taskErr.isEmpty()){
+//             ui->label_17->setVisible(true);
+//             ui->textEdit_taskErr->setVisible(true);
+//             ui->textEdit_taskErr->setText(taskErr);
+//         }
+//         else{
+//             ui->label_17->setVisible(false);
+//             ui->textEdit_taskErr->setVisible(false);
+//         }
+//     }
+// }
 
 void MasternodeList::slot_updateServiceBtn()
 {
@@ -840,28 +894,28 @@ void MasternodeList::askDNData()
 
 void MasternodeList::clearDockerDetail()
 {
-    ui->label_name->setText("");
-    ui->label_n2n_localip->setText("");
-    ui->label_image->setText("");
-    ui->label_user->setText("");
-    ui->label_serviceTimeout->setText("");
-    ui->label_n2n_serverip->setText("");
-    ui->label_n2n_name->setText("");
-    ui->label_n2n_localip->setText("");
-    ui->label_ssh_pubkey->setText("");
+//     ui->label_name->setText("");
+//     ui->label_n2n_localip->setText("");
+//     ui->label_image->setText("");
+//     ui->label_user->setText("");
+//     ui->label_serviceTimeout->setText("");
+//     ui->label_n2n_serverip->setText("");
+//     ui->label_n2n_name->setText("");
+//     ui->label_n2n_localip->setText("");
+//     ui->label_ssh_pubkey->setText("");
 
-    ui->label_taskName->setText("");
-    ui->label_cpuCount->setText("");
-    ui->label_memoryBytes->setText("");
-    ui->label_GPUName->setText("");
-    ui->label_GPUCount->setText("");
-    ui->label_taskStatus->setText("");
-    ui->textEdit_taskErr->setText("");
-    ui->label_17->setVisible(false);
-    ui->textEdit_taskErr->setVisible(false);
-    ui->serviceTableWidget->setRowCount(0);
+//     ui->label_taskName->setText("");
+//     ui->label_cpuCount->setText("");
+//     ui->label_memoryBytes->setText("");
+//     ui->label_GPUName->setText("");
+//     ui->label_GPUCount->setText("");
+//     ui->label_taskStatus->setText("");
+//     ui->textEdit_taskErr->setText("");
+//     ui->label_17->setVisible(false);
+//     ui->textEdit_taskErr->setVisible(false);
+//     ui->serviceTableWidget->setRowCount(0);
     ui->deleteServiceBtn->setEnabled(false);
-    switchButton->setEnabled(false);
+//     switchButton->setEnabled(false);
 }
 
 void MasternodeList::slot_createServiceBtn()
@@ -963,9 +1017,9 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
 {
     switchButton->setEnabled(false);
     if(isSelected){
-        QString n2n_SPIP = ui->label_n2n_serverip->text();
-        QString n2n_localip = ui->label_n2n_localip->text();
-        QString n2n_name = ui->label_n2n_name->text();
+        QString n2n_SPIP ;//= ui->label_n2n_serverip->text();
+        QString n2n_localip ;//= ui->label_n2n_localip->text();
+        QString n2n_name ;//= ui->label_n2n_name->text();
         QString virtualIP;
 
         if(!getVirtualIP(n2n_localip,virtualIP)){
@@ -996,4 +1050,75 @@ void MasternodeList::showEdgeRet(bool flag)
 {
     switchButton->SetSelected(flag);
     switchButton->setEnabled(true);
+}
+
+void MasternodeList::loadOrderTableWidget()
+{
+    ui->OrdertableWidget->setRowCount(0);
+
+    QVector<QStringList> vec;
+    QStringList list;
+    list.append("f7726bdf98ac99e08c2327b77aa43e604106e92ad0f58e0498523e38104ce5c2");
+    list.append("massgrid_01");
+    list.append("19-03-01 10:05");
+    list.append("19-03-01 14:05");
+    list.append("已结算");
+    list.append("运行中");
+    list.append("查看订单");
+    vec.append(list);
+    list.clear();
+
+    list.append("ad0f58986bdf98ac99e08c2327b77aa43e604106e92ad0f5898523e38104ce5c2");
+    list.append("massgrid_02");
+    list.append("19-03-01 12:56");
+    list.append("19-03-01 18:56");
+    list.append("已支付");
+    list.append("运行中");
+    list.append("查看服务");
+    vec.append(list);
+    list.clear();
+
+    list.append("8104ce5cf7726bdf98ac99e08c2327b77aa43e604106e92ad0f58e0498523e38104ce5c2");
+    list.append("massgrid_3");
+    list.append("19-03-01 14:44");
+    list.append("19-03-01 19:44");
+    list.append("已支付");
+    list.append("未创建");
+    list.append("创建服务");
+    vec.append(list);
+    list.clear();
+
+    int rowcount = vec.size();
+    ui->OrdertableWidget->setRowCount(rowcount);
+    for(int i=0;i<rowcount;i++){
+        QStringList list = vec.at(i);
+        QTableWidgetItem *txidItem = new QTableWidgetItem(list.at(0));//("f7726bdf98ac99e08c2327b77aa43e604106e92ad0f58e0498523e38104ce5c2");
+        QTableWidgetItem *containerNameItem = new QTableWidgetItem(list.at(1));//("massgrid_01");
+        QTableWidgetItem *createTimeItem = new QTableWidgetItem(list.at(2));//("19-03-01 14:05");
+        QTableWidgetItem *outTimeItem = new QTableWidgetItem(list.at(3));//("19-03-01 19:05");
+        QTableWidgetItem *payState = new QTableWidgetItem(list.at(4));//("已支付");
+        QTableWidgetItem *serviceState = new QTableWidgetItem(list.at(5));//("运行中");
+        QPushButton *btn = new QPushButton(list.at(6));//("创建服务");
+
+        connect(btn,SIGNAL(clicked()),this,SLOT(slot_ordertablecheck()));
+
+        btn->setStyleSheet("QPushButton\n{\n	background-color:rgb(239, 169, 4); color:rgb(255,255,255);\n	border-radius:2px;\n margin:2px; margin-left:6px;margin-right:6px;\n}");
+        ui->OrdertableWidget->setItem(i, 0, txidItem);
+        ui->OrdertableWidget->setItem(i, 1, containerNameItem);
+        ui->OrdertableWidget->setItem(i,2, createTimeItem);
+        ui->OrdertableWidget->setItem(i, 3, outTimeItem);
+        // ui->OrdertableWidget->setItem(i, 4, totalPrice);
+        ui->OrdertableWidget->setItem(i, 4, payState);
+        ui->OrdertableWidget->setItem(i, 5, serviceState);
+        ui->OrdertableWidget->setCellWidget(i,6,btn);
+
+        for(int j=1;j<6;j++)
+            ui->OrdertableWidget->item(i,j)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);  
+    }
+}
+
+void MasternodeList::slot_ordertablecheck()
+{
+    int currentIndex = ui->OrdertableWidget->currentRow();
+    LogPrintf("---->currentIndex:%d\n",currentIndex);
 }
