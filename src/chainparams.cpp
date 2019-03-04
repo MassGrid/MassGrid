@@ -157,7 +157,7 @@ class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
-        consensus.nSubsidyHalvingInterval = 420768;
+        consensus.nSubsidyHalvingInterval = 1;
         consensus.nMasternodePaymentsStartBlock = 100; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 87840; // actual historical value 2 month 1440*61
         consensus.nInstantSendKeepLock = 6;
@@ -207,9 +207,9 @@ public:
         //     "target : "<<arith_uint256().SetCompact(0x1e0ffff0).GetHex()<<std::endl;
         //  /*get testnet genesis block*/
 
-        genesis = CreateGenesisBlock(1542104476, 29907, 0x1e0ffff0, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1551684552, 46315, 0x1e0ffff0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x00000c3245874d4f55935d3763180b94dbe8b6f52e7d2f9af576fb93b14af068"));
+        assert(consensus.hashGenesisBlock == uint256S("0x000004d4842fcce4b741b48e0dffdb721ae326954dcbdd68e1788cf9c0a3e4bf"));
 		assert(genesis.hashMerkleRoot == uint256S("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
         vFixedSeeds.clear();
         vSeeds.clear();
