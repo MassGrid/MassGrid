@@ -12,28 +12,28 @@
 #include "utiltime.h"
 #include "timermodule.h"
 CDockerMan dockerman;
-map<Item,std::pair<CAmount,int>> CDockerMan::GetPriceListFromNodelist(){
+map<Item,Value_price> CDockerMan::GetPriceListFromNodelist(){
     std::map<std::string, Node> nodelist; 
     {
         LOCK(cs);
         nodelist = mapDockerNodeLists;
     }
 
-    map<Item,std::pair<CAmount,int>> list;
+    map<Item,Value_price> list;
     for(auto it=nodelist.begin();it!=nodelist.end();++it){
         if(it->second.isuseable == false)
             continue;
         Item item(it->second.engineInfo.cpu.Name,it->second.engineInfo.cpu.Count,it->second.engineInfo.mem.Name,it->second.engineInfo.mem.Count,it->second.engineInfo.gpu.Name,it->second.engineInfo.gpu.Count);
         if(list.count(item)){
-            list[item].second++;
+            list[item].count++;
         }else
         {
             CAmount price = dockerPriceConfig.getPrice(item.cpu.Type,item.cpu.Name) * item.cpu.Count +
                 dockerPriceConfig.getPrice(item.mem.Type,item.mem.Name) * item.mem.Count +
                 dockerPriceConfig.getPrice(item.gpu.Type,item.gpu.Name) * item.gpu.Count;
-            list[item] = std::make_pair(price,1);
+            list[item] = Value_price(price,1);
         }
-        LogPrint("docker","item :%s price %d sum %d\n",item.ToString(),list[item].first,list[item].second);
+        LogPrint("docker","item :%s price %d sum %d\n",item.ToString(),list[item].price,list[item].count);
     }
     return list;
 }

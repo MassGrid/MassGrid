@@ -261,13 +261,13 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
         strErr = "spec not found";
         return false;
     }
-    if(!usablemapnode[serviceItem].second){
+    if(!usablemapnode[serviceItem].count){
         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- serviceItem no resource\n");
         strErr = "no available resources";
         return false;
     }
 
-    CAmount price = usablemapnode[serviceItem].first;
+    CAmount price = usablemapnode[serviceItem].price;
     if(payment < price){
         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- serviceItem payment not enough\n");
         strErr = "payment not enough";

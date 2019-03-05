@@ -151,6 +151,6 @@ public:
     uint32_t GetPort(){return apiPort;}
     void GetVersionAndJoinToken();
     void UpdateIPfromServicelist(std::map<std::string,Service>& map);
-    map<Item,std::pair<CAmount,int>> GetPriceListFromNodelist();
+    map<Item,Value_price> GetPriceListFromNodelist();
 };
 #endif //DOCKERMAN_H

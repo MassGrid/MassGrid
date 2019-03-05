@@ -321,7 +321,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         UniValue varr(UniValue::VARR);
         for(int i=0;i<20;++i){
             MilliSleep(100);
-            if(dockercluster.dndata.mapDockerServiceLists.size()){
+            if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
                 varr.clear();
                 for(auto it = dockercluster.dndata.mapDockerServiceLists.begin();it != dockercluster.dndata.mapDockerServiceLists.end();++it){
                     UniValue obj(UniValue::VOBJ);
@@ -332,17 +332,16 @@ UniValue docker(const UniValue& params, bool fHelp)
                 for(auto it = dockercluster.dndata.items.begin();it!= dockercluster.dndata.items.end();++it){
                     UniValue obj(UniValue::VOBJ);
                     obj.push_back(Pair("Type",it->first.ToString()));
-                    obj.push_back(Pair("Price",it->second.first));
-                    obj.push_back(Pair("Count",it->second.second));
+                    obj.push_back(Pair("Price",it->second.price));
+                    obj.push_back(Pair("Count",it->second.count));
                     varr2.push_back(obj);
                 }
                 varr.push_back(varr2);
-                varr.push_back(Pair("masternodeaddress",dockercluster.dndata.masternodeAddress));
+                UniValue obj(UniValue::VOBJ);
+                varr.push_back(obj);
                 return varr;
             }
         }
-        if(!dockercluster.dndata.strErr.empty())
-            return dockercluster.dndata.strErr;
     }
     return NullUniValue;
 }

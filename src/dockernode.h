@@ -100,6 +100,18 @@ public:
         return out.str();
     }
 };
+struct Value_price{
+    CAmount price;
+    int count;
+    Value_price(CAmount p,int c):price(p),count(c){}
+    Value_price(){}
+    ADD_SERIALIZE_METHODS;
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(price);
+        READWRITE(count);
+    }
+};
 class Item{
 public:
     info cpu;

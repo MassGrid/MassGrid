@@ -52,7 +52,7 @@ public:
     CPubKey pubKeyClusterAddress{};
     int64_t sigTime{}; //dkct message times
     std::map<std::string,Service> mapDockerServiceLists{};
-    map<Item,std::pair<CAmount,int>> items{};
+    map<Item,Value_price> items{};
     string masternodeAddress{};
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
