@@ -53,9 +53,9 @@ void ThreadTimeModule()
         
         timerModule.CheckQue();
         // Check for stop or if block needs to be rebuilt
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<100;i++){
             boost::this_thread::interruption_point();
-            MilliSleep(300);
+            MilliSleep(100);
         }
     }
 }

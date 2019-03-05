@@ -343,32 +343,13 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         }
         case Method::METHOD_TASKS_LISTS:
         {
-            string serivceid;
-            Service::UpdateTaskList(responsedata,mapDockerServiceLists,serivceid); //updatealldate serviceid is null
+            std::set<std::string> serviceidSet;
+            Service::UpdateTaskList(responsedata,mapDockerServiceLists,serviceidSet); //updatealldate serviceid is null
             
-            if(!serivceid.empty() && mapDockerServiceLists.find(serivceid)->second.deleteTime <= GetAdjustedTime()) //when the task is always in pedding
-                timerModule.SetTlement(serivceid); 
-            
-            //set node usage
-            if(serivceid.empty()){
-                for(auto it = mapDockerServiceLists.begin();it!=mapDockerServiceLists.end();++it){
-                    if(it->second.mapDockerTaskLists.size()){
-                        string nodeid =it->second.mapDockerTaskLists.begin()->second.nodeID;
-                        if(!nodeid.empty()&&it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING&&
-                        it->second.mapDockerTaskLists.begin()->second.status.state < Config::TaskState::TASKSTATE_SHUTDOWN){
-                            mapDockerNodeLists[nodeid].isuseable=false;
-                        }else
-                        {
-                            mapDockerNodeLists[nodeid].isuseable=true;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                auto it = mapDockerServiceLists.find(serivceid);
-                if(it == mapDockerServiceLists.end())
-                    break;
+            for(auto iter = serviceidSet.begin();iter != serviceidSet.end();++iter){
+                auto it = mapDockerServiceLists.find(*iter);
+                if(it->second.deleteTime <= GetAdjustedTime()) //when the task is always in pedding
+                    timerModule.SetTlement(it->first); 
                 if(it->second.mapDockerTaskLists.size()){
                     string nodeid =it->second.mapDockerTaskLists.begin()->second.nodeID;
                     if(!nodeid.empty()&&it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING&&
@@ -380,7 +361,6 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                     }
                 }
             }
-            
             break;
         }
         case Method::METHOD_TASKS_INSPECT:  //not implemented yet

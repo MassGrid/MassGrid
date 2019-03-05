@@ -91,15 +91,16 @@ void Service::ServiceListUpdate(const string& serviceData,std::map<std::string,S
         LogPrint("docker","Service::ServiceListUpdate unkonw exception\n");
     }
 }
-void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service> &services,std::string& serviceid){
+void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service> &services,std::set<std::string>& serviceidSet){
     try{
         UniValue dataArry(UniValue::VARR);
         if(!dataArry.read(taskData)){
             LogPrint("docker","Task::TaskListUpdateAll docker json error\n");
             return;
         }
-
+        serviceidSet.clear();
         for(size_t i=0;i<dataArry.size();i++){
+            std::string serviceid;
             UniValue data(dataArry[i]);
             serviceid = find_value(data,"ServiceID").get_str();
             string id = find_value(data,"ID").get_str();
@@ -115,14 +116,13 @@ void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service
                 if(fSuccess){
                     auto now_time = GetAdjustedTime();
                     tasks[task.ID]=task;
+                    serviceidSet.insert(serviceid);
                     //health check timeout 
                     if(now_time >= (serviceit->second.createdAt + 180) && task.status.state != Config::TaskState::TASKSTATE_RUNNING)
                         serviceit->second.deleteTime=now_time;
                 }
             }
         }
-        if(dataArry.size() >1)
-            serviceid.clear();
     }catch(std::exception& e){
         LogPrint("docker","Task::TaskListUpdateAll JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){

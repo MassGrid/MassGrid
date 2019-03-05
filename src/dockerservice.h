@@ -161,7 +161,7 @@ public:
             return it->second.status.state;
         }
     }
-    static void UpdateTaskList(const string& taskData,std::map<std::string,Service> &services,std::string& serviceid);
+    static void UpdateTaskList(const string& taskData,std::map<std::string,Service> &services,std::set<std::string>& serviceidSet);
     static void ServiceListUpdateAll(const string& serviceData,std::map<std::string,Service> &services);
     static void ServiceListUpdate(const string& serviceData,std::map<std::string,Service> &services);
 public:    
