@@ -64,6 +64,18 @@ public:
     string Type;
     string Name;
     int Count;
+    info() = default;
+    info(const info& from){
+        Type = from.Type;
+        Name = from.Name;
+        Count = from.Count;
+    }
+    info& operator = (info const& from){
+        Type = from.Type;
+        Name = from.Name;
+        Count = from.Count;
+        return *this;
+    }
     bool operator < (const info &a) const{
         if(Type != a.Type)
             return Type < a.Type;
@@ -104,7 +116,11 @@ struct Value_price{
     CAmount price;
     int count;
     Value_price(CAmount p,int c):price(p),count(c){}
-    Value_price(){}
+    Value_price() = default;
+    Value_price(const Value_price &from){
+        price = from.price;
+        count = from.count;
+    }
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
@@ -129,6 +145,17 @@ public:
         gpu.Name = "nvidia_p106_400_3g";
         gpu.Count = 1;
 
+    }
+    Item(const Item &from){
+        cpu = from.cpu;
+        mem = from.mem;
+        gpu = from.gpu;
+    }
+    Item& operator =(Item const& from){
+        cpu = from.cpu;
+        mem = from.mem;
+        gpu = from.gpu;
+        return *this;
     }
     Item(string cpuname,int cpucount,string memname,int memcount,string gpuname,int gpucount){
         cpu.Type = "cpu";
