@@ -534,3 +534,12 @@ std::string CDockerMan::GetMasterIp(){
     return swarm.ip_port.substr(0,swarm.ip_port.find_first_of(":"));
 
 }
+std::map<std::string ,Service> CDockerMan::GetServiceFromPubkey(CPubKey pubkey){
+    map<std::string ,Service> mapServerlist{};
+    for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
+        if(it->second.customer == pubkey.ToString().substr(0,65)){
+            mapServerlist.insert(*it);
+        }
+    }
+    return mapServerlist;
+}

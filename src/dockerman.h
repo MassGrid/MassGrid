@@ -106,15 +106,7 @@ public:
     IpSet serviceIp;
     const uint32_t n2nServerPort = 8999;
     union docker_Version version;
-    map<std::string ,Service> GetServiceFromPubkey(CPubKey pubkey){
-        map<std::string ,Service> map{};
-        for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
-            if(it->second.customer == pubkey.ToString().substr(0,65)){
-                map.insert(*it);
-            }
-        }
-
-    }
+    map<std::string ,Service> GetServiceFromPubkey(CPubKey pubkey);
     bool ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService = true);
     bool PushMessage(Method mtd,std::string id,std::string pushdata,bool isClearService = true);
     bool Update(); //update all data;
