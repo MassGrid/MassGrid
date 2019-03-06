@@ -28,9 +28,6 @@
 #include <iomanip>
 #include <univalue.h>
 
-#ifdef ENABLE_WALLET
-void EnsureWalletIsUnlocked();
-#endif // ENABLE_WALLET
 
 UniValue docker(const UniValue& params, bool fHelp)
 {
@@ -322,7 +319,6 @@ UniValue docker(const UniValue& params, bool fHelp)
         for(int i=0;i<20;++i){
             MilliSleep(100);
             if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
-                varr.clear();
                 for(auto it = dockercluster.dndata.mapDockerServiceLists.begin();it != dockercluster.dndata.mapDockerServiceLists.end();++it){
                     UniValue obj(UniValue::VOBJ);
                     obj.push_back(Pair(it->first,Service::DockerServToJson(it->second)));
@@ -331,13 +327,18 @@ UniValue docker(const UniValue& params, bool fHelp)
                 UniValue varr2(UniValue::VARR);
                 for(auto it = dockercluster.dndata.items.begin();it!= dockercluster.dndata.items.end();++it){
                     UniValue obj(UniValue::VOBJ);
-                    obj.push_back(Pair("Type",it->first.ToString()));
-                    obj.push_back(Pair("Price",it->second.price));
-                    obj.push_back(Pair("Count",it->second.count));
+                    obj.push_back(Pair("CpuType",it->first.cpu.Name));
+                    obj.push_back(Pair("CpuCount",it->first.cpu.Count));
+                    obj.push_back(Pair("MemSize",it->first.mem.Count));
+                    obj.push_back(Pair("GpuType",it->first.gpu.Name));
+                    obj.push_back(Pair("GpuCount",it->first.gpu.Count));
+                    obj.push_back(Pair("Price",(double)it->second.price/COIN));
+                    obj.push_back(Pair("UsageCount",it->second.count));
                     varr2.push_back(obj);
                 }
                 varr.push_back(varr2);
                 UniValue obj(UniValue::VOBJ);
+                obj.push_back(Pair("masternodeaddress",dockercluster.dndata.masternodeAddress));
                 varr.push_back(obj);
                 return varr;
             }

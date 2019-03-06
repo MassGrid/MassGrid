@@ -137,17 +137,17 @@ bool Node::DecodeFromJson(const UniValue& data, Node& node)
         for(auto it= node.spec.labels.begin();it!=node.spec.labels.end();++it){
             if(it->first == "com.massgrid.address"){
                 node.MGDAddress = it->second;
-            }else if(it->first == "com.massgrid.cputype"){
+            }else if(it->first == "com.massgrid.cpuname"){
                 if(cpuSet.count(it->second))
                     node.engineInfo.cpu.Name = it->second;
             }else if(it->first == "com.massgrid.cpucount"){
                 node.engineInfo.cpu.Count = boost::lexical_cast<int>(it->second);
-            }else if(it->first == "com.massgrid.memtype"){
+            }else if(it->first == "com.massgrid.memname"){
                 if(memSet.count(it->second))
                     node.engineInfo.mem.Name = it->second;
             }else if(it->first == "com.massgrid.memcount"){
                 node.engineInfo.mem.Count = boost::lexical_cast<int>(it->second);
-            }else if(it->first == "com.massgrid.gputype"){
+            }else if(it->first == "com.massgrid.gpuname"){
                 if(gpuSet.count(it->second))
                     node.engineInfo.gpu.Name = it->second;
             }else if(it->first == "com.massgrid.gpucount"){
