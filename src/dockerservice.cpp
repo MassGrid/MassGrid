@@ -1,4 +1,5 @@
 #include "dockerservice.h"
+#include "base58.h"
 #include "univalue.h"
 #include "timedata.h"
 #include "primitives/transaction.h"
@@ -184,8 +185,10 @@ bool Service::DecodeFromJson(const UniValue& data, Service& service)
         for(auto it= service.spec.labels.begin();it!=service.spec.labels.end();++it){
             if(it->first == "com.massgrid.txid")
                 service.txid = uint256S(it->second);
-            else if(it->first == "com.massgrid.pubkey")
-                service.customer = it->second;
+            else if(it->first == "com.massgrid.pubkey"){
+                CPubKey pub(ParseHex(it->second));
+                service.customer = CMassGridAddress(pub.GetID()).ToString();
+            }
             else if(it->first == "com.massgrid.price")
                 service.price = boost::lexical_cast<CAmount>(it->second);
             else if(it->first == "com.massgrid.payment")

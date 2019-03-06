@@ -7,6 +7,7 @@
 #include "init.h"
 #include "netbase.h"
 #include "validation.h"
+#include "coincontrol.h"
 #include "masternode-payments.h"
 #include "masternode-sync.h"
 #include "masternodeconfig.h"
@@ -285,8 +286,13 @@ UniValue docker(const UniValue& params, bool fHelp)
         int nChangePosRet = -1;
         CRecipient recipient = {scriptPubKey, nAmount, false};
         vecSend.push_back(recipient);
+
+        CCoinControl coinControl;
+        coinControl.fUseInstantSend = true;
+        coinControl.destChange = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).Get();
+
         if (!pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRequired, nChangePosRet,
-                                            strError, NULL, true,ALL_COINS, true)) {
+                                            strError, &coinControl, true,ALL_COINS, true)) {
             if (nAmount + nFeeRequired > pwalletMain->GetBalance())
                 strError = strprintf("Error: This transaction requires a transaction fee of at least %s because of its amount, complexity, or use of recently received funds!", FormatMoney(nFeeRequired));
             throw JSONRPCError(RPC_WALLET_ERROR, strError);
