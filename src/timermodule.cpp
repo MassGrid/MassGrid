@@ -1,5 +1,7 @@
 #include "timermodule.h"
+#include "masternode-sync.h"
 #include "dockerman.h"
+#include "dockerserverman.h"
 ServiceTimerModule timerModule;
 bool ServiceTimerModule::Flush(){
     LogPrint("timer","ServiceTimerModule::Flush start\n");
@@ -40,6 +42,12 @@ void ServiceTimerModule::CheckQue(){
     }
 }
 void ServiceTimerModule::SetTlement(std::string serviceid){
+    Service svi;
+    if(!dockerman.GetServiceFromList(serviceid,svi)){
+        LogPrint("timer","ServiceTimerModule::SetTlement serviceid not found\n");
+        return;
+    }
+    dockerServerman.SetTlementService(svi.txid);
     dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,serviceid,"");
 }
 void ThreadTimeModule()
@@ -49,9 +57,11 @@ void ThreadTimeModule()
 
     while(true)
     {
-        timerModule.Flush();
-        
-        timerModule.CheckQue();
+        if (masternodeSync.IsSynced()){
+            timerModule.Flush();
+            
+            timerModule.CheckQue();
+        }
         // Check for stop or if block needs to be rebuilt
         for(int i=0;i<100;i++){
             boost::this_thread::interruption_point();
