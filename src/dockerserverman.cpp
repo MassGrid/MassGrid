@@ -109,9 +109,9 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         mdndata.masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
         LogPrintf("CDockerServerman::ProcessMessage -- Sent DNDATA to peer %d\n", pfrom->id);
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
-
-    }else if(strCommand == NetMsgType::DNDATA){     //cluster
         
+    }else if(strCommand == NetMsgType::DNDATA){     //cluster
+
         LogPrint("docker","CDockerServerman::ProcessMessage DNDATA Started\n");
         DockerGetData mdndata;
         vRecv >> mdndata;

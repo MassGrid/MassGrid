@@ -65,7 +65,8 @@ void Node::NodeListUpdateAll(const string& nodeData,std::map<std::string,Node> &
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
             string id = find_value(data,"ID").get_str();
-            int index = find_value(data,"Index").get_int();
+            UniValue tdata = find_value(data,"Version").get_obj();
+            int64_t index=find_value(tdata,"Index").get_int64();
             auto it = nodes.find(id);
             if(it!=nodes.end() && it->second.version.index == index)    //if the elem existed and needn't update
                 continue;
@@ -90,7 +91,8 @@ void Node::NodeListUpdate(const string& nodeData,std::map<std::string,Node> &nod
             return;
         }
         string id = find_value(data,"ID").get_str();
-        int index = find_value(data,"Index").get_int();
+        UniValue tdata = find_value(data,"Version").get_obj();
+        int64_t index=find_value(tdata,"Index").get_int64();
         auto it = nodes.find(id);
         if(it!=nodes.end() && it->second.version.index == index)    //if the elem existed and needn't update
             return;
@@ -107,7 +109,7 @@ void Node::NodeListUpdate(const string& nodeData,std::map<std::string,Node> &nod
 }
 bool Node::DecodeFromJson(const UniValue& data, Node& node)
 {
-
+    
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
@@ -118,7 +120,7 @@ bool Node::DecodeFromJson(const UniValue& data, Node& node)
         }
         if(data[vKeys[i]].isObject()){
             if(vKeys[i]=="Version"){
-                node.version.index=find_value(tdata,"Index").get_int();
+                node.version.index=find_value(tdata,"Index").get_int64();
             }else if(vKeys[i]=="Spec"){
                 ParseNodeSpec(tdata,node.spec);
             }else if(vKeys[i]=="Description"){

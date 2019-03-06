@@ -59,42 +59,48 @@ namespace Config{
         ADD_SERIALIZE_PROPERTIES(Leader,reachability,addr);
     }; 
 };
-class info{
+class Info{
 public:
     string Type;
     string Name;
     int Count;
-    info() = default;
-    info(const info& from){
+    Info() = default;
+    Info(string type,string name,int count){
+        Type=type;
+        Name=name;
+        Count=count;
+    }
+    Info(const Info& from){
         Type = from.Type;
         Name = from.Name;
         Count = from.Count;
     }
-    info& operator = (info const& from){
+    Info& operator = (Info const& from){
         Type = from.Type;
         Name = from.Name;
         Count = from.Count;
         return *this;
     }
-    bool operator < (const info &a) const{
+    bool operator < (const Info &a) const{
         if(Type != a.Type)
             return Type < a.Type;
         if(Name != a.Name)
             return Name < a.Name;
         if(Count != a.Count)
             return Count < a.Count;
+        return false;
     }
-    bool operator != (const info &a) const{
+    bool operator != (const Info &a) const{
         if(Type != a.Type)
             return true;
         if(Name != a.Name)
-            return Name < a.Name;
+            return true;
         if(Count != a.Count)
             return true;
         return false;
     }
-
-    bool operator == (const info &a) const{
+    
+    bool operator == (const Info &a) const{
         if(*this != a)
             return false;
         return true;
@@ -112,14 +118,20 @@ public:
         return out.str();
     }
 };
-struct Value_price{
+class Value_price{
+public:
     CAmount price;
     int count;
-    Value_price(CAmount p,int c):price(p),count(c){}
     Value_price() = default;
+    Value_price(CAmount p,int c):price(p),count(c){}
     Value_price(const Value_price &from){
         price = from.price;
         count = from.count;
+    }
+    Value_price& operator=(Value_price const& from){
+        price=from.price;
+        count=from.count;
+        return *this;
     }
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
@@ -130,9 +142,9 @@ struct Value_price{
 };
 class Item{
 public:
-    info cpu;
-    info mem;
-    info gpu;
+    Info cpu;
+    Info mem;
+    Info gpu;
 public:
     Item(){
         cpu.Type = "cpu";
@@ -176,8 +188,14 @@ public:
         gpu.Name = gpuname;
         gpu.Count = gpucount;
     }
-    std::string ToString(){
-        return cpu.ToString()+" "+mem.ToString()+" "+gpu.ToString();
+    bool operator != (const Item &a) const{
+        if(cpu != a.cpu)
+            return true;
+        if(gpu != a.gpu)
+            return true;
+        if(mem != a.mem)
+            return true;
+        return false;
     }
     bool operator < (const Item &a) const {
         if(cpu != a.cpu)
@@ -188,6 +206,10 @@ public:
 
         if(gpu != a.gpu)
             return gpu < a.gpu;
+        return false;
+    }
+    std::string ToString(){
+        return cpu.ToString()+" "+mem.ToString()+" "+gpu.ToString();
     }
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>

@@ -66,7 +66,8 @@ void Task::TaskListUpdateAll(const string& taskData, std::map<std::string,Task> 
         for(size_t i=0;i<dataArry.size();i++){
             UniValue data(dataArry[i]);
             string id = find_value(data,"ID").get_str();
-            int index = find_value(data,"Index").get_int();
+            UniValue tdata = find_value(data,"Version").get_obj();
+            int64_t index = find_value(tdata,"Index").get_int64();
             auto it = tasks.find(id);
             if(it!=tasks.end() && it->second.version.index == index)    //if the elem existed and needn't update
                 continue;

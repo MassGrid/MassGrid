@@ -50,7 +50,7 @@ namespace Config{
     static const char* strStatus[] = { "created", "restarting", "running", "removing", "paused", "exited", "dead" };
 
     struct Version{
-        uint64_t index{};
+        int64_t index{};
         ADD_SERIALIZE_PROPERTIES(index);
     };
     struct Status{

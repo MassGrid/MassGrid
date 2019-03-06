@@ -38,7 +38,7 @@ bool Swarm::DockerSwarmJson(const UniValue& data, Swarm& swarm)
         if(data[vKeys[i]].isObject()){
             UniValue tdata(data[vKeys[i]]);
             if(vKeys[i]=="Version"){
-                version.index=find_value(tdata,"Index").get_int();
+                version.index=find_value(tdata,"Index").get_int64();
             }else if(vKeys[i]=="JoinTokens"){
                 mjoinWorkerTokens=find_value(tdata,"Worker").get_str();
                 mjoinManagerTokens=find_value(tdata,"Manager").get_str();
