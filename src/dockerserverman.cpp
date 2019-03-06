@@ -316,8 +316,8 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
         spec.taskTemplate.containerSpec.image = "massgrid/10.0-base-ubuntu16.04";
     spec.taskTemplate.containerSpec.user= "root";
     
-    spec.taskTemplate.resources.limits.memoryBytes = (int64_t)serviceItem.mem.Count *G;
-    spec.taskTemplate.resources.limits.nanoCPUs = (int64_t)serviceItem.cpu.Count * G;
+    spec.taskTemplate.resources.limits.memoryBytes = serviceItem.mem.Count *G;
+    spec.taskTemplate.resources.limits.nanoCPUs = serviceItem.cpu.Count * G;
 
     Config::GenericResources otherresources;
     otherresources.discreateResourceSpec.kind = serviceItem.gpu.Name;
@@ -368,7 +368,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
         return false;
     }
     //  9.  write to wallet
-
+    LogPrintf("CDockerServerman::CheckAndCreateServiveSpec write to walletdb\n");
     wtx.Setserviceid(svi.ID);
     wtx.Setverison(std::to_string(WALLET_DATABASE_VERSION));
     wtx.Setcreatetime(std::to_string(svi.createdAt));
