@@ -134,7 +134,7 @@ bool Node::DecodeFromJson(const UniValue& data, Node& node)
         auto cpuSet = dockerPriceConfig.getNameSet("cpu");
         auto memSet = dockerPriceConfig.getNameSet("mem");
         auto gpuSet = dockerPriceConfig.getNameSet("gpu");
-        for(auto it= node.spec.labels.begin();it!=node.spec.labels.end();++it){
+        for(auto it= node.description.engine.labels.begin();it!=node.description.engine.labels.end();++it){
             if(it->first == "com.massgrid.address"){
                 node.MGDAddress = it->second;
             }else if(it->first == "com.massgrid.cpuname"){

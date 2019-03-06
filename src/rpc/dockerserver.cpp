@@ -195,15 +195,15 @@ UniValue docker(const UniValue& params, bool fHelp)
             throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
         UniValue varr(UniValue::VARR);
         auto entries = dockerPriceConfig.getEntries();
+        int entriesNum=1;
         for(auto it = entries.begin();it!= entries.end();++it){
         UniValue obj(UniValue::VOBJ);
         std::ostringstream streamFull;
-        streamFull << std::setw(18) <<
-                        it->getType() << " " <<
+        streamFull << it->getType() << " " <<
                         it->getName() << " " <<
-                        it->getPrice();
+                        (double)it->getPrice()/COIN;
         std::string strFull = streamFull.str();
-        obj.push_back(strFull);
+        obj.push_back(Pair(std::to_string(entriesNum++),strFull));
         varr.push_back(obj);
         }
         return varr;
