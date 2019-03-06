@@ -78,7 +78,8 @@ void Service::ServiceListUpdate(const string& serviceData,std::map<std::string,S
             return;
         }
         string id = find_value(data,"ID").get_str();
-        int64_t index = find_value(data,"Index").get_int64();
+        UniValue tdata = find_value(data,"Version").get_obj();
+        int64_t index=find_value(tdata,"Index").get_int64();
         auto it = services.find(id);
         if(it!=services.end() && it->second.version.index == index)    //if the elem existed and needn't update
             return;
@@ -105,7 +106,8 @@ void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service
             UniValue data(dataArry[i]);
             serviceid = find_value(data,"ServiceID").get_str();
             string id = find_value(data,"ID").get_str();
-            int64_t index = find_value(data,"Index").get_int64();
+            UniValue tdata = find_value(data,"Version").get_obj();
+            int64_t index=find_value(tdata,"Index").get_int64();
             auto serviceit = services.find(serviceid);
             if(serviceit != services.end()){
                 std::map<std::string,Task> &tasks = serviceit->second.mapDockerTaskLists;

@@ -345,12 +345,12 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
 
     
     spec.taskTemplate.placement.constraints.push_back("node.role == worker");
-    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.cpuname == "+serviceItem.cpu.Name));
-    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.cpucount == "+std::to_string(serviceItem.cpu.Count)));
-    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.memname == "+serviceItem.mem.Name));
-    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.memcount == "+std::to_string(serviceItem.mem.Count)));
-    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.gpuname == "+serviceItem.gpu.Name));
-    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.gpucount == "+std::to_string(serviceItem.gpu.Count)));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.com.massgrid.cpuname == "+serviceItem.cpu.Name));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.com.massgrid.cpucount == "+std::to_string(serviceItem.cpu.Count)));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.com.massgrid.memname == "+serviceItem.mem.Name));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.com.massgrid.memcount == "+std::to_string(serviceItem.mem.Count)));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.com.massgrid.gpuname == "+serviceItem.gpu.Name));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.com.massgrid.gpucount == "+std::to_string(serviceItem.gpu.Count)));
     Config::Mount mount;
     mount.target="/dev/net";
     mount.source="/dev/net";
