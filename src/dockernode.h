@@ -114,7 +114,7 @@ public:
     }
     std::string ToString(){
         std::ostringstream out;
-        out << "Type :" <<Type << "Name :" <<Name <<"Count: "<<Count;
+        out << " Type :" <<Type << " Name :" <<Name <<" Count: "<<Count;
         return out.str();
     }
 };

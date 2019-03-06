@@ -76,7 +76,7 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "sendtomasternode  - send to masternode address: \n"
                 "                  \"MassGrid address\"(string, required)\n"
                 "                  \"amount\"(int, required)\n"
-                + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\"")
+                + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\"")
                 + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\"")
                 + HelpExampleCli("docker", "sendtomasternode \"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\" 6.4")
 #endif // ENABLE_WALLET
@@ -117,7 +117,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     {
         if (!masternodeSync.IsSynced())
             return "Need to Synced First";
-        if (params.size() != 12)
+        if (params.size() != 13)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
         std::string strAddr = params[1].get_str();
         if(!dockercluster.SetConnectDockerAddress(strAddr))
@@ -128,32 +128,32 @@ UniValue docker(const UniValue& params, bool fHelp)
         DockerCreateService createService{};
 
         createService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-        createService.txid = uint256();
+        createService.txid = uint256S(params[2].get_str());
         
-        std::string strServiceName = params[2].get_str();
+        std::string strServiceName = params[3].get_str();
         createService.serviceName = strServiceName;
 
-        std::string strServiceImage = params[3].get_str();
+        std::string strServiceImage = params[4].get_str();
         createService.image = strServiceImage;
 
-        createService.item.cpu.Name = params[4].get_str();
-        int64_t serviceCpu = params[5].get_int64();
+        createService.item.cpu.Name = params[5].get_str();
+        int64_t serviceCpu = params[6].get_int64();
         createService.item.cpu.Count = serviceCpu;
 
-        createService.item.mem.Name = params[6].get_str();
-        int64_t serviceMemoey_byte = params[7].get_int64();
+        createService.item.mem.Name = params[7].get_str();
+        int64_t serviceMemoey_byte = params[8].get_int64();
         createService.item.mem.Count = serviceMemoey_byte;
         
-        std::string strServiceGpuName = params[8].get_str();
+        std::string strServiceGpuName = params[9].get_str();
         createService.item.gpu.Name = strServiceGpuName;
 
-        int64_t serviceGpu = params[9].get_int64();
+        int64_t serviceGpu = params[10].get_int64();
         createService.item.gpu.Count = serviceGpu;
 
-        std::string strn2n_Community = params[10].get_str();
+        std::string strn2n_Community = params[11].get_str();
         createService.n2n_community = strn2n_Community;
 
-        std::string strssh_pubkey = params[11].get_str();
+        std::string strssh_pubkey = params[12].get_str();
         createService.ssh_pubkey = strssh_pubkey;
         EnsureWalletIsUnlocked();
         if(!dockercluster.CreateAndSendSeriveSpec(createService))
