@@ -189,6 +189,8 @@ bool Service::DecodeFromJson(const UniValue& data, Service& service)
                 CPubKey pub(ParseHex(it->second));
                 service.customer = CMassGridAddress(pub.GetID()).ToString();
             }
+            else if(it->first == "com.massgrid.feerate")
+                service.feeRate = boost::lexical_cast<double>(it->second);
             else if(it->first == "com.massgrid.price")
                 service.price = boost::lexical_cast<CAmount>(it->second);
             else if(it->first == "com.massgrid.payment")

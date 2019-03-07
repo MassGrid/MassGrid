@@ -298,6 +298,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
         spec.name = createService.serviceName.substr(0,10) + "_" + createService.ToString().substr(0,4);
     else
         spec.name = createService.ToString().substr(0,15);
+    spec.labels["com.massgrid.feerate"] = std::to_string(dockerServerman.feeRate);
     spec.labels["com.massgrid.pubkey"] = createService.pubKeyClusterAddress.ToString().substr(0,66);
     spec.labels["com.massgrid.txid"] = createService.txid.ToString();
     spec.labels["com.massgrid.price"] =std::to_string(price);
@@ -476,7 +477,7 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             // customer
             vecSend.clear();
             CAmount customerSend = payment;
-            if(customerSend > CAmount(0)){
+            if(customerSend > CAmount(1000)){
                 if(!customerAddress.IsValid())
                     customerscriptPubKey = masternodescriptPubKey; 
                 CRecipient customerrecipient = {customerscriptPubKey, customerSend, true};
@@ -492,7 +493,7 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             // provider
             CAmount providerSend = payment * payrate;
             CAmount customerSend = payment * (1 - payrate);
-            if(providerSend > CAmount(0)){
+            if(providerSend > CAmount(1000)){
                 Node node;
                 if(dockerman.GetNodeFromList(taskit->second.nodeID,node) && CMassGridAddress(node.MGDAddress).IsValid()){
                     payment -= providerSend;
@@ -504,7 +505,7 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             }
 
             // customer
-            if(customerSend > CAmount(0)){
+            if(customerSend > CAmount(1000)){
                 if(customerAddress.IsValid()){
                     payment -= customerSend;
                     CRecipient customerrecipient = {customerscriptPubKey, customerSend, false};
@@ -517,8 +518,8 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
                 LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,svi.payment);
                 return false;
             }
-            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,svi.payment);
-            if(masternodeSend > CAmount(0)){
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld feerate %lf\n",masternodeSend, providerSend , customerSend ,svi.payment,svi.feeRate);
+            if(masternodeSend > CAmount(1000)){
                 CRecipient masternoderecipient = {masternodescriptPubKey, masternodeSend, false};
                 vecSend.push_back(masternoderecipient);
             }
@@ -529,6 +530,10 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
                 }
             }              
         }
+    }
+    if (!vecSend.size()){
+        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete vecSend.size() == 0 \n");
+        return false;
     }
     CCoinControl coinControl;
     coinControl.fUseInstantSend = true;
