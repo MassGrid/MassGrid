@@ -93,14 +93,14 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         DockerGetData mdndata;
         CPubKey pubkey;
         vRecv >> pubkey;
-        LogPrint("docker", "CDockerServerman::ProcessMessage GETDNDATA -- pubkey =%s\n", pubkey.ToString().substr(0,65));
+        LogPrint("docker", "CDockerServerman::ProcessMessage GETDNDATA -- pubkey =%s\n", pubkey.ToString().substr(0,66));
 
         mdndata.mapDockerServiceLists.clear();
 
         dockerservicefilter serfilter;
-        serfilter.label.push_back("com.massgrid.pubkey="+pubkey.ToString().substr(0,65));
+        serfilter.label.push_back("com.massgrid.pubkey="+pubkey.ToString().substr(0,66));
         // if(!dockerman.PushMessage(Method::METHOD_SERVICES_LISTS,"",serfilter.ToJsonString(),false)){
-        //     LogPrint("docker","CDockerServerman::ProcessMessage GETDNDATA service list failed -- pubkey =%s\n", pubkey.ToString().substr(0,65));
+        //     LogPrint("docker","CDockerServerman::ProcessMessage GETDNDATA service list failed -- pubkey =%s\n", pubkey.ToString().substr(0,66));
         // }
         mdndata.mapDockerServiceLists = dockerman.GetServiceFromPubkey(pubkey);
         mdndata.version = DOCKERREQUEST_API_VERSION;
@@ -188,7 +188,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             return;
         }
         if(!delService.CheckSignature(delService.pubKeyClusterAddress)){
-            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE --CheckSignature Failed pubkey= %s\n",delService.pubKeyClusterAddress.ToString().substr(0,65));
+            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE --CheckSignature Failed pubkey= %s\n",delService.pubKeyClusterAddress.ToString().substr(0,66));
             return;
         }
         bool ret = SetTlementService(delService.txid);
@@ -298,7 +298,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
         spec.name = createService.serviceName.substr(0,10) + "_" + createService.ToString().substr(0,4);
     else
         spec.name = createService.ToString().substr(0,15);
-    spec.labels["com.massgrid.pubkey"] = createService.pubKeyClusterAddress.ToString().substr(0,65);
+    spec.labels["com.massgrid.pubkey"] = createService.pubKeyClusterAddress.ToString().substr(0,66);
     spec.labels["com.massgrid.txid"] = createService.txid.ToString();
     spec.labels["com.massgrid.price"] =std::to_string(price);
     spec.labels["com.massgrid.payment"] = std::to_string(payment);
@@ -337,20 +337,20 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     spec.taskTemplate.containerSpec.env.push_back("N2N_SNIP=" + dockerman.GetMasterIp() + ":" + boost::lexical_cast<std::string>(dockerman.n2nServerPort));
     spec.taskTemplate.containerSpec.env.push_back("SSH_PUBKEY=" + createService.ssh_pubkey);
     spec.taskTemplate.containerSpec.env.push_back("CPUNAME=" + serviceItem.cpu.Name);
-    spec.taskTemplate.containerSpec.env.push_back("CPUCOUNT=" + serviceItem.cpu.Count);
+    spec.taskTemplate.containerSpec.env.push_back("CPUCOUNT=" + std::to_string(serviceItem.cpu.Count));
     spec.taskTemplate.containerSpec.env.push_back("MEMNAME=" + serviceItem.mem.Name);
-    spec.taskTemplate.containerSpec.env.push_back("MEMCOUNT=" + serviceItem.mem.Count);
+    spec.taskTemplate.containerSpec.env.push_back("MEMCOUNT=" + std::to_string(serviceItem.mem.Count));
     spec.taskTemplate.containerSpec.env.push_back("GPUNAME=" + serviceItem.gpu.Name);
-    spec.taskTemplate.containerSpec.env.push_back("GPUCOUNT=" + serviceItem.gpu.Count);
+    spec.taskTemplate.containerSpec.env.push_back("GPUCOUNT=" + std::to_string(serviceItem.gpu.Count));
 
     
     spec.taskTemplate.placement.constraints.push_back("node.role == worker");
-    spec.taskTemplate.placement.constraints.push_back(std::string("node.engine.labels.cpuname == "+serviceItem.cpu.Name));
-    spec.taskTemplate.placement.constraints.push_back(std::string("node.engine.labels.cpucount == "+std::to_string(serviceItem.cpu.Count)));
-    spec.taskTemplate.placement.constraints.push_back(std::string("node.engine.labels.memname == "+serviceItem.mem.Name));
-    spec.taskTemplate.placement.constraints.push_back(std::string("node.engine.labels.memcount == "+std::to_string(serviceItem.mem.Count)));
-    spec.taskTemplate.placement.constraints.push_back(std::string("node.engine.labels.gpuname == "+serviceItem.gpu.Name));
-    spec.taskTemplate.placement.constraints.push_back(std::string("node.engine.labels.gpucount == "+std::to_string(serviceItem.gpu.Count)));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.cpuname == "+serviceItem.cpu.Name));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.cpucount == "+std::to_string(serviceItem.cpu.Count)));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.memname == "+serviceItem.mem.Name));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.memcount == "+std::to_string(serviceItem.mem.Count)));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.gpuname == "+serviceItem.gpu.Name));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.gpucount == "+std::to_string(serviceItem.gpu.Count)));
     Config::Mount mount;
     mount.target="/dev/net";
     mount.source="/dev/net";
@@ -408,6 +408,7 @@ bool CDockerServerman::SetTlementService(uint256 serviceTxid){
     }
     payment = svi.payment;
     customerAddress = CMassGridAddress(svi.customer);
+    LogPrintf("CDockerServerman::CMassGridAddress customerAddress %s pubkey: %s\n",customerAddress.ToString(),svi.customer);
     if(customerAddress.IsValid())
         customerscriptPubKey = GetScriptForDestination(customerAddress.Get());
 
@@ -505,6 +506,7 @@ bool CDockerServerman::SetTlementService(uint256 serviceTxid){
                 LogPrintf("CDockerServerman::SetTlementService payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,svi.payment);
                 return false;
             }
+            LogPrintf("CDockerServerman::SetTlementService masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,svi.payment);
             if(masternodeSend > CAmount(0)){
                 CRecipient masternoderecipient = {masternodescriptPubKey, masternodeSend, false};
                 vecSend.push_back(masternoderecipient);

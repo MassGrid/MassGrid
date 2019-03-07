@@ -48,7 +48,7 @@ void Cluster::AskForDNData()
     if(!connectNode) return;
 
     LOCK(cs);
-    LogPrintf("AskForDNData pukey %s\n",DefaultPubkey.ToString().substr(0,65));
+    LogPrintf("AskForDNData pukey %s\n",DefaultPubkey.ToString().substr(0,66));
 
     dockerServerman.setDNDataStatus(CDockerServerman::Ask);
     g_connman->PushMessage(connectNode, NetMsgType::GETDNDATA, DefaultPubkey);

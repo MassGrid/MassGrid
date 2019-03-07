@@ -4057,7 +4057,7 @@ CPubKey CWallet::CreatePubKey(const std::string& addr)
     // }
     // if (!vchPubKey.IsFullyValid())
     //     throw runtime_error(" Invalid public key: "+strAddress);
-    // LogPrintf("result pubkey %s\n",vchPubKey.GetID().ToString());//.substr(0,65));
+    // LogPrintf("result pubkey %s\n",vchPubKey.GetID().ToString());//.substr(0,66));
     // return vchPubKey;
 }
 

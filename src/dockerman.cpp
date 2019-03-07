@@ -517,7 +517,7 @@ std::string CDockerMan::GetMasterIp(){
 std::map<std::string ,Service> CDockerMan::GetServiceFromPubkey(CPubKey pubkey){
     map<std::string ,Service> mapServerlist{};
     for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
-        if(it->second.customer == pubkey.ToString().substr(0,65)){
+        if(it->second.customer == pubkey.ToString().substr(0,66)){
             mapServerlist.insert(*it);
         }
     }
