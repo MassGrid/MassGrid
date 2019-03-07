@@ -97,8 +97,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
         mdndata.mapDockerServiceLists.clear();
 
-        dockerservicefilter serfilter;
-        serfilter.label.push_back("com.massgrid.pubkey="+pubkey.ToString().substr(0,66));
+        // dockerservicefilter serfilter;
+        // serfilter.label.push_back("com.massgrid.pubkey="+pubkey.ToString().substr(0,66));
         // if(!dockerman.PushMessage(Method::METHOD_SERVICES_LISTS,"",serfilter.ToJsonString(),false)){
         //     LogPrint("docker","CDockerServerman::ProcessMessage GETDNDATA service list failed -- pubkey =%s\n", pubkey.ToString().substr(0,66));
         // }

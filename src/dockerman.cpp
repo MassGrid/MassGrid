@@ -6,6 +6,7 @@
 #include <queue>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include "base58.h"
 #include "dockerman.h"
 #include "http.h"
 #include "init.h"
@@ -517,7 +518,7 @@ std::string CDockerMan::GetMasterIp(){
 std::map<std::string ,Service> CDockerMan::GetServiceFromPubkey(CPubKey pubkey){
     map<std::string ,Service> mapServerlist{};
     for(auto it = dockerman.mapDockerServiceLists.begin();it != dockerman.mapDockerServiceLists.end();++it){
-        if(it->second.customer == pubkey.ToString().substr(0,66)){
+        if(it->second.customer == CMassGridAddress(pubkey.GetID()).ToString()){
             mapServerlist.insert(*it);
         }
     }
