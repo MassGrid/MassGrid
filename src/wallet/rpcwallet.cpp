@@ -1488,6 +1488,67 @@ void ListTransactions(const CWalletTx& wtx, const string& strAccount, int nMinDe
             }
         }
     }
+    UniValue entry(UniValue::VOBJ);
+    if(wtx.mapValue.count("serviceid")){
+        entry.push_back(Pair("serviceid", wtx.Getserviceid()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("verison")){
+        entry.push_back(Pair("verison", wtx.Getverison()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("createtime")){
+        entry.push_back(Pair("createtime", wtx.Getcreatetime()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("deletetime")){
+        entry.push_back(Pair("deletetime", wtx.Getdeletetime()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("price")){
+        entry.push_back(Pair("price", wtx.Getprice()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("cpuname")){
+        entry.push_back(Pair("cpuname", wtx.Getcpuname()));
+        ret.push_back(entry);
+    }
+     if(wtx.mapValue.count("cpucount")){
+        entry.push_back(Pair("cpucount", wtx.Getcpucount()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("memname")){
+        entry.push_back(Pair("memname", wtx.Getmemname()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("memcount")){
+        entry.push_back(Pair("memcount", wtx.Getmemcount()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("gpuname")){
+        entry.push_back(Pair("gpuname", wtx.Getgpuname()));
+        ret.push_back(entry);
+    }
+     if(wtx.mapValue.count("gpucount")){
+        entry.push_back(Pair("gpucount", wtx.Getgpucount()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("custeraddress")){
+        entry.push_back(Pair("custeraddress", wtx.Getcusteraddress()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("provideraddress")){
+        entry.push_back(Pair("provideraddress", wtx.Getprovideraddress()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("masternodeaddress")){
+        entry.push_back(Pair("masternodeaddress", wtx.Getmasternodeaddress()));
+        ret.push_back(entry);
+    }
+    if(wtx.mapValue.count("tlementtxid")){
+        entry.push_back(Pair("tlementtxid", wtx.Gettlementtxid()));
+        ret.push_back(entry);
+    }
 }
 
 void AcentryToJSON(const CAccountingEntry& acentry, const string& strAccount, UniValue& ret)

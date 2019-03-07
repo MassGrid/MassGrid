@@ -421,10 +421,11 @@ public:
         void Set##arg(const std::string v) { \
         mapValue[#arg] = v; \
         } \
-        std::string Get##arg() { \
-        if(!mapValue.count(#arg)) \
+        std::string Get##arg() const{ \
+        auto it = mapValue.find(#arg);  \
+        if(it == mapValue.end()) \
             return std::string(); \
-        return mapValue[#arg]; \
+        return it->second; \
         }
     void BindWallet(CWallet *pwalletIn)
     {

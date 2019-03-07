@@ -987,10 +987,6 @@ bool CWallet::AddToWallet(const CWalletTx& wtxIn, bool fFromLoadWallet, CWalletD
                 wtx.fFromMe = wtxIn.fFromMe;
                 fUpdated = true;
             }
-            if(wtxIn.mapValue != wtx.mapValue){
-                wtx.mapValue = wtxIn.mapValue;
-                fUpdated = true;
-            }
         }
 
         //// debug print
