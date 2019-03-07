@@ -177,7 +177,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
         
         std::string strtxid = params[2].get_str();
-        delService.txid = dockercluster.dndata.mapDockerServiceLists[strtxid].txid;
+        delService.txid = uint256S(strtxid);
         EnsureWalletIsUnlocked();
         CKey vchSecret;
         if (!pwalletMain->GetKey(delService.pubKeyClusterAddress.GetID(), vchSecret)){

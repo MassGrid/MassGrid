@@ -48,7 +48,6 @@ void ServiceTimerModule::SetTlement(std::string serviceid){
         return;
     }
     dockerServerman.SetTlementService(svi.txid);
-    dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,serviceid,"");
 }
 void ThreadTimeModule()
 {

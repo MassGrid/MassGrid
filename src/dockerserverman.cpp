@@ -388,6 +388,17 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
 }
 bool CDockerServerman::SetTlementService(uint256 serviceTxid){
 
+    SetTlementServiceWithoutDelete(serviceTxid);
+    Service svi;
+    if(!dockerman.GetServiceFromTxId(serviceTxid,svi)){
+        LogPrintf("CDockerServerman::SetTlementService not found from txid %s error\n",serviceTxid.ToString());
+        return false;
+    }
+    dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,svi.ID,"");
+    return true;
+}
+bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
+
     Service svi;
     CWalletTx wtxNew;
     bool fnoCreated;
@@ -403,32 +414,32 @@ bool CDockerServerman::SetTlementService(uint256 serviceTxid){
     int64_t deleteTime = GetAdjustedTime();
 
     if(!dockerman.GetServiceFromTxId(serviceTxid,svi)){
-        LogPrintf("CDockerServerman::SetTlementService not found from txid %s error\n",serviceTxid.ToString());
+        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete not found from txid %s error\n",serviceTxid.ToString());
         return false;
     }
     payment = svi.payment;
     customerAddress = CMassGridAddress(svi.customer);
-    LogPrintf("CDockerServerman::CMassGridAddress customerAddress %s pubkey: %s\n",customerAddress.ToString(),svi.customer);
+    LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete customerAddress %s pubkey: %s\n",customerAddress.ToString(),svi.customer);
     if(customerAddress.IsValid())
         customerscriptPubKey = GetScriptForDestination(customerAddress.Get());
 
     if (!pwalletMain->mapWallet.count(serviceTxid)){
-        LogPrintf("CDockerServerman::SetTlementService Invalid or non-wallet transaction id\n");
+        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete Invalid or non-wallet transaction id\n");
         return false;
     }
     CWalletTx& wtx = pwalletMain->mapWallet[serviceTxid];  //watch only not check
 
     if(wtx.HasTlemented()){
-        LogPrintf("CDockerServerman::SetTlementService has been tlementtxid\n");
+        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete has been tlementtxid\n");
         return false;
     }
 
     if(!wtx.GetOutPoint(masternodescriptPubKey,outpoint)){
-        LogPrintf("CDockerServerman::SetTlementService outpoint not found\n");
+        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete outpoint not found\n");
         return false;
     }
     if(!wtx.HasCreatedService()){
-        LogPrintf("CDockerServerman::SetTlementService current transaction not been used\n");
+        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete current transaction not been used\n");
         vecSend.clear();
         CAmount customerSend = payment;
         if(customerSend > CAmount(0)){
@@ -440,13 +451,13 @@ bool CDockerServerman::SetTlementService(uint256 serviceTxid){
     }
     else{
         if (svi.feeRate >= 1 ||svi.feeRate < 0){
-            LogPrintf("CDockerServerman::SetTlementService svi.feeRate %lf error\n",svi.feeRate);
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete svi.feeRate %lf error\n",svi.feeRate);
             return false;
         }
         
         auto taskit = svi.mapDockerTaskLists.begin();
         if(taskit == svi.mapDockerTaskLists.end()){  //
-            LogPrintf("CDockerServerman::SetTlementService has no found task\n");
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete has no found task\n");
             return false;
         }
 
@@ -456,7 +467,7 @@ bool CDockerServerman::SetTlementService(uint256 serviceTxid){
             trustTime = prepareTime;
         double payrate = (double)trustTime / prepareTime;
         if(payrate < 0){
-            LogPrintf("CDockerServerman::SetTlementService payrate %lf < 0\n",payrate);
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payrate %lf < 0\n",payrate);
             return false;
         }
         fnoCreated = taskit->second.status.state < Config::TASKSTATE_RUNNING;
@@ -503,10 +514,10 @@ bool CDockerServerman::SetTlementService(uint256 serviceTxid){
             //masternode fee
             masternodeSend += payment;
             if(masternodeSend + providerSend + customerSend != svi.payment){
-                LogPrintf("CDockerServerman::SetTlementService payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,svi.payment);
+                LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,svi.payment);
                 return false;
             }
-            LogPrintf("CDockerServerman::SetTlementService masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,svi.payment);
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,svi.payment);
             if(masternodeSend > CAmount(0)){
                 CRecipient masternoderecipient = {masternodescriptPubKey, masternodeSend, false};
                 vecSend.push_back(masternoderecipient);
@@ -530,7 +541,7 @@ bool CDockerServerman::SetTlementService(uint256 serviceTxid){
     int nChangePosRet = -1;
     bool fCreated = pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRet, nChangePosRet, strError, &coinControl, true, ALL_COINS, true);
     if (!fCreated){
-        LogPrintf("CDockerServerman::SetTlementService CreateTransaction error %s\n",strError);
+        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete CreateTransaction error %s\n",strError);
         return false;
     }
 
@@ -546,7 +557,7 @@ bool CDockerServerman::SetTlementService(uint256 serviceTxid){
         }
     }
     if (!pwalletMain->CommitTransaction(wtxNew, reservekey, g_connman.get(),NetMsgType::TXLOCKREQUEST)){
-        LogPrintf("CDockerServerman::SetTlementService CommitTransaction error \n");
+        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete CommitTransaction error \n");
         return false;
     }
     return true;

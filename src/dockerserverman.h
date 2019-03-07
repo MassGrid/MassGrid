@@ -34,6 +34,7 @@ public:
     double feeRate = 0.01;  //set feeRate 1%
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
     bool CheckAndCreateServiveSpec(DockerCreateService Spec, string& strErr);
+    bool SetTlementServiceWithoutDelete(uint256 serviceTxid);
     bool SetTlementService(uint256 txid);
     DNDATASTATUS dndataStatus;
 
