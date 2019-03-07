@@ -523,12 +523,12 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
                 CRecipient masternoderecipient = {masternodescriptPubKey, masternodeSend, false};
                 vecSend.push_back(masternoderecipient);
             }
-            for(auto it = vecSend.end();it!= vecSend.begin();--it){
+            for(auto it = vecSend.rbegin();it!= vecSend.rend();++it){
                 if(it->nAmount >= CENT){
                     it->fSubtractFeeFromAmount =true;
                     break;
                 }
-            }              
+            }       
         }
     }
     if (!vecSend.size()){
