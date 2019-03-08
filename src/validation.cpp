@@ -1125,18 +1125,14 @@ bool GetTransaction(const uint256 &hash, CTransaction &txOut, const Consensus::P
 }
 
 bool CheckTransactionInputScriptPubkey(const uint256 &hash, CTransaction &txOut,const CPubKey& pubKey, const Consensus::Params& consensusParams, uint256 &hashBlock,std::string& strErr, bool fAllowSlow){
-    if(GetTransaction(hash, txOut, consensusParams, hashBlock, fAllowSlow)){
-        CCoinsView viewDummy;
-        CCoinsViewCache view(&viewDummy);
+        
+        if(GetTransaction(hash, txOut, consensusParams, hashBlock, fAllowSlow)){
         for(int i = 0; i< txOut.vin.size(); ++i){
-            const Coin& coin = view.AccessCoin(txOut.vin[i].prevout);
-            const CScript& prevPubKey = coin.out.scriptPubKey;
-            if(prevPubKey == GetScriptForDestination(pubKey.GetID())){
-                if (coin.IsSpent()) {
-                    LogPrintf("CheckTransactionInputScriptPubkey Input not found or already spent");
-                    continue;
+            CTransaction tx;
+            if(GetTransaction(txOut.vin[i].prevout.hash, tx, consensusParams, hashBlock, fAllowSlow)){
+                if( tx.vout[txOut.vin[i].prevout.n].scriptPubKey == GetScriptForDestination(pubKey.GetID())){
+                    return true;
                 }
-                return true;
             }
         }
         strErr = "ScriptPubkey not found";

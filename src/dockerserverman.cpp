@@ -227,6 +227,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     uint256 hash;
     if(!CheckTransactionInputScriptPubkey(createService.txid, tx,createService.pubKeyClusterAddress, Params().GetConsensus(), hash,strErr, true)){
         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+        return false;
     }
 
     CWalletTx& wtx = pwalletMain->mapWallet[createService.txid];  //watch only not check
@@ -234,7 +235,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     //check tx in block
     bool fLocked = instantsend.IsLockedInstantSendTransaction(wtx.GetHash());
     int confirms = wtx.GetDepthInMainChain(false);
-    LogPrintf("docker","current transaction fLocked %d confirms %d\n",fLocked,confirms);
+    LogPrint("docker","current transaction fLocked %d confirms %d\n",fLocked,confirms);
     if(!fLocked && confirms < 1){
         strErr = "The transaction not confirms: "+std::to_string(confirms);
         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
@@ -396,7 +397,8 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete outpoint not found\n");
         return false;
     }
-    if(!pwalletMain->IsUTXO(outpoint)){
+    Coin coin;
+    if(!GetUTXOCoin(outpoint,coin)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete outpoint not UTXO\n");
         return false;
     }
@@ -412,21 +414,22 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     CAmount nNet = nCredit - nDebit;
     CAmount nFee = (wtx.IsFromMe(filter) ? wtx.GetValueOut() - nDebit : 0);
     CAmount payment = nNet - nFee;
-    
+    const CAmount pay = payment;
+
     if(!wtx.HasCreatedService()){
-        LogPrintf("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction not been used\n");
+        LogPrint("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction not been used\n");
 
         CTransaction txOut;
         uint256 hash;
         if(GetTransaction(serviceTxid, txOut, Params().GetConsensus(), hash, true)){
-            CCoinsView viewDummy;
-            CCoinsViewCache view(&viewDummy);
             for(int i = 0; i< txOut.vin.size(); ++i){
-                const Coin& coin = view.AccessCoin(txOut.vin[i].prevout);
-                customerscriptPubKey = coin.out.scriptPubKey;
-                break;
+                CTransaction tx;
+                if(GetTransaction(txOut.vin[i].prevout.hash, tx, Params().GetConsensus(), hash, true)){
+                    customerscriptPubKey = tx.vout[txOut.vin[i].prevout.n].scriptPubKey;
+                    break;
+                }
             }
-        }
+         }
         vecSend.clear();
         CAmount customerSend = payment;
         if(customerSend > CAmount(0)){ 
@@ -435,7 +438,7 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         }
     }
     else{
-        LogPrintf("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction has been used\n");
+        LogPrint("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction has been used\n");
 
         customerAddress = CMassGridAddress(wtx.Getcusteraddress());
         providerAddress = CMassGridAddress(wtx.Getprovideraddress());
@@ -496,8 +499,8 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             }
             //masternode fee
             masternodeSend += payment;
-            if(masternodeSend + providerSend + customerSend != payment){
-                LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,payment);
+            if(masternodeSend + providerSend + customerSend != pay){
+                LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,pay);
                 return false;
             }
             LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld feerate %lf\n",masternodeSend, providerSend , customerSend ,payment,feeRate);
