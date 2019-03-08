@@ -25,7 +25,8 @@ void ServiceTimerModule::UpdateSet(uint256 hash){
     }
     CWalletTx& wtx = pwalletMain->mapWallet[hash];
     if(!wtx.Getserviceid().empty() && wtx.Gettlementtxid().empty()){
-        setWalletTx.insert(&wtx);
+        if(!dockerServerman.SetTlementServiceWithoutDelete(wtx.GetHash()))
+            setWalletTx.insert(&wtx);
     }
 }
 void ServiceTimerModule::UpdateQueAll(std::map<std::string, Service>&map){
