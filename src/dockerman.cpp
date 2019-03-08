@@ -24,7 +24,7 @@ map<Item,Value_price> CDockerMan::GetPriceListFromNodelist(){
 
     map<Item,Value_price> list;
     for(auto it=nodelist.begin();it!=nodelist.end();++it){
-        if(it->second.isuseable == false)
+        if(it->second.isuseable == false || it->second.spec.role == Config::Role::ROLE_MANAGER)
             continue;
         Item item(it->second.engineInfo.cpu.Name,it->second.engineInfo.cpu.Count,it->second.engineInfo.mem.Name,it->second.engineInfo.mem.Count,it->second.engineInfo.gpu.Name,it->second.engineInfo.gpu.Count);
         if(list.count(item)){
