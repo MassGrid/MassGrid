@@ -189,6 +189,8 @@ bool Service::DecodeFromJson(const UniValue& data, Service& service)
                 CPubKey pub(ParseHex(it->second));
                 service.customer = CMassGridAddress(pub.GetID()).ToString();
             }
+            else if(it->first == "com.massgrid.deletetime")
+                service.deleteTime = boost::lexical_cast<int64_t>(it->second);
             else if(it->first == "com.massgrid.feerate")
                 service.feeRate = boost::lexical_cast<double>(it->second);
             else if(it->first == "com.massgrid.price")
@@ -209,7 +211,6 @@ bool Service::DecodeFromJson(const UniValue& data, Service& service)
                 service.item.gpu.Count = boost::lexical_cast<int>(it->second);
         }
         service.timeUsage = ((double)service.payment /service.price)* 3600;
-        service.deleteTime=service.createdAt + service.timeUsage;
     }
     return true;
 }

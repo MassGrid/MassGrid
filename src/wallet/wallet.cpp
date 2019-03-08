@@ -1019,6 +1019,19 @@ bool CWallet::AddToWallet(const CWalletTx& wtxIn, bool fFromLoadWallet, CWalletD
     return true;
 }
 
+bool CWallet::IsUTXO(const COutPoint& outpoint){
+    LOCK(cs_wallet);
+    return setWalletUTXO.count(outpoint);
+}
+
+void CWallet::Untlement(std::set<CWalletTx*>& setWalletTx){
+    LOCK(cs_wallet);
+    for(auto &entry : mapWallet){
+        if(!entry.second.Getserviceid().empty() && !entry.second.Getdeletetime().empty() && entry.second.Gettlementtxid().empty()){
+            setWalletTx.insert(&(entry.second));
+        }
+    }
+}
 /**
  * Add a transaction to the wallet, or update it.
  * pblock is optional, but should be provided if the transaction is known to be in a block.

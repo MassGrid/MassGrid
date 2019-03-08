@@ -12,6 +12,8 @@
 #include "init.h"
 #include "utiltime.h"
 #include "timermodule.h"
+#include "wallet/wallet.h"
+#include "dockerserverman.h"
 CDockerMan dockerman;
 map<Item,Value_price> CDockerMan::GetPriceListFromNodelist(){
     std::map<std::string, Node> nodelist; 
@@ -248,6 +250,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 UpdateIPfromServicelist(mapDockerServiceLists);
                 //Update service Timer
                 timerModule.UpdateQueAll(mapDockerServiceLists);
+                timerModule.UpdateSetAll();
             }
 
             dockertaskfilter taskfilter;
@@ -264,6 +267,35 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 id=jsondata["ID"].get_str();
                 LogPrintf("CDockerMan::ProcessMessage ServiceCreate: %d Successful\n",id);
                 PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
+
+
+                if (mapDockerServiceLists.find(id) != mapDockerServiceLists.end()){
+                    const Service& svi = mapDockerServiceLists[id];
+
+                    CWalletTx& wtx = pwalletMain->mapWallet[svi.txid];  //watch only not check
+                    wtx.Setserviceid(svi.ID);
+                    wtx.Setverison(std::to_string(WALLET_DATABASE_VERSION));
+                    wtx.Setcreatetime(std::to_string(svi.createdAt));
+                    wtx.Setprice(std::to_string(svi.price));
+                    wtx.Setfeerate(std::to_string(svi.feeRate));
+                    wtx.Setcpuname(svi.item.cpu.Name);
+                    wtx.Setcpucount(std::to_string(svi.item.cpu.Count));
+                    wtx.Setmemname(svi.item.mem.Name);
+                    wtx.Setmemcount(std::to_string(svi.item.mem.Count));
+                    wtx.Setgpuname(svi.item.gpu.Name);
+                    wtx.Setgpucount(std::to_string(svi.item.gpu.Count));
+                    wtx.Setmasternodeaddress(CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
+                    wtx.Setcusteraddress(svi.customer);
+                    if(svi.mapDockerTaskLists.size()){
+                        auto tvi = svi.mapDockerTaskLists.begin();
+                        if(mapDockerNodeLists.find(tvi->second.nodeID) != mapDockerNodeLists.end()){
+                            const Node& nvi = mapDockerNodeLists[tvi->second.nodeID];
+                            wtx.Setprovideraddress(nvi.MGDAddress);
+                        }
+                    }
+                    CWalletDB walletdb(pwalletMain->strWalletFile);
+                    wtx.WriteToDisk(&walletdb);
+                }
             }
             else{
                 LogPrint("docker","CDockerMan::ProcessMessage Not exist this ServiceId\n");
@@ -305,16 +337,32 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         break;
                     }
                 }
+                uint256 txid = it->second.txid;
+                int taskstate = 0;
                 // set node usage
                 if(it->second.mapDockerTaskLists.size()){
                     string nodeid = it->second.mapDockerTaskLists.begin()->second.nodeID;
+                    taskstate = it->second.mapDockerTaskLists.begin()->second.desiredState;
                     if(!nodeid.empty()){
                         auto it2 = mapDockerNodeLists.find(nodeid);
                         it2->second.isuseable=true;
                     }
                 }
-                //  delete service form map
                 mapDockerServiceLists.erase(it);
+                //write deletetime todb
+                if (!pwalletMain->mapWallet.count(txid)){
+                    LogPrint("docker","CDockerMan::ProcessMessage erase txid not found %s\n",txid.ToString());
+                    return false;
+                }
+                CWalletTx& wtx = pwalletMain->mapWallet[txid];  //watch only not check
+                wtx.Setdeletetime(std::to_string(GetAdjustedTime()));
+                wtx.Settaskstate(std::to_string(taskstate));
+                CWalletDB walletdb(pwalletMain->strWalletFile);
+                wtx.WriteToDisk(&walletdb);
+
+                //add to tlementset
+                timerModule.UpdateSet(wtx);
+                //  delete service form map
                 LogPrint("docker","CDockerMan::ProcessMessage erase ServiceId %s\n",id);
             }
             else{
@@ -350,7 +398,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             for(auto iter = serviceidSet.begin();iter != serviceidSet.end();++iter){
                 auto it = mapDockerServiceLists.find(*iter);
                 if(it->second.deleteTime <= GetAdjustedTime()) //when the task is always in pedding
-                    timerModule.SetTlement(it->first); 
+                    PushMessage(Method::METHOD_SERVICES_DELETE,it->first,"");
                 if(it->second.mapDockerTaskLists.size()){
                     string nodeid =it->second.mapDockerTaskLists.begin()->second.nodeID;
                     if(!nodeid.empty()&&it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING&&

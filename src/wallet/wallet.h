@@ -474,6 +474,7 @@ public:
     ATTRIBUTE_MEMBER_FUNC(createtime);
     ATTRIBUTE_MEMBER_FUNC(deletetime);
     ATTRIBUTE_MEMBER_FUNC(price);
+    ATTRIBUTE_MEMBER_FUNC(feerate);
     ATTRIBUTE_MEMBER_FUNC(cpuname);
     ATTRIBUTE_MEMBER_FUNC(cpucount);
     ATTRIBUTE_MEMBER_FUNC(memname);
@@ -483,6 +484,7 @@ public:
     ATTRIBUTE_MEMBER_FUNC(masternodeaddress);
     ATTRIBUTE_MEMBER_FUNC(custeraddress);
     ATTRIBUTE_MEMBER_FUNC(provideraddress);
+    ATTRIBUTE_MEMBER_FUNC(taskstate);
     ATTRIBUTE_MEMBER_FUNC(tlementtxid);
 
 
@@ -692,6 +694,8 @@ public:
     bool fFileBacked;
     const std::string strWalletFile;
 
+    bool IsUTXO(const COutPoint& outpoint);
+    void Untlement(std::set<CWalletTx*>& setWalletTx);
     void LoadKeyPool(int nIndex, const CKeyPool &keypool)
     {
         if (keypool.fInternal) {

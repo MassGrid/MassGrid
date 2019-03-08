@@ -35,7 +35,6 @@ public:
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
     bool CheckAndCreateServiveSpec(DockerCreateService Spec, string& strErr);
     bool SetTlementServiceWithoutDelete(uint256 serviceTxid);
-    bool SetTlementService(uint256 txid);
     DNDATASTATUS dndataStatus;
 
     void setDNDataStatus(DNDATASTATUS type){

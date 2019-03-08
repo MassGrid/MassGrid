@@ -1,10 +1,12 @@
 #ifndef TIMEMODULE_H
 #define TIMEMODULE_H
+#include <queue>
+#include <set>
 #include "dockernode.h"
 #include "dockerswarm.h"
 #include "dockerservice.h"
 #include "dockertask.h"
-#include <queue>
+#include "wallet/wallet.h"
 class ServiceTimerModule;
 class ServiceListInfo{
 public:
@@ -25,13 +27,18 @@ extern ServiceTimerModule timerModule;
 class ServiceTimerModule{
 public:
     mutable CCriticalSection cs_serInfoQueue;
+    mutable CCriticalSection cs_serInfoQueue2;
     std::priority_queue<ServiceListInfo, std::vector<ServiceListInfo> > serviceInfoQue;
+    std::set<CWalletTx*> setWalletTx;
 public:
     bool Flush();
+    void UpdateSetAll();
+    void UpdateSet(CWalletTx & wtx);
+    void UpdateSet(uint256 hash);
     void UpdateQueAll(std::map<std::string, Service>&map);
     void UpdateQue(std::map<std::string, Service>&map,std::string id);
     void CheckQue();
-    void SetTlement(std::string serviceid);
+    void SetTlement();
 };
 void ThreadTimeModule();
 #endif //TIMEMODULE_H

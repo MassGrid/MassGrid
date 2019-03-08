@@ -12,6 +12,8 @@
 #include "coincontrol.h"
 #include "validation.h"
 #include "messagesigner.h"
+#include "instantx.h"
+#include "timermodule.h"
 CDockerServerman dockerServerman;
 bool DockerCreateService::Sign(const CKey& keyClusterAddress, const CPubKey& pubKeyClusterAddress)
 {
@@ -191,67 +193,66 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE --CheckSignature Failed pubkey= %s\n",delService.pubKeyClusterAddress.ToString().substr(0,66));
             return;
         }
-        bool ret = SetTlementService(delService.txid);
-        if(!ret){
-            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE --deleteService Failed txid= %s\n",delService.txid.ToString());
-        }else
-            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE --deleteService successful txid= %s\n",delService.txid.ToString());
-
+        Service svi;
+        if(dockerman.GetServiceFromTxId(delService.txid,svi))
+            dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,svi.ID,"");
+        else
+            timerModule.UpdateSet(delService.txid);
     }
 }
 bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createService, string& strErr){
 
     LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec Started\n");
-    Config::ServiceSpec spec;
     // 1.first check time
     if(createService.sigTime > GetAdjustedTime() + TIMEOUT && createService.sigTime < GetAdjustedTime() - TIMEOUT){
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec sigTime is invaild\n");
         strErr = "sigTime Error";
-        return false;
-    }
-    //  2.check transactions
-    if (!pwalletMain->mapWallet.count(createService.txid)){
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec Invalid or non-wallet transaction id\n");
-        strErr = "Invalid transaction";
-        return false;
-    }
-    CWalletTx& wtx = pwalletMain->mapWallet[createService.txid];  //watch only not check
-    if(wtx.HasCreatedService()){
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec current transaction has been used\n");
-        strErr = "The transaction has been used";
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
         return false;
     }
 
+    //  2. checkSignature
+    if(!createService.CheckSignature(createService.pubKeyClusterAddress)){
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- CheckSignature() failed\n");
+        return false;
+    }
+    //  3.check transactions
+    if (!pwalletMain->mapWallet.count(createService.txid)){
+        strErr = "Invalid or non-wallet transaction: "+createService.txid.ToString();
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+        return false;
+    }
+    
+    //check transaction prescript pubkey
+    CTransaction tx;
+    uint256 hash;
+    if(!CheckTransactionInputScriptPubkey(createService.txid, tx,createService.pubKeyClusterAddress, Params().GetConsensus(), hash,strErr, true)){
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+    }
+
+    CWalletTx& wtx = pwalletMain->mapWallet[createService.txid];  //watch only not check
+
+    //check tx in block
+    bool fLocked = instantsend.IsLockedInstantSendTransaction(wtx.GetHash());
+    int confirms = wtx.GetDepthInMainChain(false);
+    LogPrintf("docker","current transaction fLocked %d confirms %d\n",fLocked,confirms);
+    if(!fLocked && confirms < 1){
+        strErr = "The transaction not confirms: "+std::to_string(confirms);
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+        return false;
+    }
+    if(wtx.HasCreatedService()){
+        strErr = "The transaction has been used";
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec current %s\n",strErr);
+        return false;
+    }
+    
     isminefilter filter = ISMINE_SPENDABLE;
     CAmount nCredit = wtx.GetCredit(filter);
     CAmount nDebit = wtx.GetDebit(filter);
     CAmount nNet = nCredit - nDebit;
     CAmount nFee = (wtx.IsFromMe(filter) ? wtx.GetValueOut() - nDebit : 0);
-
     CAmount payment = nNet - nFee;
 
-    CTransaction tx;
-    uint256 hash;
-    if(GetTransaction(createService.txid, tx, Params().GetConsensus(), hash, true)){
-        for(int i = 0; i< tx.vout.size(); ++i){
-            if(tx.vout[i].scriptPubKey != GetScriptForDestination(createService.pubKeyClusterAddress.GetID())){
-                if( i >= tx.vout.size() - 1){
-                    LogPrintf("CDockerServerman::CheckAndCreateServiveSpec txid scriptPubkey error \n");
-                    strErr = "User scriptPubkey error";
-                    return false;
-                }
-            }
-            else{
-                LogPrintf("CDockerServerman::CheckAndCreateServiveSpec txid scriptPubkey found \n");
-                break;
-            }
-        }
-    }
-    //  3. checkSignature
-    if(!createService.CheckSignature(createService.pubKeyClusterAddress)){
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- CheckSignature() failed\n");
-        return false;
-    }
     //  4. find item
 
     const Item serviceItem = createService.item;
@@ -267,6 +268,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
         return false;
     }
 
+    //  5. check item
     CAmount price = usablemapnode[serviceItem].price;
     if(payment < price){
         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- serviceItem payment not enough\n");
@@ -274,30 +276,31 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
         return false;
     }
 
-    //  5. check item
 
     if(!(serviceItem.gpu.Count > 0 && serviceItem.gpu.Count <= DOCKER_MAX_GPU_NUM)){
-        LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec gpu %d,  DOCKER_MAX_CPU_NUM,%d\n",serviceItem.gpu.Count,DOCKER_MAX_GPU_NUM);
-        strErr = "CPU count error";
+        strErr = "GPU count error MAX_COUNT: "+std::to_string(DOCKER_MAX_GPU_NUM);
+        LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec gpu %d,  DOCKER_MAX_GPU_NUM,%d\n",serviceItem.gpu.Count,DOCKER_MAX_GPU_NUM);
         return false;
     }
     if(!(serviceItem.cpu.Count > 0 && serviceItem.cpu.Count <= DOCKER_MAX_CPU_NUM)){
+        strErr = "CPU count error MAX_COUNT: "+std::to_string(DOCKER_MAX_CPU_NUM);
         LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec cpu %d,  DOCKER_MAX_CPU_NUM,%d\n",serviceItem.cpu.Count,DOCKER_MAX_CPU_NUM);
-        strErr = "Memory size error";
         return false;
     }
     if(!(serviceItem.mem.Count > 0 && serviceItem.mem.Count <= DOCKER_MAX_MEMORY_BYTE)){
+        strErr = "memory size error MAX_COUNT: "+std::to_string(DOCKER_MAX_MEMORY_BYTE);
         LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec memory_byte %d,  DOCKER_MAX_MEMORY_BYTE %d\n",serviceItem.mem.Count,DOCKER_MAX_MEMORY_BYTE);
-        strErr = "GPU count error";
         return false;
     }
 
     //  6. update spec
 
+    Config::ServiceSpec spec;
     if(!createService.serviceName.empty())
         spec.name = createService.serviceName.substr(0,10) + "_" + createService.ToString().substr(0,4);
     else
         spec.name = createService.ToString().substr(0,15);
+    spec.labels["com.massgrid.deletetime"] = std::to_string(payment/price * 3600 + GetAdjustedTime());
     spec.labels["com.massgrid.feerate"] = std::to_string(dockerServerman.feeRate);
     spec.labels["com.massgrid.pubkey"] = createService.pubKeyClusterAddress.ToString().substr(0,66);
     spec.labels["com.massgrid.txid"] = createService.txid.ToString();
@@ -362,67 +365,21 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
         dockerman.serviceIp.Erase(ipaddr);
         return false;
     }
-    //  8.  get svi
-    Service svi;
-    if(!dockerman.GetServiceFromTxId(createService.txid,svi)){
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec GetServiceFromTxId Error txid %s\n",createService.txid.ToString());
-        return false;
-    }
-    //  9.  write to wallet
-    LogPrintf("CDockerServerman::CheckAndCreateServiveSpec write to walletdb\n");
-    wtx.Setserviceid(svi.ID);
-    wtx.Setverison(std::to_string(WALLET_DATABASE_VERSION));
-    wtx.Setcreatetime(std::to_string(svi.createdAt));
-    wtx.Setprice(std::to_string(svi.price));
-    wtx.Setcpuname(serviceItem.cpu.Name);
-    wtx.Setcpucount(std::to_string(serviceItem.cpu.Count));
-    wtx.Setmemname(serviceItem.mem.Name);
-    wtx.Setmemcount(std::to_string(serviceItem.mem.Count));
-    wtx.Setgpuname(serviceItem.gpu.Name);
-    wtx.Setgpucount(std::to_string(serviceItem.gpu.Count));
-    wtx.Setmasternodeaddress(CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
-
-    CWalletDB walletdb(pwalletMain->strWalletFile);
-    wtx.WriteToDisk(&walletdb);
     return true;
 
-}
-bool CDockerServerman::SetTlementService(uint256 serviceTxid){
-
-    SetTlementServiceWithoutDelete(serviceTxid);
-    Service svi;
-    if(!dockerman.GetServiceFromTxId(serviceTxid,svi)){
-        LogPrintf("CDockerServerman::SetTlementService not found from txid %s error\n",serviceTxid.ToString());
-        return false;
-    }
-    dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,svi.ID,"");
-    return true;
 }
 bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
 
-    Service svi;
     CWalletTx wtxNew;
     bool fnoCreated;
     vector<CRecipient> vecSend;
-    CAmount payment;
     COutPoint outpoint;
-    CMassGridAddress customerAddress{};
-    CMassGridAddress providerAddress{};
     CMassGridAddress masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID());
     CScript masternodescriptPubKey = GetScriptForDestination(masternodeAddress.Get());
-    CScript customerscriptPubKey{};
-    CScript providerscriptPubKey{};
-    int64_t deleteTime = GetAdjustedTime();
-
-    if(!dockerman.GetServiceFromTxId(serviceTxid,svi)){
-        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete not found from txid %s error\n",serviceTxid.ToString());
-        return false;
-    }
-    payment = svi.payment;
-    customerAddress = CMassGridAddress(svi.customer);
-    LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete customerAddress %s pubkey: %s\n",customerAddress.ToString(),svi.customer);
-    if(customerAddress.IsValid())
-        customerscriptPubKey = GetScriptForDestination(customerAddress.Get());
+    CMassGridAddress customerAddress = masternodeAddress;
+    CMassGridAddress providerAddress = masternodeAddress;
+    CScript customerscriptPubKey = masternodescriptPubKey;
+    CScript providerscriptPubKey = masternodescriptPubKey;
 
     if (!pwalletMain->mapWallet.count(serviceTxid)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete Invalid or non-wallet transaction id\n");
@@ -439,31 +396,66 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete outpoint not found\n");
         return false;
     }
+    if(!pwalletMain->IsUTXO(outpoint)){
+        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete outpoint not UTXO\n");
+        return false;
+    }
+    
+    if(pwalletMain->IsSpent(outpoint.hash,outpoint.n)){
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec IsSpent\n");
+        return false;
+    }
+
+    isminefilter filter = ISMINE_SPENDABLE;
+    CAmount nCredit = wtx.GetCredit(filter);
+    CAmount nDebit = wtx.GetDebit(filter);
+    CAmount nNet = nCredit - nDebit;
+    CAmount nFee = (wtx.IsFromMe(filter) ? wtx.GetValueOut() - nDebit : 0);
+    CAmount payment = nNet - nFee;
+    
     if(!wtx.HasCreatedService()){
-        LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete current transaction not been used\n");
+        LogPrintf("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction not been used\n");
+
+        CTransaction txOut;
+        uint256 hash;
+        if(GetTransaction(serviceTxid, txOut, Params().GetConsensus(), hash, true)){
+            CCoinsView viewDummy;
+            CCoinsViewCache view(&viewDummy);
+            for(int i = 0; i< txOut.vin.size(); ++i){
+                const Coin& coin = view.AccessCoin(txOut.vin[i].prevout);
+                customerscriptPubKey = coin.out.scriptPubKey;
+                break;
+            }
+        }
         vecSend.clear();
         CAmount customerSend = payment;
-        if(customerSend > CAmount(0)){
-            if(!customerAddress.IsValid())
-                customerscriptPubKey = masternodescriptPubKey; 
+        if(customerSend > CAmount(0)){ 
             CRecipient customerrecipient = {customerscriptPubKey, customerSend, true};
             vecSend.push_back(customerrecipient);
         }
     }
     else{
-        if (svi.feeRate >= 1 ||svi.feeRate < 0){
-            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete svi.feeRate %lf error\n",svi.feeRate);
-            return false;
-        }
-        
-        auto taskit = svi.mapDockerTaskLists.begin();
-        if(taskit == svi.mapDockerTaskLists.end()){  //
-            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete has no found task\n");
-            return false;
-        }
+        LogPrintf("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction has been used\n");
 
-        int64_t trustTime = deleteTime - svi.createdAt;
-        int64_t prepareTime = svi.timeUsage;
+        customerAddress = CMassGridAddress(wtx.Getcusteraddress());
+        providerAddress = CMassGridAddress(wtx.Getprovideraddress());
+        double feeRate = boost::lexical_cast<double>(wtx.Getfeerate());
+        int64_t createTime = boost::lexical_cast<int64_t>(wtx.Getcreatetime());
+        int64_t deleteTime = boost::lexical_cast<int64_t>(wtx.Getdeletetime());
+        CAmount price = boost::lexical_cast<CAmount>(wtx.Getprice());
+        fnoCreated = boost::lexical_cast<int>(wtx.Gettaskstate()) < Config::TASKSTATE_RUNNING;
+        
+
+        if(customerAddress.IsValid())
+            customerscriptPubKey = GetScriptForDestination(customerAddress.Get());
+        if(providerAddress.IsValid())
+            providerscriptPubKey = GetScriptForDestination(providerAddress.Get());
+        if (feeRate >= 1 ||feeRate < 0){
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete svi.feeRate reset %lf\n",feeRate);
+            feeRate = 0;
+        }
+        int64_t trustTime = deleteTime - createTime;
+        int64_t prepareTime = (double)payment / price * 3600;
         if(trustTime > prepareTime)
             trustTime = prepareTime;
         double payrate = (double)trustTime / prepareTime;
@@ -471,15 +463,12 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payrate %lf < 0\n",payrate);
             return false;
         }
-        fnoCreated = taskit->second.status.state < Config::TASKSTATE_RUNNING;
 
         if(fnoCreated){  //not create task
             // customer
             vecSend.clear();
             CAmount customerSend = payment;
             if(customerSend > CAmount(1000)){
-                if(!customerAddress.IsValid())
-                    customerscriptPubKey = masternodescriptPubKey; 
                 CRecipient customerrecipient = {customerscriptPubKey, customerSend, true};
                 vecSend.push_back(customerrecipient);
             }
@@ -487,38 +476,31 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         }else
         {
             vecSend.clear();
-            CAmount masternodeSend = payment * svi.feeRate;
+            CAmount masternodeSend = payment * feeRate;
             payment -= masternodeSend;  //compute fee
 
             // provider
             CAmount providerSend = payment * payrate;
             CAmount customerSend = payment * (1 - payrate);
             if(providerSend > CAmount(1000)){
-                Node node;
-                if(dockerman.GetNodeFromList(taskit->second.nodeID,node) && CMassGridAddress(node.MGDAddress).IsValid()){
-                    payment -= providerSend;
-                    providerAddress = CMassGridAddress(node.MGDAddress);
-                    providerscriptPubKey = GetScriptForDestination(providerAddress.Get());
-                    CRecipient providerrecipient = {providerscriptPubKey, providerSend, false};
-                    vecSend.push_back(providerrecipient);
-                }
+                payment -= providerSend;
+                CRecipient providerrecipient = {providerscriptPubKey, providerSend, false};
+                vecSend.push_back(providerrecipient);
             }
 
             // customer
             if(customerSend > CAmount(1000)){
-                if(customerAddress.IsValid()){
-                    payment -= customerSend;
-                    CRecipient customerrecipient = {customerscriptPubKey, customerSend, false};
-                    vecSend.push_back(customerrecipient);
-                }
+                payment -= customerSend;
+                CRecipient customerrecipient = {customerscriptPubKey, customerSend, false};
+                vecSend.push_back(customerrecipient);
             }
             //masternode fee
             masternodeSend += payment;
-            if(masternodeSend + providerSend + customerSend != svi.payment){
-                LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,svi.payment);
+            if(masternodeSend + providerSend + customerSend != payment){
+                LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,payment);
                 return false;
             }
-            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld feerate %lf\n",masternodeSend, providerSend , customerSend ,svi.payment,svi.feeRate);
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld feerate %lf\n",masternodeSend, providerSend , customerSend ,payment,feeRate);
             if(masternodeSend > CAmount(1000)){
                 CRecipient masternoderecipient = {masternodescriptPubKey, masternodeSend, false};
                 vecSend.push_back(masternoderecipient);
@@ -551,16 +533,7 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     }
 
     //commit to wtx;
-    wtxNew.Setdeletetime(std::to_string(deleteTime));
     wtxNew.Settlementtxid(wtxNew.GetHash().ToString());
-    if(wtx.HasCreatedService()){
-        if(!fnoCreated){
-            if(providerAddress.IsValid())
-                wtxNew.Setprovideraddress(providerAddress.ToString());
-            else
-                wtxNew.Setprovideraddress(masternodeAddress.ToString());
-        }
-    }
     if (!pwalletMain->CommitTransaction(wtxNew, reservekey, g_connman.get(),NetMsgType::TXLOCKREQUEST)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete CommitTransaction error \n");
         return false;
