@@ -122,7 +122,9 @@ void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service
                     tasks[task.ID]=task;
                     serviceidSet.insert(serviceid);
                     //health check timeout 
-                    if(now_time >= (serviceit->second.createdAt + 180) && task.status.state != Config::TaskState::TASKSTATE_RUNNING)
+                    if((now_time >= (serviceit->second.createdAt + 180) && task.status.state < Config::TaskState::TASKSTATE_RUNNING )||
+                    task.status.state > Config::TaskState::TASKSTATE_RUNNING
+                    )
                         serviceit->second.deleteTime=now_time;
                 }
             }
