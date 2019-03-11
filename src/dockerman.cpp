@@ -286,13 +286,6 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                     wtx.Setgpucount(std::to_string(svi.item.gpu.Count));
                     wtx.Setmasternodeaddress(CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
                     wtx.Setcusteraddress(svi.customer);
-                    if(svi.mapDockerTaskLists.size()){
-                        auto tvi = svi.mapDockerTaskLists.begin();
-                        if(mapDockerNodeLists.find(tvi->second.nodeID) != mapDockerNodeLists.end()){
-                            const Node& nvi = mapDockerNodeLists[tvi->second.nodeID];
-                            wtx.Setprovideraddress(nvi.MGDAddress);
-                        }
-                    }
                     CWalletDB walletdb(pwalletMain->strWalletFile);
                     wtx.WriteToDisk(&walletdb);
                 }
@@ -397,11 +390,18 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             
             for(auto iter = serviceidSet.begin();iter != serviceidSet.end();++iter){
                 auto it = mapDockerServiceLists.find(*iter);
+                CWalletTx& wtx = pwalletMain->mapWallet[it->second.txid];  //watch only not check
+
                 if(it->second.mapDockerTaskLists.size()){
                     string nodeid =it->second.mapDockerTaskLists.begin()->second.nodeID;
                     if(!nodeid.empty()&&it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING&&
                             it->second.mapDockerTaskLists.begin()->second.status.state < Config::TaskState::TASKSTATE_SHUTDOWN){
                         mapDockerNodeLists[nodeid].isuseable=false;
+                        if(wtx.Getprovideraddress().empty()){
+                            wtx.Setprovideraddress(mapDockerNodeLists[nodeid].MGDAddress);
+                            CWalletDB walletdb(pwalletMain->strWalletFile);
+                            wtx.WriteToDisk(&walletdb);
+                        }
                     }else
                     {
                         mapDockerNodeLists[nodeid].isuseable=true;
