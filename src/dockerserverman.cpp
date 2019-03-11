@@ -196,8 +196,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         Service svi;
         if(dockerman.GetServiceFromTxId(delService.txid,svi))
             dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,svi.ID,"");
-        else
-            timerModule.UpdateSet(delService.txid);
+        timerModule.UpdateSet(delService.txid);
     }
 }
 bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createService, string& strErr){
