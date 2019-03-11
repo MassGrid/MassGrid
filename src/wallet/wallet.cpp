@@ -1027,7 +1027,7 @@ bool CWallet::IsUTXO(const COutPoint& outpoint){
 void CWallet::Untlement(std::set<CWalletTx*>& setWalletTx){
     LOCK(cs_wallet);
     for(auto &entry : mapWallet){
-        if(!entry.second.Getserviceid().empty() && !entry.second.Getdeletetime().empty() && entry.second.Gettlementtxid().empty()){
+        if(!entry.second.Getserviceid().empty() && entry.second.Gettlementtxid().empty()){
             setWalletTx.insert(&(entry.second));
         }
     }

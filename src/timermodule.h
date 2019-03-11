@@ -38,6 +38,7 @@ public:
     void UpdateQueAll(std::map<std::string, Service>&map);
     void UpdateQue(std::map<std::string, Service>&map,std::string id);
     void CheckQue();
+    void CheckTransaction();
     void SetTlement();
 };
 void ThreadTimeModule();

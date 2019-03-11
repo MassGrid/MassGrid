@@ -438,6 +438,10 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     }
     else{
         LogPrint("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction has been used\n");
+        if(wtx.Getdeletetime().empty()){
+            LogPrint("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction deletetime invaild\n");
+            return false;
+        }
 
         customerAddress = CMassGridAddress(wtx.Getcusteraddress());
         providerAddress = CMassGridAddress(wtx.Getprovideraddress());
