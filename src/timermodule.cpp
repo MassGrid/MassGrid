@@ -95,7 +95,6 @@ void ThreadTimeModule()
     int64_t count = 0;
     while(true)
     {
-        ++count;
         if (masternodeSync.IsSynced()){
             timerModule.Flush();
             
@@ -111,5 +110,6 @@ void ThreadTimeModule()
             boost::this_thread::interruption_point();
             MilliSleep(100);
         }
+        ++count;
     }
 }

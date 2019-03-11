@@ -397,8 +397,6 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             
             for(auto iter = serviceidSet.begin();iter != serviceidSet.end();++iter){
                 auto it = mapDockerServiceLists.find(*iter);
-                if(it->second.deleteTime <= GetAdjustedTime()) //when the task is always in pedding
-                    PushMessage(Method::METHOD_SERVICES_DELETE,it->first,"");
                 if(it->second.mapDockerTaskLists.size()){
                     string nodeid =it->second.mapDockerTaskLists.begin()->second.nodeID;
                     if(!nodeid.empty()&&it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING&&
@@ -409,6 +407,8 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         mapDockerNodeLists[nodeid].isuseable=true;
                     }
                 }
+                if(it->second.deleteTime <= GetAdjustedTime()) //when the task is always in pedding
+                    PushMessage(Method::METHOD_SERVICES_DELETE,it->first,"");
             }
             break;
         }
