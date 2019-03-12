@@ -24,6 +24,7 @@
 #include "../wallet/wallet.h"
 #include "dockercluster.h"
 #include "dockeredge.h"
+#include "timermodule.h"
 
 #include <fstream>
 #include <iomanip>
@@ -47,7 +48,7 @@ UniValue docker(const UniValue& params, bool fHelp)
 #ifdef ENABLE_WALLET
             strCommand != "create" && strCommand != "delete"  && strCommand != "sendtomasternode" &&
 #endif // ENABLE_WALLET
-            strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata"&& strCommand != "listprice"&& strCommand != "setprice"&& strCommand != "setdockerfee"))
+            strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata"&& strCommand != "listprice" && strCommand != "listuntlementtx" && strCommand != "setprice"&& strCommand != "setdockerfee"))
             throw std::runtime_error(
                 "docker \"command\"...\n"
                 "Set of commands to execute docker related actions\n"
@@ -78,9 +79,22 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "                  \"dockernode (IP:Port)\" (string, required)\n"
                 "                  \"MassGrid address\"(string, required)\n"
                 "                  \"amount\"(int, required)\n"
+                "masternode command:  "
+                "listuntlementtx   - list all untlement transactions\n"
+                "listprice         - list all service items price\n"
+                "setprice          - set item price\n"
+                "                  \"type\" (string, required)\n"
+                "                  \"name\"(string, required)\n"
+                "                  \"price\"(double, required)\n"
+                "setdockerfee      - set docker masternode fee (0.01):\n"
+                "                  \"price\" (percent(double), required)\n"
                 + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\"")
                 + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\"")
                 + HelpExampleCli("docker", "sendtomasternode \"119.3.66.159:19443\" \"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\" 6.4")
+                + HelpExampleCli("docker", "listuntlementtx")
+                + HelpExampleCli("docker", "listprice")
+                + HelpExampleCli("docker", "setprice \"cpu intel_i3 0.8\"")
+                + HelpExampleCli("docker", "setdockerfee 0.01")
 #endif // ENABLE_WALLET
                 + HelpExampleCli("docker", "getdndata \"119.3.66.159:19443\"")
                 + HelpExampleCli("docker", "connect \"massgridn2n\" \"10.1.1.4\" \"119.3.66.159\"")
@@ -191,6 +205,15 @@ UniValue docker(const UniValue& params, bool fHelp)
         }
         g_connman->PushMessage(dockercluster.connectNode, NetMsgType::DELETESERVICE, delService);
         return "delete service Successfully id: "+delService.txid.ToString();
+    }
+    if(strCommand == "listuntlementtx"){
+        if (!fMasterNode)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+        UniValue varr(UniValue::VARR);
+        std::set<CWalletTx*> setWallet = timerModule.GetWalletTxSet();
+        for(const auto& tx :setWallet)
+            varr.push_back(tx->GetHash().ToString());
+        return varr;
     }
     if(strCommand == "listprice"){
         if (!fMasterNode)

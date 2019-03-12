@@ -25,7 +25,7 @@ public:
 };
 extern ServiceTimerModule timerModule;
 class ServiceTimerModule{
-public:
+private:
     mutable CCriticalSection cs_serInfoQueue;
     mutable CCriticalSection cs_serInfoQueue2;
     std::priority_queue<ServiceListInfo, std::vector<ServiceListInfo> > serviceInfoQue;
@@ -40,6 +40,10 @@ public:
     void CheckQue();
     void CheckTransaction();
     void SetTlement();
+    std::set<CWalletTx*>& GetWalletTxSet(){
+        LOCK(cs_serInfoQueue2);
+        return setWalletTx;
+    }
 };
 void ThreadTimeModule();
 #endif //TIMEMODULE_H
