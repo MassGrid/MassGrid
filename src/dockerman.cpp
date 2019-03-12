@@ -204,7 +204,9 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
 }
 
 bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService){
-    LogPrint("docker","CDockerMan::ProcessMessage Started Method: %s ProcessMessage: %d Messages %s\n",strMethod[mtd],ret,responsedata);
+
+    LogPrintf("CDockerMan::ProcessMessage Method: %s  ProcessMessage: %d\n",strMethod[mtd],ret);
+    LogPrint("docker","CDockerMan::ProcessMessage Response Messages %s\n",responsedata);
     std::string strMessage;
     std::string id;
     HttpType type;
@@ -265,9 +267,9 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         {
             if(jsondata.exists("ID")){
                 id=jsondata["ID"].get_str();
-                LogPrintf("CDockerMan::ProcessMessage ServiceCreate: %d Successful\n",id);
-                PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
+                LogPrintf("CDockerMan::ProcessMessage Service Create: %d Successful\n",id);
 
+                PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
 
                 if (mapDockerServiceLists.find(id) != mapDockerServiceLists.end()){
                     const Service& svi = mapDockerServiceLists[id];
@@ -291,7 +293,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 }
             }
             else{
-                LogPrint("docker","CDockerMan::ProcessMessage Not exist this ServiceId\n");
+                LogPrint("docker","CDockerMan::ProcessMessage Create Service error no serviceid\n");
                 return false;
             }
             break;
@@ -310,7 +312,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 return true;
             }
             else{
-                LogPrint("docker","CDockerMan::ProcessMessage Not exist this ServiceId\n");
+                LogPrint("docker","CDockerMan::ProcessMessage No serviceid\n");
                 return false;
             }    
             break;
@@ -344,7 +346,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 mapDockerServiceLists.erase(it);
                 //write deletetime todb
                 if (!pwalletMain->mapWallet.count(txid)){
-                    LogPrint("docker","CDockerMan::ProcessMessage erase txid not found %s\n",txid.ToString());
+                    LogPrintf("CDockerMan::ProcessMessage Warning txid not found %s\n",txid.ToString());
                     return false;
                 }
                 CWalletTx& wtx = pwalletMain->mapWallet[txid];  //watch only not check
@@ -356,23 +358,23 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 //add to tlementset
                 timerModule.UpdateSet(wtx);
                 //  delete service form map
-                LogPrint("docker","CDockerMan::ProcessMessage erase ServiceId %s\n",id);
+                LogPrint("docker","CDockerMan::ProcessMessage remove serviceid successful%s\n",id);
             }
             else{
-                LogPrint("docker","CDockerMan::ProcessMessage not find ServiceId %s\n",id);
+                LogPrint("docker","CDockerMan::ProcessMessage serviceid not found%s\n",id);
                 return false;
             }
             break;
         }
-        case Method::METHOD_SERVICES_UPDATE:
+        case Method::METHOD_SERVICES_UPDATE:    // not implemented yet
         {
             id=url.substr(url.find_last_of("/")+1);
             bool ret = PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
             if(!ret){
                 return false;
-                LogPrint("docker","CDockerMan::ProcessMessage update failed ServiceId %s\n",id);
+                LogPrint("docker","CDockerMan::ProcessMessage update failed serviceid %s\n",id);
             }
-            LogPrint("docker","CDockerMan::ProcessMessage update successful ServiceId %s\n",id);
+            LogPrint("docker","CDockerMan::ProcessMessage update successful serviceid %s\n",id);
             break;
         }
         case Method::METHOD_SERVICES_LOGS:  // not implemented yet
@@ -393,10 +395,11 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 CWalletTx& wtx = pwalletMain->mapWallet[it->second.txid];  //watch only not check
 
                 if(it->second.mapDockerTaskLists.size()){
-                    string nodeid =it->second.mapDockerTaskLists.begin()->second.nodeID;
-                    if(!nodeid.empty()&&it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING&&
-                            it->second.mapDockerTaskLists.begin()->second.status.state < Config::TaskState::TASKSTATE_SHUTDOWN){
-                        mapDockerNodeLists[nodeid].isuseable=false;
+                    string nodeid = it->second.mapDockerTaskLists.begin()->second.nodeID;
+                    if(!nodeid.empty()
+                    && it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING
+                    && it->second.mapDockerTaskLists.begin()->second.status.state < Config::TaskState::TASKSTATE_SHUTDOWN){
+                        mapDockerNodeLists[nodeid].isuseable = false;
                         if(wtx.Getprovideraddress().empty()){
                             wtx.Setprovideraddress(mapDockerNodeLists[nodeid].MGDAddress);
                             CWalletDB walletdb(pwalletMain->strWalletFile);
@@ -405,6 +408,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                     }else
                     {
                         mapDockerNodeLists[nodeid].isuseable=true;
+                        LogPrint("docker","CDockerMan::ProcessMessage task state error reset usable serviceid: &s\n",it->first);
                     }
                 }
                 if(it->second.deleteTime <= GetAdjustedTime()) //when the task is always in pedding
@@ -455,7 +459,6 @@ void CDockerMan::UpdateIPfromServicelist(std::map<std::string,Service>& map){
 }
 bool CDockerMan::Update(){
     LOCK(cs);
-    LogPrint("docker","CDockerMan::Update start\n");
     dockernodefilter ndfilter;
 
     if(!PushMessage(Method::METHOD_NODES_LISTS,"",ndfilter.ToJsonString())){
@@ -476,7 +479,6 @@ bool CDockerMan::Update(){
 }
 bool CDockerMan::UpdateSwarmAndNodeList(){
     LOCK(cs);
-    LogPrint("docker","CDockerMan::UpdateSwarmAndNodeList start\n");
     mapDockerNodeLists.clear();
     dockernodefilter ndfilter;
 
@@ -494,7 +496,6 @@ bool CDockerMan::UpdateSwarmAndNodeList(){
 }
 bool CDockerMan::UpdateServicesList(){
     LOCK(cs);
-    LogPrint("docker","CDockerMan::UpdateServicesList start\n");
     mapDockerServiceLists.clear();
     dockerservicefilter serfilter;
     if(!PushMessage(Method::METHOD_SERVICES_LISTS,"",serfilter.ToJsonString())){
@@ -508,7 +509,6 @@ bool CDockerMan::UpdateServicesList(){
 bool CDockerMan::UpdateService(std::string serviceid){
     LOCK(cs);
     dockerservicefilter serfilter;
-    LogPrint("docker","CDockerMan::UpdateService start\n");
     if(!PushMessage(Method::METHOD_SERVICES_INSPECT,serviceid,serfilter.ToJsonString(),false)){
         LogPrint("docker","CDockerMan::UpdateService ERROR Get METHOD_SERVICES_LISTS failed! \n");
         return false;

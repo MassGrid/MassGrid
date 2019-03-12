@@ -19,7 +19,25 @@ static const int64_t G = 1000 * M;
 static const int TIMEOUT = 5 * 60;
 class CDockerServerman;
 class DockerCreateService;
+class DockerDeleteService;
 extern CDockerServerman dockerServerman;
+enum SERVICEMANCODE{
+    SUCCESS = 0,
+    SIGTIME_ERROR,
+    VERSION_ERROR,
+    CHECKSIGNATURE_ERROR,
+    NO_THRANSACTION,
+    TRANSACTION_NOT_CONFIRMS,
+    TRANSACTION_DOUBLE_CREATE,
+    SERVICEITEM_NOT_FOUND,
+    SERVICEITEM_NO_RESOURCE,
+    PAYMENT_NOT_ENOUGH,
+    GPU_AMOUNT_ERROR,
+    CPU_AMOUNT_ERROR,
+    MEM_AMOUNT_ERROR,
+    TRANSACTION_DOUBLE_TLEMENT,
+    PUBKEY_ERROR
+};
 
 class CDockerServerman{
 private:
@@ -32,13 +50,14 @@ public:
         Received
     };
     enum TLEMENTSTATE{
-        FAILEDREMOVE = -1,
-        FAILEDCONTINUE,
+        FAILEDCONTINUE = -1,
+        FAILEDREMOVE,
         SUCCESS
     };
     double feeRate = 0.01;  //set feeRate 1%
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
-    bool CheckAndCreateServiveSpec(DockerCreateService Spec, string& strErr);
+    bool CheckAndCreateServiveSpec(DockerCreateService Spec, int& ErrCode);
+    bool CheckAndRemoveServiveSpec(DockerDeleteService delService, int& errCode);
     int SetTlementServiceWithoutDelete(uint256 serviceTxid);
     DNDATASTATUS dndataStatus;
 
@@ -53,7 +72,7 @@ public:
 class DockerGetData{
 public:
     uint64_t version = DOCKERREQUEST_API_VERSION;
-    string strErr = "successfully";
+    int errCode{};
     CPubKey pubKeyClusterAddress{};
     int64_t sigTime{}; //dkct message times
     std::map<std::string,Service> mapDockerServiceLists{};
@@ -68,7 +87,7 @@ public:
         READWRITE(mapDockerServiceLists);
         READWRITE(items);
         READWRITE(masternodeAddress);
-        READWRITE(strErr);
+        READWRITE(errCode);
     }
     uint256 GetHash() const
     {
@@ -78,7 +97,7 @@ public:
         ss << mapDockerServiceLists;
         ss << items;
         ss << masternodeAddress;
-        ss << strErr;
+        ss << errCode;
         return ss.GetHash();
     }
 };
@@ -134,7 +153,6 @@ class DockerDeleteService{
 public:
 
     uint64_t version = DOCKERREQUEST_API_VERSION;
-    string strErr{};
     std::vector<unsigned char> vchSig{};
     CPubKey pubKeyClusterAddress{};
     uint256 txid{};
@@ -148,8 +166,6 @@ public:
         READWRITE(pubKeyClusterAddress);
         READWRITE(txid);
         READWRITE(sigTime);
-        READWRITE(strErr);
-
     }
     uint256 GetHash() const
     {
@@ -158,7 +174,6 @@ public:
         ss << pubKeyClusterAddress;
         ss << txid;
         ss << sigTime;
-        ss << strErr;
 
         return ss.GetHash();
     }

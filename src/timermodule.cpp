@@ -27,7 +27,7 @@ void ServiceTimerModule::UpdateSet(uint256 hash){
         return;
     }
     CWalletTx& wtx = pwalletMain->mapWallet[hash];
-    if(!dockerServerman.SetTlementServiceWithoutDelete(wtx.GetHash()))
+    if(dockerServerman.SetTlementServiceWithoutDelete(wtx.GetHash()) < 0)
         setWalletTx.insert(&wtx);
 }
 void ServiceTimerModule::UpdateQueAll(std::map<std::string, Service>&map){
@@ -71,7 +71,7 @@ void ServiceTimerModule::SetTlement(){
     LogPrint("timer","ServiceTimerModule::SetTlement start\n");
     LOCK(cs_serInfoQueue2);
     for(auto wtx = setWalletTx.begin(); wtx != setWalletTx.end(); ++wtx){
-        if(dockerServerman.SetTlementServiceWithoutDelete((*wtx)->GetHash()))
+        if(dockerServerman.SetTlementServiceWithoutDelete((*wtx)->GetHash()) >= 0)
             setWalletTx.erase(wtx--);
     }
 }

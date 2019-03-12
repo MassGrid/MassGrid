@@ -15,6 +15,23 @@
 #include "instantx.h"
 #include "timermodule.h"
 CDockerServerman dockerServerman;
+const char* strServiceCode[] = {
+    "Successful",
+    "SigTime Error",
+    "Version not support",
+    "CheckSignature Failed",
+    "Invalid or non-wallet transaction",
+    "The transaction not confirms",
+    "Transaction has been create",
+    "Serviceitem not found",
+    "Serviceitem no resource",
+    "Payment not enough",
+    "GPU amount error",
+    "CPU thread amount error",
+    "Memory Size error",
+    "Transaction has been tlemented"
+    "PubKey check failed"
+};
 bool DockerCreateService::Sign(const CKey& keyClusterAddress, const CPubKey& pubKeyClusterAddress)
 {
     std::string strError;
@@ -90,46 +107,36 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
     
     if (strCommand == NetMsgType::GETDNDATA) { //server
         
-        LogPrint("docker","CDockerServerman::ProcessMessage GETDNDATA Started\n");
+        LogPrint("dockernode","CDockerServerman::ProcessMessage GETDNDATA Started\n");
         if (!fMasterNode) return;
         DockerGetData mdndata;
         CPubKey pubkey;
         vRecv >> pubkey;
-        LogPrint("docker", "CDockerServerman::ProcessMessage GETDNDATA -- pubkey =%s\n", pubkey.ToString().substr(0,66));
 
         mdndata.mapDockerServiceLists.clear();
-
-        // dockerservicefilter serfilter;
-        // serfilter.label.push_back("com.massgrid.pubkey="+pubkey.ToString().substr(0,66));
-        // if(!dockerman.PushMessage(Method::METHOD_SERVICES_LISTS,"",serfilter.ToJsonString(),false)){
-        //     LogPrint("docker","CDockerServerman::ProcessMessage GETDNDATA service list failed -- pubkey =%s\n", pubkey.ToString().substr(0,66));
-        // }
         mdndata.mapDockerServiceLists = dockerman.GetServiceFromPubkey(pubkey);
-        mdndata.version = DOCKERREQUEST_API_VERSION;
         mdndata.sigTime = GetAdjustedTime();
         mdndata.items = dockerman.GetPriceListFromNodelist();
         mdndata.masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
+        LogPrint("dockernode", "CDockerServerman::ProcessMessage GETDNDATA -- pubkey %s servicelistSize() %d \n", pubkey.ToString().substr(0,66),mdndata.mapDockerServiceLists.size());
         LogPrintf("CDockerServerman::ProcessMessage -- Sent DNDATA to peer %d\n", pfrom->id);
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
         
     }else if(strCommand == NetMsgType::DNDATA){     //cluster
 
-        LogPrint("docker","CDockerServerman::ProcessMessage DNDATA Started\n");
+        LogPrint("dockernode","CDockerServerman::ProcessMessage DNDATA Started\n");
         DockerGetData mdndata;
         vRecv >> mdndata;
         if(mdndata.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || mdndata.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
-            LogPrintf("CDockerServerman::ProcessMessage --mdndata version %d not support need [%d - %d]\n", mdndata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+            LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", mdndata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
             setDNDataStatus(DNDATASTATUS::Received);
             return;
         }
          
         dockercluster.dndata = mdndata;
-        LogPrint("docker","CDockerServerman::ProcessMessage DNDATA mapDockerServiceLists.size() %d sigTime:%d\n",mdndata.mapDockerServiceLists.size(),mdndata.sigTime);
+        LogPrint("dockernode","CDockerServerman::ProcessMessage DNDATA servicelistSize() %d\n",mdndata.mapDockerServiceLists.size());
         std::map<std::string,Service>::iterator iter = mdndata.mapDockerServiceLists.begin();
         for(;iter != mdndata.mapDockerServiceLists.end();iter++){
-            if(iter->second.mapDockerTaskLists.size()){
-                LogPrintf("CDockerServerman::ProcessMessage DNDATA mapDockerTaskLists.size()%d serviceid %s\n",iter->second.mapDockerTaskLists.size(),iter->first);
-            }
             if (pwalletMain->mapWallet.count(iter->second.txid)){
                 CWalletTx& wtx = pwalletMain->mapWallet[iter->second.txid];
                 if(wtx.HasCreatedService())
@@ -144,8 +151,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
                 wtx.Setmemcount(std::to_string(iter->second.item.mem.Count));
                 wtx.Setgpuname(iter->second.item.gpu.Name);
                 wtx.Setgpucount(std::to_string(iter->second.item.gpu.Count));
-                wtx.Setmasternodeaddress(CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
-
+                wtx.Setmasternodeaddress(CMassGridAddress(mdndata.masternodeAddress).ToString());
+                wtx.Setcusteraddress(iter->second.customer);
                 CWalletDB walletdb(pwalletMain->strWalletFile);
                 wtx.WriteToDisk(&walletdb);
             }
@@ -155,77 +162,112 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         setDNDataStatus(DNDATASTATUS::Received);
 
     }else if(strCommand == NetMsgType::CREATESERVICE){
-        LogPrint("docker","CDockerServerman::ProcessMessage CREATESERVICE Started\n");
+        LogPrint("dockernode","CDockerServerman::ProcessMessage CREATESERVICE Started\n");
         if (!fMasterNode) return;
         DockerCreateService createService;
-        DockerGetData mdndata;
         vRecv >> createService;
-        LogPrint("docker","CDockerServerman::ProcessMessage CREATESERVICE createService hash %s\n",createService.ToString());
-        if(createService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || createService.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
-            LogPrintf("CDockerServerman::ProcessMessage --createService version %d not support need [%d - %d]\n", createService.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
-            mdndata.strErr = "Error service version is: "+ std::to_string(DOCKERREQUEST_API_VERSION);
-        }else{
-            mdndata.version = DOCKERREQUEST_API_VERSION;
-            mdndata.sigTime = GetAdjustedTime();
-            if(CheckAndCreateServiveSpec(createService,mdndata.strErr)){
-                mdndata.mapDockerServiceLists.clear();
-                mdndata.mapDockerServiceLists = dockerman.GetServiceFromPubkey(createService.pubKeyClusterAddress);
-            }
+        DockerGetData mdndata;
+        mdndata.sigTime = GetAdjustedTime();
+        LogPrint("dockernode","CDockerServerman::ProcessMessage CREATESERVICE txid %s\n",createService.txid.ToString());
+        if(CheckAndCreateServiveSpec(createService,mdndata.errCode)){
+            mdndata.mapDockerServiceLists.clear();
+            mdndata.mapDockerServiceLists = dockerman.GetServiceFromPubkey(createService.pubKeyClusterAddress);
         }
             
         LogPrintf("CDockerServerman::ProcessMessage -- CREATESERVICE Sent DNDATA to peer %d\n", pfrom->id);
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
     }else if(strCommand == NetMsgType::DELETESERVICE){
-        LogPrint("docker","CDockerServerman::ProcessMessage DELETESERVICE Started\n");
+        LogPrint("dockernode","CDockerServerman::ProcessMessage DELETESERVICE Started\n");
         if (!fMasterNode) return;
         DockerDeleteService delService;
         vRecv >> delService;
-        LogPrint("docker","CDockerServerman::ProcessMessage DELETESERVICE delService hash %s\n",delService.ToString());
-        if(delService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || delService.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
-            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE version %d not support need [%d - %d]\n", delService.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
-            return;
+        DockerGetData mdndata;
+        mdndata.sigTime = GetAdjustedTime();
+        LogPrint("dockernode","CDockerServerman::ProcessMessage DELETESERVICE txid %s\n",delService.txid.ToString());
+        if(CheckAndRemoveServiveSpec(delService,mdndata.errCode)){
+            mdndata.mapDockerServiceLists.clear();
+            mdndata.mapDockerServiceLists = dockerman.GetServiceFromPubkey(delService.pubKeyClusterAddress);
         }
-        if(delService.sigTime > GetAdjustedTime() + TIMEOUT && delService.sigTime < GetAdjustedTime() - TIMEOUT){
-            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE sigTime is out of vaild timespan = %d\n",delService.sigTime);
-            return;
-        }
-        if(!delService.CheckSignature(delService.pubKeyClusterAddress)){
-            LogPrintf("CDockerServerman::ProcessMessage DELETESERVICE --CheckSignature Failed pubkey= %s\n",delService.pubKeyClusterAddress.ToString().substr(0,66));
-            return;
-        }
-        Service svi;
-        if(dockerman.GetServiceFromTxId(delService.txid,svi))
-            dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,svi.ID,"");
-        timerModule.UpdateSet(delService.txid);
+            
+        LogPrintf("CDockerServerman::ProcessMessage -- DELETESERVICE Sent DNDATA to peer %d\n", pfrom->id);
+        connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
     }
 }
-bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createService, string& strErr){
+bool CDockerServerman::CheckAndRemoveServiveSpec(DockerDeleteService delService, int& errCode){
 
-    LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec Started\n");
-    // 1.first check time
-    if(createService.sigTime > GetAdjustedTime() + TIMEOUT && createService.sigTime < GetAdjustedTime() - TIMEOUT){
-        strErr = "sigTime Error";
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+    LogPrint("dockernode","CDockerServerman::CheckAndRemoveServiveSpec Started\n");
+    
+    if(delService.sigTime > GetAdjustedTime() + TIMEOUT && delService.sigTime < GetAdjustedTime() - TIMEOUT){
+        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec DELETESERVICE sigTime is out of vaild timespan = %d\n",delService.sigTime);
+        errCode = SERVICEMANCODE::SIGTIME_ERROR;
         return false;
     }
+    if(delService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || delService.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
+        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec --current version %d not support [%d - %d]\n", delService.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+        errCode = SERVICEMANCODE::VERSION_ERROR;
+        return false;
+    }
+    if(!delService.CheckSignature(delService.pubKeyClusterAddress)){
+        errCode = SERVICEMANCODE::CHECKSIGNATURE_ERROR;
+        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec DELETESERVICE --CheckSignature Failed pubkey= %s\n",delService.pubKeyClusterAddress.ToString().substr(0,66));
+        return false;
+    }
+    if(!pwalletMain->mapWallet.count(delService.txid)){
+        errCode = SERVICEMANCODE::NO_THRANSACTION;
+        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec Invalid or non-wallet transaction: %s\n",delService.txid.ToString());
+        return false;
+    }
+    CWalletTx& wtx = pwalletMain->mapWallet[delService.txid];  //watch only not check
+    if(wtx.HasTlemented()){
+        errCode = SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT;
+        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec current transaction has been used\n");
+        return false;
+    }
+    if(wtx.Getcusteraddress() != CMassGridAddress(delService.pubKeyClusterAddress.GetID()).ToString()){
+        errCode = SERVICEMANCODE::PUBKEY_ERROR;
+        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec current transaction has been used\n");
+        return false;
+    }
+    Service svi;
+    if(dockerman.GetServiceFromTxId(delService.txid,svi))
+        dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,svi.ID,"");
+    timerModule.UpdateSet(delService.txid);
+    return true;
+}
+bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createService, int& errCode){
 
+    LogPrint("dockernode","CDockerServerman::CheckAndCreateServiveSpec Started\n");
+    // 1.first check time
+    if(createService.sigTime > GetAdjustedTime() + TIMEOUT && createService.sigTime < GetAdjustedTime() - TIMEOUT){
+        errCode = SERVICEMANCODE::SIGTIME_ERROR;
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec sigTime Error%s\n");
+        return false;
+    }
+    if(createService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || createService.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
+        errCode = SERVICEMANCODE::VERSION_ERROR;
+        LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", createService.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+        return false;
+    }     
     //  2. checkSignature
     if(!createService.CheckSignature(createService.pubKeyClusterAddress)){
+        errCode = SERVICEMANCODE::CHECKSIGNATURE_ERROR;
         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- CheckSignature() failed\n");
         return false;
     }
     //  3.check transactions
     if (!pwalletMain->mapWallet.count(createService.txid)){
-        strErr = "Invalid or non-wallet transaction: "+createService.txid.ToString();
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+        errCode = SERVICEMANCODE::NO_THRANSACTION;
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec Invalid or non-wallet transaction: %s\n",createService.txid.ToString());
         return false;
     }
     
     //check transaction prescript pubkey
     CTransaction tx;
     uint256 hash;
+    std::string strErr;
     if(!CheckTransactionInputScriptPubkey(createService.txid, tx,createService.pubKeyClusterAddress, Params().GetConsensus(), hash,strErr, true)){
         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+        errCode = SERVICEMANCODE::NO_THRANSACTION;
         return false;
     }
 
@@ -234,15 +276,15 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     //check tx in block
     bool fLocked = instantsend.IsLockedInstantSendTransaction(wtx.GetHash());
     int confirms = wtx.GetDepthInMainChain(false);
-    LogPrint("docker","current transaction fLocked %d confirms %d\n",fLocked,confirms);
+    LogPrint("dockernode","current transaction fLocked %d confirms %d\n",fLocked,confirms);
     if(!fLocked && confirms < 1){
-        strErr = "The transaction not confirms: "+std::to_string(confirms);
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+        errCode = SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS;
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec The transaction not confirms: %d\n",confirms);
         return false;
     }
     if(wtx.HasCreatedService()){
-        strErr = "The transaction has been used";
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec current %s\n",strErr);
+        errCode = SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE;
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec current transaction has been used\n");
         return false;
     }
     
@@ -258,37 +300,37 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     const Item serviceItem = createService.item;
     auto usablemapnode = dockerman.GetPriceListFromNodelist();
     if(!usablemapnode.count(serviceItem)){
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- serviceItem not found\n");
-        strErr = "spec not found";
+        errCode = SERVICEMANCODE::SERVICEITEM_NOT_FOUND;
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- serviceitem not found\n");
         return false;
     }
     if(!usablemapnode[serviceItem].count){
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- serviceItem no resource\n");
-        strErr = "no available resources";
+        errCode = SERVICEMANCODE::SERVICEITEM_NO_RESOURCE;
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- serviceitem no resource\n");
         return false;
     }
 
     //  5. check item
     CAmount price = usablemapnode[serviceItem].price;
     if(payment < price){
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- serviceItem payment not enough\n");
-        strErr = "payment not enough";
+        errCode = SERVICEMANCODE::PAYMENT_NOT_ENOUGH;
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec -- serviceitem payment not enough\n");
         return false;
     }
 
 
     if(!(serviceItem.gpu.Count > 0 && serviceItem.gpu.Count <= DOCKER_MAX_GPU_NUM)){
-        strErr = "GPU count error MAX_COUNT: "+std::to_string(DOCKER_MAX_GPU_NUM);
+        errCode = SERVICEMANCODE::GPU_AMOUNT_ERROR;
         LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec gpu %d,  DOCKER_MAX_GPU_NUM,%d\n",serviceItem.gpu.Count,DOCKER_MAX_GPU_NUM);
         return false;
     }
     if(!(serviceItem.cpu.Count > 0 && serviceItem.cpu.Count <= DOCKER_MAX_CPU_NUM)){
-        strErr = "CPU count error MAX_COUNT: "+std::to_string(DOCKER_MAX_CPU_NUM);
+        errCode = SERVICEMANCODE::CPU_AMOUNT_ERROR;
         LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec cpu %d,  DOCKER_MAX_CPU_NUM,%d\n",serviceItem.cpu.Count,DOCKER_MAX_CPU_NUM);
         return false;
     }
     if(!(serviceItem.mem.Count > 0 && serviceItem.mem.Count <= DOCKER_MAX_MEMORY_BYTE)){
-        strErr = "memory size error MAX_COUNT: "+std::to_string(DOCKER_MAX_MEMORY_BYTE);
+        errCode = SERVICEMANCODE::MEM_AMOUNT_ERROR;
         LogPrint("docker","CDockerServerman::CheckAndCreateServiveSpec memory_byte %d,  DOCKER_MAX_MEMORY_BYTE %d\n",serviceItem.mem.Count,DOCKER_MAX_MEMORY_BYTE);
         return false;
     }
@@ -410,7 +452,7 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     const CAmount pay = payment;
 
     if(!wtx.HasCreatedService()){
-        LogPrint("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction not been used\n");
+        LogPrint("dockernode","CDockerServerman::SetTlementServiceWithoutDelete current transaction not been used\n");
 
         CTransaction txOut;
         uint256 hash;
@@ -431,9 +473,9 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         }
     }
     else{
-        LogPrint("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction has been used\n");
+        LogPrint("dockernode","CDockerServerman::SetTlementServiceWithoutDelete current transaction has been used\n");
         if(wtx.Getdeletetime().empty()){
-            LogPrint("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction deletetime invaild\n");
+            LogPrint("dockernode","CDockerServerman::SetTlementServiceWithoutDelete current transaction deletetime invaild\n");
             return TLEMENTSTATE::FAILEDCONTINUE;
         }
 
@@ -500,7 +542,7 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
                 LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,pay);
                 return TLEMENTSTATE::FAILEDREMOVE;
             }
-            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld feerate %lf\n",masternodeSend, providerSend , customerSend ,payment,feeRate);
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld pay %lld feerate %lf trustTime %lld prepareTime %lld\n",masternodeSend, providerSend , customerSend ,pay,feeRate,trustTime,prepareTime);
             if(masternodeSend > CAmount(1000)){
                 CRecipient masternoderecipient = {masternodescriptPubKey, masternodeSend, false};
                 vecSend.push_back(masternoderecipient);

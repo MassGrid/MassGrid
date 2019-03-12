@@ -21,7 +21,7 @@ bool Cluster::SetConnectDockerAddress(std::string address_port){
     setDefaultPubkey(GetDefaultPubkey()); 
     dockerServerman.setDNDataStatus(CDockerServerman::Free);  
 
-    LogPrint("docker","Cluster::SetConnectDockerAddress Started\n");
+    LogPrint("dockernode","Cluster::SetConnectDockerAddress Started\n");
     if (!Lookup(address_port.c_str(), connectDockerAddr, 0, false)){
         LogPrintf("Cluster::SetConnectDockerAddress Incorrect DockerNode address %s", address_port);
         return false;
@@ -31,7 +31,7 @@ bool Cluster::SetConnectDockerAddress(std::string address_port){
 
 bool Cluster::ProcessDockernodeConnections(){
 
-    LogPrint("docker","Cluster::ProcessDockernodeConnections Started\n");
+    LogPrint("dockernode","Cluster::ProcessDockernodeConnections Started\n");
     
     connectNode = g_connman->ConnectNode(CAddress(connectDockerAddr, NODE_NETWORK), NULL);
     
@@ -44,7 +44,7 @@ bool Cluster::ProcessDockernodeConnections(){
 
 void Cluster::AskForDNData()
 {
-    LogPrint("docker","Cluster::AskForDNData Started\n");
+    LogPrint("dockernode","Cluster::AskForDNData Started\n");
     if(!connectNode) return;
 
     LOCK(cs);
@@ -56,7 +56,7 @@ void Cluster::AskForDNData()
 
 bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
 
-    LogPrint("docker","Cluster::CreateAndSendSeriveSpec Started\n");
+    LogPrint("dockernode","Cluster::CreateAndSendSeriveSpec Started\n");
 
     LOCK(cs);
     if(!connectNode){
