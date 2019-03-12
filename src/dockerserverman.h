@@ -31,10 +31,15 @@ public:
         Ask,
         Received
     };
+    enum TLEMENTSTATE{
+        FAILEDREMOVE = -1,
+        FAILEDCONTINUE,
+        SUCCESS
+    };
     double feeRate = 0.01;  //set feeRate 1%
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
     bool CheckAndCreateServiveSpec(DockerCreateService Spec, string& strErr);
-    bool SetTlementServiceWithoutDelete(uint256 serviceTxid);
+    int SetTlementServiceWithoutDelete(uint256 serviceTxid);
     DNDATASTATUS dndataStatus;
 
     void setDNDataStatus(DNDATASTATUS type){
@@ -70,8 +75,10 @@ public:
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << version;
         ss << pubKeyClusterAddress;
+        ss << mapDockerServiceLists;
         ss << items;
         ss << masternodeAddress;
+        ss << strErr;
         return ss.GetHash();
     }
 };
@@ -79,7 +86,6 @@ class DockerCreateService{
 public:
 
     uint64_t version = DOCKERREQUEST_API_VERSION;
-    string strErr{};
     std::vector<unsigned char> vchSig{};
     CPubKey pubKeyClusterAddress{};
     uint256 txid{};
@@ -103,8 +109,6 @@ public:
         READWRITE(image);
         READWRITE(item);
         READWRITE(ssh_pubkey);
-        READWRITE(strErr);
-
     }
     uint256 GetHash() const
     {
@@ -118,7 +122,6 @@ public:
         ss << image;
         ss << item;
         ss << ssh_pubkey;
-        ss << strErr;
         return ss.GetHash();
     }
     bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);

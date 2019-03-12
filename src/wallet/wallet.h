@@ -481,11 +481,13 @@ public:
     ATTRIBUTE_MEMBER_FUNC(memcount);
     ATTRIBUTE_MEMBER_FUNC(gpuname);
     ATTRIBUTE_MEMBER_FUNC(gpucount);
-    ATTRIBUTE_MEMBER_FUNC(masternodeaddress);
     ATTRIBUTE_MEMBER_FUNC(custeraddress);
     ATTRIBUTE_MEMBER_FUNC(provideraddress);
     ATTRIBUTE_MEMBER_FUNC(taskstate);
     ATTRIBUTE_MEMBER_FUNC(tlementtxid);
+    ATTRIBUTE_MEMBER_FUNC(masternodeaddress);
+    ATTRIBUTE_MEMBER_FUNC(masternodeip);
+    ATTRIBUTE_MEMBER_FUNC(masternodeoutpoint);
 
 
     int64_t GetTxTime() const;

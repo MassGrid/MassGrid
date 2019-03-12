@@ -1488,53 +1488,6 @@ void ListTransactions(const CWalletTx& wtx, const string& strAccount, int nMinDe
             }
         }
     }
-    UniValue entry(UniValue::VOBJ);
-    if(wtx.mapValue.count("serviceid")){
-        entry.push_back(Pair("serviceid", wtx.Getserviceid()));
-    }
-    if(wtx.mapValue.count("verison")){
-        entry.push_back(Pair("verison", wtx.Getverison()));
-    }
-    if(wtx.mapValue.count("createtime")){
-        entry.push_back(Pair("createtime", wtx.Getcreatetime()));
-    }
-    if(wtx.mapValue.count("deletetime")){
-        entry.push_back(Pair("deletetime", wtx.Getdeletetime()));
-    }
-    if(wtx.mapValue.count("price")){
-        entry.push_back(Pair("price", wtx.Getprice()));
-    }
-    if(wtx.mapValue.count("cpuname")){
-        entry.push_back(Pair("cpuname", wtx.Getcpuname()));
-    }
-     if(wtx.mapValue.count("cpucount")){
-        entry.push_back(Pair("cpucount", wtx.Getcpucount()));
-    }
-    if(wtx.mapValue.count("memname")){
-        entry.push_back(Pair("memname", wtx.Getmemname()));
-    }
-    if(wtx.mapValue.count("memcount")){
-        entry.push_back(Pair("memcount", wtx.Getmemcount()));
-    }
-    if(wtx.mapValue.count("gpuname")){
-        entry.push_back(Pair("gpuname", wtx.Getgpuname()));
-    }
-     if(wtx.mapValue.count("gpucount")){
-        entry.push_back(Pair("gpucount", wtx.Getgpucount()));
-    }
-    if(wtx.mapValue.count("custeraddress")){
-        entry.push_back(Pair("custeraddress", wtx.Getcusteraddress()));
-    }
-    if(wtx.mapValue.count("provideraddress")){
-        entry.push_back(Pair("provideraddress", wtx.Getprovideraddress()));
-    }
-    if(wtx.mapValue.count("masternodeaddress")){
-        entry.push_back(Pair("masternodeaddress", wtx.Getmasternodeaddress()));
-    }
-    if(wtx.mapValue.count("tlementtxid")){
-        entry.push_back(Pair("tlementtxid", wtx.Gettlementtxid()));
-    }
-    ret.push_back(entry);
 }
 
 void AcentryToJSON(const CAccountingEntry& acentry, const string& strAccount, UniValue& ret)

@@ -75,11 +75,12 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "                  \"dockernode (IP:Port)\" (string, required)\n"
                 "                  \"txid (string, required)\n"
                 "sendtomasternode  - send to masternode address: \n"
+                "                  \"dockernode (IP:Port)\" (string, required)\n"
                 "                  \"MassGrid address\"(string, required)\n"
                 "                  \"amount\"(int, required)\n"
                 + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\"")
                 + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\"")
-                + HelpExampleCli("docker", "sendtomasternode \"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\" 6.4")
+                + HelpExampleCli("docker", "sendtomasternode \"119.3.66.159:19443\" \"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\" 6.4")
 #endif // ENABLE_WALLET
                 + HelpExampleCli("docker", "getdndata \"119.3.66.159:19443\"")
                 + HelpExampleCli("docker", "connect \"massgridn2n\" \"10.1.1.4\" \"119.3.66.159\"")
@@ -249,19 +250,33 @@ UniValue docker(const UniValue& params, bool fHelp)
     }
     if(strCommand == "sendtomasternode"){
         LOCK2(cs_main, pwalletMain->cs_wallet);
-
-        CMassGridAddress address(params[1].get_str());
+        std::string strAddr = params[1].get_str();
+        std::string mnoupouint;
+        std::map<COutPoint, CMasternode> mapMasternodes = mnodeman.GetFullMasternodeMap();
+        for(auto it = mapMasternodes.begin();it!=mapMasternodes.end();++it){
+            if(it->second.addr.ToString() == strAddr){
+                mnoupouint = it->first.ToStringShort();
+                break;
+            }
+        }
+        CMassGridAddress address(params[2].get_str());
         if (!address.IsValid())
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid MassGrid address");
 
         // Amount
-        CAmount nAmount = AmountFromValue(params[2]);
+        CAmount nAmount = AmountFromValue(params[3]);
         if (nAmount <= 0)
             throw JSONRPCError(RPC_TYPE_ERROR, "Invalid amount for send");
 
         // Wallet comments
         CWalletTx wtxNew;
         wtxNew.Setmasternodeaddress(params[1].get_str());
+        if(mnoupouint.empty()){
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "MassGrid masternode outpoint not found");
+        }
+        wtxNew.Setmasternodeoutpoint(mnoupouint);
+        wtxNew.Setmasternodeip(strAddr);
+        wtxNew.Setmasternodeaddress(params[2].get_str());
 
         EnsureWalletIsUnlocked();
 

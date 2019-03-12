@@ -368,9 +368,8 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     return true;
 
 }
-bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
+int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
 
-    CWalletTx wtxNew;
     bool fnoCreated;
     vector<CRecipient> vecSend;
     COutPoint outpoint;
@@ -383,28 +382,23 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
 
     if (!pwalletMain->mapWallet.count(serviceTxid)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete Invalid or non-wallet transaction id\n");
-        return false;
+        return TLEMENTSTATE::FAILEDCONTINUE;
     }
     CWalletTx& wtx = pwalletMain->mapWallet[serviceTxid];  //watch only not check
 
     if(wtx.HasTlemented()){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete has been tlementtxid\n");
-        return false;
+        return TLEMENTSTATE::FAILEDREMOVE;
     }
 
     if(!wtx.GetOutPoint(masternodescriptPubKey,outpoint)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete outpoint not found\n");
-        return false;
+        return TLEMENTSTATE::FAILEDREMOVE;
     }
     Coin coin;
     if(!GetUTXOCoin(outpoint,coin)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete outpoint not UTXO\n");
-        return false;
-    }
-    
-    if(pwalletMain->IsSpent(outpoint.hash,outpoint.n)){
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec IsSpent\n");
-        return false;
+        return TLEMENTSTATE::FAILEDREMOVE;
     }
 
     isminefilter filter = ISMINE_SPENDABLE;
@@ -440,7 +434,7 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         LogPrint("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction has been used\n");
         if(wtx.Getdeletetime().empty()){
             LogPrint("docker","CDockerServerman::SetTlementServiceWithoutDelete current transaction deletetime invaild\n");
-            return false;
+            return TLEMENTSTATE::FAILEDCONTINUE;
         }
 
         customerAddress = CMassGridAddress(wtx.Getcusteraddress());
@@ -467,7 +461,7 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         double payrate = (double)trustTime / prepareTime;
         if(payrate < 0){
             LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payrate %lf < 0\n",payrate);
-            return false;
+            return TLEMENTSTATE::FAILEDREMOVE;
         }
 
         if(fnoCreated){  //not create task
@@ -504,7 +498,7 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             masternodeSend += payment;
             if(masternodeSend + providerSend + customerSend != pay){
                 LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,pay);
-                return false;
+                return TLEMENTSTATE::FAILEDREMOVE;
             }
             LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld feerate %lf\n",masternodeSend, providerSend , customerSend ,payment,feeRate);
             if(masternodeSend > CAmount(1000)){
@@ -521,8 +515,10 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     }
     if (!vecSend.size()){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete vecSend.size() == 0 \n");
-        return false;
+        return TLEMENTSTATE::FAILEDREMOVE;
     }
+
+    CWalletTx wtxNew;
     CCoinControl coinControl;
     coinControl.fUseInstantSend = true;
     coinControl.Select(outpoint);
@@ -535,14 +531,16 @@ bool CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     bool fCreated = pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRet, nChangePosRet, strError, &coinControl, true, ALL_COINS, true);
     if (!fCreated){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete CreateTransaction error %s\n",strError);
-        return false;
+        return TLEMENTSTATE::FAILEDCONTINUE;
     }
 
     //commit to wtx;
-    wtxNew.Settlementtxid(wtxNew.GetHash().ToString());
     if (!pwalletMain->CommitTransaction(wtxNew, reservekey, g_connman.get(),NetMsgType::TXLOCKREQUEST)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete CommitTransaction error \n");
-        return false;
+        return TLEMENTSTATE::FAILEDCONTINUE;
     }
-    return true;
+    wtx.Settlementtxid(wtxNew.GetHash().ToString());
+    CWalletDB walletdb(pwalletMain->strWalletFile);
+    wtx.WriteToDisk(&walletdb);
+    return TLEMENTSTATE::SUCCESS;
 }
