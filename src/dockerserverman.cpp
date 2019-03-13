@@ -108,7 +108,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
     if (strCommand == NetMsgType::GETDNDATA) { //server
         
         LogPrint("dockernode","CDockerServerman::ProcessMessage GETDNDATA Started\n");
-        if (!fMasterNode) return;
+        if (!fDockerNode) return;
         DockerGetData mdndata;
         CPubKey pubkey;
         vRecv >> pubkey;
@@ -163,7 +163,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("dockernode","CDockerServerman::ProcessMessage CREATESERVICE Started\n");
-        if (!fMasterNode) return;
+        if (!fDockerNode) return;
         DockerCreateService createService;
         vRecv >> createService;
         DockerGetData mdndata;
@@ -178,7 +178,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
     }else if(strCommand == NetMsgType::DELETESERVICE){
         LogPrint("dockernode","CDockerServerman::ProcessMessage DELETESERVICE Started\n");
-        if (!fMasterNode) return;
+        if (!fDockerNode) return;
         DockerDeleteService delService;
         vRecv >> delService;
         DockerGetData mdndata;

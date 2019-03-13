@@ -99,15 +99,15 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
     mnp.nSentinelVersion = nSentinelVersion;
     mnp.fSentinelIsCurrent =
             (abs(GetAdjustedTime() - nSentinelPingTime) < MASTERNODE_WATCHDOG_MAX_SECONDS);
-    
-    dockerman.Update();
-    mnp.mdocker.nodeCount=dockerman.GetDockerNodeCount();
-    mnp.mdocker.activeNodeCount=dockerman.GetDockerNodeActiveCount();
-    mnp.mdocker.dockerServiceCount=dockerman.GetDockerServiceCount();
-    mnp.mdocker.dockerTaskCount=dockerman.GetDockerTaskCount();
-    mnp.mdocker.docker_version=dockerman.version.ver;
-    mnp.mdocker.joinToken=dockerman.GetSwarmJoinToken();
-    LogPrint("docker","CActiveMasternode::SendMasternodePing %s\n",mnp.mdocker.ToString());
+    if(fDockerNode){
+        dockerman.Update();
+        mnp.mdocker.nodeCount=dockerman.GetDockerNodeCount();
+        mnp.mdocker.activeNodeCount=dockerman.GetDockerNodeActiveCount();
+        mnp.mdocker.dockerServiceCount=dockerman.GetDockerServiceCount();
+        mnp.mdocker.dockerTaskCount=dockerman.GetDockerTaskCount();
+        mnp.mdocker.docker_version=dockerman.version.ver;
+        mnp.mdocker.joinToken=dockerman.GetSwarmJoinToken();
+    }
     if(!mnp.Sign(keyMasternode, pubKeyMasternode)) {
         LogPrintf("CActiveMasternode::SendMasternodePing -- ERROR: Couldn't sign Masternode Ping\n");
         return false;

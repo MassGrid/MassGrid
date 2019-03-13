@@ -17,7 +17,8 @@ void ServiceTimerModule::UpdateSetAll(){
 }
 void ServiceTimerModule::UpdateSet(CWalletTx & wtx){
     LogPrint("timer","ServiceTimerModule::UpdateSet CWalletTx start\n");
-     if(dockerServerman.SetTlementServiceWithoutDelete(wtx.GetHash()) < 0)
+    LOCK(cs_serInfoQueue2);
+    if(dockerServerman.SetTlementServiceWithoutDelete(wtx.GetHash()) < 0)
         setWalletTx.insert(&wtx);
 }
 void ServiceTimerModule::UpdateQueAll(std::map<std::string, Service>&map){

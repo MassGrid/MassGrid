@@ -207,7 +207,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         return "delete service Successfully id: "+delService.txid.ToString();
     }
     if(strCommand == "listuntlementtx"){
-        if (!fMasterNode)
+        if (!fDockerNode)
             throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
         UniValue varr(UniValue::VARR);
         std::set<CWalletTx*> setWallet = timerModule.GetWalletTxSet();
@@ -216,7 +216,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         return varr;
     }
     if(strCommand == "listprice"){
-        if (!fMasterNode)
+        if (!fDockerNode)
             throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
         UniValue varr(UniValue::VARR);
         auto entries = dockerPriceConfig.getEntries();
@@ -234,7 +234,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         return varr;
     }
     if(strCommand == "setprice"){
-        if (!fMasterNode)
+        if (!fDockerNode)
             throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
         if (params.size() != 4)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
@@ -252,7 +252,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         return "add new "+type + " " +name + " " +strPrice;
     }    
     if (strCommand == "setdockerfee"){
-        if (!fMasterNode)
+        if (!fDockerNode)
             throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
         if (params.size() < 2)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Please specify an fee rate");

@@ -44,6 +44,7 @@
 //MassGrid only features
 
 extern bool fMasterNode;
+extern bool fDockerNode;
 extern bool fLiteMode;
 extern int nWalletBackups;
 

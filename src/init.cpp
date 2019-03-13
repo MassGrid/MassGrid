@@ -592,6 +592,7 @@ std::string HelpMessage(HelpMessageMode mode)
 
     strUsage += HelpMessageGroup(_("Masternode options:"));
     strUsage += HelpMessageOpt("-masternode=<n>", strprintf(_("Enable the client to act as a masternode (0-1, default: %u)"), 0));
+    strUsage += HelpMessageOpt("-dockernode=<n>", strprintf(_("Enable the client to act as a dockernode default enable masternode (0-1, default: %u)"), 0));
     strUsage += HelpMessageOpt("-mnconf=<file>", strprintf(_("Specify masternode configuration file (default: %s)"), "masternode.conf"));
     strUsage += HelpMessageOpt("-mnconflock=<n>", strprintf(_("Lock masternodes from masternode configuration file (default: %u)"), 1));
     strUsage += HelpMessageOpt("-dpconf=<file>", strprintf(_("Specify dockerprice configuration file (default: %s)"), "dockerprice.conf"));
@@ -836,7 +837,11 @@ void InitParameterInteraction()
         if (SoftSetBoolArg("-listen", true))
             LogPrintf("%s: parameter interaction: -masternode=1 -> setting -listen=1\n", __func__);
     }
-
+    if (GetBoolArg("-dockernode", false)) {
+        // masternodes must accept connections from outside
+        if (SoftSetBoolArg("-listen", true))
+            LogPrintf("%s: parameter interaction: -dockernode=1 -> setting -listen=1\n", __func__);
+    }
     if (mapArgs.count("-connect") && mapMultiArgs["-connect"].size() > 0) {
         // when only connecting to trusted nodes, do not seed via DNS, or listen by default
         if (SoftSetBoolArg("-dnsseed", false))
@@ -1907,8 +1912,12 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
             MilliSleep(10);
     }
 
-    // ********************************************************* Step 11a: setup PrivateSend
+    // ********************************************************* Step 11a: setup InstantSend
     fMasterNode = GetBoolArg("-masternode", false);
+    fDockerNode = GetBoolArg("-dockernode", false);
+
+    if(fDockerNode)
+        fMasterNode = true;
     // TODO: masternode should have no wallet
 
     if((fMasterNode || masternodeConfig.getCount() > -1) && fTxIndex == false) {
@@ -2017,10 +2026,10 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     // ********************************************************* Step 12: start node
 threadGroup.create_thread(boost::bind(&ThreadCheckInstantSend, boost::ref(*g_connman)));
 
-    if(fMasterNode)
+    if(fDockerNode)
 threadGroup.create_thread(&ThreadSnStart);
 
-    if(fMasterNode)
+    if(fDockerNode)
         threadGroup.create_thread(&ThreadTimeModule);
     if (!CheckDiskSpace())
         return false;
