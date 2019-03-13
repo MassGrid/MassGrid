@@ -1,5 +1,6 @@
 #include "timermodule.h"
 #include "init.h"
+#include "validation.h"
 #include "masternode-sync.h"
 #include "dockerman.h"
 #include "dockerserverman.h"
@@ -83,7 +84,7 @@ void ThreadTimeModule()
 {
     RenameThread("massgrid-sctrl");
     LogPrintf("ThreadTimeModule Start\n");
-    int64_t count = 0;
+    int height = chainActive.Height();
     while(true)
     {
         if (masternodeSync.IsSynced()){
@@ -91,9 +92,10 @@ void ThreadTimeModule()
             
             timerModule.CheckQue();
 
-            if(count % 30 == 0){
+            if(height != chainActive.Height()){
                 timerModule.CheckTransaction();
                 timerModule.SetTlement();
+                height = chainActive.Height();
             }
         }
         // Check for stop or if block needs to be rebuilt
@@ -101,6 +103,5 @@ void ThreadTimeModule()
             boost::this_thread::interruption_point();
             MilliSleep(100);
         }
-        ++count;
     }
 }
