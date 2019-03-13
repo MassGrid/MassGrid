@@ -34,7 +34,6 @@ public:
     bool Flush();
     void UpdateSetAll();
     void UpdateSet(CWalletTx & wtx);
-    void UpdateSet(uint256 hash);
     void UpdateQueAll(std::map<std::string, Service>&map);
     void UpdateQue(std::map<std::string, Service>&map,std::string id);
     void CheckQue();

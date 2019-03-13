@@ -231,7 +231,8 @@ bool CDockerServerman::CheckAndRemoveServiveSpec(DockerDeleteService delService,
     Service svi;
     if(dockerman.GetServiceFromTxId(delService.txid,svi))
         dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,svi.ID,"");
-    timerModule.UpdateSet(delService.txid);
+    else 
+        timerModule.UpdateSet(wtx);
     return true;
 }
 bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createService, int& errCode){

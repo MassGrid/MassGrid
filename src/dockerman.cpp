@@ -355,7 +355,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 CWalletDB walletdb(pwalletMain->strWalletFile);
                 wtx.WriteToDisk(&walletdb);
 
-                //add to tlementset
+                //exec tlementset
                 timerModule.UpdateSet(wtx);
                 //  delete service form map
                 LogPrint("docker","CDockerMan::ProcessMessage remove serviceid successful%s\n",id);
