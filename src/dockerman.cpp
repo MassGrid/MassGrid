@@ -205,7 +205,7 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
 
 bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService){
 
-    LogPrintf("CDockerMan::ProcessMessage Method: %s  ProcessMessage: %d\n",strMethod[mtd],ret);
+    LogPrint("docker","CDockerMan::ProcessMessage Method: %s  ProcessMessage: %d\n",strMethod[mtd],ret);
     LogPrint("docker","CDockerMan::ProcessMessage Response Messages %s\n",responsedata);
     std::string strMessage;
     std::string id;
@@ -474,7 +474,7 @@ bool CDockerMan::Update(){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_SWARM_INSPECT failed! \n");
         return false;
     }
-    LogPrint("docker","CDockerMan::Update Succcessful\n");
+    LogPrintf("CDockerMan::Update Succcessful\n");
     return true;
 }
 bool CDockerMan::UpdateSwarmAndNodeList(){
