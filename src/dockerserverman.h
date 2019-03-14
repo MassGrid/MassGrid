@@ -21,6 +21,7 @@ class CDockerServerman;
 class DockerCreateService;
 class DockerDeleteService;
 extern CDockerServerman dockerServerman;
+extern const char* strServiceCode[];
 enum SERVICEMANCODE{
     SUCCESS = 0,
     SIGTIME_ERROR,

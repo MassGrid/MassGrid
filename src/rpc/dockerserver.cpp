@@ -173,8 +173,15 @@ UniValue docker(const UniValue& params, bool fHelp)
         createService.ssh_pubkey = strssh_pubkey;
         EnsureWalletIsUnlocked();
         if(!dockercluster.CreateAndSendSeriveSpec(createService))
-            return "CreateSpec Error";
-        return "CreateSpec Successfully hash: "+createService.ToString();
+            return "CreateSpec Error Failed";
+
+        for(int i=0;i<20;++i){
+            MilliSleep(100);
+            if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
+                return strServiceCode[dockercluster.dndata.errCode];
+            }
+        }
+        return NullUniValue;
     }
     if(strCommand == "delete"){
         if (!masternodeSync.IsSynced())
@@ -196,15 +203,20 @@ UniValue docker(const UniValue& params, bool fHelp)
         EnsureWalletIsUnlocked();
         CKey vchSecret;
         if (!pwalletMain->GetKey(delService.pubKeyClusterAddress.GetID(), vchSecret)){
-            LogPrintf("delService Sign Error1\n");
-            return false;
+            return "delService Error not found privkey";
         }
         if(!delService.Sign(vchSecret,delService.pubKeyClusterAddress)){
-            LogPrintf("delService Sign Error2\n");
-            return false;
+            return "delService Sign Error";
         }
         g_connman->PushMessage(dockercluster.connectNode, NetMsgType::DELETESERVICE, delService);
-        return "delete service Successfully id: "+delService.txid.ToString();
+
+        for(int i=0;i<20;++i){
+            MilliSleep(100);
+            if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
+                return strServiceCode[dockercluster.dndata.errCode];
+            }
+        }
+        return NullUniValue;
     }
     if(strCommand == "listuntlementtx"){
         if (!fDockerNode)
