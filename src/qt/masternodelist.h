@@ -90,7 +90,7 @@ private:
     int64_t m_nTimeDockerListUpdated;
     int64_t m_nTimeListUpdated;
     int64_t m_nTimeMyListUpdated;
-
+    
 private:
     int loadServerList();
     bool deleteService(const std::string& serviceid);
@@ -104,6 +104,13 @@ private:
     void initOrderTablewidget();
     void resetTableWidgetTitle();
     void loadOrderTableWidget();
+    void jumpToCheckOrder(int index);
+    void jumpToCheckService(int index);
+    void jumpToCreateService(int index);
+
+    void gotoDockerSerivcePage(const std::string& str);
+    void gotoCreateServicePage(const std::string& str);
+    void gotoOrderDetailPage(int index);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -123,6 +130,7 @@ private Q_SLOTS:
     void slot_deleteServiceBtn();
     void updateServiceList();
     void openServiceDetail(QModelIndex);
+    void openOrderDetail(QModelIndex);
 
     void loadDockerDetail(const std::string& key);
     // void updateServiceDetail(Service& service);
@@ -130,7 +138,13 @@ private Q_SLOTS:
     void slot_createServiceBtn();
     void slot_changeN2Nstatus(bool);
     void slot_curTabPageChanged(int);
-    void slot_ordertablecheck();
+    void slot_orderManagerBtnClicked();
     void updateDockerList(bool fForce = false);
+
+    void slot_btn_refund();
+    void slot_orderTablewidget_clicked(QModelIndex);
+    void loadOrderData();
+
 };
+
 #endif // MASTERNODELIST_H

@@ -305,7 +305,6 @@ UniValue docker(const UniValue& params, bool fHelp)
 
         // Wallet comments
         CWalletTx wtxNew;
-        wtxNew.Setmasternodeaddress(params[1].get_str());
         if(mnoupouint.empty()){
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "MassGrid masternode outpoint not found");
         }

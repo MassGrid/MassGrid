@@ -102,7 +102,7 @@ QTabWidget::pane{
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
@@ -592,7 +592,28 @@ border:hidden;
            <property name="styleSheet">
             <string notr="true">QFrame#frame_5{
 border:hidden;
-}</string>
+}
+
+QPushButton#pushButton_load,
+QPushButton#pushButton_refund{
+width:80;
+height:28;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+border-radius:2px;
+}
+
+QPushButton::!enabled#pushButton_load,
+QPushButton::!enabled#pushButton_refund{
+background-color: rgb(125, 125, 125);
+width:80;
+height:28;
+color: rgb(255, 255, 255);
+border:hidden;
+border-radius:2px;
+}
+</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -653,6 +674,43 @@ border-radius:2px;
               </property>
               <property name="text">
                <string>搜索</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_load">
+              <property name="text">
+               <string>加载</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_refund">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton#pushButton_refund{
+width:80;
+height:28;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+border-radius:2px;
+}
+
+QPushButton::!enabled#pushButton_refund{
+background-color: rgb(125, 125, 125);
+width:80;
+height:28;
+color: rgb(255, 255, 255);
+border:hidden;
+border-radius:2px;
+}
+</string>
+              </property>
+              <property name="text">
+               <string>退款</string>
               </property>
              </widget>
             </item>

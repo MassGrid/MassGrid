@@ -20,7 +20,10 @@ FORMS += \
     ../src/qt/forms/transactiondescdialog.ui\
     ../src/qt/forms/mainwintitle.ui\
     ../src/qt/forms/adddockerservicedlg.ui \
-    ../src/qt/forms/servicedetail.ui
+    ../src/qt/forms/servicedetail.ui\
+    ../src/qt/forms/orderdetail.ui \
+    ../src/qt/forms/resourceitem.ui
 
 RESOURCES += \
 ../src/qt/massgrid.qrc
+

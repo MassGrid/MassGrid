@@ -279,15 +279,17 @@ void SendCoinsDialog::on_sendButton_clicked()
     send(recipients, strFee, strFunds);
 }
 
-void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds)
+std::string SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds,bool isSendToMasternode)
 {
     // prepare transaction for getting txFee earlier
     WalletModelTransaction currentTransaction(recipients);
     WalletModel::SendCoinsReturn prepareStatus;
+    if(isSendToMasternode)
+        coinControlChangeEdited(GUIUtil::getDefaultReceiveAddr());
     if (model->getOptionsModel()->getCoinControlFeatures()) // coin control enabled
-        prepareStatus = model->prepareTransaction(currentTransaction, CoinControlDialog::coinControl);
+        prepareStatus = model->prepareTransaction(currentTransaction, isSendToMasternode, CoinControlDialog::coinControl);
     else
-        prepareStatus = model->prepareTransaction(currentTransaction);
+        prepareStatus = model->prepareTransaction(currentTransaction,isSendToMasternode);
         
     // process prepareStatus and on error generate message shown to user
     processSendCoinsReturn(prepareStatus,
@@ -295,7 +297,7 @@ void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee,
 
     if(prepareStatus.status != WalletModel::OK) {
         fNewRecipientAllowed = true;
-        return;
+        return "";
     }
 
     CAmount txFee = currentTransaction.getTransactionFee();
@@ -396,7 +398,7 @@ void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee,
     if(retval != CMessageBox::Ok)
     {
         fNewRecipientAllowed = true;
-        return;
+        return "";
     }
 
     // now send the prepared transaction
@@ -411,7 +413,9 @@ void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee,
         coinControlUpdateLabels();
     }
     fNewRecipientAllowed = true;
-    Q_EMIT sendCoinSucess();
+    if(!isSendToMasternode)
+        Q_EMIT sendCoinSucess();
+    return currentTransaction.getTransaction()->GetHash().ToString();
 }
 
 void SendCoinsDialog::clear()

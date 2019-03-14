@@ -1507,7 +1507,7 @@ border: hidden;
                      <string>Select &amp;Recipient</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../massgrid.qrc">
+                     <iconset>
                       <normaloff>:/res/pic/add.png</normaloff>:/res/pic/add.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -2452,7 +2452,7 @@ color: rgb(255, 255, 255);</string>
                     <string>S&amp;end</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../massgrid.qrc">
+                    <iconset>
                      <normaloff>:/res/pic/menuicon/address-book.png</normaloff>:/res/pic/menuicon/address-book.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -2630,12 +2630,10 @@ color: rgb(255, 255, 255);</string>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../massgrid.qrc"/>
- </resources>
+ <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupFee"/>
   <buttongroup name="groupCustomFee"/>
+  <buttongroup name="groupFee"/>
  </buttongroups>
 </ui>

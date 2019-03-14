@@ -1786,8 +1786,6 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         //if address not null ,change the default pubkey
         std::string defaultAddr = DefaultReceiveAddress();
 
-        LogPrintf("=====>DefaultReceiveAddress:%s\n",defaultAddr);
-
         if(defaultAddr.size()){
             CTxDestination newAddress = CMassGridAddress(defaultAddr).Get();
             if(!pwalletMain->mapAddressBook.count(newAddress)){

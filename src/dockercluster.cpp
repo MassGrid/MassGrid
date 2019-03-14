@@ -80,6 +80,8 @@ bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
         return false;
     }
     
+    dockerServerman.setDNDataStatus(CDockerServerman::Creating);
+
     g_connman->PushMessage(connectNode, NetMsgType::CREATESERVICE, sspec);
     return true;
 }

@@ -31,6 +31,7 @@
 #include <QNetworkInterface>
 #include <QList>
 #include "servicedetail.h"
+#include "orderdetail.h"
 
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
 #define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
@@ -93,7 +94,6 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
 
     ui->serviceTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->serviceTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    // ui->serviceTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->serviceTableWidget->verticalHeader()->setVisible(false); 
 
     ui->tableWidgetMyMasternodes->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -105,6 +105,8 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     connect(ui->tableWidgetMasternodes, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDockerDetail(QModelIndex)));
     connect(ui->serviceTableWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(loadServerDetail(QModelIndex)));
     connect(ui->serviceTableWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(openServiceDetail(QModelIndex)));
+    connect(ui->OrdertableWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(openOrderDetail(QModelIndex)));
+    connect(ui->OrdertableWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(slot_orderTablewidget_clicked(QModelIndex)));
     
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
     connect(ui->updateServiceBtn, SIGNAL(clicked()), this, SLOT(slot_updateServiceBtn()));
@@ -112,16 +114,20 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     
     connect(ui->createServiceBtn, SIGNAL(clicked()), this, SLOT(slot_createServiceBtn()));
     connect(ui->tabWidget, SIGNAL(currentChanged(int)),this,SLOT(slot_curTabPageChanged(int)));
+    connect(ui->pushButton_refund,SIGNAL(clicked()),this,SLOT(slot_btn_refund()));
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
     connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
+    connect(ui->pushButton_load,SIGNAL(clicked()),this,SLOT(loadOrderData()));
     timer->start(1000);
 
     fFilterUpdated = false;
     nTimeFilterUpdated = GetTime();
     updateNodeList();
     ui->tabWidget->tabBar()->setTabEnabled(2,false);
+    ui->tabWidget->tabBar()->setTabEnabled(4,false);
+    ui->tabWidget->tabBar()->setTabEnabled(5,false);
 
     switchButton = new QSwitchButton(ui->frame_2);
     switchButton->SetSelected(false);
@@ -213,10 +219,13 @@ void MasternodeList::showDockerDetail(QModelIndex index)
     int row = index.row();
     const std::string& address_port = ui->tableWidgetMasternodes->item(row,0)->text().toStdString().c_str();
 
-    m_curAddr_Port = address_port;
+    gotoDockerSerivcePage(address_port);
+}
 
+void MasternodeList::gotoDockerSerivcePage(const std::string& ip_port)
+{
+    m_curAddr_Port = ip_port;
     setCurUpdateMode(DockerUpdateMode::WhenNormal);
-
     updateServiceList();
 }
 
@@ -644,7 +653,7 @@ int MasternodeList::loadServerList()
         label->setText(taskStatusStr);
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         label->setStyleSheet(taskStatus == 8 ? "color:green;" : "color:red;");
-
+ 
         QTableWidgetItem *nameItem = new QTableWidgetItem(name);
         QTableWidgetItem *imageItem = new QTableWidgetItem(QString::fromStdString(image));
         QTableWidgetItem *idItem = new QTableWidgetItem(id);
@@ -659,17 +668,18 @@ int MasternodeList::loadServerList()
         ui->serviceTableWidget->setCellWidget(count,4,label);
 
         for(int i=0;i<4;i++)
-            ui->serviceTableWidget->item(0,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
+            ui->serviceTableWidget->item(count,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
 
         count++;
     }
     dockerServerman.setDNDataStatus(CDockerServerman::Free);
+
     return count;
 }
 
 void MasternodeList::loadServerDetail(QModelIndex index)
 {
-    QString key = ui->serviceTableWidget->item(index.row(),1)->text();
+    QString key = ui->serviceTableWidget->item(index.row(),0)->text();
     loadDockerDetail(key.toStdString());
     ui->deleteServiceBtn->setEnabled(true);
     switchButton->setEnabled(true);
@@ -680,8 +690,6 @@ void MasternodeList::loadDockerDetail(const std::string & key)
     Service service = dockercluster.dndata.mapDockerServiceLists[key.c_str()];
     map<std::string,Task> mapDockerTasklists = service.mapDockerTaskLists;
 
-    // LogPrintf("loadDockerDetail service:%s\n",service.ToJsonString());
-
     int taskStatus = -1;
     map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
     for(;iter != mapDockerTasklists.end();iter++){
@@ -690,9 +698,7 @@ void MasternodeList::loadDockerDetail(const std::string & key)
     }
 
     // updateTaskDetail(mapDockerTasklists,taskStatus);
-
     DockerUpdateMode mode = taskStatus == 8 ? DockerUpdateMode::WhenNormal : DockerUpdateMode::AfterCreate;
-
     // updateServiceDetail(service);
     setCurUpdateMode(mode);
 }
@@ -716,6 +722,7 @@ void MasternodeList::openServiceDetail(QModelIndex index)
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
     dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+
     dlg.exec();
 }
 
@@ -843,7 +850,7 @@ void MasternodeList::slot_deleteServiceBtn()
     
     if(curindex <0 )
         return ;
-    std::string strServiceid = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
+    std::string strServiceid = ui->serviceTableWidget->item(curindex,0)->text().toStdString();
 
     deleteService(strServiceid);
     // loadDockerDetail(key.toStdString());
@@ -888,49 +895,34 @@ void MasternodeList::askDNData()
 {
     dockercluster.AskForDNData();
     ui->tabWidget->setCurrentIndex(2);
-    ui->createServiceBtn->setEnabled(false);
     refreshServerList();
 }
 
 void MasternodeList::clearDockerDetail()
 {
-//     ui->label_name->setText("");
-//     ui->label_n2n_localip->setText("");
-//     ui->label_image->setText("");
-//     ui->label_user->setText("");
-//     ui->label_serviceTimeout->setText("");
-//     ui->label_n2n_serverip->setText("");
-//     ui->label_n2n_name->setText("");
-//     ui->label_n2n_localip->setText("");
-//     ui->label_ssh_pubkey->setText("");
-
-//     ui->label_taskName->setText("");
-//     ui->label_cpuCount->setText("");
-//     ui->label_memoryBytes->setText("");
-//     ui->label_GPUName->setText("");
-//     ui->label_GPUCount->setText("");
-//     ui->label_taskStatus->setText("");
-//     ui->textEdit_taskErr->setText("");
-//     ui->label_17->setVisible(false);
-//     ui->textEdit_taskErr->setVisible(false);
-//     ui->serviceTableWidget->setRowCount(0);
     ui->deleteServiceBtn->setEnabled(false);
-//     switchButton->setEnabled(false);
 }
 
 void MasternodeList::slot_createServiceBtn()
+{
+    std::string ip_port = m_curAddr_Port;
+    gotoCreateServicePage(ip_port);
+}
+
+void MasternodeList::gotoCreateServicePage(const std::string& ip_port)
 {
     AddDockerServiceDlg dlg;
 
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
     dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
-    dlg.setaddr_port(m_curAddr_Port);
+    dlg.setaddr_port(ip_port);
 
     dlg.setWalletModel(walletModel);
 
+
+
     if(dlg.exec() == QDialog::Accepted){
-        ui->createServiceBtn->setEnabled(false);
         setCurUpdateMode(DockerUpdateMode::AfterCreate);
         refreshServerList();  
     }
@@ -956,12 +948,10 @@ void MasternodeList::refreshServerList()
         int count = loadServerList();
         if(!count){
             clearDockerDetail();
-            ui->createServiceBtn->setEnabled(true);
             setCurUpdateMode(DockerUpdateMode::WhenNormal);
         }
         else{
-            ui->createServiceBtn->setEnabled(false);
-            QString key = ui->serviceTableWidget->item(0,1)->text();
+            QString key = ui->serviceTableWidget->item(0,0)->text();
             loadDockerDetail(key.toStdString());
         }
         updateEdgeStatus(count);
@@ -1099,8 +1089,7 @@ void MasternodeList::loadOrderTableWidget()
         QTableWidgetItem *payState = new QTableWidgetItem(list.at(4));//("已支付");
         QTableWidgetItem *serviceState = new QTableWidgetItem(list.at(5));//("运行中");
         QPushButton *btn = new QPushButton(list.at(6));//("创建服务");
-
-        connect(btn,SIGNAL(clicked()),this,SLOT(slot_ordertablecheck()));
+        connect(btn,SIGNAL(clicked()),this,SLOT(slot_orderManagerBtnClicked()));
 
         btn->setStyleSheet("QPushButton\n{\n	background-color:rgb(239, 169, 4); color:rgb(255,255,255);\n	border-radius:2px;\n margin:2px; margin-left:6px;margin-right:6px;\n}");
         ui->OrdertableWidget->setItem(i, 0, txidItem);
@@ -1117,8 +1106,89 @@ void MasternodeList::loadOrderTableWidget()
     }
 }
 
-void MasternodeList::slot_ordertablecheck()
+void MasternodeList::slot_orderManagerBtnClicked()
 {
-    int currentIndex = ui->OrdertableWidget->currentRow();
-    LogPrintf("---->currentIndex:%d\n",currentIndex);
+    QPushButton *btn = dynamic_cast<QPushButton *>(QObject::sender());
+
+    QModelIndex index = ui->OrdertableWidget->indexAt(btn->pos());
+    QTableWidgetItem* item = ui->OrdertableWidget->item(index.row(),0);
+
+    if(btn->text() == "查看服务")
+        jumpToCheckService(index.row());
+    else if(btn->text() == "查看订单")
+        jumpToCheckOrder(index.row());
+    else if(btn->text() == "创建服务")
+        jumpToCreateService(index.row());
+}
+
+void MasternodeList::gotoOrderDetailPage(int index)
+{
+    OrderDetail dlg(0);
+    
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    dlg.exec();
+}
+
+void MasternodeList::openOrderDetail(QModelIndex index)
+{
+    // int index = ui->OrdertableWidget->item();
+    gotoOrderDetailPage(index.row());
+}
+
+void MasternodeList::jumpToCheckOrder(int index)
+{
+    // openOrderDetail(index);
+    gotoOrderDetailPage(index);
+}
+
+void MasternodeList::jumpToCheckService(int index)
+{
+    std::string ip_port = "118.25.224.128:19443";
+    gotoDockerSerivcePage(ip_port);
+}
+
+void MasternodeList::jumpToCreateService(int index)
+{
+    std::string ip_port = "118.25.224.128:19443";
+    gotoCreateServicePage(ip_port); 
+}
+
+void MasternodeList::slot_btn_refund()
+{
+    int curindex = ui->OrdertableWidget->currentRow();
+
+    QString txid = ui->OrdertableWidget->item(curindex,0)->text();
+
+    CMessageBox::StandardButton retval = CMessageBox::question(this, tr("退款"),
+        QString("是否对订单\n(Txid为%1...)\n进行退款操作?").arg(txid.mid(20)),
+        CMessageBox::Ok_Cancel,
+        CMessageBox::Cancel);
+
+    if(retval != CMessageBox::Ok) return;
+
+}
+
+void MasternodeList::slot_orderTablewidget_clicked(QModelIndex index)
+{
+    ui->pushButton_refund->setEnabled(true);
+}
+
+void MasternodeList::loadOrderData()
+{
+    LogPrintf("=====>wtx txid start\n");
+    for (map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin();
+            it != pwalletMain->mapWallet.end() ; ++it)
+    {
+        // const CWalletTx& wtx = (*it).second;
+        // BOOST_FOREACH(const CTxOut& txout, wtx.vout)
+        //     if (txout.scriptPubKey == scriptPubKey)
+        //         bKeyUsed = true;
+
+        LogPrintf("=====>wtx txid:%s\n",((*it).first).ToString());
+
+    }
+    LogPrintf("=====>wtx txid end\n");
+
 }

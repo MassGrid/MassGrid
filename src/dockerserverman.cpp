@@ -156,9 +156,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
                 CWalletDB walletdb(pwalletMain->strWalletFile);
                 wtx.WriteToDisk(&walletdb);
             }
-
         }
-        
         setDNDataStatus(DNDATASTATUS::Received);
 
     }else if(strCommand == NetMsgType::CREATESERVICE){
@@ -173,7 +171,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             mdndata.mapDockerServiceLists.clear();
             mdndata.mapDockerServiceLists = dockerman.GetServiceFromPubkey(createService.pubKeyClusterAddress);
         }
-            
+        
         LogPrintf("CDockerServerman::ProcessMessage -- CREATESERVICE Sent DNDATA to peer %d\n", pfrom->id);
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
     }else if(strCommand == NetMsgType::DELETESERVICE){

@@ -47,6 +47,7 @@ public:
     void setAddress(const QString &address);
     void pasteEntry(const SendCoinsRecipient &rv);
     bool handlePaymentRequest(const SendCoinsRecipient &recipient);
+    std::string send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds,bool isSendToMasternode = false);
 
 public Q_SLOTS:
     void clear();
@@ -62,7 +63,6 @@ private:
     ClientModel *clientModel;
     WalletModel *model;
     bool fNewRecipientAllowed;
-    void send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds);
     bool fFeeMinimized;
     const PlatformStyle *platformStyle;
 

@@ -48,7 +48,9 @@ public:
     enum DNDATASTATUS{
         Free = 0,
         Ask,
-        Received
+        Received,
+        Creating,
+        Deleteing
     };
     enum TLEMENTSTATE{
         FAILEDCONTINUE = -1,

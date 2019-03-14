@@ -26,6 +26,8 @@ QT_FORMS_UI = \
   qt/forms/signverifymessagedialog.ui \
   qt/forms/transactiondescdialog.ui\
   qt/forms/servicedetail.ui\
+  qt/forms/orderdetail.ui\
+  qt/forms/resourceitem.ui\
   qt/forms/cmessagebox.ui\
   qt/forms/privkeymgr.ui\
   qt/forms/cprogressdialog.ui\
@@ -73,6 +75,8 @@ QT_MOC_CPP = \
   qt/moc_transactiondesc.cpp \
   qt/moc_transactiondescdialog.cpp \
   qt/moc_servicedetail.cpp \
+  qt/moc_orderdetail.cpp \
+  qt/moc_resourceitem.cpp \
   qt/moc_cmessagebox.cpp\
   qt/moc_privkeymgr.cpp\
   qt/moc_cprogressdialog.cpp\
@@ -158,6 +162,8 @@ MASSGRID_QT_H = \
   qt/cprogressdialog.h\
   qt/transactiondescdialog.h \
   qt/servicedetail.h \
+  qt/orderdetail.h \ 
+  qt/resourceitem.h \
   qt/mainwintitle.h\
   qt/adddockerservicedlg.h \
   qt/transactionfilterproxy.h \
@@ -287,6 +293,8 @@ MASSGRID_QT_CPP += \
   qt/cprogressdialog.cpp\
   qt/transactiondescdialog.cpp \
   qt/servicedetail.cpp \
+  qt/orderdetail.cpp \
+  qt/resourceitem.cpp \
   qt/mainwintitle.cpp\
   qt/adddockerservicedlg.cpp \
   qt/transactionfilterproxy.cpp \

@@ -895,159 +895,29 @@ QPushButton::!enabled#nextButton_4
 }</string>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="page">
-            <layout class="QVBoxLayout" name="verticalLayout">
+            <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,10">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
              <item>
-              <layout class="QGridLayout" name="gridLayout_6" rowstretch="1,1,1,1,1,1,1,1,0,0,0" columnstretch="1,3,1,3" rowminimumheight="1,1,1,1,1,1,1,1,0,0,0" columnminimumwidth="1,1,1,1">
-               <property name="horizontalSpacing">
-                <number>12</number>
-               </property>
-               <property name="verticalSpacing">
-                <number>5</number>
-               </property>
-               <item row="5" column="2">
-                <widget class="QLabel" name="label_8">
+              <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0">
+               <item>
+                <widget class="QLabel" name="label_2">
                  <property name="text">
-                  <string>CPU Count:</string>
+                  <string> Service Name:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0" rowspan="2">
-                <widget class="QLabel" name="label_5">
-                 <property name="text">
-                  <string>GPU Name:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="2">
-                <widget class="QLabel" name="label_27">
-                 <property name="text">
-                  <string>矿机配置:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="3">
-                <widget class="QFrame" name="frame_2">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>36</height>
-                  </size>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_3">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QSpinBox" name="spinBox_gpucount">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>36</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>16777215</width>
-                      <height>36</height>
-                     </size>
-                    </property>
-                    <property name="maximum">
-                     <number>6</number>
-                    </property>
-                    <property name="value">
-                     <number>2</number>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QLabel" name="label_7">
-                 <property name="text">
-                  <string>GPU Count:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="1" rowspan="2">
-                <layout class="QHBoxLayout" name="horizontalLayout_11">
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <spacer name="horizontalSpacer_3">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="openPubKeyButton">
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>32</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">QPushButton#openPubKeyButton{
-width:130;
-height:28;
-background-color: rgb(239, 169, 4);
-color: rgb(255, 255, 255);
-border:hidden;
-}</string>
-                   </property>
-                   <property name="text">
-                    <string>open pubKey file</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="2" column="1">
+               <item>
                 <widget class="QLineEdit" name="lineEdit_name">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1066,83 +936,17 @@ border:hidden;
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_2">
+               <item>
+                <widget class="QLabel" name="label_3">
                  <property name="text">
-                  <string>Name:</string>
+                  <string>N2N Name:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="3">
-                <widget class="QFrame" name="frame">
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_2">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout">
-                    <item>
-                     <widget class="QSpinBox" name="spinBox_memorybyte">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>36</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>36</height>
-                       </size>
-                      </property>
-                      <property name="maximum">
-                       <number>8</number>
-                      </property>
-                      <property name="value">
-                       <number>2</number>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLabel" name="label_4">
-                      <property name="text">
-                       <string>GB</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="3" column="1">
+               <item>
                 <widget class="QLineEdit" name="lineEdit_n2n_name">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1161,166 +965,17 @@ border:hidden;
                  </property>
                 </widget>
                </item>
-               <item row="5" column="1" rowspan="2">
-                <widget class="QComboBox" name="comboBox_gpuname">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>NVIDIA_GPUP104_100</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="7" column="3">
-                <widget class="QComboBox" name="comboBox_image_2">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>矿机(Count*GPU,Count*ram,Count*CPU)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>矿机A(2*P104,2G,1*CPU)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>矿机B(8*P104,8G,4*CPU)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_3">
+               <item>
+                <widget class="QLabel" name="label">
                  <property name="text">
-                  <string>N2N_Name:</string>
+                  <string>Image:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
-               <item row="9" column="0" rowspan="2">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>SSH-PubKey:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
-                <widget class="QLabel" name="label_9">
-                 <property name="text">
-                  <string>Memory Byte:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="3">
-                <widget class="QFrame" name="frame_3">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>36</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>36</height>
-                  </size>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_4">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QSpinBox" name="spinBox_cpucount">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>36</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>16777215</width>
-                      <height>36</height>
-                     </size>
-                    </property>
-                    <property name="minimum">
-                     <number>1</number>
-                    </property>
-                    <property name="maximum">
-                     <number>2</number>
-                    </property>
-                    <property name="value">
-                     <number>1</number>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="9" column="3">
-                <widget class="QLineEdit" name="lineEdit_totalCoin">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>34</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>0</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="1">
+               <item>
                 <widget class="QComboBox" name="comboBox_image">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -1365,46 +1020,159 @@ border:hidden;
                  </item>
                 </widget>
                </item>
-               <item row="9" column="2">
-                <widget class="QLabel" name="label_11">
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <widget class="QLabel" name="label_6">
                  <property name="text">
-                  <string>预估费用:</string>
+                  <string>SSH-PubKey:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
-               <item row="7" column="0">
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string>Image:</string>
+               <item>
+                <widget class="QLineEdit" name="textEdit_sshpubkey"/>
+               </item>
+               <item>
+                <widget class="QPushButton" name="openPubKeyButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>32</height>
+                  </size>
                  </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <property name="styleSheet">
+                  <string notr="true">QPushButton#openPubKeyButton{
+width:130;
+height:28;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+}</string>
+                 </property>
+                 <property name="text">
+                  <string>open pubKey file</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <widget class="QTextEdit" name="textEdit_sshpubkey"/>
-             </item>
-             <item>
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>13</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>GPU 类型:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="comboBox_image_2">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>10.0-base-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-runtime-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-cudnn7-runtime-ubuntu16.04 </string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-devel-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-cudnn7-devel-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-massgridminer-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-ethereumminer-ubuntu16.04</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>CPU 类型:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="comboBox_image_3">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>10.0-base-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-runtime-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-cudnn7-runtime-ubuntu16.04 </string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-devel-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-cudnn7-devel-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-massgridminer-ubuntu16.04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10.0-ethereumminer-ubuntu16.04</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
                <item>
                 <spacer name="horizontalSpacer">
                  <property name="orientation">
@@ -1418,38 +1186,21 @@ border:hidden;
                  </property>
                 </spacer>
                </item>
-               <item>
-                <widget class="QPushButton" name="nextButton_1">
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>下一步</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
               </layout>
+             </item>
+             <item>
+              <widget class="QTableWidget" name="tableWidget_resource">
+               <column>
+                <property name="text">
+                 <string>Resource</string>
+                </property>
+               </column>
+              </widget>
              </item>
             </layout>
            </widget>
            <widget class="QWidget" name="page_2">
-            <layout class="QVBoxLayout" name="verticalLayout_17">
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
               <layout class="QGridLayout" name="gridLayout_2">
                <item row="0" column="1">
@@ -1460,7 +1211,7 @@ border:hidden;
                  <property name="sizeHint" stdset="0">
                   <size>
                    <width>20</width>
-                   <height>40</height>
+                   <height>52</height>
                   </size>
                  </property>
                 </spacer>
@@ -1472,7 +1223,7 @@ border:hidden;
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>40</width>
+                   <width>228</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -1509,12 +1260,15 @@ border:hidden;
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit">
+                     <widget class="QValidatedLineEdit" name="payTo">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
+                      </property>
+                      <property name="readOnly">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
@@ -1550,7 +1304,7 @@ border:hidden;
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit__TotalCoin">
+                     <widget class="MassGridAmountField" name="payAmount">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                         <horstretch>0</horstretch>
@@ -1578,7 +1332,7 @@ border:hidden;
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QCheckBox" name="checkBox">
+                    <widget class="QCheckBox" name="checkUseInstantSend">
                      <property name="text">
                       <string>即时支付</string>
                      </property>
@@ -1586,6 +1340,48 @@ border:hidden;
                       <bool>true</bool>
                      </property>
                     </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item>
+                    <spacer name="horizontalSpacer_2">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_7">
+                     <property name="text">
+                      <string>支付状态刷新:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_4">
+                     <item>
+                      <widget class="QLabel" name="label_refreshPayStatus">
+                       <property name="text">
+                        <string>5</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_9">
+                       <property name="text">
+                        <string>S</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                   </layout>
                  </item>
@@ -1598,7 +1394,7 @@ border:hidden;
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>40</width>
+                   <width>227</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -1612,7 +1408,7 @@ border:hidden;
                  <property name="sizeHint" stdset="0">
                   <size>
                    <width>20</width>
-                   <height>40</height>
+                   <height>51</height>
                   </size>
                  </property>
                 </spacer>
@@ -1937,6 +1733,19 @@ border:hidden;
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QValidatedLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qvalidatedlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MassGridAmountField</class>
+   <extends>QLineEdit</extends>
+   <header>massgridamountfield.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
