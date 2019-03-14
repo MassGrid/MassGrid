@@ -221,9 +221,13 @@ bool CDockerServerman::CheckAndRemoveServiveSpec(DockerDeleteService delService,
         LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec current transaction has been used\n");
         return false;
     }
-    if(wtx.Getcusteraddress() != CMassGridAddress(delService.pubKeyClusterAddress.GetID()).ToString()){
+    //check transaction prescript pubkey
+    CTransaction tx;
+    uint256 hash;
+    std::string strErr;
+    if(!CheckTransactionInputScriptPubkey(delService.txid, tx,delService.pubKeyClusterAddress, Params().GetConsensus(), hash,strErr, true)){
         errCode = SERVICEMANCODE::PUBKEY_ERROR;
-        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec current transaction has been used\n");
+        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec %s\n",strErr);
         return false;
     }
     Service svi;
@@ -474,7 +478,7 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     else{
         LogPrint("dockernode","CDockerServerman::SetTlementServiceWithoutDelete current transaction has been used\n");
         if(wtx.Getdeletetime().empty()){
-            LogPrint("dockernode","CDockerServerman::SetTlementServiceWithoutDelete current transaction deletetime invaild\n");
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete current transaction deletetime invaild\n");
             return TLEMENTSTATE::FAILEDCONTINUE;
         }
 

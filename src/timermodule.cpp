@@ -71,12 +71,16 @@ void ServiceTimerModule::CheckTransaction(){
     LogPrint("timer","ServiceTimerModule::CheckTransaction start\n");
     LOCK(cs_serInfoQueue2);
     for(auto wtx = setWalletTx.begin(); wtx != setWalletTx.end(); ++wtx){
-        if(!dockerman.IsExistSerivce((*wtx)->GetHash()) && ((*wtx)->Getdeletetime().empty())){
-            LogPrint("timer","ServiceTimerModule::CheckTransaction remove transacation %s\n",(*wtx)->GetHash().ToString());
-            (*wtx)->Setdeletetime(std::to_string(GetAdjustedTime()));
-            (*wtx)->Settaskstate(std::to_string(Config::TASKSTATE_SHUTDOWN));
-            CWalletDB walletdb(pwalletMain->strWalletFile);
-            (*wtx)->WriteToDisk(&walletdb);
+        if((*wtx)->Getdeletetime().empty()){
+            if(!dockerman.IsExistSerivce((*wtx)->GetHash())){
+                LogPrint("timer","ServiceTimerModule::CheckTransaction remove transacation %s\n",(*wtx)->GetHash().ToString());
+                (*wtx)->Setdeletetime(std::to_string(GetAdjustedTime()));
+                (*wtx)->Settaskstate(std::to_string(Config::TASKSTATE_SHUTDOWN));
+                CWalletDB walletdb(pwalletMain->strWalletFile);
+                (*wtx)->WriteToDisk(&walletdb);
+            }else{
+                setWalletTx.erase(wtx--);
+            }
         }
     }
 }
