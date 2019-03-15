@@ -420,14 +420,17 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     bool fnoCreated;
     vector<CRecipient> vecSend;
     COutPoint outpoint;
-    CMassGridAddress masternodeAddress;
-    if(!mnodeman.GetAddress(activeMasternode.outpoint,masternodeAddress))
-        masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID());
+    CMassGridAddress masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID());
     CScript masternodescriptPubKey = GetScriptForDestination(masternodeAddress.Get());
-    CMassGridAddress customerAddress = masternodeAddress;
-    CMassGridAddress providerAddress = masternodeAddress;
-    CScript customerscriptPubKey = masternodescriptPubKey;
-    CScript providerscriptPubKey = masternodescriptPubKey;
+    
+    CMassGridAddress feeAddress;
+    if(!mnodeman.GetAddress(activeMasternode.outpoint,feeAddress))
+        feeAddress = masternodeAddress;
+    CScript feescriptPubKey = GetScriptForDestination(feeAddress.Get());
+    CMassGridAddress customerAddress = feeAddress;
+    CMassGridAddress providerAddress = feeAddress;
+    CScript customerscriptPubKey = feescriptPubKey;
+    CScript providerscriptPubKey = feescriptPubKey;
 
     if (!pwalletMain->mapWallet.count(serviceTxid)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete Invalid or non-wallet transaction id\n");
@@ -439,7 +442,7 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete has been tlementtxid\n");
         return TLEMENTSTATE::FAILEDREMOVE;
     }
-
+    
     if(!wtx.GetOutPoint(masternodescriptPubKey,outpoint)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete outpoint not found\n");
         return TLEMENTSTATE::FAILEDREMOVE;
@@ -551,7 +554,7 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             }
             LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld pay %lld feerate %lf trustTime %lld prepareTime %lld\n",masternodeSend, providerSend , customerSend ,pay,feeRate,trustTime,prepareTime);
             if(masternodeSend > CAmount(1000)){
-                CRecipient masternoderecipient = {masternodescriptPubKey, masternodeSend, false};
+                CRecipient masternoderecipient = {feescriptPubKey, masternodeSend, false};
                 vecSend.push_back(masternoderecipient);
             }
             for(auto it = vecSend.rbegin();it!= vecSend.rend();++it){
