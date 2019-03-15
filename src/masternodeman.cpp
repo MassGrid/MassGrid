@@ -12,6 +12,7 @@
 #include "netfulfilledman.h"
 #include "script/standard.h"
 #include "util.h"
+#include "base58.h"
 
 /** Masternode manager */
 CMasternodeMan mnodeman;
@@ -437,6 +438,15 @@ bool CMasternodeMan::Get(const COutPoint& outpoint, CMasternode& masternodeRet)
     return true;
 }
 
+bool CMasternodeMan::GetAddress(const COutPoint& outpoint, CMassGridAddress& address){
+    LOCK(cs);
+    auto it = mapMasternodes.find(outpoint);
+    if (it == mapMasternodes.end()) {
+        return false;
+    }
+    address.Set(it->second.pubKeyCollateralAddress.GetID());
+    return true; 
+}
 bool CMasternodeMan::GetMasternodeInfo(const COutPoint& outpoint, masternode_info_t& mnInfoRet)
 {
     LOCK(cs);

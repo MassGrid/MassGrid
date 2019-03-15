@@ -12,6 +12,7 @@ using namespace std;
 
 class CMasternodeMan;
 class CConnman;
+class CMassGridAddress;
 
 extern CMasternodeMan mnodeman;
 
@@ -159,6 +160,7 @@ public:
 
     /// Versions of Find that are safe to use from outside the class
     bool Get(const COutPoint& outpoint, CMasternode& masternodeRet);
+    bool GetAddress(const COutPoint& outpoint, CMassGridAddress& address);
     bool Has(const COutPoint& outpoint);
 
     bool GetMasternodeInfo(const COutPoint& outpoint, masternode_info_t& mnInfoRet);

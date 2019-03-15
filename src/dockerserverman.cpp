@@ -14,6 +14,8 @@
 #include "messagesigner.h"
 #include "instantx.h"
 #include "timermodule.h"
+#include "activemasternode.h"
+#include "masternodeman.h"
 CDockerServerman dockerServerman;
 const char* strServiceCode[] = {
     "Successful",
@@ -418,7 +420,9 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     bool fnoCreated;
     vector<CRecipient> vecSend;
     COutPoint outpoint;
-    CMassGridAddress masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID());
+    CMassGridAddress masternodeAddress;
+    if(!mnodeman.GetAddress(activeMasternode.outpoint,masternodeAddress))
+        masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID());
     CScript masternodescriptPubKey = GetScriptForDestination(masternodeAddress.Get());
     CMassGridAddress customerAddress = masternodeAddress;
     CMassGridAddress providerAddress = masternodeAddress;
