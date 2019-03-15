@@ -13,8 +13,9 @@ bool ServiceTimerModule::Flush(){
 void ServiceTimerModule::UpdateSetAll(){
     LogPrint("timer","ServiceTimerModule::UpdateSet UpdateSetAll start\n");
     LOCK(cs_serInfoQueue2);
-    setWalletTx.clear();
+    // setWalletTx.clear();
     pwalletMain->Untlement(setWalletTx);
+    CheckTransaction();
 }
 void ServiceTimerModule::UpdateSet(CWalletTx & wtx){
     LogPrint("timer","ServiceTimerModule::UpdateSet CWalletTx start\n");
@@ -62,15 +63,19 @@ void ServiceTimerModule::CheckQue(){
 void ServiceTimerModule::SetTlement(){
     LogPrint("timer","ServiceTimerModule::SetTlement start\n");
     LOCK(cs_serInfoQueue2);
-    for(auto wtx = setWalletTx.begin(); wtx != setWalletTx.end(); ++wtx){
-        if(dockerServerman.SetTlementServiceWithoutDelete((*wtx)->GetHash()) >= 0)
-            setWalletTx.erase(wtx--);
+    for(auto wtx = setWalletTx.begin(); wtx != setWalletTx.end();){
+        if(dockerServerman.SetTlementServiceWithoutDelete((*wtx)->GetHash()) >= 0){
+            setWalletTx.erase(wtx++);
+        }else{
+            ++wtx;
+        }
+        
     }
 }
 void ServiceTimerModule::CheckTransaction(){
     LogPrint("timer","ServiceTimerModule::CheckTransaction start\n");
     LOCK(cs_serInfoQueue2);
-    for(auto wtx = setWalletTx.begin(); wtx != setWalletTx.end(); ++wtx){
+    for(auto wtx = setWalletTx.begin(); wtx != setWalletTx.end();){
         if((*wtx)->Getdeletetime().empty()){
             if(!dockerman.IsExistSerivce((*wtx)->GetHash())){
                 LogPrint("timer","ServiceTimerModule::CheckTransaction remove transacation %s\n",(*wtx)->GetHash().ToString());
@@ -79,9 +84,11 @@ void ServiceTimerModule::CheckTransaction(){
                 CWalletDB walletdb(pwalletMain->strWalletFile);
                 (*wtx)->WriteToDisk(&walletdb);
             }else{
-                setWalletTx.erase(wtx--);
+                setWalletTx.erase(wtx++);
+                continue;
             }
         }
+         ++wtx;
     }
 }
 void ThreadTimeModule()
@@ -97,7 +104,6 @@ void ThreadTimeModule()
             timerModule.CheckQue();
 
             if(height != chainActive.Height()){
-                timerModule.CheckTransaction();
                 timerModule.SetTlement();
                 height = chainActive.Height();
             }

@@ -337,7 +337,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 // set node usage
                 if(it->second.mapDockerTaskLists.size()){
                     string nodeid = it->second.mapDockerTaskLists.begin()->second.nodeID;
-                    taskstate = it->second.mapDockerTaskLists.begin()->second.desiredState;
+                    taskstate = it->second.mapDockerTaskLists.begin()->second.status.state;
                     if(!nodeid.empty()){
                         auto it2 = mapDockerNodeLists.find(nodeid);
                         it2->second.isuseable=true;
@@ -510,7 +510,7 @@ bool CDockerMan::UpdateService(std::string serviceid){
     LOCK(cs);
     dockerservicefilter serfilter;
     if(!PushMessage(Method::METHOD_SERVICES_INSPECT,serviceid,serfilter.ToJsonString(),false)){
-        LogPrint("docker","CDockerMan::UpdateService ERROR Get METHOD_SERVICES_LISTS failed! \n");
+        LogPrint("docker","CDockerMan::UpdateService ERROR Get METHOD_SERVICES_INSPECT failed! \n");
         return false;
     }
     LogPrint("docker","CDockerMan::UpdateService Succcessful\n");

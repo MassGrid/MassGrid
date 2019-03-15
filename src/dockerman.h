@@ -133,16 +133,16 @@ public:
                 service = it->second;
                 return true;
             }
-            return false;
         }
+        return false;
     }
     bool IsExistSerivce(uint256 txid){
         LOCK(cs);
         for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it){
             if(it->second.txid == txid)
                 return true;
-            return false;
         }
+        return false;
     }
     bool GetNodeFromList(std::string nodeid,Node& node){
         LOCK(cs);
