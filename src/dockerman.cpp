@@ -408,7 +408,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                     }else
                     {
                         mapDockerNodeLists[nodeid].isuseable=true;
-                        LogPrint("docker","CDockerMan::ProcessMessage task state error reset usable serviceid: &s\n",it->first);
+                        LogPrint("docker","CDockerMan::ProcessMessage task state error reset usable serviceid: %s\n",it->first);
                     }
                 }
                 if(it->second.deleteTime <= GetAdjustedTime()) //when the task is always in pedding

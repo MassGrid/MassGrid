@@ -495,7 +495,8 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         int64_t createTime = boost::lexical_cast<int64_t>(wtx.Getcreatetime());
         int64_t deleteTime = boost::lexical_cast<int64_t>(wtx.Getdeletetime());
         CAmount price = boost::lexical_cast<CAmount>(wtx.Getprice());
-        fnoCreated = boost::lexical_cast<int>(wtx.Gettaskstate()) < Config::TASKSTATE_RUNNING;
+        int taskStatus = boost::lexical_cast<int>(wtx.Gettaskstate());
+        fnoCreated = taskStatus < Config::TASKSTATE_RUNNING;
         
 
         if(customerAddress.IsValid())
@@ -515,7 +516,7 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payrate %lf < 0\n",payrate);
             return TLEMENTSTATE::FAILEDREMOVE;
         }
-
+        fnoCreated  |= (taskStatus == Config::TASKSTATE_FAILED && trustTime<180);
         if(fnoCreated){  //not create task
             // customer
             vecSend.clear();
