@@ -533,7 +533,7 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payrate %lf < 0\n",payrate);
             return TLEMENTSTATE::FAILEDREMOVE;
         }
-        fnoCreated  |= (taskStatus == Config::TASKSTATE_FAILED && trustTime<180);
+        fnoCreated  |= (taskStatus >= Config::TASKSTATE_SHUTDOWN && trustTime<=180);
         if(fnoCreated){  //not create task
             // customer
             vecSend.clear();
