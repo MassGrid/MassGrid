@@ -37,7 +37,8 @@ enum SERVICEMANCODE{
     CPU_AMOUNT_ERROR,
     MEM_AMOUNT_ERROR,
     TRANSACTION_DOUBLE_TLEMENT,
-    PUBKEY_ERROR
+    PUBKEY_ERROR,
+    OUTPOINT_NOT_FOUND
 };
 
 class CDockerServerman{
@@ -47,7 +48,7 @@ private:
 public:
     enum DNDATASTATUS{
         Free = 0,
-        Ask,
+        Ask, 
         Received,
         Creating,
         Deleteing

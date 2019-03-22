@@ -31,8 +31,9 @@ const char* strServiceCode[] = {
     "GPU amount error",
     "CPU thread amount error",
     "Memory Size error",
-    "Transaction has been tlemented"
-    "PubKey check failed"
+    "Transaction has been tlemented",
+    "PubKey check failed",
+    "OutPoint not found"
 };
 bool DockerCreateService::Sign(const CKey& keyClusterAddress, const CPubKey& pubKeyClusterAddress)
 {
@@ -230,6 +231,22 @@ bool CDockerServerman::CheckAndRemoveServiveSpec(DockerDeleteService delService,
     if(!CheckTransactionInputScriptPubkey(delService.txid, tx,delService.pubKeyClusterAddress, Params().GetConsensus(), hash,strErr, true)){
         errCode = SERVICEMANCODE::PUBKEY_ERROR;
         LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec %s\n",strErr);
+        return false;
+    }
+    // check outpoint 
+    COutPoint outpoint;
+    CMassGridAddress masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID());
+    CScript masternodescriptPubKey = GetScriptForDestination(masternodeAddress.Get());
+
+    if(!wtx.GetOutPoint(masternodescriptPubKey,outpoint)){
+        errCode = SERVICEMANCODE::OUTPOINT_NOT_FOUND;
+        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec outpoint not found\n");
+        return false;
+    }
+    Coin coin;
+    if(!GetUTXOCoin(outpoint,coin)){
+        errCode = SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS;
+        LogPrintf("CDockerServerman::CheckAndRemoveServiveSpec outpoint not UTXO\n");
         return false;
     }
     Service svi;
