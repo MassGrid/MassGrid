@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef MASSGRID_QT_TRANSACTIONVIEW_H
-#define MASSGRID_QT_TRANSACTIONVIEW_H
+#ifndef MASSGRID_QT_DOCKERORDERVIEW_H
+#define MASSGRID_QT_DOCKERORDERVIEW_H
 
 #include "guiutil.h"
 
@@ -17,9 +17,10 @@
 
 #include <QObject>
 #include <qstyleditemdelegate.h>
+#include <QMap>
 
 class PlatformStyle;
-class TransactionFilterProxy;
+class DockerOrderFilterProxy;
 class WalletModel;
 
 QT_BEGIN_NAMESPACE
@@ -34,29 +35,26 @@ class QSignalMapper;
 class QTableView;
 class MDateEdit;
 
-
 class QLabel;
 class QComboBox;
 class QPushButton;
 class QTimeEdit;
 class QDateTime;
-
-class DefineCalendar;
-class MDateEdit;
+class CWalletTx;
 QT_END_NAMESPACE
 
 /** Widget showing the transaction list for a wallet, including a filter row.
     Using the filter row, the user can view or export a subset of the transactions.
   */
-class TransactionView : public QWidget
+class DockerOrderView : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TransactionView(const PlatformStyle *platformStyle, QWidget *parent = 0);
+    explicit DockerOrderView(const PlatformStyle *platformStyle, QWidget *parent = 0);
 
     void setModel(WalletModel *model);
-
+    void getCurrentItemTxidAndmnIp(std::string &txid,std::string &masternodeip,std::string &orderStatus);
     // Date ranges for filter
     enum DateEnum
     {
@@ -73,7 +71,7 @@ public:
         STATUS_COLUMN_WIDTH = 30,
         WATCHONLY_COLUMN_WIDTH = 23,
         DATE_COLUMN_WIDTH = 120,
-        TYPE_COLUMN_WIDTH = 240,
+        TYPE_COLUMN_WIDTH = 200,
         AMOUNT_MINIMUM_COLUMN_WIDTH = 120,
         MINIMUM_COLUMN_WIDTH = 23
     };
@@ -81,8 +79,8 @@ public:
     void setSearchWidget(QComboBox*,QComboBox*,QLineEdit*);
 private:
     WalletModel *model;
-    TransactionFilterProxy *transactionProxyModel;
-    QTableView *transactionView;
+    DockerOrderFilterProxy *dockerorderProxyModel;
+    QTableView *dockerorderView;
     QComboBox *dateWidget;
     QComboBox *typeWidget;
     QComboBox *watchOnlyWidget;
@@ -98,17 +96,19 @@ private:
     QAction *abandonAction;
 
     QWidget *createDateRangeWidget();
+    QString getOrderBtnText(CWalletTx& wtx)const;
 
     GUIUtil::TableViewLastColumnResizingFixer *columnResizingFixer;
 
-    virtual void resizeEvent(QResizeEvent* event);
 
+    virtual void resizeEvent(QResizeEvent* event);
     bool eventFilter(QObject *obj, QEvent *event);
 
 private Q_SLOTS:
     void contextualMenu(const QPoint &);
     void dateRangeChanged();
-    void showDetails();
+    // void showDetails();
+    void showOrderDetail(CWalletTx& wtx);
     void copyAddress();
     void editLabel();
     void copyLabel();
@@ -122,12 +122,16 @@ private Q_SLOTS:
 
 Q_SIGNALS:
     void doubleClicked(const QModelIndex&);
+    void itemClicked(const QModelIndex&);
 
     /**  Fired when a message should be reported to the user */
     void message(const QString &title, const QString &message, unsigned int style);
 
     /** Send computed sum back to wallet-view */
     void trxAmount(QString amount);
+    void deleteService(std::string txid,std::string ip_port);
+    void openServicePage(std::string masternodeip);
+    void gotoCreateServicePage(std::string,std::string);
 
 public Q_SLOTS:
     void chooseDate(int idx);
@@ -138,7 +142,83 @@ public Q_SLOTS:
     void exportClicked();
     void focusTransaction(const QModelIndex&);
     void computeSum();
+    void deleteService();
+    void slot_btnClicked();
+    void updateOrderStatus(const std::string&)const;
+    void addOperationBtn(int)const;
+    void deleteTransaction(int)const;
+    void updateAllOperationBtn();
 };
 
 
-#endif // MASSGRID_QT_TRANSACTIONVIEW_H
+class DefineCalendar : public QCalendarWidget
+{
+    Q_OBJECT
+
+public:
+    DefineCalendar(QWidget *parent);
+    ~DefineCalendar();
+
+Q_SIGNALS:
+    void setFinished(const QDateTime &dateTime);
+
+public Q_SLOTS:
+    void UpdateYear();
+    void UpdatePage();
+    void SetToday();
+    void ClearTime();
+
+protected Q_SLOTS:
+    void BtnSlots();
+    void ComboBoxSlots(int index);
+    void CurPageChange(int year, int month);
+
+protected:
+    void paintCell(QPainter *painter, const QRect &rect, const QDate &date) const;
+
+private:
+    void InitWidgets();
+    QWidget *widget_top;
+    QPushButton *pushBtn_YL;
+    QComboBox *comboBox_Year;
+    QPushButton *pushBtn_YR;
+    QPushButton *pushBtn_ML;
+    QComboBox *comboBox_Month;
+    QPushButton *pushBtn_MR;
+};
+
+
+class MDateEdit : public QDateEdit
+{
+    Q_OBJECT
+
+public:
+    MDateEdit(QWidget *parent);
+    ~MDateEdit();
+    void setMyStytle();
+
+protected Q_SLOTS:
+    void getDateTime(const QDateTime &dateTime);
+
+private:
+    DefineCalendar *m_DefCalendar;
+
+};
+
+
+class MItemDelegate : public QStyledItemDelegate
+{
+    Q_OBJECT
+public:
+    MItemDelegate(QObject *parent=0);
+    ~MItemDelegate();
+
+private:
+
+    void paint(QPainter *painter,
+        const QStyleOptionViewItem &option, const QModelIndex &index) const;
+};
+
+
+
+#endif // MASSGRID_QT_DOCKERORDERVIEW_H

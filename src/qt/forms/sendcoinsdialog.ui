@@ -1507,7 +1507,7 @@ border: hidden;
                      <string>Select &amp;Recipient</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../massgrid.qrc">
                       <normaloff>:/res/pic/add.png</normaloff>:/res/pic/add.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -1585,7 +1585,7 @@ QRadioButton::indicator:checked:disabled{
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="page_3">
                  <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0">
@@ -2452,7 +2452,7 @@ color: rgb(255, 255, 255);</string>
                     <string>S&amp;end</string>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="../massgrid.qrc">
                      <normaloff>:/res/pic/menuicon/address-book.png</normaloff>:/res/pic/menuicon/address-book.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -2630,10 +2630,12 @@ color: rgb(255, 255, 255);</string>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../massgrid.qrc"/>
+ </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupCustomFee"/>
   <buttongroup name="groupFee"/>
+  <buttongroup name="groupCustomFee"/>
  </buttongroups>
 </ui>

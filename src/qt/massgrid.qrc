@@ -69,6 +69,7 @@
         <file>res/icons/unit_mMGD.png</file>
         <file>res/icons/unit_uMGD.png</file>
         <file>res/icons/verify.png</file>
+        <file>res/icons/finished.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="spinner-000">res/movies/spinner-000.png</file>
@@ -178,5 +179,7 @@
         <file>res/pic/finished_enabled.png</file>
         <file>res/pic/pay_disabled.png</file>
         <file>res/pic/pay_enabled.png</file>
+        <file>res/icons/docker.png</file>
+        <file>res/icons/loading.gif</file>
     </qresource>
 </RCC>

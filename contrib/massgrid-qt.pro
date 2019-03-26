@@ -22,7 +22,11 @@ FORMS += \
     ../src/qt/forms/adddockerservicedlg.ui \
     ../src/qt/forms/servicedetail.ui\
     ../src/qt/forms/orderdetail.ui \
-    ../src/qt/forms/resourceitem.ui
+    ../src/qt/forms/resourceitem.ui \
+    ../src/qt/forms/dockerorderdescdialog.ui \
+    ../src/qt/forms/loadingwin.ui\
+    ../src/qt/forms/dockerordertablemodel.ui\
+
 
 RESOURCES += \
 ../src/qt/massgrid.qrc

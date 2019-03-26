@@ -154,7 +154,6 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
                 wtx.Setmemcount(std::to_string(iter->second.item.mem.Count));
                 wtx.Setgpuname(iter->second.item.gpu.Name);
                 wtx.Setgpucount(std::to_string(iter->second.item.gpu.Count));
-                wtx.Setmasternodeaddress(CMassGridAddress(mdndata.masternodeAddress).ToString());
                 wtx.Setcusteraddress(iter->second.customer);
                 CWalletDB walletdb(pwalletMain->strWalletFile);
                 wtx.WriteToDisk(&walletdb);
@@ -174,7 +173,6 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             mdndata.mapDockerServiceLists.clear();
             mdndata.mapDockerServiceLists = dockerman.GetServiceFromPubkey(createService.pubKeyClusterAddress);
         }
-        
         LogPrintf("CDockerServerman::ProcessMessage -- CREATESERVICE Sent DNDATA to peer %d\n", pfrom->id);
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
     }else if(strCommand == NetMsgType::DELETESERVICE){

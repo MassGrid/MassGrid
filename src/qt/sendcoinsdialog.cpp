@@ -279,7 +279,7 @@ void SendCoinsDialog::on_sendButton_clicked()
     send(recipients, strFee, strFunds);
 }
 
-std::string SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds,bool isSendToMasternode)
+std::string SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds,bool isSendToMasternode, std::string masternodeip)
 {
     // prepare transaction for getting txFee earlier
     WalletModelTransaction currentTransaction(recipients);
@@ -287,7 +287,7 @@ std::string SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString 
     if(isSendToMasternode)
         coinControlChangeEdited(GUIUtil::getDefaultReceiveAddr());
     if (model->getOptionsModel()->getCoinControlFeatures()) // coin control enabled
-        prepareStatus = model->prepareTransaction(currentTransaction, isSendToMasternode, CoinControlDialog::coinControl);
+        prepareStatus = model->prepareTransaction(currentTransaction, isSendToMasternode, masternodeip, CoinControlDialog::coinControl);
     else
         prepareStatus = model->prepareTransaction(currentTransaction,isSendToMasternode);
         
@@ -415,7 +415,7 @@ std::string SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString 
     fNewRecipientAllowed = true;
     if(!isSendToMasternode)
         Q_EMIT sendCoinSucess();
-    return currentTransaction.getTransaction()->GetHash().ToString();
+    return currentTransaction.getTransaction()->GetHash().GetHex();
 }
 
 void SendCoinsDialog::clear()

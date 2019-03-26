@@ -24,7 +24,7 @@ TransactionDescDialog::TransactionDescDialog(const QModelIndex &idx, QWidget *pa
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
 
-    ui->label_titlename->setText(this->windowTitle());
+    ui->label_titlename->setText(tr("Transaction Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
 }
 

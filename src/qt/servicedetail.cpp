@@ -17,7 +17,7 @@ ServiceDetail::ServiceDetail(QWidget* parent) : QDialog(parent),
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
-    ui->label_titlename->setText(this->windowTitle());
+    ui->label_titlename->setText(tr("Service Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
@@ -166,12 +166,16 @@ void ServiceDetail::updateTaskDetail(std::map<std::string, Task>& mapDockerTaskl
         }
 
         if (!taskErr.isEmpty()) {
-            ui->label_17->setVisible(true);
-            ui->textEdit_taskErr->setVisible(true);
+            // ui->label_17->setVisible(true);
+            // ui->textEdit_taskErr->setVisible(true);
+            ui->label_17->show();
+            ui->textEdit_taskErr->show();
             ui->textEdit_taskErr->setText(taskErr);
         } else {
-            ui->label_17->setVisible(false);
-            ui->textEdit_taskErr->setVisible(false);
+            // ui->label_17->setVisible(false);
+            // ui->textEdit_taskErr->setVisible(false);
+            ui->label_17->hide();
+            ui->textEdit_taskErr->hide();
         }
     }
 }

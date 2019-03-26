@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
-    <height>74</height>
+    <width>640</width>
+    <height>84</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>70</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>640</width>
+    <height>84</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -50,16 +62,15 @@ QLabel#label_16
     <widget class="QLabel" name="label">
      <property name="minimumSize">
       <size>
-       <width>68</width>
-       <height>68</height>
+       <width>75</width>
+       <height>75</height>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">border:1px solid rgb(100,100,100);
-border-radius:3px;</string>
+      <string notr="true">image: url(:/res/icons/docker.png);</string>
      </property>
      <property name="text">
-      <string>Image</string>
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -67,154 +78,188 @@ border-radius:3px;</string>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1">
+    <layout class="QFormLayout" name="formLayout_2">
+     <property name="labelAlignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="horizontalSpacing">
+      <number>10</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>13</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>GPU Type:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_gpuName">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>ROM Type:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_romType">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>CPU Type:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="label_cpuName">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="labelAlignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="verticalSpacing">
+      <number>13</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>GPU Count:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_gpuCount">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>ROM:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_romCount">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>CPU Count:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="label_cpuCount">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
-      <number>5</number>
+      <number>13</number>
      </property>
      <item>
-      <layout class="QFormLayout" name="formLayout_2">
-       <property name="labelAlignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>0</number>
        </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>GPU类型</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_gpuName">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>ROM类型</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_romType">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>CPU类型</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="label_cpuName">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QFormLayout" name="formLayout">
-       <property name="labelAlignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>GPU数</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_gpuCount">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>ROM大小</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_romCount">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>CPU数</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="label_cpuCount">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QFormLayout" name="formLayout_3">
-       <property name="labelAlignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-       <item row="0" column="0">
+       <item>
         <widget class="QLabel" name="label_14">
          <property name="text">
-          <string>可用数量</string>
+          <string>Count:</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item>
         <widget class="QLabel" name="label_availibleCount">
          <property name="text">
           <string>TextLabel</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_16">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>价格</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_amount">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_16">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Price:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_amount">
+       <property name="maximumSize">
+        <size>
+         <width>131</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -228,18 +273,31 @@ border-radius:3px;</string>
      </property>
      <property name="minimumSize">
       <size>
-       <width>68</width>
-       <height>68</height>
+       <width>60</width>
+       <height>60</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>60</height>
       </size>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton#buyBtn{
-border:1px solid rgb(150,150,150);
+border:3px solid rgb(239, 169, 4);
 border-radius:3px;
-}</string>
+}
+
+QPushButton:pressed#buyBtn{
+background-color: rgb(239, 169, 4);
+border-radius:3px;
+color: rgb(255, 255, 255);
+}
+</string>
      </property>
      <property name="text">
-      <string>租借</string>
+      <string>Buy</string>
      </property>
     </widget>
    </item>

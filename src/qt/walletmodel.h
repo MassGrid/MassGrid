@@ -23,6 +23,8 @@ class OptionsModel;
 class PlatformStyle;
 class RecentRequestsTableModel;
 class TransactionTableModel;
+
+class DockerOrderTableModel;
 class WalletModelTransaction;
 
 class CCoinControl;
@@ -136,6 +138,8 @@ public:
     OptionsModel *getOptionsModel();
     AddressTableModel *getAddressTableModel();
     TransactionTableModel *getTransactionTableModel();
+    DockerOrderTableModel *getDockerOrderTableModel();
+
     RecentRequestsTableModel *getRecentRequestsTableModel();
 
     CAmount getBalance(const CCoinControl *coinControl = NULL) const;
@@ -160,7 +164,7 @@ public:
     };
 
     // prepare transaction for getting txfee before sending coins
-    SendCoinsReturn prepareTransaction(WalletModelTransaction &transaction, bool isSendToMasternode = false, const CCoinControl *coinControl = NULL);
+    SendCoinsReturn prepareTransaction(WalletModelTransaction &transaction, bool isSendToMasternode = false, std::string masternodeip = "", const CCoinControl *coinControl = NULL);
 
     // Send coins to a list of recipients
     SendCoinsReturn sendCoins(WalletModelTransaction &transaction);
@@ -227,6 +231,7 @@ private:
 
     AddressTableModel *addressTableModel;
     TransactionTableModel *transactionTableModel;
+    DockerOrderTableModel *dockerorderTableModel;
     RecentRequestsTableModel *recentRequestsTableModel;
 
     // Cache some values to be able to detect changes

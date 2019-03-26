@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DockerOrderDescDialog</class>
+ <widget class="QDialog" name="DockerOrderDescDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>679</width>
+    <height>419</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QWidget" name="centerWin" native="true">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="leftMargin">
+       <number>25</number>
+      </property>
+      <property name="topMargin">
+       <number>20</number>
+      </property>
+      <property name="rightMargin">
+       <number>25</number>
+      </property>
+      <property name="bottomMargin">
+       <number>20</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QFrame" name="mainframe">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="1,10">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="leftMargin">
+            <number>9</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_titlename">
+             <property name="text">
+              <string>title name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QToolButton" name="cancelButton">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame">
+           <property name="styleSheet">
+            <string notr="true">QFrame#frame{
+border:hidden;
+}</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <layout class="QFormLayout" name="formLayout">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>Service Id:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLabel" name="label_serviceid">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_4">
+                  <property name="text">
+                   <string>Verison:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLabel" name="label_verison">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_8">
+                  <property name="text">
+                   <string>Createtime:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLabel" name="label_createtime">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_7">
+                  <property name="text">
+                   <string>Deletetime:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLabel" name="label_deletetime">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_12">
+                  <property name="text">
+                   <string>Feerate:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QLabel" name="label_feerate">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
+                 <widget class="QLabel" name="label_11">
+                  <property name="text">
+                   <string>Tlement txid:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1">
+                 <widget class="QLabel" name="label_tlementtxid">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="0">
+                 <widget class="QLabel" name="label_16">
+                  <property name="text">
+                   <string>Masternodeip:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="1">
+                 <widget class="QLabel" name="label_masternodeip">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="0">
+                 <widget class="QLabel" name="label_35">
+                  <property name="text">
+                   <string>Task State:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="1">
+                 <widget class="QLabel" name="label_taskstate">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QFormLayout" name="formLayout_2">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_21">
+                  <property name="text">
+                   <string>GPU Name:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLabel" name="label_gpuname">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_23">
+                  <property name="text">
+                   <string>GPU Count:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLabel" name="label_gpucount">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_25">
+                  <property name="text">
+                   <string>Mem Name:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLabel" name="label_memname">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_27">
+                  <property name="text">
+                   <string>Mem Count:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLabel" name="label_memcount">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_29">
+                  <property name="text">
+                   <string>CPU Name:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QLabel" name="label_cpuname">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
+                 <widget class="QLabel" name="label_31">
+                  <property name="text">
+                   <string>CPU Count:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1">
+                 <widget class="QLabel" name="label_cpucount">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="0">
+                 <widget class="QLabel" name="label_33">
+                  <property name="text">
+                   <string>Price:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="1">
+                 <widget class="QLabel" name="label_price">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="1">
+                 <widget class="QLabel" name="label_orderstatus">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="0">
+                 <widget class="QLabel" name="label_37">
+                  <property name="text">
+                   <string>Order Status:</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QFormLayout" name="formLayout_3">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_15">
+                <property name="text">
+                 <string>Masternodeoutpoint:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="label_masternodeoutpoint">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_20">
+                <property name="text">
+                 <string>Custeraddress:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLabel" name="label_custeraddress">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_19">
+                <property name="text">
+                 <string>Provideraddress:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLabel" name="label_provideraddress">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_39">
+                <property name="text">
+                 <string>Masternodeaddress:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLabel" name="label_masternodeaddress">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

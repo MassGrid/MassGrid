@@ -47,7 +47,7 @@ public:
     void setAddress(const QString &address);
     void pasteEntry(const SendCoinsRecipient &rv);
     bool handlePaymentRequest(const SendCoinsRecipient &recipient);
-    std::string send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds,bool isSendToMasternode = false);
+    std::string send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds,bool isSendToMasternode = false, std::string masternodeip = "");
 
 public Q_SLOTS:
     void clear();

@@ -13,7 +13,7 @@
     </message>
     <message>
         <source>Name:</source>
-        <translation>容器名:</translation>
+        <translation type="vanished">容器名:</translation>
     </message>
     <message>
         <source>Image:</source>
@@ -21,7 +21,7 @@
     </message>
     <message>
         <source>Ok</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
         <source>title name</source>
@@ -29,19 +29,19 @@
     </message>
     <message>
         <source>N2N_Name:</source>
-        <translation>N2N名:</translation>
+        <translation type="vanished">N2N名:</translation>
     </message>
     <message>
         <source>GPU Name:</source>
-        <translation>GPU名:</translation>
+        <translation type="vanished">GPU名:</translation>
     </message>
     <message>
         <source>GPU Count:</source>
-        <translation>GPU数:</translation>
+        <translation type="vanished">GPU数:</translation>
     </message>
     <message>
         <source>Memory Byte:</source>
-        <translation>内存大小:</translation>
+        <translation type="vanished">内存大小:</translation>
     </message>
     <message>
         <source>Mb</source>
@@ -49,7 +49,7 @@
     </message>
     <message>
         <source>CPU Count:</source>
-        <translation>CPU数量:</translation>
+        <translation type="vanished">CPU数量:</translation>
     </message>
     <message>
         <source>SSH-PubKey:</source>
@@ -57,7 +57,7 @@
     </message>
     <message>
         <source>create docker service error</source>
-        <translation>创建虚拟机服务失败！</translation>
+        <translation type="vanished">创建虚拟机服务失败！</translation>
     </message>
     <message>
         <source>Wallet option</source>
@@ -73,11 +73,11 @@
     </message>
     <message>
         <source>Create and send SeriveSpec failed!</source>
-        <translation>创建虚拟机服务失败！</translation>
+        <translation type="vanished">创建虚拟机服务失败！</translation>
     </message>
     <message>
         <source>Create and send SeriveSpec success!</source>
-        <translation>创建虚拟机服务成功！</translation>
+        <translation type="vanished">创建虚拟机服务成功！</translation>
     </message>
     <message>
         <source>open pubKey file</source>
@@ -101,10 +101,6 @@
     </message>
     <message>
         <source>massgridn2n</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>NVIDIA_GPUP104_100</source>
         <translation></translation>
     </message>
     <message>
@@ -136,12 +132,180 @@
         <translation></translation>
     </message>
     <message>
-        <source>GB</source>
+        <source>SSH public key is empty!</source>
+        <translation>公钥不能为空！</translation>
+    </message>
+    <message>
+        <source>1.Configuration</source>
+        <translation>1.配置</translation>
+    </message>
+    <message>
+        <source>2.Payment</source>
+        <translation>2.付款</translation>
+    </message>
+    <message>
+        <source>3.Wait for Create</source>
+        <translation>3.等待创建</translation>
+    </message>
+    <message>
+        <source>4.Finished</source>
+        <translation>4.完成</translation>
+    </message>
+    <message>
+        <source> Service Name:</source>
+        <translation>服务名:</translation>
+    </message>
+    <message>
+        <source>N2N Name:</source>
+        <translation>N2N名:</translation>
+    </message>
+    <message>
+        <source>GPU 类型:</source>
+        <translation>GPU类型:</translation>
+    </message>
+    <message>
+        <source>CPU 类型:</source>
+        <translation>CPU类型:</translation>
+    </message>
+    <message>
+        <source>Pay to:</source>
+        <translation>地址:</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>金额:</translation>
+    </message>
+    <message>
+        <source>Lenght of hire</source>
+        <translation>租用时长</translation>
+    </message>
+    <message>
+        <source>(1H)</source>
         <translation></translation>
     </message>
     <message>
-        <source>SSH public key is empty!</source>
-        <translation>公钥不能为空！</translation>
+        <source>InstantSend</source>
+        <translation>即时支付</translation>
+    </message>
+    <message>
+        <source>Payment status refresh:</source>
+        <translation>支付状态刷新:</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>下一步</translation>
+    </message>
+    <message>
+        <source>Service is Creating...</source>
+        <translation>服务创建中...</translation>
+    </message>
+    <message>
+        <source>Waiting time:</source>
+        <translation>等待时长:</translation>
+    </message>
+    <message>
+        <source>The service has been created successfully!</source>
+        <translation>服务创建成功!</translation>
+    </message>
+    <message>
+        <source>Finished</source>
+        <translation>完成</translation>
+    </message>
+    <message>
+        <source>退出</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>正在转账中，退出后可以在订单管理中查询转账结果并进行下一步操作，确认关闭？</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>转账已完成，服务创建中，现在退出将在15-60分钟内收到退款，是否仍旧退出？</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect docker network failed!</source>
+        <translation>连接虚拟机网络失败！</translation>
+    </message>
+    <message>
+        <source>Delete docker service failed!</source>
+        <translation>删除虚拟机服务失败！</translation>
+    </message>
+    <message>
+        <source>Check transaction...</source>
+        <translation>检测交易</translation>
+    </message>
+    <message>
+        <source>Create Service Error</source>
+        <translation>创建服务失败</translation>
+    </message>
+    <message>
+        <source>Can&apos;t receive create service return!</source>
+        <translation>无法获取创建服务结果!</translation>
+    </message>
+    <message>
+        <source>Create Failed</source>
+        <translation>创建失败</translation>
+    </message>
+    <message>
+        <source>Transaction Sigtime failed!</source>
+        <translation>交易签名有误!</translation>
+    </message>
+    <message>
+        <source>Docker version failed!</source>
+        <translation>虚拟机版本有误!</translation>
+    </message>
+    <message>
+        <source>Can&apos;t find service item!</source>
+        <translation>无法找到当前项!</translation>
+    </message>
+    <message>
+        <source>Have&apos;t enough resource can be find!</source>
+        <translation>无法找到足够的服务资源!</translation>
+    </message>
+    <message>
+        <source>Create failed!</source>
+        <translation>创建失败!</translation>
+    </message>
+    <message>
+        <source>Load docer resource...</source>
+        <translation>加载虚拟机资源...</translation>
+    </message>
+    <message>
+        <source>Service name is Empty!</source>
+        <translation>虚拟机名为空!</translation>
+    </message>
+    <message>
+        <source>Ssh pubkey is Empty!</source>
+        <translation>SSH公钥为空!</translation>
+    </message>
+    <message>
+        <source>Create Error</source>
+        <translation>创建失败</translation>
+    </message>
+    <message>
+        <source>Transaction error:</source>
+        <translation>交易错误:</translation>
+    </message>
+    <message>
+        <source>the window will be close!</source>
+        <translation>当前页面将被关闭!</translation>
+    </message>
+    <message>
+        <source>Transaction has been finished,</source>
+        <translation>交易已完成,</translation>
+    </message>
+    <message>
+        <source>,is need to re-select resource or go into the order list page to apply for a refund?</source>
+        <translation>是否重选资源或者进入订单管理系统申请退款?</translation>
     </message>
 </context>
 <context>
@@ -871,6 +1035,630 @@
     </message>
 </context>
 <context>
+    <name>DockerOrderDesc</name>
+    <message numerus="yes">
+        <source>Open for %n more block(s)</source>
+        <translation>
+            <numerusform>对于%n个块开放</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Open until %1</source>
+        <translation>至 %1 个数据块时开启</translation>
+    </message>
+    <message>
+        <source>conflicted</source>
+        <translation>发现冲突</translation>
+    </message>
+    <message>
+        <source>%1/offline</source>
+        <translation>%1 / 离线</translation>
+    </message>
+    <message>
+        <source>0/unconfirmed, %1</source>
+        <translation>0/未确认, %1</translation>
+    </message>
+    <message>
+        <source>in memory pool</source>
+        <translation>在内存池</translation>
+    </message>
+    <message>
+        <source>not in memory pool</source>
+        <translation>不在内存池</translation>
+    </message>
+    <message>
+        <source>abandoned</source>
+        <translation>被遗弃的</translation>
+    </message>
+    <message>
+        <source>%1/unconfirmed</source>
+        <translation>%1/未确认</translation>
+    </message>
+    <message>
+        <source>%1 confirmations</source>
+        <translation>%1 已确认</translation>
+    </message>
+    <message>
+        <source>verified via InstantSend</source>
+        <translation>验证通过即时支付</translation>
+    </message>
+    <message>
+        <source>InstantSend verification in progress - %1 of %2 signatures</source>
+        <translation>正在进行的即时支付验证 - %1 of %2 签名</translation>
+    </message>
+    <message>
+        <source>InstantSend verification failed</source>
+        <translation>即时支付验证失败</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <source>, has not been successfully broadcast yet</source>
+        <translation>，未被成功广播</translation>
+    </message>
+    <message numerus="yes">
+        <source>, broadcast through %n node(s)</source>
+        <translation>
+            <numerusform>，通过%n多个节点广播</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>日期</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>源</translation>
+    </message>
+    <message>
+        <source>Generated</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>来自</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>到</translation>
+    </message>
+    <message>
+        <source>own address</source>
+        <translation>自己的地址</translation>
+    </message>
+    <message>
+        <source>watch-only</source>
+        <translation>仅限查看</translation>
+    </message>
+    <message>
+        <source>label</source>
+        <translation>标签</translation>
+    </message>
+    <message>
+        <source>Credit</source>
+        <translation>收入</translation>
+    </message>
+    <message numerus="yes">
+        <source>matures in %n more block(s)</source>
+        <translation>
+            <numerusform>在 %n 成熟块</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>not accepted</source>
+        <translation>未被接受</translation>
+    </message>
+    <message>
+        <source>Debit</source>
+        <translation>支出</translation>
+    </message>
+    <message>
+        <source>Total debit</source>
+        <translation>支出总额</translation>
+    </message>
+    <message>
+        <source>Total credit</source>
+        <translation>入账总额</translation>
+    </message>
+    <message>
+        <source>Transaction fee</source>
+        <translation>交易费</translation>
+    </message>
+    <message>
+        <source>Net amount</source>
+        <translation>净额</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>消息</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>备注</translation>
+    </message>
+    <message>
+        <source>Transaction ID</source>
+        <translation>交易ID</translation>
+    </message>
+    <message>
+        <source>Transaction total size</source>
+        <translation>交易总规模</translation>
+    </message>
+    <message>
+        <source>Merchant</source>
+        <translation>商店</translation>
+    </message>
+    <message>
+        <source>Generated coins must mature %1 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to &quot;not accepted&quot; and it won&apos;t be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
+        <translation>生成的MGD在可以使用前必须有 %1 个成熟的区块。当您生成了此区块后，它将被广播到网络中以加入区块链。如果它未成功进入区块链，其状态将变更为“不接受”并且不可使用。这可能偶尔会发生，如果另一个节点比你早几秒钟成功生成一个区块。</translation>
+    </message>
+    <message>
+        <source>Debug information</source>
+        <translation>调试信息</translation>
+    </message>
+    <message>
+        <source>Transaction</source>
+        <translation>交易</translation>
+    </message>
+    <message>
+        <source>Inputs</source>
+        <translation>输入</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>金额</translation>
+    </message>
+    <message>
+        <source>true</source>
+        <translation>正确</translation>
+    </message>
+    <message>
+        <source>false</source>
+        <translation>错误</translation>
+    </message>
+</context>
+<context>
+    <name>DockerOrderDescDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation>窗体</translation>
+    </message>
+    <message>
+        <source>title name</source>
+        <translation>标题名</translation>
+    </message>
+    <message>
+        <source>Service Id:</source>
+        <translation>服务ID:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Verison:</source>
+        <translation>版本号:</translation>
+    </message>
+    <message>
+        <source>Createtime:</source>
+        <translation>创建时间:</translation>
+    </message>
+    <message>
+        <source>Deletetime:</source>
+        <translation>结束时间:</translation>
+    </message>
+    <message>
+        <source>Feerate:</source>
+        <translation>费率:</translation>
+    </message>
+    <message>
+        <source>Tlement txid:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Masternodeip:</source>
+        <translation>主节点IP:</translation>
+    </message>
+    <message>
+        <source>Task State:</source>
+        <translation>任务状态</translation>
+    </message>
+    <message>
+        <source>GPU Name:</source>
+        <translation>GPU名:</translation>
+    </message>
+    <message>
+        <source>GPU Count:</source>
+        <translation>GPU数:</translation>
+    </message>
+    <message>
+        <source>Mem Name:</source>
+        <translation>内存类型:</translation>
+    </message>
+    <message>
+        <source>Mem Count:</source>
+        <translation>内存大小</translation>
+    </message>
+    <message>
+        <source>CPU Name:</source>
+        <translation>CPU类型:</translation>
+    </message>
+    <message>
+        <source>CPU Count:</source>
+        <translation>CPU数量:</translation>
+    </message>
+    <message>
+        <source>Price:</source>
+        <translation>金额:</translation>
+    </message>
+    <message>
+        <source>Order Status:</source>
+        <translation>订单状态:</translation>
+    </message>
+    <message>
+        <source>Masternodeoutpoint:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Custeraddress:</source>
+        <translation>客户端收币地址:</translation>
+    </message>
+    <message>
+        <source>Provideraddress:</source>
+        <translation>供应商收币地址:</translation>
+    </message>
+    <message>
+        <source>Masternodeaddress:</source>
+        <translation>主节点收币地址:</translation>
+    </message>
+    <message>
+        <source>Docer order Detail</source>
+        <translation>虚拟机订单详情</translation>
+    </message>
+    <message>
+        <source>Settled</source>
+        <translation>已结算</translation>
+    </message>
+    <message>
+        <source>Paid</source>
+        <translation>已付款</translation>
+    </message>
+</context>
+<context>
+    <name>DockerOrderTableModel</name>
+    <message>
+        <source>Date</source>
+        <translation>日期</translation>
+    </message>
+    <message>
+        <source>TxID</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Address / Label</source>
+        <translation>地址/标签</translation>
+    </message>
+    <message>
+        <source>OrderStatus</source>
+        <translation>订单状态</translation>
+    </message>
+    <message>
+        <source>Operate</source>
+        <translation>操作</translation>
+    </message>
+    <message numerus="yes">
+        <source>Open for %n more block(s)</source>
+        <translation>
+            <numerusform>对于%n个块开放</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Open until %1</source>
+        <translation>至 %1 个数据块时开启</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>掉线</translation>
+    </message>
+    <message>
+        <source>Unconfirmed</source>
+        <translation>未确认的 </translation>
+    </message>
+    <message>
+        <source>Abandoned</source>
+        <translation>被遗弃的</translation>
+    </message>
+    <message>
+        <source>Confirming (%1 of %2 recommended confirmations)</source>
+        <translation>确认中 (推荐 %2个确认，已经有 %1个确认)</translation>
+    </message>
+    <message>
+        <source>Confirmed (%1 confirmations)</source>
+        <translation>已确认 (%1 条确认信息)</translation>
+    </message>
+    <message>
+        <source>Conflicted</source>
+        <translation>冲突的</translation>
+    </message>
+    <message>
+        <source>Immature (%1 confirmations, will be available after %2)</source>
+        <translation>未成熟 (%1 个确认，将在 %2 个后可用)</translation>
+    </message>
+    <message>
+        <source>This block was not received by any other nodes and will probably not be accepted!</source>
+        <translation>此数据块未被任何其他节点接收，可能不被接受！</translation>
+    </message>
+    <message>
+        <source>Generated but not accepted</source>
+        <translation>已生成但未被接受</translation>
+    </message>
+    <message>
+        <source>Received with</source>
+        <translation>接收于</translation>
+    </message>
+    <message>
+        <source>Received from</source>
+        <translation>收款来自</translation>
+    </message>
+    <message>
+        <source>Received via PrivateSend</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Sent to</source>
+        <translation>发送给</translation>
+    </message>
+    <message>
+        <source>Payment to yourself</source>
+        <translation>付款给自己</translation>
+    </message>
+    <message>
+        <source>Mined</source>
+        <translation>挖矿所得</translation>
+    </message>
+    <message>
+        <source>PrivateSend Denominate</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>PrivateSend Collateral Payment</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>PrivateSend Make Collateral Inputs</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>PrivateSend Create Denominations</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>PrivateSend</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>watch-only</source>
+        <translation>仅限查看</translation>
+    </message>
+    <message>
+        <source>(n/a)</source>
+        <translation>（不可用）</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(没有标签)</translation>
+    </message>
+    <message>
+        <source>Transaction status. Hover over this field to show number of confirmations.</source>
+        <translation>交易状态。 鼠标移到此区域可显示确认项数量。</translation>
+    </message>
+    <message>
+        <source>Date and time that the transaction was received.</source>
+        <translation>接收到交易的时间</translation>
+    </message>
+    <message>
+        <source>TxID of transaction.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Whether or not a watch-only address is involved in this transaction.</source>
+        <translation>决定是否有一个仅限查看的地址参与这次交易.</translation>
+    </message>
+    <message>
+        <source>User-defined intent/purpose of the transaction.</source>
+        <translation>用户定义的交易意图/目的。</translation>
+    </message>
+    <message>
+        <source>Amount removed from or added to balance.</source>
+        <translation>从余额添加或移除的金额。</translation>
+    </message>
+    <message>
+        <source>Settled</source>
+        <translation>已结算</translation>
+    </message>
+    <message>
+        <source>Paid</source>
+        <translation>已付款</translation>
+    </message>
+</context>
+<context>
+    <name>DockerOrderView</name>
+    <message>
+        <source>Abandon transaction</source>
+        <translation>放弃交易</translation>
+    </message>
+    <message>
+        <source>Copy address</source>
+        <translation>复制地址</translation>
+    </message>
+    <message>
+        <source>Copy label</source>
+        <translation>复制标签</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>复制金额</translation>
+    </message>
+    <message>
+        <source>Copy transaction ID</source>
+        <translation>复制交易编号</translation>
+    </message>
+    <message>
+        <source>Copy raw transaction</source>
+        <translation>复制原始交易</translation>
+    </message>
+    <message>
+        <source>Copy full transaction details</source>
+        <translation>复制完整的交易细节</translation>
+    </message>
+    <message>
+        <source>Edit label</source>
+        <translation>编辑标签</translation>
+    </message>
+    <message>
+        <source>Show transaction details</source>
+        <translation>显示交易详情</translation>
+    </message>
+    <message>
+        <source>Delete Service</source>
+        <translation>删除服务</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>全部</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>今天</translation>
+    </message>
+    <message>
+        <source>This week</source>
+        <translation>本周</translation>
+    </message>
+    <message>
+        <source>This month</source>
+        <translation>本月</translation>
+    </message>
+    <message>
+        <source>Last month</source>
+        <translation>上月</translation>
+    </message>
+    <message>
+        <source>This year</source>
+        <translation>今年</translation>
+    </message>
+    <message>
+        <source>Range...</source>
+        <translation>范围...</translation>
+    </message>
+    <message>
+        <source>Received with</source>
+        <translation>接收于</translation>
+    </message>
+    <message>
+        <source>Sent to</source>
+        <translation>发送给</translation>
+    </message>
+    <message>
+        <source>To yourself</source>
+        <translation>到自己</translation>
+    </message>
+    <message>
+        <source>Mined</source>
+        <translation>挖矿所得</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>其他</translation>
+    </message>
+    <message>
+        <source>Enter address or label to search</source>
+        <translation>输入地址或标签进行搜索</translation>
+    </message>
+    <message>
+        <source>Get Detail</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Order Detail</source>
+        <translation>订单详情</translation>
+    </message>
+    <message>
+        <source>Service Detail</source>
+        <translation>服务详情</translation>
+    </message>
+    <message>
+        <source>Create Service</source>
+        <translation>创建服务</translation>
+    </message>
+    <message>
+        <source>Export Transaction History</source>
+        <translation>导出交易历史</translation>
+    </message>
+    <message>
+        <source>Comma separated file (*.csv)</source>
+        <translation>逗号分隔文件 (*.csv)</translation>
+    </message>
+    <message>
+        <source>Confirmed</source>
+        <translation>已确认</translation>
+    </message>
+    <message>
+        <source>Watch-only</source>
+        <translation>仅限查看</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>日期</translation>
+    </message>
+    <message>
+        <source>TxID</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>标签</translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation>地址</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Exporting Failed</source>
+        <translation>导出失败</translation>
+    </message>
+    <message>
+        <source>There was an error trying to save the transaction history to %1.</source>
+        <translation>导出交易历史到 %1 时发生错误。</translation>
+    </message>
+    <message>
+        <source>Exporting Successful</source>
+        <translation>导出成功</translation>
+    </message>
+    <message>
+        <source>The transaction history was successfully saved to %1.</source>
+        <translation>交易历史已成功保存到 %1。</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation>范围：</translation>
+    </message>
+    <message>
+        <source>to</source>
+        <translation>到</translation>
+    </message>
+</context>
+<context>
     <name>EditAddressDialog</name>
     <message>
         <source>Edit Address</source>
@@ -1087,6 +1875,17 @@
     </message>
 </context>
 <context>
+    <name>LoadingWin</name>
+    <message>
+        <source>Form</source>
+        <translation>表单</translation>
+    </message>
+    <message>
+        <source>Loading...</source>
+        <translation>加载中:</translation>
+    </message>
+</context>
+<context>
     <name>MainwinTitle</name>
     <message>
         <source>Form</source>
@@ -1158,15 +1957,15 @@
     </message>
     <message>
         <source>123.45</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>0.00</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>123,45</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1835,7 +2634,7 @@ Address: %4
     </message>
     <message>
         <source>NodeCount/activeNodeCount</source>
-        <translation>节点数/活跃节点数</translation>
+        <translation type="vanished">节点数/活跃节点数</translation>
     </message>
     <message>
         <source>joinToken</source>
@@ -1851,11 +2650,11 @@ Address: %4
     </message>
     <message>
         <source>ContainerName</source>
-        <translation>容器名</translation>
+        <translation type="vanished">容器名</translation>
     </message>
     <message>
         <source>UserId</source>
-        <translation>用户ID</translation>
+        <translation type="vanished">用户ID</translation>
     </message>
     <message>
         <source>update Service</source>
@@ -1871,31 +2670,31 @@ Address: %4
     </message>
     <message>
         <source>Container Name:</source>
-        <translation>容器名:</translation>
+        <translation type="vanished">容器名:</translation>
     </message>
     <message>
         <source>Image Name:</source>
-        <translation>镜像名:</translation>
+        <translation type="vanished">镜像名:</translation>
     </message>
     <message>
         <source>User name:</source>
-        <translation>登陆名:</translation>
+        <translation type="vanished">登陆名:</translation>
     </message>
     <message>
         <source>N2N_NAME:</source>
-        <translation>N2N名:</translation>
+        <translation type="vanished">N2N名:</translation>
     </message>
     <message>
         <source>Remote_IP:</source>
-        <translation>远程IP:</translation>
+        <translation type="vanished">远程IP:</translation>
     </message>
     <message>
         <source>N2N_SERVERIP:</source>
-        <translation>N2N服务器IP:</translation>
+        <translation type="vanished">N2N服务器IP:</translation>
     </message>
     <message>
         <source>SSH-PubKey:</source>
-        <translation>SSH公钥:</translation>
+        <translation type="vanished">SSH公钥:</translation>
     </message>
     <message>
         <source>Service Task Detail</source>
@@ -1903,23 +2702,23 @@ Address: %4
     </message>
     <message>
         <source>Task Name:</source>
-        <translation>任务名:</translation>
+        <translation type="vanished">任务名:</translation>
     </message>
     <message>
         <source>CPU Count:</source>
-        <translation>CPU数量:</translation>
+        <translation type="vanished">CPU数量:</translation>
     </message>
     <message>
         <source>Memory Bytes：</source>
-        <translation>内存大小:</translation>
+        <translation type="vanished">内存大小:</translation>
     </message>
     <message>
         <source>GPU Name:</source>
-        <translation>GPU名:</translation>
+        <translation type="vanished">GPU名:</translation>
     </message>
     <message>
         <source>GPU Count:</source>
-        <translation>GPU数:</translation>
+        <translation type="vanished">GPU数:</translation>
     </message>
     <message>
         <source>Docker option</source>
@@ -1943,7 +2742,7 @@ Address: %4
     </message>
     <message>
         <source>Task Status:</source>
-        <translation>任务状态:</translation>
+        <translation type="vanished">任务状态:</translation>
     </message>
     <message>
         <source>Can&apos;t open docker detail page without synced!</source>
@@ -1959,7 +2758,7 @@ Address: %4
     </message>
     <message>
         <source>Task Tip:</source>
-        <translation>任务详情提示:</translation>
+        <translation type="vanished">任务详情提示:</translation>
     </message>
     <message>
         <source>Create completed</source>
@@ -1979,7 +2778,7 @@ Address: %4
     </message>
     <message>
         <source>status</source>
-        <translation>状态</translation>
+        <translation type="vanished">状态</translation>
     </message>
     <message>
         <source>Update List</source>
@@ -1991,23 +2790,19 @@ Address: %4
     </message>
     <message>
         <source>Service Detail</source>
-        <translation>服务详情</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation></translation>
+        <translation type="vanished">服务详情</translation>
     </message>
     <message>
         <source>Service Timeout:</source>
-        <translation>服务到期时间:</translation>
+        <translation type="vanished">服务到期时间:</translation>
     </message>
     <message>
         <source>Task Detail</source>
-        <translation>任务详情</translation>
+        <translation type="vanished">任务详情</translation>
     </message>
     <message>
         <source>Waiting...</source>
-        <translation>等待中...</translation>
+        <translation type="vanished">等待中...</translation>
     </message>
     <message>
         <source>Create Service</source>
@@ -2024,6 +2819,54 @@ Address: %4
     <message>
         <source>Delete docker service failed!</source>
         <translation>删除虚拟机服务失败！</translation>
+    </message>
+    <message>
+        <source>Node/activeCount</source>
+        <translation>节点/活跃数</translation>
+    </message>
+    <message>
+        <source>User Id</source>
+        <translation>用户ID</translation>
+    </message>
+    <message>
+        <source>Container Name</source>
+        <translation>容器名</translation>
+    </message>
+    <message>
+        <source>Image Name</source>
+        <translation>镜像名</translation>
+    </message>
+    <message>
+        <source>Expiration Time</source>
+        <translation>到期时间</translation>
+    </message>
+    <message>
+        <source>Order List</source>
+        <translation>订单列表</translation>
+    </message>
+    <message>
+        <source>Enter txid or coninter name to search</source>
+        <translation>输入txid或者镜像名</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>搜索</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>刷新</translation>
+    </message>
+    <message>
+        <source>Refund</source>
+        <translation>退款</translation>
+    </message>
+    <message>
+        <source>Can&apos;t open docker order page without synced!</source>
+        <translation>请在钱包同步完成后打开订单页面</translation>
+    </message>
+    <message>
+        <source>退款</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2411,6 +3254,89 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>Tor</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OrderDetail</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">窗体</translation>
+    </message>
+    <message>
+        <source>title name</source>
+        <translation type="unfinished">标题名</translation>
+    </message>
+    <message>
+        <source>Service Detail</source>
+        <translation>服务详情</translation>
+    </message>
+    <message>
+        <source>Image Name:</source>
+        <translation>镜像名:</translation>
+    </message>
+    <message>
+        <source>N2N_SERVERIP:</source>
+        <translation>N2N服务器IP:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Service Timeout:</source>
+        <translation>服务到期时间:</translation>
+    </message>
+    <message>
+        <source>Container Name:</source>
+        <translation>容器名:</translation>
+    </message>
+    <message>
+        <source>User name:</source>
+        <translation>登陆名:</translation>
+    </message>
+    <message>
+        <source>SSH-PubKey:</source>
+        <translation>SSH公钥:</translation>
+    </message>
+    <message>
+        <source>N2N_NAME:</source>
+        <translation>N2N名:</translation>
+    </message>
+    <message>
+        <source>Remote_IP:</source>
+        <translation>远程IP:</translation>
+    </message>
+    <message>
+        <source>Task Detail</source>
+        <translation>任务详情</translation>
+    </message>
+    <message>
+        <source>Task Name:</source>
+        <translation>任务名:</translation>
+    </message>
+    <message>
+        <source>GPU Name:</source>
+        <translation>GPU名:</translation>
+    </message>
+    <message>
+        <source>Task Tip:</source>
+        <translation>任务详情提示:</translation>
+    </message>
+    <message>
+        <source>CPU Count:</source>
+        <translation>CPU数量:</translation>
+    </message>
+    <message>
+        <source>Memory Bytes：</source>
+        <translation>内存大小:</translation>
+    </message>
+    <message>
+        <source>GPU Count:</source>
+        <translation>GPU数:</translation>
+    </message>
+    <message>
+        <source>Task Status:</source>
+        <translation>任务状态:</translation>
     </message>
 </context>
 <context>
@@ -2926,6 +3852,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>Error: Cannot parse configuration file: %1. Only use key=value syntax.</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Error reading dockerprice configuration file: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3563,6 +4493,53 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
 </context>
 <context>
+    <name>ResourceItem</name>
+    <message>
+        <source>Form</source>
+        <translation>表单</translation>
+    </message>
+    <message>
+        <source>GPU Type:</source>
+        <translation>GPU 类型:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>ROM Type:</source>
+        <translation>内存类型:</translation>
+    </message>
+    <message>
+        <source>CPU Type:</source>
+        <translation>CPU类型:</translation>
+    </message>
+    <message>
+        <source>GPU Count:</source>
+        <translation>GPU数:</translation>
+    </message>
+    <message>
+        <source>ROM:</source>
+        <translation>内存大小:</translation>
+    </message>
+    <message>
+        <source>CPU Count:</source>
+        <translation>CPU数量:</translation>
+    </message>
+    <message>
+        <source>Count:</source>
+        <translation>可用数量:</translation>
+    </message>
+    <message>
+        <source>Price:</source>
+        <translation>金额:</translation>
+    </message>
+    <message>
+        <source>Buy</source>
+        <translation>购买</translation>
+    </message>
+</context>
+<context>
     <name>SendCoinsDialog</name>
     <message>
         <source>Send Coins</source>
@@ -4023,6 +5000,89 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
 </context>
 <context>
+    <name>ServiceDetail</name>
+    <message>
+        <source>Dialog</source>
+        <translation>窗体</translation>
+    </message>
+    <message>
+        <source>title name</source>
+        <translation>标题名</translation>
+    </message>
+    <message>
+        <source>Service Detail</source>
+        <translation>服务详情</translation>
+    </message>
+    <message>
+        <source>Image Name:</source>
+        <translation>镜像名:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>N2N_SERVERIP:</source>
+        <translation>N2N服务器IP:</translation>
+    </message>
+    <message>
+        <source>Service Timeout:</source>
+        <translation>服务到期时间:</translation>
+    </message>
+    <message>
+        <source>Container Name:</source>
+        <translation>容器名:</translation>
+    </message>
+    <message>
+        <source>User name:</source>
+        <translation>登陆名:</translation>
+    </message>
+    <message>
+        <source>SSH-PubKey:</source>
+        <translation>SSH公钥:</translation>
+    </message>
+    <message>
+        <source>N2N_NAME:</source>
+        <translation>N2N名:</translation>
+    </message>
+    <message>
+        <source>Remote_IP:</source>
+        <translation>远程IP:</translation>
+    </message>
+    <message>
+        <source>Task Detail</source>
+        <translation>任务详情</translation>
+    </message>
+    <message>
+        <source>Task Name:</source>
+        <translation>任务名:</translation>
+    </message>
+    <message>
+        <source>GPU Name:</source>
+        <translation>GPU名:</translation>
+    </message>
+    <message>
+        <source>CPU Count:</source>
+        <translation>CPU数量:</translation>
+    </message>
+    <message>
+        <source>Memory Bytes：</source>
+        <translation>内存大小:</translation>
+    </message>
+    <message>
+        <source>GPU Count:</source>
+        <translation>GPU数:</translation>
+    </message>
+    <message>
+        <source>Task Status:</source>
+        <translation>任务状态:</translation>
+    </message>
+    <message>
+        <source>Task Tip:</source>
+        <translation>任务详情提示:</translation>
+    </message>
+</context>
+<context>
     <name>ShutdownWindow</name>
     <message>
         <source>MassGrid is shutting down...</source>
@@ -4448,6 +5508,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>title name</source>
         <translation>标题名</translation>
+    </message>
+    <message>
+        <source>Transaction Detail</source>
+        <translation>转账详情</translation>
     </message>
 </context>
 <context>

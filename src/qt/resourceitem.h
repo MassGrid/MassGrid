@@ -2,6 +2,7 @@
 #define RESOURCEITEM_H
 
 #include <QWidget>
+#include "amount.h"
 
 namespace Ui {
 class ResourceItem;
@@ -25,10 +26,14 @@ public:
     QString getCPUName()const;
     QString getCPUCount()const;
     QString getAvailibleCount()const;
-    QString getAmount()const;
+
+    CAmount getAmount()const;
+    void setAmount(CAmount );
 
 private:
     Ui::ResourceItem *ui;
+
+    CAmount m_amount;
 
 Q_SIGNALS:
     void sig_buyClicked();

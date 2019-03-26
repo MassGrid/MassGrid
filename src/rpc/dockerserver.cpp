@@ -311,7 +311,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         wtxNew.Setmasternodeoutpoint(mnoupouint);
         wtxNew.Setmasternodeip(strAddr);
         wtxNew.Setmasternodeaddress(params[2].get_str());
-
+        wtxNew.Setorderstatus("0");
         EnsureWalletIsUnlocked();
 
         CAmount curBalance = pwalletMain->GetBalance();

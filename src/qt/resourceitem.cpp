@@ -63,7 +63,13 @@ QString ResourceItem::getAvailibleCount()const
     return ui->label_availibleCount->text();
 }
 
-QString ResourceItem::getAmount()const
+CAmount ResourceItem::getAmount()const
 {
-    return ui->label_amount->text();
+    // return ui->label_amount->text();
+    return m_amount;
+}
+
+void ResourceItem::setAmount(CAmount amount)
+{
+    m_amount = amount;
 }

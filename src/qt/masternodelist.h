@@ -26,6 +26,8 @@ class QSwitchButton;
 class Task;
 class Service;
 
+class DockerOrderView;
+
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 QT_END_NAMESPACE
@@ -71,6 +73,7 @@ private:
     Ui::MasternodeList *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;
+    DockerOrderView *dockerorderView;
 
     // Protects tableWidgetMasternodes
     CCriticalSection cs_mnlist;
@@ -93,24 +96,20 @@ private:
     
 private:
     int loadServerList();
-    bool deleteService(const std::string& serviceid);
     void clearDockerDetail();
     void setCurUpdateMode(DockerUpdateMode mode);
     DockerUpdateMode getCurUpdateMode();
     void startTimer(bool start);
-    void askDNData();
     void updateEdgeStatus(int count =0);
     bool getVirtualIP(const QString& n2n_localip,QString& virtualIP);
     void initOrderTablewidget();
     void resetTableWidgetTitle();
-    void loadOrderTableWidget();
     void jumpToCheckOrder(int index);
-    void jumpToCheckService(int index);
-    void jumpToCreateService(int index);
 
     void gotoDockerSerivcePage(const std::string& str);
-    void gotoCreateServicePage(const std::string& str);
+    void gotoCreateServicePage(const std::string& str,const std::string& txid);
     void gotoOrderDetailPage(int index);
+    void initDockerOrderView(const PlatformStyle *platformStyle);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -130,21 +129,23 @@ private Q_SLOTS:
     void slot_deleteServiceBtn();
     void updateServiceList();
     void openServiceDetail(QModelIndex);
-    void openOrderDetail(QModelIndex);
+    void askDNData();
 
-    void loadDockerDetail(const std::string& key);
-    // void updateServiceDetail(Service& service);
-    // void updateTaskDetail(std::map<std::string,Task> &mapDockerTasklists,int& taskStatus);
+    int loadDockerDetail(const std::string& key);
     void slot_createServiceBtn();
     void slot_changeN2Nstatus(bool);
     void slot_curTabPageChanged(int);
-    void slot_orderManagerBtnClicked();
     void updateDockerList(bool fForce = false);
 
     void slot_btn_refund();
-    void slot_orderTablewidget_clicked(QModelIndex);
     void loadOrderData();
-
+    void dockerOrderViewdoubleClicked(QModelIndex index);
+    void dockerOrderViewitemClicked(const QModelIndex index);
+    void deleteService(std::string txid,std::string ip_port);
+    void jumpToCheckService(std::string ip);
+    void jumpToCreateService(std::string ip,std::string txid);
+    void disenableRefund();
+    void disenableDeleteServiceBtn();
 };
 
 #endif // MASTERNODELIST_H

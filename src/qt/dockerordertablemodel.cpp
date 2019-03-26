@@ -2,17 +2,16 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "transactiontablemodel.h"
-
+#include "dockerordertablemodel.h"
+// #include 
 #include "addresstablemodel.h"
 #include "guiconstants.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
 #include "platformstyle.h"
-#include "transactiondesc.h"
-#include "transactionrecord.h"
+#include "dockerorderdesc.h"
+#include "dockerorderrecord.h"
 #include "walletmodel.h"
-#include "dockerordertablemodel.h"
 
 #include "core_io.h"
 #include "validation.h"
@@ -20,73 +19,78 @@
 #include "uint256.h"
 #include "util.h"
 #include "wallet/wallet.h"
+#include "txmempool.h"
+#include "validation.h"
 
 #include <QColor>
 #include <QDateTime>
 #include <QDebug>
 #include <QIcon>
 #include <QList>
+#include <QPushButton>
 
 #include <boost/foreach.hpp>
 
 // Amount column is right-aligned it contains numbers
-static int column_alignments[] = {
+static int column_alignments2[] = {
         Qt::AlignLeft|Qt::AlignVCenter, /* status */
         Qt::AlignLeft|Qt::AlignVCenter, /* watchonly */
         Qt::AlignLeft|Qt::AlignVCenter, /* date */
         Qt::AlignLeft|Qt::AlignVCenter, /* type */
         Qt::AlignLeft|Qt::AlignVCenter, /* address */
-        Qt::AlignRight|Qt::AlignVCenter /* amount */
+        Qt::AlignRight|Qt::AlignVCenter, /* amount */
+        Qt::AlignHCenter|Qt::AlignVCenter, /* amount */
+        Qt::AlignHCenter|Qt::AlignVCenter /* amount */
     };
 
 // Comparison operator for sort/binary search of model tx list
 struct TxLessThan
 {
-    bool operator()(const TransactionRecord &a, const TransactionRecord &b) const
+    bool operator()(const DockerOrderRecord &a, const DockerOrderRecord &b) const
     {
         return a.hash < b.hash;
     }
-    bool operator()(const TransactionRecord &a, const uint256 &b) const
+    bool operator()(const DockerOrderRecord &a, const uint256 &b) const
     {
         return a.hash < b;
     }
-    bool operator()(const uint256 &a, const TransactionRecord &b) const
+    bool operator()(const uint256 &a, const DockerOrderRecord &b) const
     {
         return a < b.hash;
     }
 };
 
 // Private implementation
-class TransactionTablePriv
+class DockerOrderTablePriv
 {
 public:
-    TransactionTablePriv(CWallet *wallet, TransactionTableModel *parent) :
+    DockerOrderTablePriv(CWallet *wallet, DockerOrderTableModel *parent) :
         wallet(wallet),
         parent(parent)
     {
     }
 
     CWallet *wallet;
-    TransactionTableModel *parent;
+    DockerOrderTableModel *parent;
 
     /* Local cache of wallet.
      * As it is in the same order as the CWallet, by definition
      * this is sorted by sha256.
      */
-    QList<TransactionRecord> cachedWallet;
+    QList<DockerOrderRecord> cachedWallet;
 
     /* Query entire wallet anew from core.
      */
     void refreshWallet()
     {
-        qDebug() << "TransactionTablePriv::refreshWallet";
+        qDebug() << "DockerOrderTablePriv::refreshWallet";
         cachedWallet.clear();
         {
             LOCK2(cs_main, wallet->cs_wallet);
             for(std::map<uint256, CWalletTx>::iterator it = wallet->mapWallet.begin(); it != wallet->mapWallet.end(); ++it)
             {
-                if(TransactionRecord::showTransaction(it->second))
-                    cachedWallet.append(TransactionRecord::decomposeTransaction(wallet, it->second));
+                if(DockerOrderRecord::showTransaction(it->second) && it->second.Getmasternodeaddress().size())
+                    cachedWallet.append(DockerOrderRecord::decomposeTransaction(wallet, it->second));
             }
         }
     }
@@ -98,12 +102,13 @@ public:
      */
     void updateWallet(const uint256 &hash, int status, bool showTransaction)
     {
-        qDebug() << "TransactionTablePriv::updateWallet: " + QString::fromStdString(hash.ToString()) + " " + QString::number(status);
+        LOCK2(cs_main, wallet->cs_wallet);
+        qDebug() << "DockerOrderTablePriv::updateWallet: " + QString::fromStdString(hash.ToString()) + " " + QString::number(status);
 
         // Find bounds of this transaction in model
-        QList<TransactionRecord>::iterator lower = qLowerBound(
+        QList<DockerOrderRecord>::iterator lower = qLowerBound(
             cachedWallet.begin(), cachedWallet.end(), hash, TxLessThan());
-        QList<TransactionRecord>::iterator upper = qUpperBound(
+        QList<DockerOrderRecord>::iterator upper = qUpperBound(
             cachedWallet.begin(), cachedWallet.end(), hash, TxLessThan());
         int lowerIndex = (lower - cachedWallet.begin());
         int upperIndex = (upper - cachedWallet.begin());
@@ -126,7 +131,7 @@ public:
         case CT_NEW:
             if(inModel)
             {
-                qWarning() << "TransactionTablePriv::updateWallet: Warning: Got CT_NEW, but transaction is already in model";
+                qWarning() << "DockerOrderTablePriv::updateWallet: Warning: Got CT_NEW, but transaction is already in model";
                 break;
             }
             if(showTransaction)
@@ -136,35 +141,39 @@ public:
                 std::map<uint256, CWalletTx>::iterator mi = wallet->mapWallet.find(hash);
                 if(mi == wallet->mapWallet.end())
                 {
-                    qWarning() << "TransactionTablePriv::updateWallet: Warning: Got CT_NEW, but transaction is not in wallet";
+                    qWarning() << "DockerOrderTablePriv::updateWallet: Warning: Got CT_NEW, but transaction is not in wallet";
                     break;
                 }
                 // Added -- insert at the right position
-                QList<TransactionRecord> toInsert =
-                        TransactionRecord::decomposeTransaction(wallet, mi->second);
+                if(!mi->second.Getmasternodeaddress().size())
+                    return ;
+                QList<DockerOrderRecord> toInsert =
+                        DockerOrderRecord::decomposeTransaction(wallet, mi->second);
                 if(!toInsert.isEmpty()) /* only if something to insert */
                 {
                     parent->beginInsertRows(QModelIndex(), lowerIndex, lowerIndex+toInsert.size()-1);
                     int insert_idx = lowerIndex;
-                    Q_FOREACH(const TransactionRecord &rec, toInsert)
+                    Q_FOREACH(const DockerOrderRecord &rec, toInsert)
                     {
                         cachedWallet.insert(insert_idx, rec);
                         insert_idx += 1;
                     }
                     parent->endInsertRows();
+                    Q_EMIT parent->addOperationBtn(0);
                 }
             }
             break;
         case CT_DELETED:
             if(!inModel)
             {
-                qWarning() << "TransactionTablePriv::updateWallet: Warning: Got CT_DELETED, but transaction is not in model";
+                qWarning() << "DockerOrderTablePriv::updateWallet: Warning: Got CT_DELETED, but transaction is not in model";
                 break;
             }
             // Removed -- remove entire transaction from table
             parent->beginRemoveRows(QModelIndex(), lowerIndex, upperIndex-1);
             cachedWallet.erase(lower, upper);
             parent->endRemoveRows();
+            Q_EMIT parent->deleteTransaction(lowerIndex);
             break;
         case CT_UPDATED:
             // Miscellaneous updates -- nothing to do, status update will take care of this, and is only computed for
@@ -178,11 +187,11 @@ public:
         return cachedWallet.size();
     }
 
-    TransactionRecord *index(int idx)
+    DockerOrderRecord *index(int idx)
     {
         if(idx >= 0 && idx < cachedWallet.size())
         {
-            TransactionRecord *rec = &cachedWallet[idx];
+            DockerOrderRecord *rec = &cachedWallet[idx];
 
             // Get required locks upfront. This avoids the GUI from getting
             // stuck if the core is holding the locks for a longer time - for
@@ -210,20 +219,20 @@ public:
         return 0;
     }
 
-    QString describe(TransactionRecord *rec, int unit)
+    QString describe(DockerOrderRecord *rec, int unit)
     {
         {
             LOCK2(cs_main, wallet->cs_wallet);
             std::map<uint256, CWalletTx>::iterator mi = wallet->mapWallet.find(rec->hash);
             if(mi != wallet->mapWallet.end())
             {
-                return TransactionDesc::toHTML(wallet, mi->second, rec, unit);
+                return DockerOrderDesc::toHTML(wallet, mi->second, rec, unit);
             }
         }
         return QString();
     }
 
-    QString getTxHex(TransactionRecord *rec)
+    QString getTxHex(DockerOrderRecord *rec)
     {
         LOCK2(cs_main, wallet->cs_wallet);
         std::map<uint256, CWalletTx>::iterator mi = wallet->mapWallet.find(rec->hash);
@@ -234,18 +243,30 @@ public:
         }
         return QString();
     }
+    
+    CTransaction getTc(DockerOrderRecord *rec)
+    {
+        LOCK2(cs_main, wallet->cs_wallet);
+        std::map<uint256, CWalletTx>::iterator mi = wallet->mapWallet.find(rec->hash);
+        if(mi != wallet->mapWallet.end())
+        {
+            return static_cast<CTransaction>(mi->second);
+        }
+        return CTransaction();
+    }
 };
 
-TransactionTableModel::TransactionTableModel(const PlatformStyle *platformStyle, CWallet* wallet, WalletModel *parent):
+DockerOrderTableModel::DockerOrderTableModel(const PlatformStyle *platformStyle, CWallet* wallet, WalletModel *parent):
         QAbstractTableModel(parent),
         wallet(wallet),
         walletModel(parent),
-        priv(new TransactionTablePriv(wallet, this)),
+        priv(new DockerOrderTablePriv(wallet, this)),
         fProcessingQueuedTransactions(false),
         platformStyle(platformStyle)
 {
-    columns << QString() << QString() << tr("Date") << tr("Type") << tr("Address / Label")
-     << MassGridUnits::getAmountColumnTitle(walletModel->getOptionsModel()->getDisplayUnit());
+    columns << QString() << QString() << tr("Date") << tr("TxID") << tr("Address / Label") 
+    << MassGridUnits::getAmountColumnTitle(walletModel->getOptionsModel()->getDisplayUnit())
+    << tr("OrderStatus") << tr("Operate");
     priv->refreshWallet();
 
     connect(walletModel->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
@@ -253,29 +274,28 @@ TransactionTableModel::TransactionTableModel(const PlatformStyle *platformStyle,
     subscribeToCoreSignals();
 }
 
-TransactionTableModel::~TransactionTableModel()
+DockerOrderTableModel::~DockerOrderTableModel()
 {
     unsubscribeFromCoreSignals();
     delete priv;
 }
 
 /** Updates the column title to "Amount (DisplayUnit)" and emits headerDataChanged() signal for table headers to react. */
-void TransactionTableModel::updateAmountColumnTitle()
+void DockerOrderTableModel::updateAmountColumnTitle()
 {
     columns[Amount] = MassGridUnits::getAmountColumnTitle(walletModel->getOptionsModel()->getDisplayUnit());
     Q_EMIT headerDataChanged(Qt::Horizontal,Amount,Amount);
 }
 
-void TransactionTableModel::updateTransaction(const QString &hash, int status, bool showTransaction)
+void DockerOrderTableModel::updateTransaction(const QString &hash, int status, bool showTransaction)
 {
     uint256 updated;
     updated.SetHex(hash.toStdString());
 
     priv->updateWallet(updated, status, showTransaction);
-    walletModel->getDockerOrderTableModel()->updateTransaction(hash, status, showTransaction);
 }
 
-void TransactionTableModel::updateConfirmations()
+void DockerOrderTableModel::updateConfirmations()
 {
     // Blocks came in since last poll.
     // Invalidate status (number of confirmations) and (possibly) description
@@ -285,55 +305,55 @@ void TransactionTableModel::updateConfirmations()
     Q_EMIT dataChanged(index(0, ToAddress), index(priv->size()-1, ToAddress));
 }
 
-int TransactionTableModel::rowCount(const QModelIndex &parent) const
+int DockerOrderTableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return priv->size();
 }
 
-int TransactionTableModel::columnCount(const QModelIndex &parent) const
+int DockerOrderTableModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return columns.length();
 }
 
-QString TransactionTableModel::formatTxStatus(const TransactionRecord *wtx) const
+QString DockerOrderTableModel::formatTxStatus(const DockerOrderRecord *wtx) const
 {
     QString status;
 
     switch(wtx->status.status)
     {
-    case TransactionStatus::OpenUntilBlock:
+    case DockerOrderStatus::OpenUntilBlock:
         status = tr("Open for %n more block(s)","",wtx->status.open_for);
         break;
-    case TransactionStatus::OpenUntilDate:
+    case DockerOrderStatus::OpenUntilDate:
         status = tr("Open until %1").arg(GUIUtil::dateTimeStr(wtx->status.open_for));
         break;
-    case TransactionStatus::Offline:
+    case DockerOrderStatus::Offline:
         status = tr("Offline");
         break;
-    case TransactionStatus::Unconfirmed:
+    case DockerOrderStatus::Unconfirmed:
         status = tr("Unconfirmed");
         break;
-    case TransactionStatus::Abandoned:
+    case DockerOrderStatus::Abandoned:
         status = tr("Abandoned");
         break;
-    case TransactionStatus::Confirming:
-        status = tr("Confirming (%1 of %2 recommended confirmations)").arg(wtx->status.depth).arg(TransactionRecord::RecommendedNumConfirmations);
+    case DockerOrderStatus::Confirming:
+        status = tr("Confirming (%1 of %2 recommended confirmations)").arg(wtx->status.depth).arg(DockerOrderRecord::RecommendedNumConfirmations);
         break;
-    case TransactionStatus::Confirmed:
+    case DockerOrderStatus::Confirmed:
         status = tr("Confirmed (%1 confirmations)").arg(wtx->status.depth);
         break;
-    case TransactionStatus::Conflicted:
+    case DockerOrderStatus::Conflicted:
         status = tr("Conflicted");
         break;
-    case TransactionStatus::Immature:
+    case DockerOrderStatus::Immature:
         status = tr("Immature (%1 confirmations, will be available after %2)").arg(wtx->status.depth).arg(wtx->status.depth + wtx->status.matures_in);
         break;
-    case TransactionStatus::MaturesWarning:
+    case DockerOrderStatus::MaturesWarning:
         status = tr("This block was not received by any other nodes and will probably not be accepted!");
         break;
-    case TransactionStatus::NotAccepted:
+    case DockerOrderStatus::NotAccepted:
         status = tr("Generated but not accepted");
         break;
     }
@@ -341,7 +361,7 @@ QString TransactionTableModel::formatTxStatus(const TransactionRecord *wtx) cons
     return status;
 }
 
-QString TransactionTableModel::formatTxDate(const TransactionRecord *wtx) const
+QString DockerOrderTableModel::formatTxDate(const DockerOrderRecord *wtx) const
 {
     if(wtx->time)
     {
@@ -353,7 +373,7 @@ QString TransactionTableModel::formatTxDate(const TransactionRecord *wtx) const
 /* Look up address in address book, if found return label (address)
    otherwise just return (address)
  */
-QString TransactionTableModel::lookupAddress(const std::string &address, bool tooltip) const
+QString DockerOrderTableModel::lookupAddress(const std::string &address, bool tooltip) const
 {
     QString label = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(address));
     QString description;
@@ -368,33 +388,33 @@ QString TransactionTableModel::lookupAddress(const std::string &address, bool to
     return description;
 }
 
-QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
+QString DockerOrderTableModel::formatTxType(const DockerOrderRecord *wtx) const
 {
     switch(wtx->type)
     {
-    case TransactionRecord::RecvWithAddress:
+    case DockerOrderRecord::RecvWithAddress:
         return tr("Received with");
-    case TransactionRecord::RecvFromOther:
+    case DockerOrderRecord::RecvFromOther:
         return tr("Received from");
-    case TransactionRecord::RecvWithPrivateSend:
+    case DockerOrderRecord::RecvWithPrivateSend:
         return tr("Received via PrivateSend");
-    case TransactionRecord::SendToAddress:
-    case TransactionRecord::SendToOther:
+    case DockerOrderRecord::SendToAddress:
+    case DockerOrderRecord::SendToOther:
         return tr("Sent to");
-    case TransactionRecord::SendToSelf:
+    case DockerOrderRecord::SendToSelf:
         return tr("Payment to yourself");
-    case TransactionRecord::Generated:
+    case DockerOrderRecord::Generated:
         return tr("Mined");
 
-    case TransactionRecord::PrivateSendDenominate:
+    case DockerOrderRecord::PrivateSendDenominate:
         return tr("PrivateSend Denominate");
-    case TransactionRecord::PrivateSendCollateralPayment:
+    case DockerOrderRecord::PrivateSendCollateralPayment:
         return tr("PrivateSend Collateral Payment");
-    case TransactionRecord::PrivateSendMakeCollaterals:
+    case DockerOrderRecord::PrivateSendMakeCollaterals:
         return tr("PrivateSend Make Collateral Inputs");
-    case TransactionRecord::PrivateSendCreateDenominations:
+    case DockerOrderRecord::PrivateSendCreateDenominations:
         return tr("PrivateSend Create Denominations");
-    case TransactionRecord::PrivateSend:
+    case DockerOrderRecord::PrivateSend:
         return tr("PrivateSend");
 
     default:
@@ -402,25 +422,25 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
     }
 }
 
-QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord *wtx) const
+QVariant DockerOrderTableModel::txAddressDecoration(const DockerOrderRecord *wtx) const
 {
     switch(wtx->type)
     {
-    case TransactionRecord::Generated:
+    case DockerOrderRecord::Generated:
         return QIcon(":/icons/res/icons/tx_mined");
-    case TransactionRecord::RecvWithPrivateSend:
-    case TransactionRecord::RecvWithAddress:
-    case TransactionRecord::RecvFromOther:
+    case DockerOrderRecord::RecvWithPrivateSend:
+    case DockerOrderRecord::RecvWithAddress:
+    case DockerOrderRecord::RecvFromOther:
         return QIcon(":/icons/res/icons/tx_input");
-    case TransactionRecord::SendToAddress:
-    case TransactionRecord::SendToOther:
+    case DockerOrderRecord::SendToAddress:
+    case DockerOrderRecord::SendToOther:
         return QIcon(":/icons/res/icons/tx_output");
     default:
         return QIcon(":/icons/res/icons/tx_inout");
     }
 }
 
-QString TransactionTableModel::formatTxToAddress(const TransactionRecord *wtx, bool tooltip) const
+QString DockerOrderTableModel::formatTxToAddress(const DockerOrderRecord *wtx, bool tooltip) const
 {
     QString watchAddress;
     if (tooltip) {
@@ -430,42 +450,42 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord *wtx, b
 
     switch(wtx->type)
     {
-    case TransactionRecord::RecvFromOther:
+    case DockerOrderRecord::RecvFromOther:
         return QString::fromStdString(wtx->address) + watchAddress;
-    case TransactionRecord::RecvWithAddress:
-    case TransactionRecord::RecvWithPrivateSend:
-    case TransactionRecord::SendToAddress:
-    case TransactionRecord::Generated:
-    case TransactionRecord::PrivateSend:
+    case DockerOrderRecord::RecvWithAddress:
+    case DockerOrderRecord::RecvWithPrivateSend:
+    case DockerOrderRecord::SendToAddress:
+    case DockerOrderRecord::Generated:
+    case DockerOrderRecord::PrivateSend:
         return lookupAddress(wtx->address, tooltip) + watchAddress;
-    case TransactionRecord::SendToOther:
+    case DockerOrderRecord::SendToOther:
         return QString::fromStdString(wtx->address) + watchAddress;
-    case TransactionRecord::SendToSelf:
+    case DockerOrderRecord::SendToSelf:
     default:
         return tr("(n/a)") + watchAddress;
     }
 }
 
-QVariant TransactionTableModel::addressColor(const TransactionRecord *wtx) const
+QVariant DockerOrderTableModel::addressColor(const DockerOrderRecord *wtx) const
 {
     // Show addresses without label in a less visible color
     switch(wtx->type)
     {
-    case TransactionRecord::RecvWithAddress:
-    case TransactionRecord::SendToAddress:
-    case TransactionRecord::Generated:
-    case TransactionRecord::PrivateSend:
-    case TransactionRecord::RecvWithPrivateSend:
+    case DockerOrderRecord::RecvWithAddress:
+    case DockerOrderRecord::SendToAddress:
+    case DockerOrderRecord::Generated:
+    case DockerOrderRecord::PrivateSend:
+    case DockerOrderRecord::RecvWithPrivateSend:
         {
         QString label = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(wtx->address));
         if(label.isEmpty())
             return COLOR_BAREADDRESS;
         } break;
-    case TransactionRecord::SendToSelf:
-    case TransactionRecord::PrivateSendCreateDenominations:
-    case TransactionRecord::PrivateSendDenominate:
-    case TransactionRecord::PrivateSendMakeCollaterals:
-    case TransactionRecord::PrivateSendCollateralPayment:
+    case DockerOrderRecord::SendToSelf:
+    case DockerOrderRecord::PrivateSendCreateDenominations:
+    case DockerOrderRecord::PrivateSendDenominate:
+    case DockerOrderRecord::PrivateSendMakeCollaterals:
+    case DockerOrderRecord::PrivateSendCollateralPayment:
         return COLOR_BAREADDRESS;
     default:
         break;
@@ -473,7 +493,7 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord *wtx) const
     return QVariant();
 }
 
-QString TransactionTableModel::formatTxAmount(const TransactionRecord *wtx, bool showUnconfirmed, MassGridUnits::SeparatorStyle separators) const
+QString DockerOrderTableModel::formatTxAmount(const DockerOrderRecord *wtx, bool showUnconfirmed, MassGridUnits::SeparatorStyle separators) const
 {
     QString str = MassGridUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), wtx->credit + wtx->debit, false, separators);
     if(showUnconfirmed)
@@ -486,20 +506,20 @@ QString TransactionTableModel::formatTxAmount(const TransactionRecord *wtx, bool
     return QString(str);
 }
 
-QVariant TransactionTableModel::txStatusDecoration(const TransactionRecord *wtx) const
+QVariant DockerOrderTableModel::txStatusDecoration(const DockerOrderRecord *wtx) const
 {
     switch(wtx->status.status)
     {
-    case TransactionStatus::OpenUntilBlock:
-    case TransactionStatus::OpenUntilDate:
+    case DockerOrderStatus::OpenUntilBlock:
+    case DockerOrderStatus::OpenUntilDate:
         return COLOR_TX_STATUS_OPENUNTILDATE;
-    case TransactionStatus::Offline:
+    case DockerOrderStatus::Offline:
         return COLOR_TX_STATUS_OFFLINE;
-    case TransactionStatus::Unconfirmed:
+    case DockerOrderStatus::Unconfirmed:
         return QIcon(":/icons/transaction_0");
-    case TransactionStatus::Abandoned:
+    case DockerOrderStatus::Abandoned:
         return QIcon(":/icons/transaction_abandoned");
-    case TransactionStatus::Confirming:
+    case DockerOrderStatus::Confirming:
         switch(wtx->status.depth)
         {
         case 1: return QIcon(":/icons/transaction_1");
@@ -508,24 +528,24 @@ QVariant TransactionTableModel::txStatusDecoration(const TransactionRecord *wtx)
         case 4: return QIcon(":/icons/transaction_4");
         default: return QIcon(":/icons/transaction_5");
         };
-    case TransactionStatus::Confirmed:
+    case DockerOrderStatus::Confirmed:
         return QIcon(":/icons/transaction_confirmed");
-    case TransactionStatus::Conflicted:
+    case DockerOrderStatus::Conflicted:
         return QIcon(":/icons/transaction_conflicted");
-    case TransactionStatus::Immature: {
+    case DockerOrderStatus::Immature: {
         int total = wtx->status.depth + wtx->status.matures_in;
         int part = (wtx->status.depth * 4 / total) + 1;
         return QIcon(QString(":/icons/transaction_%1").arg(part));
         }
-    case TransactionStatus::MaturesWarning:
-    case TransactionStatus::NotAccepted:
+    case DockerOrderStatus::MaturesWarning:
+    case DockerOrderStatus::NotAccepted:
         return QIcon(":/icons/transaction_0");
     default:
         return COLOR_BLACK;
     }
 }
 
-QVariant TransactionTableModel::txWatchonlyDecoration(const TransactionRecord *wtx) const
+QVariant DockerOrderTableModel::txWatchonlyDecoration(const DockerOrderRecord *wtx) const
 {
     if (wtx->involvesWatchAddress)
         return QIcon(":/icons/eye");
@@ -533,22 +553,68 @@ QVariant TransactionTableModel::txWatchonlyDecoration(const TransactionRecord *w
         return QVariant();
 }
 
-QString TransactionTableModel::formatTooltip(const TransactionRecord *rec) const
+QString DockerOrderTableModel::formatTooltip(const DockerOrderRecord *rec) const
 {
     QString tooltip = formatTxStatus(rec) + QString("\n") + formatTxType(rec);
-    if(rec->type==TransactionRecord::RecvFromOther || rec->type==TransactionRecord::SendToOther ||
-       rec->type==TransactionRecord::SendToAddress || rec->type==TransactionRecord::RecvWithAddress)
+    if(rec->type==DockerOrderRecord::RecvFromOther || rec->type==DockerOrderRecord::SendToOther ||
+       rec->type==DockerOrderRecord::SendToAddress || rec->type==DockerOrderRecord::RecvWithAddress)
     {
         tooltip += QString(" ") + formatTxToAddress(rec, true);
     }
     return tooltip;
 }
 
-QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
+QString DockerOrderTableModel::formatOrderStatus(const DockerOrderRecord *rec,const QModelIndex &index) const
+{
+#ifdef ENABLE_WALLET
+    LOCK2(cs_main, wallet->cs_wallet);
+#else
+    LOCK(cs_main);
+#endif
+
+    CTransaction tx;
+    uint256 hashBlock;
+    CWalletTx& wtx = wallet->mapWallet[rec->hash];  //watch only not check
+    if (!GetTransaction(rec->hash, tx, Params().GetConsensus(), hashBlock, true)){
+        LogPrintf("No information available about transaction\n");
+            return QString("NULL"); 
+    }
+    for (unsigned int i = 0; i < tx.vout.size(); i++) {
+        const CTxOut& txout = tx.vout[i];
+
+        txnouttype type;
+        std::vector<CTxDestination> addresses;
+        int nRequired;
+
+        if (!ExtractDestinations(txout.scriptPubKey, type, addresses, nRequired)) {
+            LogPrintf("Can't find vout address\n");
+            return QString("NULL"); 
+        }
+
+        BOOST_FOREACH(const CTxDestination& addr, addresses){
+            if(CMassGridAddress(addr).ToString() == wtx.Getmasternodeaddress()){
+
+                bool isSpent = checkIsSpent(rec,i); 
+                std::string orderStatusStr = isSpent?"1":"0";  
+
+                if(wtx.Getorderstatus() != orderStatusStr){
+                    wtx.Setorderstatus(orderStatusStr);
+                    CWalletDB walletdb(wallet->strWalletFile);
+                    wtx.WriteToDisk(&walletdb);
+                    Q_EMIT updateOrderStatus(rec->getTxID().toStdString());
+                }
+                return isSpent ? tr("Settled") : tr("Paid");
+            }
+        }
+    }
+    return QString("NULL"); 
+}
+
+QVariant DockerOrderTableModel::data(const QModelIndex &index, int role) const
 {
     if(!index.isValid())
         return QVariant();
-    TransactionRecord *rec = static_cast<TransactionRecord*>(index.internalPointer());
+    DockerOrderRecord *rec = static_cast<DockerOrderRecord*>(index.internalPointer());
 
     switch(role)
     {
@@ -572,12 +638,20 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
         {
         case Date:
             return formatTxDate(rec);
-        case Type:
-            return formatTxType(rec);
+        case TxID:
+            // return formatTxType(rec);
+            return rec->getTxID();
         case ToAddress:
             return formatTxToAddress(rec, false);
         case Amount:
+            // LogPrintf("DockerOrderTableModel::DockerOrderTableModel::data start\n");
+            // QString amount = formatOrderStatus(rec);
+            // LogPrintf("DockerOrderTableModel::DockerOrderTableModel::data end\n");
             return formatTxAmount(rec, true, MassGridUnits::separatorAlways);
+        case OrderStatus:
+            return formatOrderStatus(rec,index) ;
+        case Operation:
+            return tr("");
         }
         break;
     case Qt::EditRole:
@@ -588,28 +662,32 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(rec->status.sortKey);
         case Date:
             return rec->time;
-        case Type:
-            return formatTxType(rec);
+        case TxID:
+            // return formatTxType(rec);
+            return rec->getTxID();
         case Watchonly:
             return (rec->involvesWatchAddress ? 1 : 0);
         case ToAddress:
             return formatTxToAddress(rec, true);
         case Amount:
-            return qint64(rec->credit + rec->debit);
+            return formatOrderStatus(rec,index);
+            // return qint64(rec->credit + rec->debit);
+        case Operation:
+            return tr("");
         }
         break;
     case Qt::ToolTipRole:
         return formatTooltip(rec);
     case Qt::TextAlignmentRole:
-        return column_alignments[index.column()];
+        return column_alignments2[index.column()];
     case Qt::ForegroundRole:
         // Use the "danger" color for abandoned transactions
-        if(rec->status.status == TransactionStatus::Abandoned)
+        if(rec->status.status == DockerOrderStatus::Abandoned)
         {
             return COLOR_TX_STATUS_DANGER;
         }
         // Non-confirmed (but not immature) as transactions are grey
-        if(!rec->status.countsForBalance && rec->status.status != TransactionStatus::Immature)
+        if(!rec->status.countsForBalance && rec->status.status != DockerOrderStatus::Immature)
         {
             return COLOR_UNCONFIRMED;
         }
@@ -682,7 +760,7 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant TransactionTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant DockerOrderTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(orientation == Qt::Horizontal)
     {
@@ -692,7 +770,7 @@ QVariant TransactionTableModel::headerData(int section, Qt::Orientation orientat
         }
         else if (role == Qt::TextAlignmentRole)
         {
-            return column_alignments[section];
+            return column_alignments2[section];
         } else if (role == Qt::ToolTipRole)
         {
             switch(section)
@@ -701,8 +779,8 @@ QVariant TransactionTableModel::headerData(int section, Qt::Orientation orientat
                 return tr("Transaction status. Hover over this field to show number of confirmations.");
             case Date:
                 return tr("Date and time that the transaction was received.");
-            case Type:
-                return tr("Type of transaction.");
+            case TxID:
+                return tr("TxID of transaction.");
             case Watchonly:
                 return tr("Whether or not a watch-only address is involved in this transaction.");
             case ToAddress:
@@ -715,10 +793,10 @@ QVariant TransactionTableModel::headerData(int section, Qt::Orientation orientat
     return QVariant();
 }
 
-QModelIndex TransactionTableModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex DockerOrderTableModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    TransactionRecord *data = priv->index(row);
+    DockerOrderRecord *data = priv->index(row);
     if(data)
     {
         return createIndex(row, column, priv->index(row));
@@ -726,88 +804,124 @@ QModelIndex TransactionTableModel::index(int row, int column, const QModelIndex 
     return QModelIndex();
 }
 
-void TransactionTableModel::updateDisplayUnit()
+void DockerOrderTableModel::updateDisplayUnit()
 {
     // emit dataChanged to update Amount column with the current unit
     updateAmountColumnTitle();
     Q_EMIT dataChanged(index(0, Amount), index(priv->size()-1, Amount));
 }
 
-// queue notifications to show a non freezing progress dialog e.g. for rescan
-struct TransactionNotification
-{
-public:
-    TransactionNotification() {}
-    TransactionNotification(uint256 hash, ChangeType status, bool showTransaction):
-        hash(hash), status(status), showTransaction(showTransaction) {}
+// // queue notifications to show a non freezing progress dialog e.g. for rescan
+// struct TransactionNotification
+// {
+// public:
+//     TransactionNotification() {}
+//     TransactionNotification(uint256 hash, ChangeType status, bool showTransaction):
+//         hash(hash), status(status), showTransaction(showTransaction) {}
 
-    void invoke(QObject *ttm)
-    {
-        QString strHash = QString::fromStdString(hash.GetHex());
-        qDebug() << "NotifyTransactionChanged: " + strHash + " status= " + QString::number(status);
-        QMetaObject::invokeMethod(ttm, "updateTransaction", Qt::QueuedConnection,
-                                  Q_ARG(QString, strHash),
-                                  Q_ARG(int, status),
-                                  Q_ARG(bool, showTransaction));
-    }
-private:
-    uint256 hash;
-    ChangeType status;
-    bool showTransaction;
-};
+//     void invoke(QObject *ttm)
+//     {
+//         QString strHash = QString::fromStdString(hash.GetHex());
+//         qDebug() << "NotifyTransactionChanged: " + strHash + " status= " + QString::number(status);
+//         QMetaObject::invokeMethod(ttm, "updateTransaction", Qt::QueuedConnection,
+//                                   Q_ARG(QString, strHash),
+//                                   Q_ARG(int, status),
+//                                   Q_ARG(bool, showTransaction));
+//     }
+// private:
+//     uint256 hash;
+//     ChangeType status;
+//     bool showTransaction;
+// };
 
-static bool fQueueNotifications = false;
-static std::vector< TransactionNotification > vQueueNotifications;
+// static bool fQueueNotifications_DockerOrder = false;
+// static std::vector< TransactionNotification > vQueueNotifications;
 
-static void NotifyTransactionChanged(TransactionTableModel *ttm, CWallet *wallet, const uint256 &hash, ChangeType status)
-{
-    // Find transaction in wallet
-    std::map<uint256, CWalletTx>::iterator mi = wallet->mapWallet.find(hash);
-    // Determine whether to show transaction or not (determine this here so that no relocking is needed in GUI thread)
-    bool inWallet = mi != wallet->mapWallet.end();
-    bool showTransaction = (inWallet && TransactionRecord::showTransaction(mi->second));
+// static void NotifyTransactionChanged(DockerOrderTableModel *ttm, CWallet *wallet, const uint256 &hash, ChangeType status)
+// {
+//     // Find transaction in wallet
+//     std::map<uint256, CWalletTx>::iterator mi = wallet->mapWallet.find(hash);
+//     // Determine whether to show transaction or not (determine this here so that no relocking is needed in GUI thread)
+//     bool inWallet = mi != wallet->mapWallet.end();
+//     bool showTransaction = (inWallet && DockerOrderRecord::showTransaction(mi->second));
 
-    TransactionNotification notification(hash, status, showTransaction);
+//     TransactionNotification notification(hash, status, showTransaction);
 
-    if (fQueueNotifications)
-    {
-        vQueueNotifications.push_back(notification);
-        return;
-    }
-    notification.invoke(ttm);
-}
+//     if (fQueueNotifications)
+//     {
+//         vQueueNotifications.push_back(notification);
+//         return;
+//     }
+//     notification.invoke(ttm);
+// }
 
-static void ShowProgress(TransactionTableModel *ttm, const std::string &title, int nProgress)
-{
-    if (nProgress == 0)
-        fQueueNotifications = true;
+// static void ShowProgress(DockerOrderTableModel *ttm, const std::string &title, int nProgress)
+// {
+//     if (nProgress == 0)
+//         fQueueNotifications = true;
 
-    if (nProgress == 100)
-    {
-        fQueueNotifications = false;
-        if (vQueueNotifications.size() > 10) // prevent balloon spam, show maximum 10 balloons
-            QMetaObject::invokeMethod(ttm, "setProcessingQueuedTransactions", Qt::QueuedConnection, Q_ARG(bool, true));
-        for (unsigned int i = 0; i < vQueueNotifications.size(); ++i)
-        {
-            if (vQueueNotifications.size() - i <= 10)
-                QMetaObject::invokeMethod(ttm, "setProcessingQueuedTransactions", Qt::QueuedConnection, Q_ARG(bool, false));
+//     if (nProgress == 100)
+//     {
+//         fQueueNotifications = false;
+//         if (vQueueNotifications.size() > 10) // prevent balloon spam, show maximum 10 balloons
+//             QMetaObject::invokeMethod(ttm, "setProcessingQueuedTransactions", Qt::QueuedConnection, Q_ARG(bool, true));
+//         for (unsigned int i = 0; i < vQueueNotifications.size(); ++i)
+//         {
+//             if (vQueueNotifications.size() - i <= 10)
+//                 QMetaObject::invokeMethod(ttm, "setProcessingQueuedTransactions", Qt::QueuedConnection, Q_ARG(bool, false));
 
-            vQueueNotifications[i].invoke(ttm);
-        }
-        std::vector<TransactionNotification >().swap(vQueueNotifications); // clear
-    }
-}
+//             vQueueNotifications[i].invoke(ttm);
+//         }
+//         std::vector<TransactionNotification >().swap(vQueueNotifications); // clear
+//     }
+// }
 
-void TransactionTableModel::subscribeToCoreSignals()
+void DockerOrderTableModel::subscribeToCoreSignals()
 {
     // Connect signals to wallet
-    wallet->NotifyTransactionChanged.connect(boost::bind(NotifyTransactionChanged, this, _1, _2, _3));
-    wallet->ShowProgress.connect(boost::bind(ShowProgress, this, _1, _2));
+    // wallet->NotifyTransactionChanged.connect(boost::bind(NotifyTransactionChanged, this, _1, _2, _3));
+    // wallet->ShowProgress.connect(boost::bind(ShowProgress, this, _1, _2));
 }
 
-void TransactionTableModel::unsubscribeFromCoreSignals()
+void DockerOrderTableModel::unsubscribeFromCoreSignals()
 {
     // Disconnect signals from wallet
-    wallet->NotifyTransactionChanged.disconnect(boost::bind(NotifyTransactionChanged, this, _1, _2, _3));
-    wallet->ShowProgress.disconnect(boost::bind(ShowProgress, this, _1, _2));
+    // wallet->NotifyTransactionChanged.disconnect(boost::bind(NotifyTransactionChanged, this, _1, _2, _3));
+    // wallet->ShowProgress.disconnect(boost::bind(ShowProgress, this, _1, _2));
+}
+
+bool DockerOrderTableModel::checkIsSpent(const DockerOrderRecord *rec,int vout_n) const
+{
+
+#ifdef ENABLE_WALLET
+    LOCK2(cs_main, wallet->cs_wallet);
+#else
+    LOCK(cs_main);
+#endif
+    // RPCTypeCheck(params, boost::assign::list_of(UniValue::VSTR)(UniValue::VARR)(UniValue::VARR)(UniValue::VSTR), true);
+
+    CTransaction tx = priv->getTc(const_cast<DockerOrderRecord *>(rec));
+
+    // throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Missing transaction");
+
+    COutPoint outpoint = COutPoint(tx.GetHash(),vout_n);
+    // Fetch previous transactions (inputs):
+    CCoinsView viewDummy;
+    CCoinsViewCache view(&viewDummy);
+    {
+        LOCK(mempool.cs);
+        CCoinsViewCache &viewChain = *pcoinsTip;
+        CCoinsViewMemPool viewMempool(&viewChain, mempool);
+        view.SetBackend(viewMempool); // temporarily switch cache backend to db+mempool view
+        view.AccessCoin(outpoint); // Load entries from viewChain into view; can fail.
+        view.SetBackend(viewDummy); // switch back to avoid locking mempool for too long
+    }
+
+    const Coin& coin = view.AccessCoin(outpoint); //txin.prevout
+    if (coin.IsSpent()) {
+        // LogPrintf("Input not found or already spent\n");
+        return true;
+    }
+
+    return false;
 }

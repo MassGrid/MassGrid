@@ -11,6 +11,8 @@
 #include "paymentserver.h"
 #include "recentrequeststablemodel.h"
 #include "transactiontablemodel.h"
+#include "dockerordertablemodel.h"
+#include "masternodeman.h"
 
 #include "base58.h"
 #include "keystore.h"
@@ -36,6 +38,7 @@
 WalletModel::WalletModel(const PlatformStyle *platformStyle, CWallet *wallet, OptionsModel *optionsModel, QObject *parent) :
     QObject(parent), wallet(wallet), optionsModel(optionsModel), addressTableModel(0),
     transactionTableModel(0),
+    dockerorderTableModel(0),
     recentRequestsTableModel(0),
     cachedBalance(0),
     cachedUnconfirmedBalance(0),
@@ -53,6 +56,7 @@ WalletModel::WalletModel(const PlatformStyle *platformStyle, CWallet *wallet, Op
 
     addressTableModel = new AddressTableModel(wallet, this);
     transactionTableModel = new TransactionTableModel(platformStyle, wallet, this);
+    dockerorderTableModel = new DockerOrderTableModel(platformStyle, wallet, this);
     recentRequestsTableModel = new RecentRequestsTableModel(wallet, this);
 
     // This timer will be fired repeatedly to update the balance
@@ -151,6 +155,8 @@ void WalletModel::pollBalanceChanged()
         checkBalanceChanged();
         if(transactionTableModel)
             transactionTableModel->updateConfirmations();
+        if(dockerorderTableModel)
+            dockerorderTableModel->updateConfirmations();
     }
 }
 
@@ -212,7 +218,7 @@ bool WalletModel::validateAddress(const QString &address)
     return addressParsed.IsValid();
 }
 
-WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransaction &transaction, bool isSendToMasternode, const CCoinControl *coinControl)
+WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransaction &transaction, bool isSendToMasternode, std::string masternodeip, const CCoinControl *coinControl)
 {
     CAmount total = 0;
     bool fSubtractFeeFromAmount = false;
@@ -302,9 +308,21 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
         std::string strFailReason;
 
         CWalletTx *newTx = transaction.getTransaction();
-        if(isSendToMasternode)
-            newTx->Setmasternodeaddress(((setAddress.toList()).at(0)).toStdString().c_str());
-
+        std::string masternodeAddr = setAddress.toList().at(0).toStdString();
+        if(isSendToMasternode){
+            std::string mnoupouint;
+            std::map<COutPoint, CMasternode> mapMasternodes = mnodeman.GetFullMasternodeMap();
+            for(auto it = mapMasternodes.begin();it!=mapMasternodes.end();++it){
+                if(it->second.addr.ToString() == masternodeip){
+                    mnoupouint = it->first.ToStringShort();
+                    break;
+                }
+            }
+            newTx->Setmasternodeoutpoint(mnoupouint);
+            newTx->Setmasternodeaddress(masternodeAddr);
+            newTx->Setmasternodeip(masternodeip);
+            newTx->Setorderstatus("0");
+        }
 
         CReserveKey *keyChange = transaction.getPossibleKeyChange();
 
@@ -441,6 +459,11 @@ AddressTableModel *WalletModel::getAddressTableModel()
 TransactionTableModel *WalletModel::getTransactionTableModel()
 {
     return transactionTableModel;
+}
+
+DockerOrderTableModel *WalletModel::getDockerOrderTableModel()
+{
+    return dockerorderTableModel;
 }
 
 RecentRequestsTableModel *WalletModel::getRecentRequestsTableModel()

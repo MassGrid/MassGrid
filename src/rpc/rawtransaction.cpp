@@ -337,7 +337,6 @@ UniValue getrawtransaction(const UniValue& params, bool fHelp)
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available about transaction");
 
     string strHex = EncodeHexTx(tx);
-
     if (!fVerbose)
         return strHex;
 
@@ -771,11 +770,13 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp)
     vector<unsigned char> txData(ParseHexV(params[0], "argument 1"));
     CDataStream ssData(txData, SER_NETWORK, PROTOCOL_VERSION);
     vector<CMutableTransaction> txVariants;
+
     while (!ssData.empty()) {
         try {
             CMutableTransaction tx;
             ssData >> tx;
             txVariants.push_back(tx);
+            // LogPrintf("=====>signrawtransaction tx.txid:%s\n",tx.GetHash().GetHex());
         }
         catch (const std::exception&) {
             throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "TX decode failed");
@@ -827,26 +828,31 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp)
         EnsureWalletIsUnlocked();
 #endif
 
+    LogPrintf("===>signrawtransaction params.size():%d\n",params.size());
+
     // Add previous txouts given in the RPC call:
     if (params.size() > 1 && !params[1].isNull()) {
         UniValue prevTxs = params[1].get_array();
         for (unsigned int idx = 0; idx < prevTxs.size(); idx++) {
             const UniValue& p = prevTxs[idx];
+            LogPrintf("===>signrawtransaction 2\n");
             if (!p.isObject())
                 throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "expected object with {\"txid'\",\"vout\",\"scriptPubKey\"}");
 
             UniValue prevOut = p.get_obj();
 
             RPCTypeCheckObj(prevOut, boost::assign::map_list_of("txid", UniValue::VSTR)("vout", UniValue::VNUM)("scriptPubKey", UniValue::VSTR));
+            LogPrintf("===>signrawtransaction 3\n");
 
             uint256 txid = ParseHashO(prevOut, "txid");
-
+            LogPrintf("=====>signrawtransaction tx.txid:%s\n",txid.GetHex());
             int nOut = find_value(prevOut, "vout").get_int();
             if (nOut < 0)
                 throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "vout must be positive");
 
             COutPoint out(txid, nOut);
             vector<unsigned char> pkData(ParseHexO(prevOut, "scriptPubKey"));
+            LogPrintf("=====>signrawtransaction scriptPubKey:%s\n",pkData[0]);
             CScript scriptPubKey(pkData.begin(), pkData.end());
 
             {
@@ -863,6 +869,7 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp)
                 newcoin.nHeight = 1;
                 view.AddCoin(out, std::move(newcoin), true);
             }
+            LogPrintf("===>signrawtransaction 4\n");
 
             // if redeemScript given and not using the local wallet (private keys
             // given), add redeemScript to the tempKeystore so it can be signed:
@@ -877,6 +884,7 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp)
             }
         }
     }
+            LogPrintf("===>signrawtransaction 5\n");
 
 #ifdef ENABLE_WALLET
     const CKeyStore& keystore = ((fGivenKeys || !pwalletMain) ? tempKeystore : *pwalletMain);
@@ -901,6 +909,8 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp)
         else
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid sighash param");
     }
+                LogPrintf("===>signrawtransaction 6\n");
+
 
     bool fHashSingle = ((nHashType & ~SIGHASH_ANYONECANPAY) == SIGHASH_SINGLE);
 
@@ -931,6 +941,8 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp)
             TxInErrorToJSON(txin, vErrors, ScriptErrorString(serror));
         }
     }
+                LogPrintf("===>signrawtransaction 7\n");
+
     bool fComplete = vErrors.empty();
 
     UniValue result(UniValue::VOBJ);
