@@ -5,7 +5,7 @@
     <name>AddDockerServiceDlg</name>
     <message>
         <source>Error</source>
-        <translation>错误</translation>
+        <translation type="vanished">错误</translation>
     </message>
     <message>
         <source>Dialog</source>
@@ -61,11 +61,11 @@
     </message>
     <message>
         <source>Wallet option</source>
-        <translation>钱包操作</translation>
+        <translation type="vanished">钱包操作</translation>
     </message>
     <message>
         <source>This option need to unlock your wallet</source>
-        <translation>该操作需要解锁您的钱包</translation>
+        <translation type="vanished">该操作需要解锁您的钱包</translation>
     </message>
     <message>
         <source>Docker option</source>
@@ -85,15 +85,11 @@
     </message>
     <message>
         <source>open Pubkey file</source>
-        <translation>打开公钥文件</translation>
-    </message>
-    <message>
-        <source>Pubkey File (*.pub)</source>
-        <translation></translation>
+        <translation type="vanished">打开公钥文件</translation>
     </message>
     <message>
         <source>open Pubkey file error!</source>
-        <translation>打开公钥文件错误！</translation>
+        <translation type="vanished">打开公钥文件错误！</translation>
     </message>
     <message>
         <source>Create Service</source>
@@ -133,7 +129,7 @@
     </message>
     <message>
         <source>SSH public key is empty!</source>
-        <translation>公钥不能为空！</translation>
+        <translation type="vanished">公钥不能为空！</translation>
     </message>
     <message>
         <source>1.Configuration</source>
@@ -220,18 +216,6 @@
         <translation>完成</translation>
     </message>
     <message>
-        <source>退出</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>正在转账中，退出后可以在订单管理中查询转账结果并进行下一步操作，确认关闭？</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>转账已完成，服务创建中，现在退出将在15-60分钟内收到退款，是否仍旧退出？</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Connect docker network failed!</source>
         <translation>连接虚拟机网络失败！</translation>
     </message>
@@ -245,67 +229,87 @@
     </message>
     <message>
         <source>Create Service Error</source>
-        <translation>创建服务失败</translation>
+        <translation type="vanished">创建服务失败</translation>
     </message>
     <message>
         <source>Can&apos;t receive create service return!</source>
-        <translation>无法获取创建服务结果!</translation>
+        <translation type="vanished">无法获取创建服务结果!</translation>
     </message>
     <message>
         <source>Create Failed</source>
-        <translation>创建失败</translation>
+        <translation type="vanished">创建失败</translation>
     </message>
     <message>
         <source>Transaction Sigtime failed!</source>
-        <translation>交易签名有误!</translation>
+        <translation type="vanished">交易签名有误!</translation>
     </message>
     <message>
         <source>Docker version failed!</source>
-        <translation>虚拟机版本有误!</translation>
+        <translation type="vanished">虚拟机版本有误!</translation>
     </message>
     <message>
         <source>Can&apos;t find service item!</source>
-        <translation>无法找到当前项!</translation>
+        <translation type="vanished">无法找到当前项!</translation>
     </message>
     <message>
         <source>Have&apos;t enough resource can be find!</source>
-        <translation>无法找到足够的服务资源!</translation>
+        <translation type="vanished">无法找到足够的服务资源!</translation>
     </message>
     <message>
         <source>Create failed!</source>
-        <translation>创建失败!</translation>
+        <translation type="vanished">创建失败!</translation>
     </message>
     <message>
         <source>Load docer resource...</source>
-        <translation>加载虚拟机资源...</translation>
+        <translation type="vanished">加载虚拟机资源...</translation>
     </message>
     <message>
         <source>Service name is Empty!</source>
-        <translation>虚拟机名为空!</translation>
+        <translation type="vanished">虚拟机名为空!</translation>
     </message>
     <message>
         <source>Ssh pubkey is Empty!</source>
-        <translation>SSH公钥为空!</translation>
+        <translation type="vanished">SSH公钥为空!</translation>
     </message>
     <message>
         <source>Create Error</source>
-        <translation>创建失败</translation>
+        <translation type="vanished">创建失败</translation>
     </message>
     <message>
         <source>Transaction error:</source>
-        <translation>交易错误:</translation>
+        <translation type="vanished">交易错误:</translation>
     </message>
     <message>
         <source>the window will be close!</source>
-        <translation>当前页面将被关闭!</translation>
+        <translation type="vanished">当前页面将被关闭!</translation>
     </message>
     <message>
         <source>Transaction has been finished,</source>
-        <translation>交易已完成,</translation>
+        <translation type="vanished">交易已完成,</translation>
     </message>
     <message>
         <source>,is need to re-select resource or go into the order list page to apply for a refund?</source>
-        <translation>是否重选资源或者进入订单管理系统申请退款?</translation>
+        <translation type="vanished">是否重选资源或者进入订单管理系统申请退款?</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>退出</translation>
+    </message>
+    <message>
+        <source>After exiting, you can query the transfer result in the order list and proceed to the next step,are you sure close it？</source>
+        <translation>正在转账中，退出后可以在订单管理中查询转账结果并进行下一步操作，确认关闭？</translation>
+    </message>
+    <message>
+        <source>The transfer has been completed and the service is being created. If you exit now, you will receive a refund within 15-60 minutes,are sure close it?</source>
+        <translation>转账已完成，服务创建中，现在退出将在15-60分钟内收到退款，是否退出？</translation>
+    </message>
+    <message>
+        <source>Create Service...</source>
+        <translation>创建服务</translation>
+    </message>
+    <message>
+        <source>re-Create</source>
+        <translation>重新创建</translation>
     </message>
 </context>
 <context>

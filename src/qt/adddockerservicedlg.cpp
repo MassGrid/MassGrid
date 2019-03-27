@@ -23,7 +23,7 @@
 #include "instantx.h"
 #include "dockerserverman.h"
 #include "loadingwin.h"
-#include <Qthread>
+#include <QThread>
 #include <QStringList>
 #include <QEventLoop>
 extern SendCoinsDialog* g_sendCoinsPage;
@@ -139,18 +139,18 @@ void AddDockerServiceDlg::slot_close()
 {
     if(ui->stackedWidget->currentIndex() == 1){
         if(m_txid.size()){
-            CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("退出"),
-            tr("正在转账中，退出后可以在订单管理中查询转账结果并进行下一步操作，确认关闭？"),
-            CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+            CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Quit"),
+                tr("After exiting, you can query the transfer result in the order list and proceed to the next step,are you sure close it？"),
+                CMessageBox::Ok_Cancel, CMessageBox::Cancel);
 
             if(btnRetVal == CMessageBox::Cancel)
                 return;
         }
     }
     else if(ui->stackedWidget->currentIndex() == 2){
-        CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("退出"),
-        tr("转账已完成，服务创建中，现在退出将在15-60分钟内收到退款，是否仍旧退出？"),
-        CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+        CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Quit"),
+                tr("The transfer has been completed and the service is being created. If you exit now, you will receive a refund within 15-60 minutes,are sure close it?"),
+                CMessageBox::Ok_Cancel, CMessageBox::Cancel);
 
         if(btnRetVal == CMessageBox::Cancel){
             close();
@@ -267,14 +267,14 @@ void AddDockerServiceDlg::transactionFinished()
 void AddDockerServiceDlg::doStep3()
 {
     ui->nextButton_3->setEnabled(false);
-    showLoading(QString("Create Service..."));
+    showLoading(tr("Create Service..."));
     if(createDockerService()){
         // dockercluster.AskForDNData();
         QTimer::singleShot(1000,this,SLOT(refreshDNData()));
     }
     else
     {
-        ui->nextButton_3->setText("重新创建");
+        ui->nextButton_3->setText(tr("re-Create"));
         ui->nextButton_3->setEnabled(true);
     }
 }

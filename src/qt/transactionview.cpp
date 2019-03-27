@@ -19,7 +19,6 @@
 #include "massgridgui.h"
 #include "ui_interface.h"
 #include "definecalendar.h"
-// #include "mitemdelegate.h"
 #include <QComboBox>
 #include <QDateTimeEdit>
 #include <QDesktopServices>

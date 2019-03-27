@@ -900,13 +900,37 @@ bool MasternodeList::getVirtualIP(const QString& n2n_localip,QString& virtualIP)
 void MasternodeList::slot_changeN2Nstatus(bool isSelected)
 {
     switchButton->setEnabled(false);
+
+    int curindex = ui->serviceTableWidget->currentRow();
+    
+    if(curindex <0 )
+        return ;
+
+    std::string serviceid = ui->serviceTableWidget->item(curindex,0)->text().toStdString();
+    Service service = dockercluster.dndata.mapDockerServiceLists[serviceid];
+
+    std::vector<std::string> env = service.spec.taskTemplate.containerSpec.env;
+    int count = env.size();
+    QString n2n_name;
+    QString n2n_localip;
+    QString n2n_SPIP;
+    QString virtualIP;
+
+    for (int i = 0; i < count; i++) {
+        QString envStr = QString::fromStdString(env[i]);
+        if (envStr.contains("N2N_NAME")) {
+            n2n_name = envStr.split("=").at(1);
+        } else if (envStr.contains("N2N_SERVERIP")) {
+            n2n_localip = envStr.split("=").at(1);
+        } else if (envStr.contains("N2N_SNIP")) {
+            n2n_SPIP = envStr.split("=").at(1);
+        }
+    }
+
     if(isSelected){
-        QString n2n_SPIP ;//= ui->label_n2n_serverip->text();
-        QString n2n_localip ;//= ui->label_n2n_localip->text();
-        QString n2n_name ;//= ui->label_n2n_name->text();
-        QString virtualIP;
 
         if(!getVirtualIP(n2n_localip,virtualIP)){
+
             switchButton->SetSelected(false);
             CMessageBox::information(this, tr("Edge option"),tr("Get remote ip error!"));
             return ;
