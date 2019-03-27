@@ -7,9 +7,10 @@ LoadingWin::LoadingWin(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_movie = new QMovie("://res/icons/loading.gif");
-    m_movie->setScaledSize(ui->label->size());
-    ui->label->setMovie(m_movie);
+    // m_movie = new QMovie("qrc:/res/icons/loading.gif");
+    
+    // m_movie->setScaledSize(ui->label->size());
+    // ui->label->setMovie(m_movie);
 
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_ShowWithoutActivating,true);
@@ -27,7 +28,7 @@ LoadingWin::~LoadingWin()
 
 void LoadingWin::showLoading(const QString &msg)
 {
-    m_movie->start();
+    // m_movie->start();
     ui->label_msg->setText(msg);
     // setWindowFlags(Qt::Widget | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint);
     show();
@@ -35,12 +36,7 @@ void LoadingWin::showLoading(const QString &msg)
 
 void LoadingWin::hideWin()
 {
-    m_movie->stop();
+    // m_movie->stop();
     setWindowFlags(windowFlags() &~ Qt::WindowStaysOnTopHint); 
     hide();
 }
-
-
-// this->setWindowsFlags(this->getWindowsFlags()  |   Qt::WindowStaysOnTopHint);
-// 取消时：
-// this->setWindowsFlags(this->getWindowsFlags() &~ Qt::WindowStaysOnTopHint);

@@ -181,5 +181,6 @@
         <file>res/pic/pay_enabled.png</file>
         <file>res/icons/docker.png</file>
         <file>res/icons/loading.gif</file>
+        <file>res/icons/loading.png</file>
     </qresource>
 </RCC>

@@ -2,7 +2,7 @@
 #define LOADINGWIN_H
 
 #include <QWidget>
-#include <QMovie>
+// #include <QMovie>
 
 namespace Ui {
 class LoadingWin;
@@ -22,7 +22,7 @@ public:
 private:
     Ui::LoadingWin *ui;
 
-    QMovie *m_movie;
+    // QMovie *m_movie;
 
 };
 
