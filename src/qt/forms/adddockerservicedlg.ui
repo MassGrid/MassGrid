@@ -129,6 +129,14 @@ QFrame#frame_3
     border-color: rgb(186, 186, 186);
     border:1px solid rgb(186, 186, 186);
 	border-radius:3px;
+}
+
+QFrame#frame_8,
+QFrame#frame_9{
+	 min-height:38px;
+   	 border-color: rgb(186, 186, 186);
+    border:1px solid rgb(186, 186, 186);
+	border-radius:3px;
 }</string>
         </property>
         <property name="frameShape">
@@ -888,7 +896,7 @@ QPushButton::!enabled#nextButton_4
 }</string>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="page">
             <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,0,10">
@@ -1230,10 +1238,7 @@ border-radius:3px;
            </widget>
            <widget class="QWidget" name="page_2">
             <property name="styleSheet">
-             <string notr="true">QFrame#frame_8,
-QFrame#frame_9{
-min-height:38px;
-}</string>
+             <string notr="true"/>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <property name="spacing">

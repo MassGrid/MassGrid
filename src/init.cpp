@@ -2076,7 +2076,7 @@ threadGroup.create_thread(&ThreadSnStart);
         return InitError(strNodeError);
 
     // Generate coins in the background
-    GenerateMassGrids(GetBoolArg("-gen", DEFAULT_GENERATE), GetArg("-genproclimit", DEFAULT_GENERATE_THREADS), chainparams, connman);
+    GenerateMassGrids(GetBoolArg("-testnet", false)?false:GetBoolArg("-gen", DEFAULT_GENERATE), GetArg("-genproclimit", DEFAULT_GENERATE_THREADS), chainparams, connman);
 
     // ********************************************************* Step 13: finished
 

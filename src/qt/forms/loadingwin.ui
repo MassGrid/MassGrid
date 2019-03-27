@@ -123,7 +123,7 @@ border-radius:5px;
          <widget class="QLabel" name="label_msg">
           <property name="font">
            <font>
-            <pointsize>13</pointsize>
+            <pointsize>11</pointsize>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
           </property>

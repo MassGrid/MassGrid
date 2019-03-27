@@ -102,7 +102,7 @@ QTabWidget::pane{
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
@@ -745,11 +745,6 @@ border-radius:2px;
           <layout class="QGridLayout" name="gridLayout_orderView"/>
          </item>
         </layout>
-       </widget>
-       <widget class="QWidget" name="tab_3">
-        <attribute name="title">
-         <string/>
-        </attribute>
        </widget>
       </widget>
      </item>

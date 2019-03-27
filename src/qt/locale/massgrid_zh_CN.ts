@@ -5,7 +5,7 @@
     <name>AddDockerServiceDlg</name>
     <message>
         <source>Error</source>
-        <translation type="vanished">错误</translation>
+        <translation>错误</translation>
     </message>
     <message>
         <source>Dialog</source>
@@ -13,7 +13,7 @@
     </message>
     <message>
         <source>Name:</source>
-        <translation type="vanished">容器名:</translation>
+        <translation>容器名:</translation>
     </message>
     <message>
         <source>Image:</source>
@@ -21,7 +21,7 @@
     </message>
     <message>
         <source>Ok</source>
-        <translation type="vanished">确定</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <source>title name</source>
@@ -29,19 +29,19 @@
     </message>
     <message>
         <source>N2N_Name:</source>
-        <translation type="vanished">N2N名:</translation>
+        <translation>N2N名:</translation>
     </message>
     <message>
         <source>GPU Name:</source>
-        <translation type="vanished">GPU名:</translation>
+        <translation>GPU名:</translation>
     </message>
     <message>
         <source>GPU Count:</source>
-        <translation type="vanished">GPU数:</translation>
+        <translation>GPU数:</translation>
     </message>
     <message>
         <source>Memory Byte:</source>
-        <translation type="vanished">内存大小:</translation>
+        <translation>内存大小:</translation>
     </message>
     <message>
         <source>Mb</source>
@@ -49,7 +49,7 @@
     </message>
     <message>
         <source>CPU Count:</source>
-        <translation type="vanished">CPU数量:</translation>
+        <translation>CPU数量:</translation>
     </message>
     <message>
         <source>SSH-PubKey:</source>
@@ -57,15 +57,15 @@
     </message>
     <message>
         <source>create docker service error</source>
-        <translation type="vanished">创建虚拟机服务失败！</translation>
+        <translation>创建虚拟机服务失败！</translation>
     </message>
     <message>
         <source>Wallet option</source>
-        <translation type="vanished">钱包操作</translation>
+        <translation>钱包操作</translation>
     </message>
     <message>
         <source>This option need to unlock your wallet</source>
-        <translation type="vanished">该操作需要解锁您的钱包</translation>
+        <translation>该操作需要解锁您的钱包</translation>
     </message>
     <message>
         <source>Docker option</source>
@@ -73,11 +73,11 @@
     </message>
     <message>
         <source>Create and send SeriveSpec failed!</source>
-        <translation type="vanished">创建虚拟机服务失败！</translation>
+        <translation>创建虚拟机服务失败！</translation>
     </message>
     <message>
         <source>Create and send SeriveSpec success!</source>
-        <translation type="vanished">创建虚拟机服务成功！</translation>
+        <translation>创建虚拟机服务成功！</translation>
     </message>
     <message>
         <source>open pubKey file</source>
@@ -85,11 +85,11 @@
     </message>
     <message>
         <source>open Pubkey file</source>
-        <translation type="vanished">打开公钥文件</translation>
+        <translation>打开公钥文件</translation>
     </message>
     <message>
         <source>open Pubkey file error!</source>
-        <translation type="vanished">打开公钥文件错误！</translation>
+        <translation>打开公钥文件错误！</translation>
     </message>
     <message>
         <source>Create Service</source>
@@ -129,7 +129,7 @@
     </message>
     <message>
         <source>SSH public key is empty!</source>
-        <translation type="vanished">公钥不能为空！</translation>
+        <translation>公钥不能为空！</translation>
     </message>
     <message>
         <source>1.Configuration</source>
@@ -229,67 +229,67 @@
     </message>
     <message>
         <source>Create Service Error</source>
-        <translation type="vanished">创建服务失败</translation>
+        <translation>创建服务失败</translation>
     </message>
     <message>
         <source>Can&apos;t receive create service return!</source>
-        <translation type="vanished">无法获取创建服务结果!</translation>
+        <translation>无法获取创建服务结果!</translation>
     </message>
     <message>
         <source>Create Failed</source>
-        <translation type="vanished">创建失败</translation>
+        <translation>创建失败</translation>
     </message>
     <message>
         <source>Transaction Sigtime failed!</source>
-        <translation type="vanished">交易签名有误!</translation>
+        <translation>交易签名有误!</translation>
     </message>
     <message>
         <source>Docker version failed!</source>
-        <translation type="vanished">虚拟机版本有误!</translation>
+        <translation>虚拟机版本有误!</translation>
     </message>
     <message>
         <source>Can&apos;t find service item!</source>
-        <translation type="vanished">无法找到当前项!</translation>
+        <translation>无法找到当前项!</translation>
     </message>
     <message>
         <source>Have&apos;t enough resource can be find!</source>
-        <translation type="vanished">无法找到足够的服务资源!</translation>
+        <translation>无法找到足够的服务资源!</translation>
     </message>
     <message>
         <source>Create failed!</source>
-        <translation type="vanished">创建失败!</translation>
+        <translation>创建失败!</translation>
     </message>
     <message>
         <source>Load docer resource...</source>
-        <translation type="vanished">加载虚拟机资源...</translation>
+        <translation>加载虚拟机资源...</translation>
     </message>
     <message>
         <source>Service name is Empty!</source>
-        <translation type="vanished">虚拟机名为空!</translation>
+        <translation>虚拟机名为空!</translation>
     </message>
     <message>
         <source>Ssh pubkey is Empty!</source>
-        <translation type="vanished">SSH公钥为空!</translation>
+        <translation>SSH公钥为空!</translation>
     </message>
     <message>
         <source>Create Error</source>
-        <translation type="vanished">创建失败</translation>
+        <translation>创建失败</translation>
     </message>
     <message>
         <source>Transaction error:</source>
-        <translation type="vanished">交易错误:</translation>
+        <translation>交易错误:</translation>
     </message>
     <message>
         <source>the window will be close!</source>
-        <translation type="vanished">当前页面将被关闭!</translation>
+        <translation>当前页面将被关闭!</translation>
     </message>
     <message>
         <source>Transaction has been finished,</source>
-        <translation type="vanished">交易已完成,</translation>
+        <translation>交易已完成,</translation>
     </message>
     <message>
         <source>,is need to re-select resource or go into the order list page to apply for a refund?</source>
-        <translation type="vanished">是否重选资源或者进入订单管理系统申请退款?</translation>
+        <translation>是否重选资源或者进入订单管理系统申请退款?</translation>
     </message>
     <message>
         <source>Quit</source>
@@ -2638,7 +2638,7 @@ Address: %4
     </message>
     <message>
         <source>NodeCount/activeNodeCount</source>
-        <translation type="vanished">节点数/活跃节点数</translation>
+        <translation>节点数/活跃节点数</translation>
     </message>
     <message>
         <source>joinToken</source>
@@ -2654,11 +2654,11 @@ Address: %4
     </message>
     <message>
         <source>ContainerName</source>
-        <translation type="vanished">容器名</translation>
+        <translation>容器名</translation>
     </message>
     <message>
         <source>UserId</source>
-        <translation type="vanished">用户ID</translation>
+        <translation>用户ID</translation>
     </message>
     <message>
         <source>update Service</source>
@@ -2666,7 +2666,7 @@ Address: %4
     </message>
     <message>
         <source>create Service</source>
-        <translation type="vanished">创建服务</translation>
+        <translation>创建服务</translation>
     </message>
     <message>
         <source>Docker Server Detail</source>
@@ -2674,31 +2674,31 @@ Address: %4
     </message>
     <message>
         <source>Container Name:</source>
-        <translation type="vanished">容器名:</translation>
+        <translation>容器名:</translation>
     </message>
     <message>
         <source>Image Name:</source>
-        <translation type="vanished">镜像名:</translation>
+        <translation>镜像名:</translation>
     </message>
     <message>
         <source>User name:</source>
-        <translation type="vanished">登陆名:</translation>
+        <translation>登陆名:</translation>
     </message>
     <message>
         <source>N2N_NAME:</source>
-        <translation type="vanished">N2N名:</translation>
+        <translation>N2N名:</translation>
     </message>
     <message>
         <source>Remote_IP:</source>
-        <translation type="vanished">远程IP:</translation>
+        <translation>远程IP:</translation>
     </message>
     <message>
         <source>N2N_SERVERIP:</source>
-        <translation type="vanished">N2N服务器IP:</translation>
+        <translation>N2N服务器IP:</translation>
     </message>
     <message>
         <source>SSH-PubKey:</source>
-        <translation type="vanished">SSH公钥:</translation>
+        <translation>SSH公钥:</translation>
     </message>
     <message>
         <source>Service Task Detail</source>
@@ -2706,23 +2706,23 @@ Address: %4
     </message>
     <message>
         <source>Task Name:</source>
-        <translation type="vanished">任务名:</translation>
+        <translation>任务名:</translation>
     </message>
     <message>
         <source>CPU Count:</source>
-        <translation type="vanished">CPU数量:</translation>
+        <translation>CPU数量:</translation>
     </message>
     <message>
         <source>Memory Bytes：</source>
-        <translation type="vanished">内存大小:</translation>
+        <translation>内存大小:</translation>
     </message>
     <message>
         <source>GPU Name:</source>
-        <translation type="vanished">GPU名:</translation>
+        <translation>GPU名:</translation>
     </message>
     <message>
         <source>GPU Count:</source>
-        <translation type="vanished">GPU数:</translation>
+        <translation>GPU数:</translation>
     </message>
     <message>
         <source>Docker option</source>
@@ -2730,7 +2730,7 @@ Address: %4
     </message>
     <message>
         <source>connect docker network failed!</source>
-        <translation type="vanished">连接虚拟机网络失败！</translation>
+        <translation>连接虚拟机网络失败！</translation>
     </message>
     <message>
         <source>Edge option</source>
@@ -2746,7 +2746,7 @@ Address: %4
     </message>
     <message>
         <source>Task Status:</source>
-        <translation type="vanished">任务状态:</translation>
+        <translation>任务状态:</translation>
     </message>
     <message>
         <source>Can&apos;t open docker detail page without synced!</source>
@@ -2762,7 +2762,7 @@ Address: %4
     </message>
     <message>
         <source>Task Tip:</source>
-        <translation type="vanished">任务详情提示:</translation>
+        <translation>任务详情提示:</translation>
     </message>
     <message>
         <source>Create completed</source>
@@ -2782,7 +2782,7 @@ Address: %4
     </message>
     <message>
         <source>status</source>
-        <translation type="vanished">状态</translation>
+        <translation>状态</translation>
     </message>
     <message>
         <source>Update List</source>
@@ -2794,19 +2794,19 @@ Address: %4
     </message>
     <message>
         <source>Service Detail</source>
-        <translation type="vanished">服务详情</translation>
+        <translation>服务详情</translation>
     </message>
     <message>
         <source>Service Timeout:</source>
-        <translation type="vanished">服务到期时间:</translation>
+        <translation>服务到期时间:</translation>
     </message>
     <message>
         <source>Task Detail</source>
-        <translation type="vanished">任务详情</translation>
+        <translation>任务详情</translation>
     </message>
     <message>
         <source>Waiting...</source>
-        <translation type="vanished">等待中...</translation>
+        <translation>等待中...</translation>
     </message>
     <message>
         <source>Create Service</source>

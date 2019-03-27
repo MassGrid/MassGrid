@@ -213,12 +213,12 @@ public:
 		assert(genesis.hashMerkleRoot == uint256S("0x010150a88cf516ade90a91f9198bc80eb59a110134c1f84abe75377165f82dc0"));
         vFixedSeeds.clear();
         vSeeds.clear();
-        // vSeeds.push_back(CDNSSeedData("testseed1.massgrid.net", "testseed1.massgrid.net"));
-        // vSeeds.push_back(CDNSSeedData("testseed2.massgrid.net", "testseed2.massgrid.net"));
-        // vSeeds.push_back(CDNSSeedData("testseed3.massgrid.net", "testseed3.massgrid.net"));
-        // vSeeds.push_back(CDNSSeedData("testseed4.massgrid.net", "testseed4.massgrid.net"));
-        // vSeeds.push_back(CDNSSeedData("testseed5.massgrid.net", "testseed5.massgrid.net"));
-        // vSeeds.push_back(CDNSSeedData("testseed6.massgrid.net", "testseed6.massgrid.net"));
+        vSeeds.push_back(CDNSSeedData("testseed1.massgrid.net", "testseed1.massgrid.net"));
+        vSeeds.push_back(CDNSSeedData("testseed2.massgrid.net", "testseed2.massgrid.net"));
+        vSeeds.push_back(CDNSSeedData("testseed3.massgrid.net", "testseed3.massgrid.net"));
+        vSeeds.push_back(CDNSSeedData("testseed4.massgrid.net", "testseed4.massgrid.net"));
+        vSeeds.push_back(CDNSSeedData("testseed5.massgrid.net", "testseed5.massgrid.net"));
+        vSeeds.push_back(CDNSSeedData("testseed6.massgrid.net", "testseed6.massgrid.net"));
 
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,111);
