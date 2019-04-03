@@ -5,9 +5,9 @@
 #include "dockerman.h"
 #include "dockerserverman.h"
 ServiceTimerModule timerModule;
-bool ServiceTimerModule::Flush(){
+bool ServiceTimerModule::Flush(bool isClear){
     LogPrint("timer","ServiceTimerModule::Flush start\n");
-    return dockerman.Update();
+    return dockerman.Update(isClear);
 }
 
 void ServiceTimerModule::UpdateSetAll(){
@@ -96,17 +96,19 @@ void ThreadTimeModule()
     RenameThread("massgrid-sctrl");
     LogPrintf("ThreadTimeModule Start\n");
     int height = chainActive.Height();
+    int64_t count=0;
     while(true)
     {
         if (masternodeSync.IsSynced()){
-            timerModule.Flush();
-            
+            timerModule.Flush(count==0);
+
             timerModule.CheckQue();
 
             if(height != chainActive.Height()){
                 timerModule.SetTlement();
                 height = chainActive.Height();
             }
+            count=(count+1)%(360*12); //12小时
         }
         // Check for stop or if block needs to be rebuilt
         for(int i=0;i<100;i++){

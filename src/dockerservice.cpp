@@ -52,10 +52,11 @@ void Service::ServiceListUpdateAll(const string& serviceData,std::map<std::strin
             UniValue data(dataArry[i]);
             string id = find_value(data,"ID").get_str();
             UniValue tdata = find_value(data,"Version").get_obj();
-            int64_t index=find_value(tdata,"Index").get_int64();
+            int64_t index = find_value(tdata,"Index").get_int64();
             auto it = services.find(id);
-            if(it!=services.end() && it->second.version.index == index)    //if the elem existed and needn't update
+            if(it!=services.end() && it->second.version.index == index){    //if the elem existed and needn't update
                 continue;
+            }
             Service service;
             bool fSuccess = DecodeFromJson(data,service);
             if(fSuccess){
@@ -113,8 +114,9 @@ void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service
             if(serviceit != services.end()){
                 std::map<std::string,Task> &tasks = serviceit->second.mapDockerTaskLists;
                 auto it = tasks.find(id);
-                if(it!=tasks.end() && it->second.version.index == index)    //if the elem existed and needn't update
+                if(it!=tasks.end() && it->second.version.index == index){    //if the elem existed and needn't update
                     continue;
+                }
                 Task task;
                 bool fSuccess = Task::DecodeFromJson(data,task);
                 if(fSuccess){
@@ -122,10 +124,11 @@ void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service
                     tasks[task.ID]=task;
                     serviceidSet.insert(serviceid);
                     //health check timeout 
-                    if((now_time >= (serviceit->second.createdAt + 180) && task.status.state < Config::TaskState::TASKSTATE_RUNNING )||
-                    task.status.state > Config::TaskState::TASKSTATE_RUNNING
-                    )
+                    if(now_time >= (serviceit->second.createdAt + 180) && task.status.state != Config::TaskState::TASKSTATE_RUNNING){
+
+                        LogPrint("timer","Task::TaskListUpdateAll task status %d, will be delete\n",task.status.state);
                         serviceit->second.deleteTime=now_time;
+                    }
                 }
             }
         }

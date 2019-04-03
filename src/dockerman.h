@@ -109,7 +109,7 @@ public:
     map<std::string ,Service> GetServiceFromPubkey(CPubKey pubkey);
     bool ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService = true);
     bool PushMessage(Method mtd,std::string id,std::string pushdata,bool isClearService = true);
-    bool Update(); //update all data;
+    bool Update(bool isClear=true); //update all data;
 
     bool UpdateSwarmAndNodeList();
     bool UpdateServicesList();

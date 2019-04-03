@@ -31,7 +31,7 @@ private:
     std::priority_queue<ServiceListInfo, std::vector<ServiceListInfo> > serviceInfoQue;
     std::set<CWalletTx*> setWalletTx;
 public:
-    bool Flush();
+    bool Flush(bool isClear=true);
     void UpdateSetAll();
     void UpdateSet(CWalletTx & wtx);
     void UpdateQueAll(std::map<std::string, Service>&map);

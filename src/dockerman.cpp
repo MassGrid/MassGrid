@@ -413,8 +413,10 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         LogPrint("docker","CDockerMan::ProcessMessage task state error reset usable serviceid: %s\n",it->first);
                     }
                 }
-                if(it->second.deleteTime <= GetAdjustedTime()) //when the task is always in pedding
+                if(it->second.deleteTime <= GetAdjustedTime()){ //when the task is always in pedding
+                    LogPrintf("CDockerMan::ProcessMessage will be delete usable serviceid: %s\n",it->first);
                     PushMessage(Method::METHOD_SERVICES_DELETE,it->first,"");
+                }
             }
             break;
         }
@@ -459,24 +461,24 @@ void CDockerMan::UpdateIPfromServicelist(std::map<std::string,Service>& map){
         }
     }
 }
-bool CDockerMan::Update(){
+bool CDockerMan::Update(bool isClear){
     LOCK(cs);
     dockernodefilter ndfilter;
 
-    if(!PushMessage(Method::METHOD_NODES_LISTS,"",ndfilter.ToJsonString())){
+    if(!PushMessage(Method::METHOD_NODES_LISTS,"",ndfilter.ToJsonString(),isClear)){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_NODES_LISTS failed! \n");
         return false;
     }
     dockerservicefilter serfilter;
-    if(!PushMessage(Method::METHOD_SERVICES_LISTS,"",serfilter.ToJsonString())){
+    if(!PushMessage(Method::METHOD_SERVICES_LISTS,"",serfilter.ToJsonString(),isClear)){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_SERVICES_LISTS failed! \n");
         return false;
     }
-    if(!PushMessage(Method::METHOD_SWARM_INSPECT,"","")){
+    if(!PushMessage(Method::METHOD_SWARM_INSPECT,"","",isClear)){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_SWARM_INSPECT failed! \n");
         return false;
     }
-    LogPrintf("CDockerMan::Update Succcessful\n");
+    LogPrintf("CDockerMan::Update Succcessful, isClear %d\n",isClear);
     return true;
 }
 bool CDockerMan::UpdateSwarmAndNodeList(){
