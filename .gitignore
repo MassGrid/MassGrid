@@ -114,7 +114,7 @@ qa/pull-tester/tests_config.py
 qa/cache/*
 
 !src/leveldb*/Makefile
-
+!src/n2n/Makefile.in
 .cproject
 .project
 .autotools
