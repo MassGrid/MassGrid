@@ -111,6 +111,8 @@ namespace GUIUtil
     // Determine whether a widget is hidden behind other windows
     bool isObscured(QWidget *w);
 
+    CAmount getTxidAmount(std::string txid);
+
     // Open debug.log
     void openDebugLogfile();
 	

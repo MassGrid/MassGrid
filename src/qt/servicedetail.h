@@ -7,6 +7,8 @@
 class Service;
 class Task;
 
+class WalletModel;
+
 namespace Ui {
 class ServiceDetail;
 }
@@ -20,9 +22,12 @@ public:
     ~ServiceDetail();
 
     void setService(Service& service);
+    void setModel(WalletModel* model);
 
 private:
     Ui::ServiceDetail *ui;
+
+    WalletModel* m_walletModel;
 
     QPoint m_last;
     bool m_mousePress;

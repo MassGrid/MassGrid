@@ -285,7 +285,9 @@ void DockerOrderView::setModel(WalletModel *model)
 
             QString btnText = getOrderBtnText(wtx);
 
-            QPushButton *btn = new QPushButton(btnText,dockerorderView);
+            QPushButton *btn = new QPushButton(btnText,NULL);
+            connect(btn,SIGNAL(destroyed(QObject*)),this,SLOT(slot_BtnDestroyed(QObject*)));
+
             m_mapViewBtns[txidStr] = btn;
             btn->setStyleSheet("QPushButton\n{\n	background-color:rgb(239, 169, 4); color:rgb(255,255,255);\n	border-radius:2px;\n margin:2px; margin-left:6px;margin-right:6px;\n}");
             dockerorderView->setIndexWidget(dockerorderView->model()->index(i,DockerOrderTableModel::Operation),btn);
@@ -294,9 +296,13 @@ void DockerOrderView::setModel(WalletModel *model)
     }
 }
 
+void DockerOrderView::slot_BtnDestroyed(QObject*)
+{
+    LogPrintf("======>DockerOrderView::slot_BtnDestroyed btn delete\n");
+}
+
 void DockerOrderView::addOperationBtn(int index)const
 {
-    LogPrintf("=============>DockerOrderView::addOperationBtn:%d\n",index);
     std::string txidStr = dockerorderView->model()->index(index,DockerOrderTableModel::TxID).data().toString().toStdString();
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
     QString btnText = getOrderBtnText(wtx);
@@ -337,9 +343,7 @@ void DockerOrderView::slot_btnClicked()
 {
     QPushButton *btn = dynamic_cast<QPushButton *>(QObject::sender());
     QModelIndex index = dockerorderView->indexAt(btn->pos());
-    LogPrintf("======>DockerOrderView::slot_btnClicked:%d\n",index.row());
     QString txidStr = dockerorderView->model()->index(index.row(),DockerOrderTableModel::TxID).data().toString();
-    LogPrintf("======>DockerOrderView::slot_btnClicked txidStr:%s\n",txidStr.toStdString());
 
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr.toStdString())];  //watch only not check
 
@@ -347,25 +351,17 @@ void DockerOrderView::slot_btnClicked()
     std::string serviceidStr = wtx.Getserviceid();
     std::string masternodeip = wtx.Getmasternodeip();
     if(orderstatusStr == "1"){
-        // btnText = tr("Order Detail");
-        LogPrintf("======>DockerOrderView::slot_btnClicked: Order Detail\n");
         showOrderDetail(wtx);
     }
     else if(orderstatusStr == "0" && serviceidStr.size()){
-        // btnText = tr("Service Detail");
         Q_EMIT openServicePage(masternodeip);
-        LogPrintf("======>DockerOrderView::slot_btnClicked: Service Detail\n");
     }
     else if(orderstatusStr == "0" && !serviceidStr.size()){
-        // btnText = tr("Create Service");
-        LogPrintf("======>DockerOrderView::slot_btnClicked: Create Service:ip:%s\n",masternodeip);
         Q_EMIT gotoCreateServicePage(masternodeip,txidStr.split("-").at(0).toStdString());
     }
     else
     {
-        // btnText = tr("Get Detail");
-        // LogPrintf("======>DockerOrderView::slot_btnClicked: not find\n");
-        // showDetails();
+        //tr("Get Detail");
     }
 }
 
@@ -467,6 +463,26 @@ void DockerOrderView::changedPrefix(const QString &prefix)
     if(!dockerorderProxyModel)
         return;
     dockerorderProxyModel->setAddressPrefix(prefix);
+}
+
+void DockerOrderView::txidPrefix(const QString &prefix)
+{
+    if(!dockerorderProxyModel)
+        return;
+        
+    int rowCount = dockerorderView->model()->rowCount();
+
+    for(int i=0;i<rowCount;i++){
+        QString txid = dockerorderView->model()->index(i,0).data(DockerOrderTableModel::TxIDRole).toString();
+
+        if(!txid.contains(prefix, Qt::CaseInsensitive)){
+            dockerorderView->hideRow(i);
+        }
+        else{
+            dockerorderView->showRow(i);
+        }
+
+    }    
 }
 
 void DockerOrderView::changedAmount(const QString &amount)

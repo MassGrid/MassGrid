@@ -63,7 +63,7 @@ private:
     void showLoading(const QString & msg);
     void hideLoadingWin();
     void filterResource(std::string);
-    CAmount getTxidAmount(std::string);
+    void initCombobox();
     
 protected:
     void mousePressEvent(QMouseEvent *e);
@@ -90,6 +90,7 @@ private Q_SLOTS:
     void refreshDNData();
     void slot_updateTaskTime(int);
     void slot_hireTimeChanged(int);
+    void slot_gpuComboxCurrentIndexChanged(int);
 
 };
 

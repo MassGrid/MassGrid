@@ -29,6 +29,7 @@ public:
 
         bool SetConnectDockerAddress(std::string address_port);
         bool ProcessDockernodeConnections();
+        bool ProcessDockernodeDisconnections(const std::string& strNode);
         
 
         void AskForDNData();

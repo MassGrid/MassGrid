@@ -34,6 +34,7 @@
 #include "orderdetail.h"
 #include "dockerorderview.h"
 #include "transactionview.h"
+#include "optionsmodel.h"
 
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
 #define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
@@ -110,11 +111,11 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     connect(ui->createServiceBtn, SIGNAL(clicked()), this, SLOT(slot_createServiceBtn()));
     connect(ui->tabWidget, SIGNAL(currentChanged(int)),this,SLOT(slot_curTabPageChanged(int)));
     connect(ui->pushButton_refund,SIGNAL(clicked()),this,SLOT(slot_btn_refund()));
+    connect(ui->lineEdit_searchOrder,SIGNAL(),this,SLOT());
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
     connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
-    connect(ui->pushButton_reloadOrderView,SIGNAL(clicked()),this,SLOT(loadOrderData()));
     timer->start(1000);
 
     fFilterUpdated = false;
@@ -145,10 +146,6 @@ MasternodeList::~MasternodeList()
 
 void MasternodeList::resizeEvent(QResizeEvent *event)
 {
-    // ui->peerWidget->setColumnWidth(PeerTableModel::NetNodeId, 0);
-    // ui->peerWidget->setColumnWidth(PeerTableModel::Address, 170);
-    // ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, 170);
-    // ui->peerWidget->setColumnWidth(PeerTableModel::Ping, 80); 
     resetTableWidgetTitle();
     QWidget::resizeEvent(event);
 }
@@ -202,7 +199,7 @@ void MasternodeList::showDockerDetail(QModelIndex index)
         CMessageBox::information(this, tr("Docker option"),tr("Can't open docker detail page without synced!"));
         return;
     } 
-    
+
     int row = index.row();
     const std::string& address_port = ui->tableWidgetMasternodes->item(row,0)->text().toStdString().c_str();
 
@@ -650,14 +647,33 @@ int MasternodeList::loadServerList()
         QTableWidgetItem *nameItem = new QTableWidgetItem(name);
         QTableWidgetItem *imageItem = new QTableWidgetItem(QString::fromStdString(image));
         QTableWidgetItem *idItem = new QTableWidgetItem(id);
-        QTableWidgetItem *timeoutItem = new QTableWidgetItem(QDateTime::fromTime_t(createdAt).addSecs(14400).toString("yyyy-MM-dd hh:mm:ss"));
+        QTableWidgetItem *timeoutItem;
+
+        CWalletTx& wtx = pwalletMain->mapWallet[service.txid];
+        if(wtx.Getprice().size()){
+            CAmount itemPrice = (CAmount)(QString::fromStdString(wtx.Getprice()).toDouble());
+            CAmount payment = GUIUtil::getTxidAmount(service.txid.ToString())*(-1);
+
+            QString itemPriceStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, itemPrice);
+            QString paymentStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, payment);
+
+            if(itemPriceStr.split(" ").size()==2 && paymentStr.split(" ").size()==2){
+                double itemPrice_num = itemPriceStr.split(" ").at(0).toDouble();
+                double payment_num = paymentStr.split(" ").at(0).toDouble();
+                int msec = (payment_num/itemPrice_num)*3600 + fmod(payment_num,itemPrice_num)*60 ;
+                timeoutItem = new QTableWidgetItem(QDateTime::fromTime_t(createdAt).addSecs(msec).toString("yyyy-MM-dd hh:mm:ss"));
+            }
+            else
+            {
+                timeoutItem = new QTableWidgetItem(QDateTime::fromTime_t(createdAt).addSecs(3600).toString("yyyy-MM-dd hh:mm:ss"));
+            }
+        }
 
         ui->serviceTableWidget->insertRow(count);
         ui->serviceTableWidget->setItem(count, 0, idItem);
         ui->serviceTableWidget->setItem(count, 1, nameItem);
         ui->serviceTableWidget->setItem(count, 2, imageItem);
         ui->serviceTableWidget->setItem(count, 3, timeoutItem);
-        // ui->serviceTableWidget->setItem(count, 2, statusItem);
         ui->serviceTableWidget->setCellWidget(count,4,label);
 
         for(int i=0;i<4;i++)
@@ -684,6 +700,7 @@ void MasternodeList::loadServerDetail(QModelIndex index)
 
 void MasternodeList::disenableDeleteServiceBtn()
 {
+
     ui->deleteServiceBtn->setEnabled(false);
     switchButton->setEnabled(false);
 }
@@ -724,6 +741,8 @@ void MasternodeList::openServiceDetail(QModelIndex index)
     QSize size = MassGridGUI::winSize();
     dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
 
+    dlg.setModel(walletModel);
+
     dlg.setService(service);
     dlg.exec();
 }
@@ -740,6 +759,13 @@ void MasternodeList::slot_deleteServiceBtn()
     
     if(curindex <0 )
         return ;
+
+    CMessageBox::StandardButton retval = CMessageBox::question(this, tr("Delete Service"),
+        tr("Are you sure you want to delete this service?"),
+        CMessageBox::Ok_Cancel,
+        CMessageBox::Cancel);
+    
+    if(retval != CMessageBox::Ok) return;
 
     std::string serviceid = ui->serviceTableWidget->item(curindex,0)->text().toStdString();
     std::string txid = dockercluster.dndata.mapDockerServiceLists[serviceid].txid.ToString();
@@ -787,6 +813,7 @@ void MasternodeList::askDNData()
 void MasternodeList::clearDockerDetail()
 {
     ui->deleteServiceBtn->setEnabled(false);
+    ui->serviceTableWidget->setRowCount(0);
 }
 
 void MasternodeList::slot_createServiceBtn()
@@ -937,7 +964,8 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
         }
 
         bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString().c_str(),
-                                               virtualIP.toStdString().c_str(),
+                                            //    virtualIP.toStdString().c_str(),
+                                               "dhcp:0.0.0.0",
                                                n2n_SPIP.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
                                                
         if(!startThreadFlag){
@@ -977,8 +1005,6 @@ void MasternodeList::jumpToCheckOrder(int index)
 
 void MasternodeList::jumpToCheckService(std::string ip_port)
 {
-    LogPrintf("-=======>MasternodeList::jumpToCheckService :%d\n",ip_port);
-    // std::string ip_port = "118.25.224.128:19443";
     gotoDockerSerivcePage(ip_port);
 }
 
@@ -992,14 +1018,13 @@ void MasternodeList::slot_btn_refund()
     std::string txid,mnip,orderstatus;
     dockerorderView->getCurrentItemTxidAndmnIp(txid,mnip,orderstatus);
 
-    CMessageBox::StandardButton retval = CMessageBox::question(this, tr("退款"),
-        QString("是否对订单\n(Txid为%1...)\n进行退款操作?").arg(QString::fromStdString(txid).mid(20)),
+    CMessageBox::StandardButton retval = CMessageBox::question(this, tr("Refund"),
+        QString("Is need to refund the order by this Txid? \n (Txid:%1...)").arg(QString::fromStdString(txid).mid(20)),
         CMessageBox::Ok_Cancel,
         CMessageBox::Cancel);
 
     if(retval != CMessageBox::Ok) return;
-    LogPrintf("=====>MasternodeList::slot_btn_refund txid:%s\n",txid);
-    LogPrintf("=====>MasternodeList::slot_btn_refund mnip:%s\n",mnip);
+
     deleteService(txid,mnip);
 }
 
@@ -1017,13 +1042,13 @@ void MasternodeList::initDockerOrderView(const PlatformStyle *platformStyle)
     connect(dockerorderView, SIGNAL(deleteService(std::string,std::string)), this, SLOT(deleteService(std::string,std::string)));
     connect(dockerorderView, SIGNAL(openServicePage(std::string)), this, SLOT(jumpToCheckService(std::string)));
     connect(dockerorderView, SIGNAL(gotoCreateServicePage(std::string,std::string)), this, SLOT(jumpToCreateService(std::string,std::string)));
-
+    connect(ui->lineEdit_searchOrder,SIGNAL(textChanged(const QString&)),dockerorderView,SLOT(txidPrefix(const QString&)));
     ui->gridLayout_orderView->addWidget(dockerorderView);
 }
 
 void MasternodeList::dockerOrderViewdoubleClicked(QModelIndex index)
 {
-    LogPrintf("=======>MasternodeList::dockerOrderViewdoubleClicked: index.row:%d\n",index.row());
+
 }
 
 void MasternodeList::dockerOrderViewitemClicked(QModelIndex index)

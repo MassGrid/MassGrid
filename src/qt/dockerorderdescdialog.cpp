@@ -9,6 +9,8 @@
 #include "wallet/wallet.h"
 #include "walletmodel.h"
 #include "optionsmodel.h"
+#include <QFontMetrics>
+#include <QFont>
 
 extern CWallet* pwalletMain;
 
@@ -80,6 +82,15 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
 
     ui->label_price->setText(amount);
 
+    // init address label
+    QFont ft;
+    QFontMetrics fm(ft);
+
+    QString masternodeoutpointStr = fm.elidedText(QString::fromStdString(wtx.Getmasternodeoutpoint()), Qt::ElideRight, ui->label_masternodeoutpoint->width());
+    QString custeraddressStr = fm.elidedText(QString::fromStdString(wtx.Getcusteraddress()), Qt::ElideRight, ui->label_custeraddress->width());
+    QString provideraddressStr = fm.elidedText(QString::fromStdString(wtx.Getprovideraddress()), Qt::ElideRight, ui->label_provideraddress->width());
+    QString masternodeaddressStr = fm.elidedText(QString::fromStdString(wtx.Getmasternodeaddress()), Qt::ElideRight, ui->label_masternodeaddress->width());
+
     ui->label_feerate->setText(QString::fromStdString(wtx.Getfeerate()));
     ui->label_cpuname->setText(QString::fromStdString(wtx.Getcpuname()));
     ui->label_cpucount->setText(QString::fromStdString(wtx.Getcpucount()));
@@ -87,12 +98,14 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
     ui->label_memcount->setText(QString::fromStdString(wtx.Getmemcount()));
     ui->label_gpuname->setText(QString::fromStdString(wtx.Getgpuname()));
     ui->label_gpucount->setText(QString::fromStdString(wtx.Getgpucount()));
-    ui->label_custeraddress->setText(QString::fromStdString(wtx.Getcusteraddress()));
-    ui->label_provideraddress->setText(QString::fromStdString(wtx.Getprovideraddress()));
     ui->label_taskstate->setText(QString::fromStdString(wtx.Gettaskstate()));
     ui->label_tlementtxid->setText(QString::fromStdString(wtx.Gettlementtxid()));
-    ui->label_masternodeaddress->setText(QString::fromStdString(wtx.Getmasternodeaddress()));
     ui->label_masternodeip->setText(QString::fromStdString(wtx.Getmasternodeip()));
-    ui->label_masternodeoutpoint->setText(QString::fromStdString(wtx.Getmasternodeoutpoint()));
+
+    ui->label_masternodeoutpoint->setText(masternodeoutpointStr);
+    ui->label_custeraddress->setText(custeraddressStr);
+    ui->label_provideraddress->setText(provideraddressStr);
+    ui->label_masternodeaddress->setText(masternodeaddressStr);
+
     ui->label_orderstatus->setText(QString::fromStdString(wtx.Getorderstatus())= "1" ? tr("Settled") : tr("Paid"));
 }

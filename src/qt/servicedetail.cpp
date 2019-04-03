@@ -3,6 +3,14 @@
 #include "dockerserverman.h"
 #include "ui_servicedetail.h"
 #include <QDateTime>
+#include "wallet/wallet.h"
+#include "walletmodel.h"
+#include "massgridunits.h"
+#include "guiutil.h"
+#include "optionsmodel.h"
+#include <math.h>
+
+extern CWallet* pwalletMain;
 
 const char* strTaskStateTmp2[] = {"new", "allocated", "pending", "assigned",
     "accepted", "preparing", "ready", "starting",
@@ -101,7 +109,6 @@ void ServiceDetail::updateServiceDetail(Service& service)
         }
     }
 
-    ui->label_serviceTimeout->setText(QDateTime::fromTime_t(createdAt).addSecs(14400).toString("yyyy-MM-dd hh:mm:ss t"));
     ui->label_n2n_serverip->setText(n2n_SPIP);
     ui->label_n2n_name->setText(n2n_name);
     ui->label_n2n_localip->setText(n2n_localip);
@@ -110,7 +117,50 @@ void ServiceDetail::updateServiceDetail(Service& service)
     ui->label_name->setText(QString::fromStdString(name));
     ui->label_image->setText(QString::fromStdString(image));
     ui->label_user->setText(QString::fromStdString(userName));
+
+    CWalletTx& wtx = pwalletMain->mapWallet[service.txid];
+    if(wtx.Getprice().size()){
+        CAmount itemPrice = (CAmount)(QString::fromStdString(wtx.Getprice()).toDouble());
+
+        CAmount payment = GUIUtil::getTxidAmount(service.txid.ToString())*(-1);
+
+        QString itemPriceStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, itemPrice);
+        QString paymentStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, payment);
+
+        if(itemPriceStr.split(" ").size()==2 && paymentStr.split(" ").size()==2){
+            double itemPrice_num = itemPriceStr.split(" ").at(0).toDouble();
+            double payment_num = paymentStr.split(" ").at(0).toDouble();
+
+            int msec = (payment_num/itemPrice_num)*3600 + fmod(payment_num,itemPrice_num)*60 ;
+
+            ui->label_serviceTimeout->setText(QDateTime::fromTime_t(createdAt).addSecs(msec).toString("yyyy-MM-dd hh:mm:ss"));
+        }
+        else
+        {
+            ui->label_serviceTimeout->setText(QDateTime::fromTime_t(createdAt).addSecs(3600).toString("yyyy-MM-dd hh:mm:ss"));
+        }
+    }
 }
+
+void ServiceDetail::setModel(WalletModel* model)
+{
+    m_walletModel = model;
+}
+
+// QString MassGridUnits::formatWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators)
+// {
+//     return format(unit, amount, plussign, separators) + QString(" ") + name(unit);
+// }
+
+// QString MassGridUnits::formatHtmlWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators)
+// {
+//     QString str(formatWithUnit(unit, amount, plussign, separators));
+//     str.replace(QChar(THIN_SP_CP), QString(THIN_SP_HTML));
+//     return QString("<span style='white-space: nowrap;'>%1</span>").arg(str);
+// }
+
+// QString MassGridUnits::floorWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators)
+
 
 void ServiceDetail::updateTaskDetail(std::map<std::string, Task>& mapDockerTasklists, int& taskStatus)
 {

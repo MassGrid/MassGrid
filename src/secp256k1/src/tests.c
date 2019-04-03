@@ -18,10 +18,10 @@
 #include "testrand_impl.h"
 
 #ifdef ENABLE_OPENSSL_TESTS
-#include "openssl/bn.h"
-#include "openssl/ec.h"
-#include "openssl/ecdsa.h"
-#include "openssl/obj_mac.h"
+#include <openssl/bn.h>
+#include <openssl/ec.h>
+#include <openssl/ecdsa.h>
+#include <openssl/obj_mac.h>
 #endif
 
 #include "contrib/lax_der_parsing.c"
