@@ -1,4 +1,20 @@
-/* (c) 2009 Richard Andrews <andrews@ntop.org> */
+/**
+ * (C) 2007-18 - ntop.org and contributors
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not see see <http://www.gnu.org/licenses/>
+ *
+ */
 
 #include "n2n.h"
 #include "n2n_transforms.h"
@@ -13,7 +29,8 @@ static int transop_encode_null( n2n_trans_op_t * arg,
                                 uint8_t * outbuf,
                                 size_t out_len,
                                 const uint8_t * inbuf,
-                                size_t in_len )
+                                size_t in_len,
+                                const uint8_t * peer_mac)
 {
     int retval = -1;
 
@@ -35,7 +52,8 @@ static int transop_decode_null( n2n_trans_op_t * arg,
                                 uint8_t * outbuf,
                                 size_t out_len,
                                 const uint8_t * inbuf,
-                                size_t in_len )
+                                size_t in_len,
+                                const uint8_t * peer_mac)
 {
     int retval = -1;
 

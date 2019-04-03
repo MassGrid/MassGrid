@@ -1,4 +1,20 @@
-/* (c) 2009 Richard Andrews <andrews@ntop.org> */
+/**
+ * (C) 2007-18 - ntop.org and contributors
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not see see <http://www.gnu.org/licenses/>
+ *
+ */
 
 /** Routines for encoding and decoding n2n packets on the wire.
  *
@@ -245,6 +261,10 @@ int encode_REGISTER( uint8_t * base,
     retval += encode_buf( base, idx, reg->cookie, N2N_COOKIE_SIZE );
     retval += encode_mac( base, idx, reg->srcMac );
     retval += encode_mac( base, idx, reg->dstMac );
+    if ( 0 != reg->sock.family )
+    {
+        retval += encode_sock( base, idx, &(reg->sock) );
+    }
 
     return retval;
 }
@@ -261,6 +281,11 @@ int decode_REGISTER( n2n_REGISTER_t * reg,
     retval += decode_mac( reg->srcMac, base, rem, idx );
     retval += decode_mac( reg->dstMac, base, rem, idx );
 
+    if ( cmn->flags & N2N_FLAGS_SOCKET )
+    {
+        retval += decode_sock( &(reg->sock), base, rem, idx );
+    }
+
     return retval;
 }
 
@@ -271,14 +296,10 @@ int encode_REGISTER_SUPER( uint8_t * base,
 {
     int retval=0;
     retval += encode_common( base, idx, common );
-    retval += encode_uint16( base, idx, reg->aflags );
-    retval += encode_uint16( base, idx, reg->timeout );
     retval += encode_buf( base, idx, reg->cookie, N2N_COOKIE_SIZE );
     retval += encode_mac( base, idx, reg->edgeMac );
     retval += encode_uint16( base, idx, 0 ); /* NULL auth scheme */
     retval += encode_uint16( base, idx, 0 ); /* No auth data */
-    if(reg->aflags & N2N_AFLAGS_LOCAL_SOCKET)
-        retval += encode_sock( base, idx, &(reg->local_sock) );
 
     return retval;
 }
@@ -291,78 +312,11 @@ int decode_REGISTER_SUPER( n2n_REGISTER_SUPER_t * reg,
 {
     size_t retval=0;
     memset( reg, 0, sizeof(n2n_REGISTER_SUPER_t) );
-    retval += decode_uint16( &(reg->aflags), base, rem, idx );
-    retval += decode_uint16( &(reg->timeout), base, rem, idx );
     retval += decode_buf( reg->cookie, N2N_COOKIE_SIZE, base, rem, idx );
     retval += decode_mac( reg->edgeMac, base, rem, idx );
     retval += decode_uint16( &(reg->auth.scheme), base, rem, idx );
     retval += decode_uint16( &(reg->auth.toksize), base, rem, idx );
     retval += decode_buf( reg->auth.token, reg->auth.toksize, base, rem, idx );
-    if(reg->aflags & N2N_AFLAGS_LOCAL_SOCKET)
-        retval += decode_sock( &(reg->local_sock), base, rem, idx );
-
-    return retval;
-}
-
-int encode_PEER_INFO( uint8_t * base, 
-                      size_t * idx,
-                      const n2n_common_t * common, 
-                      const n2n_PEER_INFO_t * pi )
-{
-    int retval=0;
-    retval += encode_common( base, idx, common );
-    retval += encode_uint16( base, idx, pi->aflags );
-    retval += encode_uint16( base, idx, pi->timeout );
-    retval += encode_mac( base, idx, pi->mac );
-    retval += encode_sock( base, idx, pi->sockets );
-    if(pi->aflags & N2N_AFLAGS_LOCAL_SOCKET)
-        retval += encode_sock( base, idx, pi->sockets+1 );
-
-    return retval;
-}
-
-int decode_PEER_INFO( n2n_PEER_INFO_t * pi,
-                      const n2n_common_t * cmn, /* info on how to interpret it */
-                      const uint8_t * base,
-                      size_t * rem,
-                      size_t * idx )
-{
-    size_t retval=0;
-    memset( pi, 0, sizeof(n2n_PEER_INFO_t) );
-    retval += decode_uint16( &(pi->aflags), base, rem, idx );
-    retval += decode_uint16( &(pi->timeout), base, rem, idx );
-    retval += decode_mac( pi->mac, base, rem, idx );
-    retval += decode_sock( pi->sockets, base, rem, idx );
-    if(pi->aflags & N2N_AFLAGS_LOCAL_SOCKET)
-        retval += decode_sock( pi->sockets+1, base, rem, idx );
-
-    return retval;
-}
-
-int encode_QUERY_PEER( uint8_t * base, 
-                       size_t * idx,
-                       const n2n_common_t * common, 
-                       const n2n_QUERY_PEER_t * qp )
-{
-    int retval=0;
-    retval += encode_common( base, idx, common );
-    retval += encode_mac( base, idx, qp->srcMac );
-    retval += encode_mac( base, idx, qp->targetMac );
-
-    return retval;
-}
-
-int decode_QUERY_PEER( n2n_QUERY_PEER_t * qp,
-                       const n2n_common_t * cmn, /* info on how to interpret it */
-                       const uint8_t * base,
-                       size_t * rem,
-                       size_t * idx )
-{
-    size_t retval=0;
-    memset( qp, 0, sizeof(n2n_QUERY_PEER_t) );
-    retval += decode_mac( qp->srcMac, base, rem, idx );
-    retval += decode_mac( qp->targetMac, base, rem, idx );
-
     return retval;
 }
 
@@ -376,6 +330,14 @@ int encode_REGISTER_ACK( uint8_t * base,
     retval += encode_buf( base, idx, reg->cookie, N2N_COOKIE_SIZE );
     retval += encode_mac( base, idx, reg->dstMac );
     retval += encode_mac( base, idx, reg->srcMac );
+
+    /* The socket in REGISTER_ACK is the socket from which the REGISTER
+     * arrived. This is sent back to the sender so it knows what its public
+     * socket is. */
+    if ( 0 != reg->sock.family )
+    {
+        retval += encode_sock( base, idx, &(reg->sock) );
+    }
 
     return retval;
 }
@@ -391,6 +353,14 @@ int decode_REGISTER_ACK( n2n_REGISTER_ACK_t * reg,
     retval += decode_buf( reg->cookie, N2N_COOKIE_SIZE, base, rem, idx );
     retval += decode_mac( reg->dstMac, base, rem, idx );
     retval += decode_mac( reg->srcMac, base, rem, idx );
+
+    /* The socket in REGISTER_ACK is the socket from which the REGISTER
+     * arrived. This is sent back to the sender so it knows what its public
+     * socket is. */
+    if ( cmn->flags & N2N_FLAGS_SOCKET )
+    {
+        retval += decode_sock( &(reg->sock), base, rem, idx );
+    }
 
     return retval;
 }
@@ -472,6 +442,12 @@ int encode_PACKET( uint8_t * base,
 {
     int retval=0;
     retval += encode_common( base, idx, common );
+    retval += encode_mac( base, idx, pkt->srcMac );
+    retval += encode_mac( base, idx, pkt->dstMac );
+    if ( 0 != pkt->sock.family )
+    {
+        retval += encode_sock( base, idx, &(pkt->sock) );
+    }
     retval += encode_uint16( base, idx, pkt->transform );
 
     return retval;
@@ -486,22 +462,16 @@ int decode_PACKET( n2n_PACKET_t * pkt,
 {
     size_t retval=0;
     memset( pkt, 0, sizeof(n2n_PACKET_t) );
+    retval += decode_mac( pkt->srcMac, base, rem, idx );
+    retval += decode_mac( pkt->dstMac, base, rem, idx );
+
+    if ( cmn->flags & N2N_FLAGS_SOCKET )
+    {
+        retval += decode_sock( &(pkt->sock), base, rem, idx );
+    }
+
     retval += decode_uint16( &(pkt->transform), base, rem, idx );
 
     return retval;
 }
 
-void decode_ETHFRAMEHDR( n2n_ETHFRAMEHDR_t * eth,
-                        const uint8_t * base )
-{
-    memcpy( eth->dstMac, base, N2N_MAC_SIZE );
-    base += N2N_MAC_SIZE;
-    memcpy( eth->srcMac, base, N2N_MAC_SIZE );
-}
-
-int copy_ETHFRAMEHDR(uint8_t * base,
-                     uint8_t * pkt)
-{
-    memcpy( base, pkt, ETH_FRAMEHDRSIZE);
-    return ETH_FRAMEHDRSIZE;
-}

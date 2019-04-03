@@ -1,16 +1,3 @@
-New install procedure, using cmake.
-
-Customize CMakeLists.txt
-
-$ cmake ./
-$ make
-
-
-
-
-!!! DEPRECATED !!!
-
-
 INSTALL
 
 To build the programs:

@@ -18,7 +18,7 @@ MASSGRID_CONFIG_INCLUDES=-I$(builddir)/config
 MASSGRID_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
 
 MASSGRID_INCLUDES += -I$(srcdir)/secp256k1/include
-MASSGRID_INCLUDES += -I$(srcdir)/n2n/include
+MASSGRID_INCLUDES += -I$(srcdir)/n2n/include -I$(srcdir)/n2n/src
 MASSGRID_INCLUDES += $(UNIVALUE_CFLAGS)
 
 LIBMASSGRID_SERVER=libmassgrid_server.a
@@ -29,7 +29,7 @@ LIBMASSGRID_UTIL=libmassgrid_util.a
 LIBMASSGRID_CRYPTO=crypto/libmassgrid_crypto.a
 LIBMASSGRIDQT=qt/libmassgridqt.a
 LIBSECP256K1=secp256k1/libsecp256k1.la
-LIBN2N=n2n/libn2n.la
+LIBN2N=n2n/libn2n.a
 
 $(LIBSECP256K1): $(wildcard secp256k1/src/*) $(wildcard secp256k1/include/*)
 	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -C $(@D) $(@F)

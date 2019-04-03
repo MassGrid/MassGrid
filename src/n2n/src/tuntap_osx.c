@@ -1,5 +1,5 @@
-/*
- * (C) 2007-09 - Luca Deri <deri@ntop.org>
+/**
+ * (C) 2007-18 - ntop.org and contributors
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,21 +13,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not see see <http://www.gnu.org/licenses/>
+ *
  */
 
 #include "n2n.h"
 
-#ifdef _DARWIN_
+#ifdef __APPLE__
 
-void tuntap_close(tuntap_dev *device);
+void tun_close(tuntap_dev *device);
 
 /* ********************************** */
 
 #define N2N_OSX_TAPDEVICE_SIZE 32
-int tuntap_open(tuntap_dev *device /* ignored */,
-                char *dev,
+int tuntap_open(tuntap_dev *device /* ignored */, 
+                char *dev, 
                 const char *address_mode, /* static or dhcp */
-                char *device_ip,
+                char *device_ip, 
                 char *device_mask,
                 const char * device_mac,
 		int mtu) {
@@ -43,9 +44,10 @@ int tuntap_open(tuntap_dev *device /* ignored */,
       break;
     }
   }
-
+  
   if(device->fd < 0) {
-    traceEvent(TRACE_ERROR, "Unable to open tap device");
+    traceEvent(TRACE_ERROR, "Unable to open tap device %s", tap_device);
+    traceEvent(TRACE_ERROR, "Please read https://github.com/ntop/n2n/blob/dev/doc/n2n_on_MacOS.txt");
     return(-1);
   } else {
     char buf[256];
@@ -85,7 +87,7 @@ int tuntap_open(tuntap_dev *device /* ignored */,
       buf[0] = 0;
       fgets(buf, sizeof(buf), fd);
       pclose(fd);
-
+      
       if(buf[0] == '\0') {
 	traceEvent(TRACE_ERROR, "Unable to read tap%d interface MAC address");
 	exit(0);
@@ -129,4 +131,4 @@ void tuntap_get_address(struct tuntap_dev *tuntap)
 {
 }
 
-#endif /* _DARWIN_ */
+#endif /* __APPLE__ */

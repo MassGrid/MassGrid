@@ -1,5 +1,5 @@
-/*
- * (C) 2007-09 - Luca Deri <deri@ntop.org>
+/**
+ * (C) 2007-18 - ntop.org and contributors
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,13 +13,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not see see <http://www.gnu.org/licenses/>
+ *
  */
 
 #include "n2n.h"
 
 #ifdef __FreeBSD__
 
-void tun_close(tuntap_dev *device);
+void tuntap_close(tuntap_dev *device);
 
 /* ********************************** */
 
@@ -77,7 +78,7 @@ int tuntap_open(tuntap_dev *device /* ignored */,
 
     fd = popen(buf, "r");
     if(fd < 0) {
-      tun_close(device);
+      tuntap_close(device);
       return(-1);
     } else {
       int a, b, c, d, e, f;
