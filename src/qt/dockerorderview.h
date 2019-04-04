@@ -148,6 +148,11 @@ public Q_SLOTS:
     void addOperationBtn(int)const;
     void deleteTransaction(int)const;
     void updateAllOperationBtn();
+    void txidPrefix(const QString &prefix);
+
+    void slot_BtnDestroyed(QObject*);
+
+
 };
 
 #endif // MASSGRID_QT_DOCKERORDERVIEW_H

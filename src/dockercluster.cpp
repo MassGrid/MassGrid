@@ -42,6 +42,17 @@ bool Cluster::ProcessDockernodeConnections(){
     return true;
 }
 
+bool Cluster::ProcessDockernodeDisconnections(const std::string& strNode)
+{
+    LogPrint("dockernode","Cluster::ProcessDockernodeDisconnections Started\n");
+
+    if(!g_connman->DisconnectNode(strNode)){
+        LogPrintf("Cluster::ProcessDockernodeDisconnections Couldn't disconnect dockernode");
+        return false;
+    }
+    return true;
+}
+
 void Cluster::AskForDNData()
 {
     LogPrint("dockernode","Cluster::AskForDNData Started\n");

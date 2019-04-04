@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>570</height>
+    <height>586</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -137,6 +137,16 @@ QFrame#frame_9{
    	 border-color: rgb(186, 186, 186);
     border:1px solid rgb(186, 186, 186);
 	border-radius:3px;
+}
+
+QPushButton#openPubKeyButton,
+QPushButton#minAmountButton{
+width:130;
+height:28;
+background-color: rgb(239, 169, 4);
+color: rgb(255, 255, 255);
+border:hidden;
+border-radius:3px;
 }</string>
         </property>
         <property name="frameShape">
@@ -896,7 +906,7 @@ QPushButton::!enabled#nextButton_4
 }</string>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="page">
             <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,0,10">
@@ -917,7 +927,7 @@ QPushButton::!enabled#nextButton_4
                   </size>
                  </property>
                  <property name="text">
-                  <string> Service Name:</string>
+                  <string>Service Name:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1059,14 +1069,7 @@ QPushButton::!enabled#nextButton_4
                   </size>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">QPushButton#openPubKeyButton{
-width:130;
-height:28;
-background-color: rgb(239, 169, 4);
-color: rgb(255, 255, 255);
-border:hidden;
-border-radius:3px;
-}</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>open pubKey file</string>
@@ -1077,6 +1080,11 @@ border-radius:3px;
              </item>
              <item>
               <widget class="QFrame" name="frame_filter">
+               <property name="styleSheet">
+                <string notr="true">QFrame#frame_filter{
+border:hidden;
+}</string>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
@@ -1085,7 +1093,7 @@ border-radius:3px;
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <property name="spacing">
-                 <number>2</number>
+                 <number>3</number>
                 </property>
                 <property name="leftMargin">
                  <number>0</number>
@@ -1110,117 +1118,53 @@ border-radius:3px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="comboBox_image_2">
+                 <widget class="QComboBox" name="comboBox_gpuType">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
-                  <item>
-                   <property name="text">
-                    <string>10.0-base-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-runtime-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-cudnn7-runtime-ubuntu16.04 </string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-devel-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-cudnn7-devel-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-massgridminer-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-ethereumminer-ubuntu16.04</string>
-                   </property>
-                  </item>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_5">
-                  <property name="text">
-                   <string>CPU 类型:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="comboBox_image_3">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <item>
-                   <property name="text">
-                    <string>10.0-base-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-runtime-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-cudnn7-runtime-ubuntu16.04 </string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-devel-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-cudnn7-devel-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-massgridminer-ubuntu16.04</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10.0-ethereumminer-ubuntu16.04</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer">
+                 <spacer name="horizontalSpacer_30">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>114</width>
+                    <width>40</width>
                     <height>20</height>
                    </size>
                   </property>
                  </spacer>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="lineEdit_minAmount">
+                  <property name="placeholderText">
+                   <string>min amount(tMGD)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="minAmountButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Search</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>

@@ -62,13 +62,15 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(slot_close()));
     connect(ui->openPubKeyButton,SIGNAL(clicked()),this,SLOT(slot_openPubKeyFile()));
     connect(ui->horizontalSlider,SIGNAL(valueChanged(int)),this,SLOT(slot_hireTimeChanged(int)));
-
+    connect(ui->minAmountButton,SIGNAL(clicked()),this,SLOT(slot_searchMinAmount()));
+    connect(ui->lineEdit_minAmount,SIGNAL(textChanged(QString)),this,SLOT(slot_minAmounttextChanged(QString)));
     
     connect(ui->nextButton_2,SIGNAL(clicked()),this,SLOT(doTransaction()));
     connect(ui->nextButton_3,SIGNAL(clicked()),this,SLOT(doStep3()));
     connect(ui->nextButton_4,SIGNAL(clicked()),this,SLOT(doStep4()));
+    connect(ui->comboBox_gpuType,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_gpuComboxCurrentIndexChanged(int)));
 
-    ui->frame_filter->hide();
+    // ui->frame_filter->hide();
     ui->stackedWidget->setCurrentIndex(0);
 
     ui->tableWidget_resource->verticalHeader()->setVisible(false);
@@ -245,7 +247,6 @@ void AddDockerServiceDlg::doTransaction()
 
 void AddDockerServiceDlg::slot_updateTaskTime(int index)
 {
-    LogPrintf("======>AddDockerServiceDlg::slot_updateTaskTime %d\n",index);
     ui->label_refreshPayStatus->setText(QString::number(index));
 }
 
@@ -263,17 +264,27 @@ void AddDockerServiceDlg::transactionFinished()
     doStep3();
 }
 
-
 void AddDockerServiceDlg::doStep3()
 {
     ui->nextButton_3->setEnabled(false);
     showLoading(tr("Create Service..."));
     if(createDockerService()){
+        //do not need to ask dndata
         // dockercluster.AskForDNData();
         QTimer::singleShot(1000,this,SLOT(refreshDNData()));
     }
     else
     {
+
+        QString msg = tr("Transaction has been finished,") + tr("create service failed") + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
+
+        CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
+            msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+        if(btnRetVal == CMessageBox::Cancel){
+            close();
+        }
+        
         ui->nextButton_3->setText(tr("re-Create"));
         ui->nextButton_3->setEnabled(true);
     }
@@ -298,14 +309,40 @@ void AddDockerServiceDlg::slot_openPubKeyFile()
         return ;
     }
     ui->textEdit_sshpubkey->setText(file.readAll());
+}
+
+void AddDockerServiceDlg::slot_searchMinAmount()
+{
+    double payment = ui->lineEdit_minAmount->text().toDouble();
+    int rowCount = ui->tableWidget_resource->rowCount();
+
+    for(int i=0;i<rowCount;i++){
+        QString itemText = ui->tableWidget_resource->item(i,1)->text();
+        QString amountStr = MassGridUnits::formatWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(),itemText.toDouble());
+        double amount = QString(amountStr.split(" ").at(0)).toDouble();
+
+        if(payment - amount < 0){
+            ui->tableWidget_resource->hideRow(i);
+        }
+    }
+}
+
+void AddDockerServiceDlg::slot_minAmounttextChanged(QString text)
+{
+    if(!text.isEmpty())
+        return ;
     
+    int rowCount = ui->tableWidget_resource->rowCount();
+
+    for(int i=0;i<rowCount;i++){
+        ui->tableWidget_resource->showRow(i);
+    }
 }
 
 void AddDockerServiceDlg::setaddr_port(const std::string& addr_port)
 {
     m_addr_port = addr_port; 
     LogPrintf("AddDockerServiceDlg::setaddr_port m_addr_port:%s\n",addr_port);
-
 }
 
 void AddDockerServiceDlg::settxid(const std::string& txid)
@@ -589,8 +626,14 @@ void AddDockerServiceDlg::hideLoadingWin()
 
 void AddDockerServiceDlg::askForDNData()
 {
-    showLoading(tr("Load docer resource..."));
+    LogPrintf("===>AddDockerServiceDlg::askForDNData:1\n");
 
+    if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+        return ;
+    }
+
+    showLoading(tr("Load docer resource..."));
     dockercluster.AskForDNData();
     refreshServerList();
 }
@@ -614,34 +657,16 @@ void AddDockerServiceDlg::refreshServerList()
     }
 }
 
-CAmount AddDockerServiceDlg::getTxidAmount(std::string txid)
-{
-    CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
-
-    isminefilter filter = ISMINE_SPENDABLE;
-    CAmount nCredit = wtx.GetCredit(filter);
-    CAmount nDebit = wtx.GetDebit(filter);
-    CAmount nNet = nCredit - nDebit;
-    CAmount nFee = (wtx.IsFromMe(filter) ? wtx.GetValueOut() - nDebit : 0);
-    CAmount payment = nNet - nFee;
-
-    return payment;
-}
-
 void AddDockerServiceDlg::filterResource(std::string txid)
 {
-    CAmount payment = getTxidAmount(txid)*(-1);
-    LogPrintf("=====>AddDockerServiceDlg::filterResource payment:%d\n",payment*1);
+    CAmount payment = GUIUtil::getTxidAmount(txid)*(-1);
     int rowCount = ui->tableWidget_resource->rowCount();
 
     for(int i=0;i<rowCount;i++){
         // ResourceItem* item = qobject_cast<ResourceItem *>(ui->tableWidget_resource->setCellWidget(i,0));
         QString amount = ui->tableWidget_resource->item(i,1)->text();
-        LogPrintf("=====>AddDockerServiceDlg::filterResource:%s\n",amount.toInt());
-        LogPrintf("=====>AddDockerServiceDlg::filterResource:%s\n",payment - amount.toInt());
         if(payment - amount.toDouble() < 0){
             ui->tableWidget_resource->hideRow(i);
-            LogPrintf("=====>AddDockerServiceDlg::hide row:%d\n",i);
         }
     }
 }
@@ -666,9 +691,11 @@ void AddDockerServiceDlg::loadResourceData()
     std::map<Item,Value_price>::iterator iter = items.begin();
 
     ui->tableWidget_resource->setRowCount(0);
-    ui->tableWidget_resource->setColumnCount(2);
+    ui->tableWidget_resource->setColumnCount(3);
     ui->tableWidget_resource->hideColumn(1);
+    ui->tableWidget_resource->hideColumn(2);
 
+    initCombobox();
 
     int count = 0;
 
@@ -689,9 +716,13 @@ void AddDockerServiceDlg::loadResourceData()
         ui->tableWidget_resource->setCellWidget(count,0,item);
 
         ui->tableWidget_resource->setItem(count,1,new QTableWidgetItem(QString::number(iter->second.price)));
+        ui->tableWidget_resource->setItem(count,2,new QTableWidgetItem(QString::fromStdString(iter->first.gpu.Name)));
+
+        ui->comboBox_gpuType->addItem(QString::fromStdString(iter->first.gpu.Name));
 
         count++;
     }
+
     if(m_txid.size())
         filterResource(m_txid);
 }
@@ -777,7 +808,6 @@ CheckoutTransaction::~CheckoutTransaction()
 
 void CheckoutTransaction::startCheckTransactiontTask()
 {
-    LogPrintf("====> startCheckTransactiontTask QThread::currentThreadId():%d\n",QThread::currentThreadId());
     std::string strErr;
     int index = 0;
     bool isTransactionFinnished = false;
@@ -789,7 +819,6 @@ void CheckoutTransaction::startCheckTransactiontTask()
         QThread::sleep(2);
         Q_EMIT updateTaskTime(++index);
     }
-    LogPrintf("=======>CheckoutTransaction::end CheckTransactiontTask\n");
     if(isTransactionFinnished)
         Q_EMIT checkTransactionFinished();
     else
@@ -824,4 +853,31 @@ void AddDockerServiceDlg::slot_hireTimeChanged(int value)
 {
     ui->label_hireTime->setText(QString("(%1H)").arg(QString::number(value)));
     ui->payAmount->setValue(m_amount*value);
+}
+
+void AddDockerServiceDlg::initCombobox()
+{
+    ui->comboBox_gpuType->clear();
+    ui->comboBox_gpuType->addItem(tr("Select GPU type"));
+}
+
+void AddDockerServiceDlg::slot_gpuComboxCurrentIndexChanged(int index)
+{
+    int rowCount = ui->tableWidget_resource->rowCount();
+
+    for(int i=0;i<rowCount;i++){
+        ui->tableWidget_resource->showRow(i);
+    }
+
+    if(index <1)
+        return ;
+
+    QString curText = ui->comboBox_gpuType->currentText();
+    
+    for(int i=0;i<rowCount;i++){
+        QString gpuType = ui->tableWidget_resource->item(i,2)->text();
+        if(!curText.contains(gpuType)){
+            ui->tableWidget_resource->hideRow(i);
+        }
+    }
 }

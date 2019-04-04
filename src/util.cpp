@@ -18,7 +18,6 @@
 #include "utilstrencodings.h"
 #include "utiltime.h"
 #include "pubkey.h"
-
 #include <stdarg.h>
 
 #if (defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__))
@@ -1041,4 +1040,5 @@ std::string SafeIntVersionToString(uint32_t nVersion)
         return "invalid_version";
     }
 }
+
 

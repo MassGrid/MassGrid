@@ -1066,6 +1066,19 @@ bool isNeedToShowTip()
     return retValue;
 }
 
+CAmount getTxidAmount(std::string txid)
+{
+    CWalletTx wtx = pwalletMain->mapWallet[uint256S(txid)];  
+
+    isminefilter filter = ISMINE_SPENDABLE;
+    CAmount nCredit = wtx.GetCredit(filter);
+    CAmount nDebit = wtx.GetDebit(filter);
+    CAmount nNet = nCredit - nDebit;
+    CAmount nFee = (wtx.IsFromMe(filter) ? wtx.GetValueOut() - nDebit : 0);
+    CAmount payment = nNet - nFee;
+    return payment;
+}
+
 void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_EMIT clicked(event->pos());

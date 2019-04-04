@@ -90,6 +90,8 @@ private:
     
     QSwitchButton *switchButton;
 
+    QTimer* m_scanTimer;
+
     int64_t m_nTimeDockerListUpdated;
     int64_t m_nTimeListUpdated;
     int64_t m_nTimeMyListUpdated;
@@ -110,6 +112,7 @@ private:
     void gotoCreateServicePage(const std::string& str,const std::string& txid);
     void gotoOrderDetailPage(int index);
     void initDockerOrderView(const PlatformStyle *platformStyle);
+    void startScanTimer(int msec);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -144,7 +147,7 @@ private Q_SLOTS:
     void deleteService(std::string txid,std::string ip_port);
     void jumpToCheckService(std::string ip);
     void jumpToCreateService(std::string ip,std::string txid);
-    void disenableRefund();
+    void timeoutToScanStatus();
     void disenableDeleteServiceBtn();
 };
 

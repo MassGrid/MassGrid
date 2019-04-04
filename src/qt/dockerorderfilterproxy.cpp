@@ -21,6 +21,7 @@ DockerOrderFilterProxy::DockerOrderFilterProxy(QObject *parent) :
     dateFrom(MIN_DATE),
     dateTo(MAX_DATE),
     addrPrefix(),
+    txidPrefix(),
     typeFilter(COMMON_TYPES),
     watchOnlyFilter(WatchOnlyFilter_All),
     minAmount(0),
@@ -40,6 +41,7 @@ bool DockerOrderFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &
     QString label = index.data(DockerOrderTableModel::LabelRole).toString();
     qint64 amount = llabs(index.data(DockerOrderTableModel::AmountRole).toLongLong());
     int status = index.data(DockerOrderTableModel::StatusRole).toInt();
+    QString txid = index.data(DockerOrderTableModel::TxIDRole).toString();
 
     if(!showInactive && status == DockerOrderStatus::Conflicted)
         return false;
@@ -55,6 +57,9 @@ bool DockerOrderFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &
         return false;
     if(amount < minAmount)
         return false;
+    if(!txid.contains(txidPrefix, Qt::CaseInsensitive)){
+        return false;
+    }
 
     return true;
 }
@@ -69,6 +74,12 @@ void DockerOrderFilterProxy::setDateRange(const QDateTime &from, const QDateTime
 void DockerOrderFilterProxy::setAddressPrefix(const QString &addrPrefix)
 {
     this->addrPrefix = addrPrefix;
+    invalidateFilter();
+}
+
+void DockerOrderFilterProxy::setTxidPrefix(const QString &txidPrefix)
+{
+    this->txidPrefix = txidPrefix;
     invalidateFilter();
 }
 

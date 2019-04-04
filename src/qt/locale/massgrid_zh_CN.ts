@@ -311,6 +311,30 @@
         <source>re-Create</source>
         <translation>重新创建</translation>
     </message>
+    <message>
+        <source>Service Name:</source>
+        <translation>服务名:</translation>
+    </message>
+    <message>
+        <source>min amount(tMGD)</source>
+        <translation>最小金额(tMGD)</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>搜索</translation>
+    </message>
+    <message>
+        <source>create service failed</source>
+        <translation>创建服务失败</translation>
+    </message>
+    <message>
+        <source>Pubkey File (*.pub)</source>
+        <translation>打开文件(*.pub)</translation>
+    </message>
+    <message>
+        <source>Select GPU type</source>
+        <translation>选择GPU类型</translation>
+    </message>
 </context>
 <context>
     <name>AddressBookPage</name>
@@ -2869,8 +2893,12 @@ Address: %4
         <translation>请在钱包同步完成后打开订单页面</translation>
     </message>
     <message>
-        <source>退款</source>
-        <translation></translation>
+        <source>Enter txid to search</source>
+        <translation>输入txid进行搜索</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete this service?</source>
+        <translation>是否删除该服务</translation>
     </message>
 </context>
 <context>
@@ -5084,6 +5112,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>Task Tip:</source>
         <translation>任务详情提示:</translation>
+    </message>
+    <message>
+        <source>Memory Bytes:</source>
+        <translation>内存大小</translation>
     </message>
 </context>
 <context>

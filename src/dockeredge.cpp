@@ -2179,7 +2179,7 @@ static int scan_address( char * ip_addr, size_t addr_size,
 
     memset(ip_addr, 0, addr_size);
 
-    p = (char *)strpbrk(s, ":");
+  p = strpbrk(const_cast<char *>(s), ":");
 
     if ( p )
     {

@@ -307,5 +307,4 @@ std::string IntVersionToString(uint32_t nVersion);
  */
 std::string SafeIntVersionToString(uint32_t nVersion);
 
-
 #endif // MASSGRID_UTIL_H
