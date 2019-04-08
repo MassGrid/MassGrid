@@ -718,7 +718,19 @@ void AddDockerServiceDlg::loadResourceData()
         ui->tableWidget_resource->setItem(count,1,new QTableWidgetItem(QString::number(iter->second.price)));
         ui->tableWidget_resource->setItem(count,2,new QTableWidgetItem(QString::fromStdString(iter->first.gpu.Name)));
 
-        ui->comboBox_gpuType->addItem(QString::fromStdString(iter->first.gpu.Name));
+        int comboxCount = ui->comboBox_gpuType->count();
+        QString GPUName = QString::fromStdString(iter->first.gpu.Name);
+        bool isContains = false;
+
+        for(int i=0;i<comboxCount;i++){
+            if(GPUName.contains(ui->comboBox_gpuType->itemText(i))){
+                // ui->comboBox_gpuType->addItem(GPUName);
+                isContains = true;
+                break;
+            }
+        }
+        if(!isContains)
+            ui->comboBox_gpuType->addItem(GPUName);
 
         count++;
     }

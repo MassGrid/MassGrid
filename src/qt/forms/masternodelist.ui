@@ -102,7 +102,7 @@ QTabWidget::pane{
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
@@ -311,7 +311,7 @@ QTabWidget::pane{
            </column>
            <column>
             <property name="text">
-             <string>Node/activeCount</string>
+             <string>ActiveCount/Node</string>
             </property>
            </column>
            <column>

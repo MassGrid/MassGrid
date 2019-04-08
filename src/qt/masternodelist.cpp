@@ -403,7 +403,7 @@ void MasternodeList::updateNodeList()
         QTableWidgetItem *activeSecondsItem = new QTableWidgetItem(QString::fromStdString(DurationToDHMS(mn.lastPing.sigTime - mn.sigTime)));
         QTableWidgetItem *lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d %H:%M", mn.lastPing.sigTime + offsetFromUtc)));
         QTableWidgetItem *pubkeyItem = new QTableWidgetItem(QString::fromStdString(CMassGridAddress(mn.pubKeyCollateralAddress.GetID()).ToString()));
-        QTableWidgetItem *nodeCount = new QTableWidgetItem(QString::number(mn.lastPing.mdocker.nodeCount)+"/"+QString::number(mn.lastPing.mdocker.activeNodeCount));
+        QTableWidgetItem *nodeCount = new QTableWidgetItem(QString::number(mn.lastPing.mdocker.activeNodeCount) + "/" +QString::number(mn.lastPing.mdocker.nodeCount));
         QTableWidgetItem *joinToken = new QTableWidgetItem(QString::fromStdString(mn.lastPing.mdocker.joinToken));
         
         if (strCurrentFilter != "")
@@ -965,8 +965,8 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
         }
 
         bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString().c_str(),
-                                            //    virtualIP.toStdString().c_str(),
-                                               "dhcp:0.0.0.0",
+                                               virtualIP.toStdString().c_str(),
+                                            //    "dhcp:0.0.0.0",
                                                n2n_SPIP.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
                                                
         if(!startThreadFlag){
@@ -1020,7 +1020,7 @@ void MasternodeList::slot_btn_refund()
     dockerorderView->getCurrentItemTxidAndmnIp(txid,mnip,orderstatus);
 
     CMessageBox::StandardButton retval = CMessageBox::question(this, tr("Refund"),
-        QString("Is need to refund the order by this Txid? \n (Txid:%1...)").arg(QString::fromStdString(txid).mid(20)),
+        tr("Is need to refund the order by this Txid? \n (Txid:%1...)").arg(QString::fromStdString(txid).mid(20)),
         CMessageBox::Ok_Cancel,
         CMessageBox::Cancel);
 
