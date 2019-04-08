@@ -235,13 +235,6 @@ int edgeStart() {
   ec.mtu = DEFAULT_MTU;
   ec.got_s = 0;        
   ec.encrypt_key = strdup("massgridn2n");
-  eee.allow_routing = 1;
-  memset(eee.community_name, 0, N2N_COMMUNITY_SIZE);
-  strncpy((char *)eee.community_name, community.c_str(), N2N_COMMUNITY_SIZE);
-  scan_address(ec.ip_addr, N2N_NETMASK_STR_SIZE,
-		   ec.ip_mode, N2N_IF_MODE_SIZE,
-		   localip.c_str());
-  strncpy((eee.sn_ip_array[eee.sn_num]), snip.c_str(), N2N_EDGE_SN_HOST_SIZE);
 #ifndef WIN32
   ec.userid = 0; /* root is the only guaranteed ID */
   ec.groupid = 0; /* root is the only guaranteed ID */
@@ -252,6 +245,16 @@ int edgeStart() {
     exit(1);
   }
   
+  eee.allow_routing = 1;
+  memset(eee.community_name, 0, N2N_COMMUNITY_SIZE);
+  strncpy((char *)eee.community_name, community.c_str(), N2N_COMMUNITY_SIZE);
+  scan_address(ec.ip_addr, N2N_NETMASK_STR_SIZE,
+		   ec.ip_mode, N2N_IF_MODE_SIZE,
+		   localip.c_str());
+  strncpy((eee.sn_ip_array[eee.sn_num]), snip.c_str(), N2N_EDGE_SN_HOST_SIZE);
+  LogPrint("edge","Adding supernode[%u] = %s\n", (unsigned int)eee.sn_num, (eee.sn_ip_array[eee.sn_num]));
+  ++eee.sn_num;
+
 #ifdef WIN32
   ec.tuntap_dev_name[0] = '\0';
 #endif
@@ -381,9 +384,11 @@ int edgeStart() {
   LogPrint("edge", "edge started\n");
 
   update_supernode_reg(&eee, time(NULL));
-  fstart(true);
+  if(fstart)
+    fstart(true);
   int ret = run_edge_loop(&eee, &keep_on_running);
-  fstart(false);
+  if(fstart)
+    fstart(false);
   return ret;
 }
 
@@ -392,7 +397,10 @@ bool ThreadEdgeStart(std::string com,std::string localaddr,std::string snaddr,st
     community = com;
     localip = localaddr;
     snip = snaddr;
-    fstart = start;
+    if(start)
+      fstart = start;
+    else
+      fstart = NULL;
     if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){
         LogPrintf("ThreadEdgeStart existed thread,Please Stop first\n");
         return false;

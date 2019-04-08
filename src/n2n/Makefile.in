@@ -33,7 +33,8 @@ INSTALL_DOC=$(INSTALL) -m644
 PREFIX?=$(DESTDIR)/usr
 #BINDIR=$(PREFIX)/bin
 ifeq ($(OS),Darwin)
-CFLAGS+= -I/usr/local/opt/openssl/include
+CFLAGS+= -I@N2N_OPENSSL@/include
+LIBS_EDGE_OPT += -L@N2N_OPENSSL@/lib
 SBINDIR=$(PREFIX)/local/sbin
 else
 SBINDIR=$(PREFIX)/sbin

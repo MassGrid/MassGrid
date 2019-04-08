@@ -115,6 +115,7 @@ qa/cache/*
 
 !src/leveldb*/Makefile
 !src/n2n/Makefile.in
+!src/n2n/config.guess
 .cproject
 .project
 .autotools
