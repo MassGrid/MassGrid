@@ -75,6 +75,7 @@ boost::thread* thrd = NULL;
 std::string strCommunity;
 std::string strLocalAddr;
 std::string strSnAddr;
+std::string strNetMask;
 int   keep_running=1;
 /** Main structure type for edge. */
 struct n2n_edge
@@ -306,7 +307,7 @@ static int edge_init(n2n_edge_t * eee)
     eee->udp_sock       = -1;
     eee->udp_mgmt_sock  = -1;
     eee->dyn_ip_mode    = 0;
-    eee->allow_routing  = 0;
+    eee->allow_routing  = 1;
     eee->drop_multicast = 1;
     eee->local_sock_ena = 0;
 	sglib_hashed_peer_info_t_init(eee->known_peers);
@@ -2305,7 +2306,7 @@ int real_main(int argc, char* argv[])
         LogPrint("edge", "ip_mode='%s'\n", ip_mode);        
     }
 
-    if(tuntap_open(&(eee.device), tuntap_dev_name, ip_mode, ip_addr, netmask, device_mac, mtu) < 0){
+    if(tuntap_open(&(eee.device), tuntap_dev_name, ip_mode, ip_addr, strNetMask.c_str(), device_mac, mtu) < 0){
         LogPrintf("dockeredge::ThreadEdgeStart  ERROR: ioctl() [Operation not permitted][-1]\n");
         return(-1);
     }
@@ -2510,10 +2511,11 @@ void EdgeStart()
     sd.stop = n2n_stop;
     SCM_Start(&sd,0,NULL)!=SVC_OK;
 }
-bool ThreadEdgeStart(std::string community,std::string localaddr,std::string snaddr,std::function<void(bool)>start){
+bool ThreadEdgeStart(std::string community,std::string localaddr,std::string netmask,std::string snaddr,std::function<void(bool)>start){
     LogPrintf("ThreadEdgeStart\n");
     strCommunity = community;
     strLocalAddr = localaddr;
+    strNetMask = netmask;
     strSnAddr = snaddr;
     fstart = start;
     if(thrd && !thrd->timed_join(boost::posix_time::seconds(1))){

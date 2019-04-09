@@ -62,27 +62,21 @@ enum HttpType{
     HTTP_POST,
     HTTP_DELETE
 };
-// class CollectUsefulNode{
-// public:
-//     map<std::string,int> usefulEngine{};
-//     void IncreaseNode(Node& node){
-//         string gputype = node.engine.labels["gputype"];
-//         map[node.engine.labels["gputype"]+"_"+node.engine.labels["gpucount"]] += 1;
-//     }
-//     void DecreaseNode(Node& node){
-//         string gputype = node.engine.labels["gputype"];
-//         if(map[node.engine.labels["gputype"]+"_"+node.engine.labels["gpucount"]] > 0)
-//             map[node.engine.labels["gputype"]+"_"+node.engine.labels["gpucount"]] -= 1;
-//     }
-// };
+
+/*
+*n2n default netmask 0xf0000000,
+*Birthday Paradox client n=2000 d=15x255x255x254 
+*Probability is 0.00804031104927
+*/
 class IpSet{
 
     set<in_addr_t> ip_set{};
+    const in_addr_t ip_start = htonl(inet_addr("160.0.0.0"));   //160.0.0.0
+    const in_addr_t ip_end = htonl(inet_addr("160.255.255.254"));     //160.255.255.254
+    const in_addr_t netmask = htonl(inet_addr("240.0.0.0"));    //240.0.0.0
 public:
-    static const int MAX_SIZE = 255;
-    const char* ip_start = "10.1."; //10.1.1.1
-
     std::string GetFreeIP();
+    std::string GetNetMask();
     bool IsFree(std::string str);
     void Erase(std::string str);
     bool IsVaild(std::string s);

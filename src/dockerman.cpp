@@ -4,6 +4,7 @@
 #include <set>
 #include <algorithm>
 #include <queue>
+#include <boost/random.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include "base58.h"
@@ -43,16 +44,27 @@ map<Item,Value_price> CDockerMan::GetPriceListFromNodelist(){
     return list;
 }
 std::string IpSet::GetFreeIP(){
-    for(int i = 1;i < MAX_SIZE;++i)
-        for(int j = 5;j < MAX_SIZE;j+=5){
-            std::string t;
-            t = ip_start + boost::lexical_cast<std::string>(i) + "." + boost::lexical_cast<std::string>(j);
-            in_addr_t ipaddr = inet_addr(t.c_str());
-            if(!ip_set.count(ipaddr)){
-                ip_set.insert(ipaddr);
-                return t;
-            }
+    while(true){
+        boost::mt19937 gen(time(0));
+        boost::uniform_int<> uni_dist(ip_start, ip_end);
+        boost::variate_generator<boost::mt19937&,boost::uniform_int<>>die(gen,uni_dist);
+        in_addr_t addr = ntohl(die());
+        in_addr ipaddr{};
+        ipaddr.s_addr = addr;
+        if(!ip_set.count(ipaddr.s_addr)){
+            ip_set.insert(ipaddr.s_addr);
+            char strip[INET_ADDRSTRLEN];
+            if(inet_ntop(AF_INET,&ipaddr.s_addr, strip, sizeof(strip) != NULL))
+                return std::string(strip);
         }
+    }
+}
+
+std::string IpSet::GetNetMask(){
+    in_addr mask{};
+    mask.s_addr = ntohl(netmask);
+    char strnetmask[INET_ADDRSTRLEN];
+    return std::string(inet_ntop(AF_INET,&mask.s_addr, strnetmask, sizeof(strnetmask)!=NULL));
 }
 
 void IpSet::Insert(std::string str){
@@ -77,19 +89,16 @@ void IpSet::Erase(std::string str){
     auto it = ip_set.find(ipaddr);
     if(it!=ip_set.end())
         ip_set.erase(it);
-}
-bool IpSet::IsVaild(std::string s){
-    vector<string> destination;
-    boost::split(destination,s, boost::is_any_of( "." ), boost::token_compress_on );
-    if(destination.size() == 4){
-        int i = boost::lexical_cast<int>(destination[2]);
-        int j = boost::lexical_cast<int>(destination[3]);
-        if(i > 0 && i < 255 && j > 0 && j < 255)
-            return true;
-        return false;
+    else{
+        LogPrintf("Warning ip_set Remove %s not find\n",str);
     }
 }
-
+bool IpSet::IsVaild(std::string s){
+    if(inet_addr(s.c_str()) == INADDR_NONE)
+        return false;
+    else
+        return true; 
+}
 
 bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool isClearService){
     LogPrint("docker","CDockerMan::PushMessage Started Method: %s\n",strMethod[mtd]);

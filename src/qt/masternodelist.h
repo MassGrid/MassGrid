@@ -103,7 +103,7 @@ private:
     DockerUpdateMode getCurUpdateMode();
     void startTimer(bool start);
     void updateEdgeStatus(int count =0);
-    bool getVirtualIP(const QString& n2n_localip,QString& virtualIP);
+    bool getVirtualIP(const QString& n2n_localip,const QString& n2n_netmask,QString& virtualIP);
     void initOrderTablewidget();
     void resetTableWidgetTitle();
     void jumpToCheckOrder(int index);

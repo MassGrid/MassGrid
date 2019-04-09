@@ -16,6 +16,7 @@
 #include <QTableWidgetItem>
 #include <QListWidgetItem>
 
+#include <boost/random.hpp>
 #include "cmessagebox.h"
 #include "dockercluster.h"
 #include "util.h"
@@ -912,16 +913,21 @@ void MasternodeList::updateEdgeStatus(int count)
     }
 }
 
-bool MasternodeList::getVirtualIP(const QString& n2n_localip,QString& virtualIP)
+bool MasternodeList::getVirtualIP(const QString& n2n_localip,const QString& n2n_netmask,QString& virtualIP)
 {
-    QStringList list = n2n_localip.split(".");
-    if(list.size() != 4){
-        return false;
-    }
+    in_addr_t in_netmask = htonl(inet_addr(n2n_netmask.toStdString().c_str()));
+    in_addr_t in_serviceip = htonl(inet_addr(n2n_localip.toStdString().c_str()));
+    in_addr_t in_gateway = in_serviceip & in_netmask;
+    in_addr_t ipend = (in_serviceip | ~in_netmask) & htonl(inet_addr("255.255.255.254"));
+    in_addr_t ipstart = in_gateway | htonl(inet_addr("1.0.0.1"));
 
-    int ipNum = QString(list.last()).toInt();
-    ipNum ++ ;
-    virtualIP = QString("%1.%2.%3.%4").arg(list.at(0)).arg(list.at(1)).arg(list.at(2)).arg(QString::number(ipNum));
+    boost::mt19937 gen(time(0));
+    boost::uniform_int<> uni_dist(ipstart, ipend);
+    boost::variate_generator<boost::mt19937&,boost::uniform_int<>>die(gen,uni_dist);
+    in_addr ipaddr{};
+    ipaddr.s_addr = ntohl(die());
+    char strip[INET_ADDRSTRLEN];
+    virtualIP = QString(inet_ntop(AF_INET,&ipaddr.s_addr, strip, sizeof(strip)));
     return true;
 }
 
@@ -941,6 +947,7 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
     int count = env.size();
     QString n2n_name;
     QString n2n_localip;
+    QString n2n_netmask;
     QString n2n_SPIP;
     QString virtualIP;
 
@@ -950,6 +957,8 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
             n2n_name = envStr.split("=").at(1);
         } else if (envStr.contains("N2N_SERVERIP")) {
             n2n_localip = envStr.split("=").at(1);
+        } else if (envStr.contains("N2N_NETMASK")) {
+            n2n_netmask = envStr.split("=").at(1);
         } else if (envStr.contains("N2N_SNIP")) {
             n2n_SPIP = envStr.split("=").at(1);
         }
@@ -957,17 +966,17 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
 
     if(isSelected){
 
-        if(!getVirtualIP(n2n_localip,virtualIP)){
+        if(!getVirtualIP(n2n_localip,n2n_netmask,virtualIP)){
 
             switchButton->SetSelected(false);
             CMessageBox::information(this, tr("Edge option"),tr("Get remote ip error!"));
             return ;
         }
 
-        bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString().c_str(),
-                                               virtualIP.toStdString().c_str(),
-                                            //    "dhcp:0.0.0.0",
-                                               n2n_SPIP.toStdString().c_str(), g_masternodeListPage->getEdgeRet);
+        bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString(),
+                                               virtualIP.toStdString(),
+                                               n2n_netmask.toStdString(),
+                                               n2n_SPIP.toStdString(), g_masternodeListPage->getEdgeRet);
                                                
         if(!startThreadFlag){
             ThreadEdgeStop();

@@ -97,7 +97,7 @@ UniValue docker(const UniValue& params, bool fHelp)
                 + HelpExampleCli("docker", "setdockerfee 0.01")
 #endif // ENABLE_WALLET
                 + HelpExampleCli("docker", "getdndata \"119.3.66.159:19443\"")
-                + HelpExampleCli("docker", "connect \"massgridn2n\" \"10.1.1.4\" \"119.3.66.159\"")
+                + HelpExampleCli("docker", "connect \"10.1.1.4\" \"240.0.0.0\" \"119.3.66.159\"")
                 + HelpExampleCli("docker", "disconnect")
                 );
 
@@ -108,13 +108,13 @@ UniValue docker(const UniValue& params, bool fHelp)
         if (params.size() != 4)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
 
-        std::string strCommunity = params[1].get_str();
+        std::string strLocalAddr = params[1].get_str();
 
-        std::string strLocalAddr = params[2].get_str();
+        std::string netmask = params[2].get_str();
 
         std::string strSnAddr = params[3].get_str();
 
-        if(ThreadEdgeStart(strCommunity,strLocalAddr,strSnAddr)){
+        if(ThreadEdgeStart("massgridn2n",strLocalAddr,netmask,strSnAddr)){
             return "edge Start Successfully";
         }
         else
