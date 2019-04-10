@@ -919,7 +919,7 @@ bool MasternodeList::getVirtualIP(const QString& n2n_localip,const QString& n2n_
     in_addr_t in_serviceip = htonl(inet_addr(n2n_localip.toStdString().c_str()));
     in_addr_t in_gateway = in_serviceip & in_netmask;
     in_addr_t ipend = (in_serviceip | ~in_netmask) & htonl(inet_addr("255.255.255.254"));
-    in_addr_t ipstart = in_gateway | htonl(inet_addr("1.0.0.1"));
+    in_addr_t ipstart = in_gateway | htonl(inet_addr("0.1.0.1"));
 
     boost::mt19937 gen(time(0));
     boost::uniform_int<> uni_dist(ipstart, ipend);

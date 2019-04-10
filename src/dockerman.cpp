@@ -44,10 +44,10 @@ map<Item,Value_price> CDockerMan::GetPriceListFromNodelist(){
     return list;
 }
 std::string IpSet::GetFreeIP(){
+    boost::mt19937 gen(time(0));
+    boost::uniform_int<> uni_dist(ip_start, ip_end);
+    boost::variate_generator<boost::mt19937&,boost::uniform_int<>>die(gen,uni_dist);
     while(true){
-        boost::mt19937 gen(time(0));
-        boost::uniform_int<> uni_dist(ip_start, ip_end);
-        boost::variate_generator<boost::mt19937&,boost::uniform_int<>>die(gen,uni_dist);
         in_addr_t addr = ntohl(die());
         in_addr ipaddr{};
         ipaddr.s_addr = addr;

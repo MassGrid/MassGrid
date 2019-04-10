@@ -64,16 +64,16 @@ enum HttpType{
 };
 
 /*
-*n2n default netmask 0xf0000000,
-*Birthday Paradox client n=2000 d=15x255x255x254 
-*Probability is 0.00804031104927
+*n2n default netmask 0xff000000,
+*Birthday Paradox client n=1000 d=255x255x254 
+*Probability is 0.0298193952119
 */
 class IpSet{
 
     set<in_addr_t> ip_set{};
-    const in_addr_t ip_start = htonl(inet_addr("160.0.0.0"));   //160.0.0.0
-    const in_addr_t ip_end = htonl(inet_addr("160.255.255.254"));     //160.255.255.254
-    const in_addr_t netmask = htonl(inet_addr("240.0.0.0"));    //240.0.0.0
+    const in_addr_t ip_start = htonl(inet_addr("10.0.0.1"));   //10.0.0.1
+    const in_addr_t ip_end = htonl(inet_addr("10.0.255.254"));     //10.1.255.254
+    const in_addr_t netmask = htonl(inet_addr("255.0.0.0"));    //255.0.0.0
 public:
     std::string GetFreeIP();
     std::string GetNetMask();
