@@ -234,12 +234,12 @@ int HttpRequest::HttpRequestExec(const string &strMethod, const string &ip, cons
 //Build HTTP headers  
 int HttpRequest::HttpHeadCreate(const string &strMethod, const string &strHostPort, const string &page, const string &strData, boost::asio::streambuf &request)  
 {  
-    //     // Form the request. We specify the "Connection: close" header so that the
-//     // server will close the socket after transmitting the response. This will
-//     // allow us to treat all data up until the EOF as the content.
+        // Form the request. We specify the "Connection: close" header so that the
+    // server will close the socket after transmitting the response. This will
+    // allow us to treat all data up until the EOF as the content.
     std::ostream request_stream(&request);
     request_stream << strMethod<<" "<< page;
-    if(strMethod=="GET" && !strData.empty()){
+    if((strMethod == "GET" || strMethod == "DELETE") && !strData.empty()){
         request_stream << "?" << strData;
     }
     request_stream << " HTTP/1.1\r\n";

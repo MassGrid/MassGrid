@@ -49,9 +49,12 @@ void ServiceTimerModule::CheckQue(){
     auto now_time = GetAdjustedTime();
     while(!serviceInfoQue.empty()){
         ServiceListInfo slist=serviceInfoQue.top();
+        // if(serviceid)
         if(now_time >= slist.deleteTime){
-            //settlement       
-            dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,slist.serviceid,"");
+            //settlement
+            if(dockerman.IsExistSerivceFromID(slist.serviceid)){
+                dockerman.PushMessage(Method::METHOD_SERVICES_DELETE,slist.serviceid,"");
+            }
             serviceInfoQue.pop();
             LogPrint("timer","ServiceTimerModule::CheckQue settlement serverice id= %s  timpstamp= %lu\n",slist.serviceid,now_time);
         }else{
@@ -69,7 +72,6 @@ void ServiceTimerModule::SetTlement(){
         }else{
             ++wtx;
         }
-        
     }
 }
 void ServiceTimerModule::CheckTransaction(){
@@ -78,9 +80,11 @@ void ServiceTimerModule::CheckTransaction(){
     for(auto wtx = setWalletTx.begin(); wtx != setWalletTx.end();){
         if((*wtx)->Getdeletetime().empty()){
             if(!dockerman.IsExistSerivce((*wtx)->GetHash())){
-                LogPrint("timer","ServiceTimerModule::CheckTransaction remove transacation %s\n",(*wtx)->GetHash().ToString());
+                LogPrint("timer","ServiceTimerModule::CheckTransaction remove transacation %s\n",((*wtx)->GetHash()).ToString());
                 (*wtx)->Setdeletetime(std::to_string(GetAdjustedTime()));
                 (*wtx)->Settaskstate(std::to_string(Config::TASKSTATE_SHUTDOWN));
+                std::string statuscode="no service found";
+                (*wtx)->Settaskstatuscode(statuscode);
                 CWalletDB walletdb(pwalletMain->strWalletFile);
                 (*wtx)->WriteToDisk(&walletdb);
             }else{
@@ -108,7 +112,7 @@ void ThreadTimeModule()
                 timerModule.SetTlement();
                 height = chainActive.Height();
             }
-            count=(count+1)%(360*12); //12小时
+            count=(count+1)%(360*12); //12 hours
         }
         // Check for stop or if block needs to be rebuilt
         for(int i=0;i<100;i++){

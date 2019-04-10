@@ -84,65 +84,48 @@ void Task::TaskListUpdateAll(const string& taskData, std::map<std::string,Task> 
 }
 bool Task::DecodeFromJson(const UniValue& data,Task& task)
 {
-    std::string id;
-    Config::Version version;
-    uint64_t createdTime;
-    uint64_t updateTime;
-    std::string name;
-    Config::Labels lab;
-    Config::TaskSpec spec;
-    std::string serviceid;
-    int32_t slot;
-    std::string nodeid;
-    Config::TaskStatus taskstatus;
-    Config::eStatus desiredstate;
-    std::vector<Config::NetworkTemplate> networksattachments;
-    std::vector<Config::GenericResources> genericresources;
-    int protocolVersion=DEFAULT_CTASK_API_VERSION;
-
     std::vector<std::string> vKeys=data.getKeys();
     for(size_t i=0;i<data.size();i++){
         UniValue tdata(data[vKeys[i]]);
         if(data[vKeys[i]].isStr()){
             if(vKeys[i]=="ID"){
-                id=tdata.get_str();
+                task.ID=tdata.get_str();
             }else if(vKeys[i]=="CreatedAt"){
-                createdTime=getDockerTime(tdata.get_str());
+                task.createdAt=getDockerTime(tdata.get_str());
             }else if(vKeys[i]=="UpdatedAt"){
-                updateTime=getDockerTime(tdata.get_str());
+                task.updatedAt=getDockerTime(tdata.get_str());
             }else if(vKeys[i]=="Name"){
-                name=tdata.get_str();
+                task.name=tdata.get_str();
             }else if(vKeys[i]=="ServiceID"){
-                serviceid=tdata.get_str();
+                task.serviceID=tdata.get_str();
             }else if(vKeys[i]=="NodeID"){
-                nodeid=tdata.get_str();
+                task.nodeID=tdata.get_str();
             }else if(vKeys[i]=="DesiredState"){
-                desiredstate=Config::eStatus(GetTaskStatus(tdata.get_str()));
+                task.desiredState=GetTaskStatus(tdata.get_str());
             }
         }
         if(data[vKeys[i]].isNum()){
             if(vKeys[i]=="Slot")
-                slot=tdata.get_int();
+                task.slot=tdata.get_int();
         }
         if(data[vKeys[i]].isObject()){
             if(vKeys[i]=="Version"){
-                version.index=find_value(tdata,"Index").get_int64();
+                task.version.index=find_value(tdata,"Index").get_int64();
             }else if(vKeys[i]=="Labels"){//key?
-                ParseTaskLabels(tdata,lab);
+                ParseTaskLabels(tdata,task.labels);
             }else if(vKeys[i]=="Spec"){
-                ParseTaskTemplateSpec(tdata,spec);
+                ParseTaskTemplateSpec(tdata,task.spec);
             }else if(vKeys[i]=="Status"){
-                ParseTaskStatus(tdata,taskstatus);
+                ParseTaskStatus(tdata,task.status);
             }else if(vKeys[i]=="AssignedGenericResources"){
                 for(size_t j=0;j<tdata.size();j++){
                     Config::GenericResources genspec;
                     ParseGenericResources(tdata[j],genspec);
-                    genericresources.push_back(genspec);
+                    task.genericResources.push_back(genspec);
                 }
             }
         }
     }
-    task=Task(id,version,createdTime,updateTime,lab,spec,serviceid,slot,nodeid,taskstatus,desiredstate,networksattachments,genericresources,protocolVersion);
     return true;
 }
 void Task::ParseTaskLabels(const UniValue& data,Config::Labels &labels)
@@ -412,7 +395,7 @@ void Task::ParseTaskStatus(const UniValue& data,Config::TaskStatus &taskstaus)
             if(vKeys[i]=="Timestamp"){
                 taskstaus.timeStamp=TimeestampStr(tdata.get_str().c_str());
             }else if(vKeys[i]=="State"){
-                taskstaus.state=Config::eStatus(GetTaskStatus(tdata.get_str()));
+                taskstaus.state=GetTaskStatus(tdata.get_str());
             }else if(vKeys[i]=="Message"){
                 taskstaus.message=tdata.get_str();
             }else if(vKeys[i]=="Err"){

@@ -105,6 +105,128 @@ public:
         return ss.GetHash();
     }
 };
+class DockerGetTranData{
+public:
+    int64_t version = DOCKERREQUEST_API_VERSION;
+    int64_t sigTime{0};
+    uint256 txid;
+public:
+    DockerGetTranData() = default;
+    DockerGetTranData(int64_t _sigTime,uint256 _txid,int64_t _version=DOCKERREQUEST_API_VERSION):
+                    txid(_txid),sigTime(_sigTime),version(_version){};
+    DockerGetTranData(const DockerGetTranData& from){
+        version=from.version;
+        sigTime=from.sigTime;
+        txid=from.txid;
+    }
+
+    DockerGetTranData& operator = (DockerGetTranData const& from){
+        version=from.version;
+        sigTime=from.sigTime;
+        txid=from.txid;
+        return *this;
+    }
+    ADD_SERIALIZE_METHODS;
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(version);
+        READWRITE(sigTime);
+        READWRITE(txid);
+    }
+    uint256 GetHash() const
+    {
+        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
+        ss << version;
+        ss << sigTime;
+        ss << txid;
+        return ss.GetHash();
+    }
+};
+namespace TASKDTDATA{
+    enum TASTUS{DEFAULT=0,SUCCESS,ERROR};
+}
+class DockerTransData{
+public:
+    int64_t version = DOCKERREQUEST_API_VERSION;
+    int64_t sigTime{0};
+    uint256 txid;
+    int64_t deleteTime{};
+    double feeRate;
+    int errCode{};
+    std::string taskStatus;
+    uint256 tlementtxid;
+    int msgStatus=TASKDTDATA::DEFAULT;
+    
+public:
+    DockerTransData() = default;
+    DockerTransData(int64_t _sigTime,uint256 _txid,int64_t _deleteTime,double _feeRate,int _errCode,
+            std::string _taskStatus,uint256 _tlementtxid,int _msgStatus,int64_t _version=DOCKERREQUEST_API_VERSION):
+            txid(_txid),sigTime(_sigTime),deleteTime(_deleteTime),feeRate(_feeRate),errCode(_errCode),taskStatus(_taskStatus),
+            tlementtxid(_tlementtxid),msgStatus(_msgStatus),version(_version){};
+    DockerTransData(const DockerTransData& from){
+        version=from.version;
+        sigTime=from.sigTime;
+        txid=from.txid;
+        deleteTime=from.deleteTime;
+        feeRate=from.feeRate;
+        errCode=from.errCode;
+        taskStatus=from.taskStatus;
+        tlementtxid=from.tlementtxid;
+        msgStatus=from.msgStatus;
+    }
+
+    DockerTransData& operator = (DockerTransData const& from){
+        version=from.version;
+        sigTime=from.sigTime;
+        txid=from.txid;
+        deleteTime=from.deleteTime;
+        feeRate=from.feeRate;
+        errCode=from.errCode;
+        taskStatus=from.taskStatus;
+        tlementtxid=from.tlementtxid;
+        msgStatus=from.msgStatus;
+        return *this;
+    }
+    ADD_SERIALIZE_METHODS;
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(version);
+        READWRITE(sigTime);
+        READWRITE(txid);
+        READWRITE(deleteTime);
+        READWRITE(feeRate);
+        READWRITE(errCode);
+        READWRITE(taskStatus);
+        READWRITE(tlementtxid);
+        READWRITE(msgStatus);
+    }
+    uint256 GetHash() const
+    {
+        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
+        ss << version;
+        ss << sigTime;
+        ss << txid;
+        ss << deleteTime;
+        ss << feeRate;
+        ss << errCode;
+        ss << taskStatus;
+        ss << tlementtxid;
+        ss << msgStatus;
+        return ss.GetHash();
+    }
+    void Init()
+    {
+        version=DOCKERREQUEST_API_VERSION;
+        sigTime=0;
+        txid.SetNull();
+        deleteTime=0;
+        feeRate=0.0;
+        errCode=0;
+        taskStatus="";
+        tlementtxid.SetNull();
+        msgStatus=TASKDTDATA::DEFAULT;
+    }
+};
 class DockerCreateService{
 public:
 
@@ -187,5 +309,5 @@ public:
         return GetHash().ToString();
     }    
 };
-
+bool CheckAndGetTransaction(DockerGetTranData dtdata,int& errCode);
 #endif  //DOCKERSERVERMAN_H

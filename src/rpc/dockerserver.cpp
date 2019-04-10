@@ -48,7 +48,7 @@ UniValue docker(const UniValue& params, bool fHelp)
 #ifdef ENABLE_WALLET
             strCommand != "create" && strCommand != "delete"  && strCommand != "sendtomasternode" &&
 #endif // ENABLE_WALLET
-            strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata"&& strCommand != "listprice" && strCommand != "listuntlementtx" && strCommand != "setprice"&& strCommand != "setdockerfee"))
+            strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata" && strCommand != "gettransaction" && strCommand != "listprice" && strCommand != "listuntlementtx" && strCommand != "setprice"&& strCommand != "setdockerfee"))
             throw std::runtime_error(
                 "docker \"command\"...\n"
                 "Set of commands to execute docker related actions\n"
@@ -97,6 +97,7 @@ UniValue docker(const UniValue& params, bool fHelp)
                 + HelpExampleCli("docker", "setdockerfee 0.01")
 #endif // ENABLE_WALLET
                 + HelpExampleCli("docker", "getdndata \"119.3.66.159:19443\"")
+                + HelpExampleCli("docker", "gettransaction \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\"")
                 + HelpExampleCli("docker", "connect \"10.1.1.4\" \"240.0.0.0\" \"119.3.66.159\"")
                 + HelpExampleCli("docker", "disconnect")
                 );
@@ -396,6 +397,42 @@ UniValue docker(const UniValue& params, bool fHelp)
                 obj.push_back(Pair("masternodeaddress",dockercluster.dndata.masternodeAddress));
                 varr.push_back(obj);
                 return varr;
+            }
+        }
+    }
+    if (strCommand == "gettransaction"){
+        if (!masternodeSync.IsSynced())
+            return "Need to Synced First";
+        
+        if (params.size() != 3)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
+        std::string strIPPort;
+        strIPPort = params[1].get_str();
+        if(!dockercluster.SetConnectDockerAddr(strIPPort)){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "SetConnectDockerAddress error");
+        }
+        if(!dockercluster.ProcessDockernodeConnections()){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "ProcessDockernodeConnections error");
+        }
+        std::string txid = params[2].get_str();
+        dockercluster.AskForTransData(txid);
+
+        UniValue varr(UniValue::VARR);
+        for(int i=0;i<10;++i){
+            MilliSleep(300);
+            if(dockercluster.dtdata.msgStatus !=TASKDTDATA::DEFAULT){
+                UniValue obj(UniValue::VOBJ);
+                if(dockercluster.dtdata.msgStatus == TASKDTDATA::ERROR){
+                    obj.push_back(Pair("errMessage",dockercluster.dtdata.errCode));
+                    return obj;
+                }
+                obj.push_back(Pair("txid",dockercluster.dtdata.txid.ToString()));
+                obj.push_back(Pair("deleteTime",dockercluster.dtdata.deleteTime));
+                obj.push_back(Pair("feeRate",dockercluster.dtdata.feeRate));
+                obj.push_back(Pair("taskStatus",dockercluster.dtdata.errCode));
+                obj.push_back(Pair("taskMessage",dockercluster.dtdata.taskStatus));
+                obj.push_back(Pair("tlementtxid",dockercluster.dtdata.tlementtxid.ToString()));
+                return obj;
             }
         }
     }

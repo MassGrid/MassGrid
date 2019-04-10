@@ -161,6 +161,57 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         }
         setDNDataStatus(DNDATASTATUS::Received);
 
+    }else if (strCommand == NetMsgType::GETTRANS) { //docker gettransaction
+        
+        LogPrint("dockernode","CDockerServerman::ProcessMessage GETTRANS Started\n");
+        if (!fDockerNode) return;
+        DockerGetTranData dtdata;
+        vRecv >> dtdata;
+
+        DockerTransData dockerTransData;
+        if(CheckAndGetTransaction(dtdata,dockerTransData.errCode)){
+            CWalletTx& wtx = pwalletMain->mapWallet[dtdata.txid];  //watch only not check
+            if(wtx.HasTlemented()){
+                dockerTransData.sigTime = GetAdjustedTime();
+                dockerTransData.txid = dtdata.txid;
+                dockerTransData.feeRate = boost::lexical_cast<double>(wtx.Getfeerate());
+                dockerTransData.deleteTime = boost::lexical_cast<int64_t>(wtx.Getdeletetime());
+                dockerTransData.errCode = boost::lexical_cast<int>(wtx.Gettaskstate());
+                dockerTransData.taskStatus = wtx.Gettaskstatuscode();
+                dockerTransData.tlementtxid = uint256S(wtx.Gettlementtxid());
+                dockerTransData.msgStatus = TASKDTDATA::SUCCESS;
+            }else{
+                dockerTransData.errCode =SERVICEMANCODE::NO_THRANSACTION;
+                dockerTransData.msgStatus = TASKDTDATA::ERROR;
+            }
+        }else{
+            dockerTransData.msgStatus=TASKDTDATA::ERROR;
+        }
+        LogPrint("timer","CDockerServerman::GETTRANS status %d msgstatus %d\n", dockerTransData.errCode,dockerTransData.msgStatus);
+        LogPrintf("CDockerServerman::ProcessMessage -- Sent TRANSDATA to peer %d\n", pfrom->id);
+        connman.PushMessage(pfrom, NetMsgType::TRANSDATA, dockerTransData);
+        
+    }else if(strCommand == NetMsgType::TRANSDATA){     //client
+
+        LogPrint("dockernode","CDockerServerman::ProcessMessage TRANSDATA Started\n");
+        DockerTransData dockerTransData;
+        vRecv >> dockerTransData;
+        if(dockerTransData.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || dockerTransData.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
+            LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", dockerTransData.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+            return;
+        }
+        dockercluster.dtdata = dockerTransData;
+        if (pwalletMain->mapWallet.count(dockerTransData.txid)){
+            CWalletTx& wtx = pwalletMain->mapWallet[dockerTransData.txid];
+            if(wtx.HasTlemented()) return;
+            wtx.Setdeletetime(std::to_string(dockerTransData.deleteTime));
+            wtx.Setfeerate(std::to_string(dockerTransData.feeRate));
+            wtx.Settaskstate(std::to_string(dockerTransData.errCode));
+            wtx.Settaskstatuscode(dockerTransData.taskStatus);
+            wtx.Settlementtxid(dockerTransData.tlementtxid.ToString());
+            CWalletDB walletdb(pwalletMain->strWalletFile);
+            wtx.WriteToDisk(&walletdb);
+        }
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("dockernode","CDockerServerman::ProcessMessage CREATESERVICE Started\n");
         if (!fDockerNode) return;
@@ -430,6 +481,27 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     }
     return true;
 
+}
+bool CheckAndGetTransaction(DockerGetTranData dtdata,int& errCode){
+    // 1.first check time
+    if(dtdata.sigTime > GetAdjustedTime() + TIMEOUT && dtdata.sigTime < GetAdjustedTime() - TIMEOUT){
+        errCode = SERVICEMANCODE::SIGTIME_ERROR;
+        LogPrintf("CDockerServerman::CheckAndGetTransaction sigTime Error %lld\n",dtdata.sigTime);
+        return false;
+    }
+    // 2 .check docker version
+    if(dtdata.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || dtdata.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
+        errCode = SERVICEMANCODE::VERSION_ERROR;
+        LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", dtdata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+        return false;
+    }
+    //  3.check transactions
+    if (!pwalletMain->mapWallet.count(dtdata.txid)){
+        errCode = SERVICEMANCODE::NO_THRANSACTION;
+        LogPrintf("CDockerServerman::CheckAndGetTransaction Invalid or non-wallet transaction: %s\n",dtdata.txid.ToString());
+        return false;
+    }
+    return true;
 }
 int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
 
