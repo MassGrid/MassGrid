@@ -68,6 +68,8 @@ const char *MNVERIFY="mnv";
 // MassGrid docker types
 const char *GETDNDATA="getdndata";   //get own docker data
 const char *DNDATA="dndata";    //respone docker data
+const char *GETTRANS="gettrans";
+const char *TRANSDATA="transdata";
 const char *CREATESERVICE="createspec";
 const char *UPDATESERVICE="updatespec";
 const char *DELETESERVICE="delspec";
@@ -150,6 +152,8 @@ const static std::string allNetMessageTypes[] = {
     NetMsgType::MNVERIFY,
     NetMsgType::GETDNDATA,
     NetMsgType::DNDATA,
+    NetMsgType::GETTRANS,
+    NetMsgType::TRANSDATA,
     NetMsgType::CREATESERVICE,
     NetMsgType::UPDATESERVICE,
     NetMsgType::DELETESERVICE,

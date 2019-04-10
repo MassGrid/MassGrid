@@ -20,6 +20,7 @@ private:
     mutable CCriticalSection cs;
 public:
         DockerGetData dndata;
+        DockerTransData dtdata;
         CService connectDockerAddr{};
         CNode* connectNode = nullptr;
 
@@ -35,5 +36,10 @@ public:
         void AskForDNData();
         bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
         bool DeleteAndSendServiceSpec(DockerDeleteService delServic);
+
+        //get dockertransaction
+        bool SetConnectDockerAddr(std::string address_port);
+        void AskForTransData(std::string txid);
+
 };
 #endif  //DOCKERCLUSTER_H

@@ -484,6 +484,7 @@ public:
     ATTRIBUTE_MEMBER_FUNC(custeraddress);
     ATTRIBUTE_MEMBER_FUNC(provideraddress);
     ATTRIBUTE_MEMBER_FUNC(taskstate);
+    ATTRIBUTE_MEMBER_FUNC(taskstatuscode);
     ATTRIBUTE_MEMBER_FUNC(tlementtxid);
     ATTRIBUTE_MEMBER_FUNC(masternodeaddress);
     ATTRIBUTE_MEMBER_FUNC(masternodeip);

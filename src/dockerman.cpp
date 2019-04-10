@@ -123,7 +123,6 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
             url="/nodes/";
             url.append(id);
             type=HttpType::HTTP_DELETE;
-            pushdata.clear();
             break;
         case Method::METHOD_NODES_UPDATE:   // not implemented yet
             break;
@@ -207,8 +206,8 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
         // err
     }
     if(ret < 0) {
-            LogPrint("docker","CDockerMan::RequestMessages Http_Error error_code: %d\n",ret);
-            return false;
+        LogPrint("docker","CDockerMan::RequestMessages Http_Error error_code: %d\n",ret);
+        return false;
     }
     std::string reponseData=http.getReponseData();
     return ProcessMessage(mtd,http.url,ret,reponseData,isClearService);
@@ -345,10 +344,13 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 }
                 uint256 txid = it->second.txid;
                 int taskstate = 0;
+                std::string taskstatuscode="";
                 // set node usage
                 if(it->second.mapDockerTaskLists.size()){
                     string nodeid = it->second.mapDockerTaskLists.begin()->second.nodeID;
                     taskstate = it->second.mapDockerTaskLists.begin()->second.status.state;
+                    taskstatuscode=it->second.mapDockerTaskLists.begin()->second.status.err;
+                    if(taskstatuscode.size()>50) taskstatuscode=taskstatuscode.substr(0,50);
                     if(!nodeid.empty()){
                         auto it2 = mapDockerNodeLists.find(nodeid);
                         it2->second.isuseable=true;
@@ -363,16 +365,17 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 CWalletTx& wtx = pwalletMain->mapWallet[txid];  //watch only not check
                 wtx.Setdeletetime(std::to_string(GetAdjustedTime()));
                 wtx.Settaskstate(std::to_string(taskstate));
+                wtx.Settaskstatuscode(taskstatuscode);
                 CWalletDB walletdb(pwalletMain->strWalletFile);
                 wtx.WriteToDisk(&walletdb);
 
                 //exec tlementset
                 timerModule.UpdateSet(wtx);
                 //  delete service form map
-                LogPrint("docker","CDockerMan::ProcessMessage remove serviceid successful%s\n",id);
+                LogPrint("docker","CDockerMan::ProcessMessage remove serviceid successful %s\n",id);
             }
             else{
-                LogPrint("docker","CDockerMan::ProcessMessage serviceid not found%s\n",id);
+                LogPrint("docker","CDockerMan::ProcessMessage serviceid not found %s\n",id);
                 return false;
             }
             break;
@@ -404,7 +407,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             for(auto iter = serviceidSet.begin();iter != serviceidSet.end();++iter){
                 auto it = mapDockerServiceLists.find(*iter);
                 CWalletTx& wtx = pwalletMain->mapWallet[it->second.txid];  //watch only not check
-
+                std::string tmpnodeid="";
                 if(it->second.mapDockerTaskLists.size()){
                     string nodeid = it->second.mapDockerTaskLists.begin()->second.nodeID;
                     if(!nodeid.empty()
@@ -418,13 +421,22 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         }
                     }else
                     {
-                        mapDockerNodeLists[nodeid].isuseable=true;
-                        LogPrint("docker","CDockerMan::ProcessMessage task state error reset usable serviceid: %s\n",it->first);
+                        if(it->second.mapDockerTaskLists.begin()->second.status.state == Config::TaskState::TASKSTATE_FAILED){
+                            tmpnodeid=nodeid;
+                        }else{
+                            mapDockerNodeLists[nodeid].isuseable=true;
+                            LogPrint("docker","CDockerMan::ProcessMessage task state error reset usable serviceid: %s\n",it->first);
+                        }
                     }
                 }
                 if(it->second.deleteTime <= GetAdjustedTime()){ //when the task is always in pedding
                     LogPrintf("CDockerMan::ProcessMessage will be delete usable serviceid: %s\n",it->first);
                     PushMessage(Method::METHOD_SERVICES_DELETE,it->first,"");
+                    if(tmpnodeid.size()>0){
+                        std::string pushData="force=ture";
+                        bool ret = PushMessage(Method::METHOD_NODES_DELETE,tmpnodeid,pushData);
+                        LogPrint("timer","CDockerMan::ProcessMessage delete nodeid %s %d\n",tmpnodeid,ret);
+                    }
                 }
             }
             break;
@@ -530,7 +542,9 @@ bool CDockerMan::UpdateService(std::string serviceid){
     return true;
 }
 uint64_t CDockerMan::GetDockerNodeCount(){
-    return mapDockerNodeLists.size();
+    uint64_t actnode = GetDockerNodeActiveCount()-GetDockerServiceCount()-1;
+    if(actnode<0) return 0;
+    return actnode;
 }
 uint64_t CDockerMan::GetDockerNodeActiveCount(){
     uint64_t count = 0;

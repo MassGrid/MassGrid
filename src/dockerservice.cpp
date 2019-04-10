@@ -114,8 +114,17 @@ void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service
             if(serviceit != services.end()){
                 std::map<std::string,Task> &tasks = serviceit->second.mapDockerTaskLists;
                 auto it = tasks.find(id);
-                if(it!=tasks.end() && it->second.version.index == index){    //if the elem existed and needn't update
-                    continue;
+                if(it!=tasks.end()){
+                    //health check timeout 
+                    int64_t now_time=GetAdjustedTime();
+                    if(now_time >= (serviceit->second.createdAt + 180) && it->second.status.state != Config::TaskState::TASKSTATE_RUNNING){
+                        LogPrint("timer","Task::TaskListUpdateAll task status %d, will be delete\n",it->second.status.state);
+                        serviceit->second.deleteTime=now_time;
+                        serviceidSet.insert(serviceid);
+                    }
+                    if(it->second.version.index == index){    //if the elem existed and needn't update
+                        continue;
+                    }
                 }
                 Task task;
                 bool fSuccess = Task::DecodeFromJson(data,task);
@@ -123,12 +132,6 @@ void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service
                     auto now_time = GetAdjustedTime();
                     tasks[task.ID]=task;
                     serviceidSet.insert(serviceid);
-                    //health check timeout 
-                    if(now_time >= (serviceit->second.createdAt + 180) && task.status.state != Config::TaskState::TASKSTATE_RUNNING){
-
-                        LogPrint("timer","Task::TaskListUpdateAll task status %d, will be delete\n",task.status.state);
-                        serviceit->second.deleteTime=now_time;
-                    }
                 }
             }
         }

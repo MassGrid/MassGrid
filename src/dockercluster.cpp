@@ -65,6 +65,27 @@ void Cluster::AskForDNData()
     g_connman->PushMessage(connectNode, NetMsgType::GETDNDATA, DefaultPubkey);
 }
 
+bool Cluster::SetConnectDockerAddr(std::string address_port)
+{
+
+    LogPrint("dockernode","Cluster::SetConnectDockerAddress Started\n");
+    if (!Lookup(address_port.c_str(), connectDockerAddr, 0, false)){
+        LogPrintf("Cluster::SetConnectDockerAddress Incorrect DockerNode address %s", address_port);
+        return false;
+    }
+    return true;
+}
+void Cluster::AskForTransData(std::string txid)
+{
+    LogPrint("dockernode","Cluster::AskForTransData Started\n");
+    if(!connectNode) return;
+
+    dtdata.Init();
+    DockerGetTranData dockerDtData;
+    dockerDtData.sigTime=GetAdjustedTime();
+    dockerDtData.txid=uint256S(txid);
+    g_connman->PushMessage(connectNode, NetMsgType::GETTRANS, dockerDtData);
+}
 bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
 
     LogPrint("dockernode","Cluster::CreateAndSendSeriveSpec Started\n");

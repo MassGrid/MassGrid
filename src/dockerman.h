@@ -138,6 +138,14 @@ public:
         }
         return false;
     }
+    bool IsExistSerivceFromID(std::string serverid){
+        LOCK(cs);
+        for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it){
+            if(it->first == serverid)
+                return true;
+        }
+        return false;
+    }
     bool GetNodeFromList(std::string nodeid,Node& node){
         LOCK(cs);
         if(!mapDockerNodeLists.count(nodeid))
