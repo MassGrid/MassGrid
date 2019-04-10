@@ -53,18 +53,19 @@ std::string IpSet::GetFreeIP(){
         ipaddr.s_addr = addr;
         if(!ip_set.count(ipaddr.s_addr)){
             ip_set.insert(ipaddr.s_addr);
-            char strip[INET_ADDRSTRLEN];
-            if(inet_ntop(AF_INET,&ipaddr.s_addr, strip, sizeof(strip) != NULL))
+            char strip[INET_ADDRSTRLEN+1];
+            if(inet_ntop(AF_INET,&ipaddr.s_addr, strip, INET_ADDRSTRLEN) != NULL){
+                LogPrintf("IpSet::GetFreeIP addr %u %s\n",addr,strip);
                 return std::string(strip);
+            }
         }
     }
 }
-
 std::string IpSet::GetNetMask(){
     in_addr mask{};
     mask.s_addr = ntohl(netmask);
-    char strnetmask[INET_ADDRSTRLEN];
-    return std::string(inet_ntop(AF_INET,&mask.s_addr, strnetmask, sizeof(strnetmask)!=NULL));
+    char strnetmask[INET_ADDRSTRLEN+1];
+    return std::string(inet_ntop(AF_INET,&mask.s_addr, strnetmask, INET_ADDRSTRLEN));
 }
 
 void IpSet::Insert(std::string str){
@@ -277,7 +278,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         {
             if(jsondata.exists("ID")){
                 id=jsondata["ID"].get_str();
-                LogPrintf("CDockerMan::ProcessMessage Service Create: %d Successful\n",id);
+                LogPrintf("CDockerMan::ProcessMessage Service Create: %s Successful\n",id);
 
                 PushMessage(Method::METHOD_SERVICES_INSPECT,id,"");
 
