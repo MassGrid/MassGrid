@@ -101,8 +101,8 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
             (abs(GetAdjustedTime() - nSentinelPingTime) < MASTERNODE_WATCHDOG_MAX_SECONDS);
     if(fDockerNode){
         dockerman.Update();
-        mnp.mdocker.nodeCount=dockerman.GetDockerNodeCount();
-        mnp.mdocker.activeNodeCount=dockerman.GetDockerNodeActiveCount();//
+        mnp.mdocker.nodeCount= dockerman.GetDockerNodeCount();
+        mnp.mdocker.activeNodeCount= dockerman.GetDockerNodeActiveCount();
         mnp.mdocker.dockerServiceCount=dockerman.GetDockerServiceCount();
         mnp.mdocker.dockerTaskCount=dockerman.GetDockerTaskCount();
         mnp.mdocker.docker_version=dockerman.version.ver;

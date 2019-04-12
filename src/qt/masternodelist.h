@@ -149,6 +149,7 @@ private Q_SLOTS:
     void jumpToCreateService(std::string ip,std::string txid);
     void timeoutToScanStatus();
     void disenableDeleteServiceBtn();
+    // void askTransData(std::string txid);
 };
 
 #endif // MASTERNODELIST_H

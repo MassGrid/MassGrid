@@ -303,7 +303,12 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     statusFrameLayout->addWidget(tmpFrame);
 
     sizeGrip = new QSizeGrip(tmpFrame);
+
+#if Q_OS_WIN
+    sizeGrip->move(2,25);
+#else
     sizeGrip->move(-3,10);
+#endif
 
     // statusBar()->addWidget(progressBarLabel);
     // statusBar()->addWidget(progressBar);
@@ -1480,7 +1485,6 @@ void MassGridGUI::message(const QString &title, const QString &message, unsigned
 {
     QString strTitle = tr("MassGrid"); // default title
     // Default to information icon
-    int nMBoxIcon = QMessageBox::Information;
     int nNotifyIcon = Notificator::Information;
 
     QString msgType;
@@ -1510,30 +1514,47 @@ void MassGridGUI::message(const QString &title, const QString &message, unsigned
 
     // Check for error/warning icon
     if (style & CClientUIInterface::ICON_ERROR) {
-        nMBoxIcon = QMessageBox::Critical;
         nNotifyIcon = Notificator::Critical;
     }
     else if (style & CClientUIInterface::ICON_WARNING) {
-        nMBoxIcon = QMessageBox::Warning;
         nNotifyIcon = Notificator::Warning;
     }
 
     // Display message
     if (style & CClientUIInterface::MODAL) {
         // Check for buttons, use OK as default, if none was supplied
-        QMessageBox::StandardButton buttons;
-        if (!(buttons = (QMessageBox::StandardButton)(style & CClientUIInterface::BTN_MASK)))
-            buttons = QMessageBox::Ok;
+        // QMessageBox::StandardButton buttons;
+        // if (!(buttons = (QMessageBox::StandardButton)(style & CClientUIInterface::BTN_MASK)))
+        //     buttons = QMessageBox::Ok;
+
+        // showNormalIfMinimized();
+        // QMessageBox mBox(strTitle, message, buttons, this);
+        // int r = mBox.exec();
+        // if (ret != NULL)
+        //     *ret = r == QMessageBox::Ok;
+
 
         showNormalIfMinimized();
-        QMessageBox mBox((QMessageBox::Icon)nMBoxIcon, strTitle, message, buttons, this);
-        int r = mBox.exec();
+
+        // QMessageBox mBox(strTitle, message, buttons, this);
+        // int r = mBox.exec();
+
+        CMessageBox::StandardButton btnRetVal = CMessageBox::information(this, strTitle,message);
+
         if (ret != NULL)
-            *ret = r == QMessageBox::Ok;
+            *ret = btnRetVal == CMessageBox::Ok;
     }
     else
         notificator->notify((Notificator::Class)nNotifyIcon, strTitle, message);
 }
+
+    // CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
+    //     msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+    // if(btnRetVal == CMessageBox::Cancel){
+    //     close();
+    //     return ;
+    // }
 
 void MassGridGUI::changeEvent(QEvent *e)
 {

@@ -263,8 +263,6 @@ void DockerOrderView::setModel(WalletModel *model)
 
         // Watch-only signal
         connect(model, SIGNAL(notifyWatchonlyChanged(bool)), this, SLOT(updateWatchOnlyColumn(bool)));
-        // bool flag = connect(model->getDockerOrderTableModel(), SIGNAL(updateOrderStatus(const QModelIndex&)), 
-        //             this, SLOT(updateOrderStatus(const QModelIndex&)));
 
         connect(model->getDockerOrderTableModel(),SIGNAL(updateOrderStatus(const std::string&)),
                     this,SLOT(updateOrderStatus(const std::string&)));

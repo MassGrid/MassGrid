@@ -917,7 +917,7 @@ QPushButton::!enabled#nextButton_4
               <number>5</number>
              </property>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0">
+              <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
                <item>
                 <widget class="QLabel" name="label_2">
                  <property name="minimumSize">
@@ -950,35 +950,6 @@ QPushButton::!enabled#nextButton_4
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_3">
-                 <property name="text">
-                  <string>N2N Name:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="lineEdit_n2n_name">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>34</height>
-                  </size>
-                 </property>
-                 <property name="placeholderText">
-                  <string>massgridn2n</string>
                  </property>
                 </widget>
                </item>

@@ -210,6 +210,20 @@ void MasternodeList::showDockerDetail(QModelIndex index)
 
 void MasternodeList::gotoDockerSerivcePage(const std::string& ip_port)
 {
+    // check n2n status
+    if(switchButton->IsSelected() && m_curAddr_Port.size() > 0 && m_curAddr_Port != ip_port){
+
+        QString msg = tr("Edge is running,the last masternode ip is:%1,we will close it if you want to switch to this node,are you sure that?")
+                        .arg(QString::fromStdString(m_curAddr_Port));
+        CMessageBox::StandardButton retval = CMessageBox::question(this, tr("N2N Status"),msg,
+            CMessageBox::Ok_Cancel,
+            CMessageBox::Cancel);
+
+        if(retval != CMessageBox::Ok)
+            return;
+        else
+            updateEdgeStatus(0);
+    }
     m_curAddr_Port = ip_port;
     ui->tabWidget->setCurrentIndex(2);
     setCurUpdateMode(DockerUpdateMode::WhenNormal);
@@ -404,7 +418,7 @@ void MasternodeList::updateNodeList()
         QTableWidgetItem *activeSecondsItem = new QTableWidgetItem(QString::fromStdString(DurationToDHMS(mn.lastPing.sigTime - mn.sigTime)));
         QTableWidgetItem *lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d %H:%M", mn.lastPing.sigTime + offsetFromUtc)));
         QTableWidgetItem *pubkeyItem = new QTableWidgetItem(QString::fromStdString(CMassGridAddress(mn.pubKeyCollateralAddress.GetID()).ToString()));
-        QTableWidgetItem *nodeCount = new QTableWidgetItem(QString::number(mn.lastPing.mdocker.activeNodeCount) + "/" +QString::number(mn.lastPing.mdocker.nodeCount));
+        QTableWidgetItem *nodeCount = new QTableWidgetItem(QString::number(mn.lastPing.mdocker.nodeCount) + "/" +QString::number(mn.lastPing.mdocker.activeNodeCount)); 
         QTableWidgetItem *joinToken = new QTableWidgetItem(QString::fromStdString(mn.lastPing.mdocker.joinToken));
         
         if (strCurrentFilter != "")
@@ -602,7 +616,7 @@ void MasternodeList::updateDockerList(bool fForce)
         ui->serviceSec->setText(time.toString("mm:ss"));
     }
 
-    if(nSecondsTillUpdate > 0 && !fForce) return;
+    if(nSecondsTillUpdate >= 0 && !fForce) return;
     m_nTimeDockerListUpdated = GetTime();
 
     // setCurUpdateMode(DockerUpdateMode::WhenNormal);
@@ -947,7 +961,7 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
     int count = env.size();
     QString n2n_name;
     QString n2n_localip;
-    QString n2n_netmask;
+    QString n2n_netmask = "255.0.0.0";
     QString n2n_SPIP;
     QString virtualIP;
 
@@ -1028,14 +1042,9 @@ void MasternodeList::slot_btn_refund()
     std::string txid,mnip,orderstatus;
     dockerorderView->getCurrentItemTxidAndmnIp(txid,mnip,orderstatus);
 
-    CMessageBox::StandardButton retval = CMessageBox::question(this, tr("Refund"),
-        tr("Is need to refund the order by this Txid? \n (Txid:%1...)").arg(QString::fromStdString(txid).mid(20)),
-        CMessageBox::Ok_Cancel,
-        CMessageBox::Cancel);
-
-    if(retval != CMessageBox::Ok) return;
-
     deleteService(txid,mnip);
+    //update order status
+    dockerorderView->updateAllOperationBtn();
 }
 
 void MasternodeList::loadOrderData()
@@ -1090,3 +1099,8 @@ void MasternodeList::timeoutToScanStatus()
 {
     ui->pushButton_refund->setEnabled(false);
 }
+
+// void MasternodeList::askTransData(std::string txid)
+// {
+//     // AskForTransData
+// }

@@ -124,7 +124,8 @@ public:
         TransactionCreationFailed, // Error returned when wallet is still locked
         TransactionCommitFailed,
         AbsurdFee,
-        PaymentRequestExpired
+        PaymentRequestExpired,
+        InvalidPubkey
     };
 
     enum EncryptionStatus
@@ -251,6 +252,7 @@ private:
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
     void checkBalanceChanged();
+    bool isSamePubkey(CWalletTx *newTx);
 
 Q_SIGNALS:
     // Signal that balance in wallet changed

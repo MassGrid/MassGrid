@@ -13,7 +13,7 @@
     </message>
     <message>
         <source>Name:</source>
-        <translation>容器名:</translation>
+        <translation type="vanished">容器名:</translation>
     </message>
     <message>
         <source>Image:</source>
@@ -21,7 +21,7 @@
     </message>
     <message>
         <source>Ok</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
         <source>title name</source>
@@ -29,19 +29,19 @@
     </message>
     <message>
         <source>N2N_Name:</source>
-        <translation>N2N名:</translation>
+        <translation type="vanished">N2N名:</translation>
     </message>
     <message>
         <source>GPU Name:</source>
-        <translation>GPU名:</translation>
+        <translation type="vanished">GPU名:</translation>
     </message>
     <message>
         <source>GPU Count:</source>
-        <translation>GPU数:</translation>
+        <translation type="vanished">GPU数:</translation>
     </message>
     <message>
         <source>Memory Byte:</source>
-        <translation>内存大小:</translation>
+        <translation type="vanished">内存大小:</translation>
     </message>
     <message>
         <source>Mb</source>
@@ -49,7 +49,7 @@
     </message>
     <message>
         <source>CPU Count:</source>
-        <translation>CPU数量:</translation>
+        <translation type="vanished">CPU数量:</translation>
     </message>
     <message>
         <source>SSH-PubKey:</source>
@@ -57,7 +57,7 @@
     </message>
     <message>
         <source>create docker service error</source>
-        <translation>创建虚拟机服务失败！</translation>
+        <translation type="vanished">创建虚拟机服务失败！</translation>
     </message>
     <message>
         <source>Wallet option</source>
@@ -73,11 +73,11 @@
     </message>
     <message>
         <source>Create and send SeriveSpec failed!</source>
-        <translation>创建虚拟机服务失败！</translation>
+        <translation type="vanished">创建虚拟机服务失败！</translation>
     </message>
     <message>
         <source>Create and send SeriveSpec success!</source>
-        <translation>创建虚拟机服务成功！</translation>
+        <translation type="vanished">创建虚拟机服务成功！</translation>
     </message>
     <message>
         <source>open pubKey file</source>
@@ -94,10 +94,6 @@
     <message>
         <source>Create Service</source>
         <translation>创建服务</translation>
-    </message>
-    <message>
-        <source>massgridn2n</source>
-        <translation></translation>
     </message>
     <message>
         <source>10.0-base-ubuntu16.04</source>
@@ -149,11 +145,11 @@
     </message>
     <message>
         <source> Service Name:</source>
-        <translation>服务名:</translation>
+        <translation type="vanished">服务名:</translation>
     </message>
     <message>
         <source>N2N Name:</source>
-        <translation>N2N名:</translation>
+        <translation type="vanished">N2N名:</translation>
     </message>
     <message>
         <source>GPU 类型:</source>
@@ -161,7 +157,7 @@
     </message>
     <message>
         <source>CPU 类型:</source>
-        <translation>CPU类型:</translation>
+        <translation type="vanished">CPU类型:</translation>
     </message>
     <message>
         <source>Pay to:</source>
@@ -2662,7 +2658,7 @@ Address: %4
     </message>
     <message>
         <source>NodeCount/activeNodeCount</source>
-        <translation>节点数/活跃节点数</translation>
+        <translation type="vanished">节点数/活跃节点数</translation>
     </message>
     <message>
         <source>joinToken</source>
@@ -2678,11 +2674,11 @@ Address: %4
     </message>
     <message>
         <source>ContainerName</source>
-        <translation>容器名</translation>
+        <translation type="vanished">容器名</translation>
     </message>
     <message>
         <source>UserId</source>
-        <translation>用户ID</translation>
+        <translation type="vanished">用户ID</translation>
     </message>
     <message>
         <source>update Service</source>
@@ -2690,7 +2686,7 @@ Address: %4
     </message>
     <message>
         <source>create Service</source>
-        <translation>创建服务</translation>
+        <translation type="vanished">创建服务</translation>
     </message>
     <message>
         <source>Docker Server Detail</source>
@@ -2698,31 +2694,31 @@ Address: %4
     </message>
     <message>
         <source>Container Name:</source>
-        <translation>容器名:</translation>
+        <translation type="vanished">容器名:</translation>
     </message>
     <message>
         <source>Image Name:</source>
-        <translation>镜像名:</translation>
+        <translation type="vanished">镜像名:</translation>
     </message>
     <message>
         <source>User name:</source>
-        <translation>登陆名:</translation>
+        <translation type="vanished">登陆名:</translation>
     </message>
     <message>
         <source>N2N_NAME:</source>
-        <translation>N2N名:</translation>
+        <translation type="vanished">N2N名:</translation>
     </message>
     <message>
         <source>Remote_IP:</source>
-        <translation>远程IP:</translation>
+        <translation type="vanished">远程IP:</translation>
     </message>
     <message>
         <source>N2N_SERVERIP:</source>
-        <translation>N2N服务器IP:</translation>
+        <translation type="vanished">N2N服务器IP:</translation>
     </message>
     <message>
         <source>SSH-PubKey:</source>
-        <translation>SSH公钥:</translation>
+        <translation type="vanished">SSH公钥:</translation>
     </message>
     <message>
         <source>Service Task Detail</source>
@@ -2730,23 +2726,23 @@ Address: %4
     </message>
     <message>
         <source>Task Name:</source>
-        <translation>任务名:</translation>
+        <translation type="vanished">任务名:</translation>
     </message>
     <message>
         <source>CPU Count:</source>
-        <translation>CPU数量:</translation>
+        <translation type="vanished">CPU数量:</translation>
     </message>
     <message>
         <source>Memory Bytes：</source>
-        <translation>内存大小:</translation>
+        <translation type="vanished">内存大小:</translation>
     </message>
     <message>
         <source>GPU Name:</source>
-        <translation>GPU名:</translation>
+        <translation type="vanished">GPU名:</translation>
     </message>
     <message>
         <source>GPU Count:</source>
-        <translation>GPU数:</translation>
+        <translation type="vanished">GPU数:</translation>
     </message>
     <message>
         <source>Docker option</source>
@@ -2754,7 +2750,7 @@ Address: %4
     </message>
     <message>
         <source>connect docker network failed!</source>
-        <translation>连接虚拟机网络失败！</translation>
+        <translation type="vanished">连接虚拟机网络失败！</translation>
     </message>
     <message>
         <source>Edge option</source>
@@ -2770,7 +2766,7 @@ Address: %4
     </message>
     <message>
         <source>Task Status:</source>
-        <translation>任务状态:</translation>
+        <translation type="vanished">任务状态:</translation>
     </message>
     <message>
         <source>Can&apos;t open docker detail page without synced!</source>
@@ -2786,7 +2782,7 @@ Address: %4
     </message>
     <message>
         <source>Task Tip:</source>
-        <translation>任务详情提示:</translation>
+        <translation type="vanished">任务详情提示:</translation>
     </message>
     <message>
         <source>Create completed</source>
@@ -2806,7 +2802,7 @@ Address: %4
     </message>
     <message>
         <source>status</source>
-        <translation>状态</translation>
+        <translation type="vanished">状态</translation>
     </message>
     <message>
         <source>Update List</source>
@@ -2818,19 +2814,19 @@ Address: %4
     </message>
     <message>
         <source>Service Detail</source>
-        <translation>服务详情</translation>
+        <translation type="vanished">服务详情</translation>
     </message>
     <message>
         <source>Service Timeout:</source>
-        <translation>服务到期时间:</translation>
+        <translation type="vanished">服务到期时间:</translation>
     </message>
     <message>
         <source>Task Detail</source>
-        <translation>任务详情</translation>
+        <translation type="vanished">任务详情</translation>
     </message>
     <message>
         <source>Waiting...</source>
-        <translation>等待中...</translation>
+        <translation type="vanished">等待中...</translation>
     </message>
     <message>
         <source>Create Service</source>
@@ -2850,7 +2846,7 @@ Address: %4
     </message>
     <message>
         <source>Node/activeCount</source>
-        <translation>节点/活跃数</translation>
+        <translation type="vanished">节点/活跃数</translation>
     </message>
     <message>
         <source>User Id</source>
@@ -2874,7 +2870,7 @@ Address: %4
     </message>
     <message>
         <source>Enter txid or coninter name to search</source>
-        <translation>输入txid或者镜像名</translation>
+        <translation type="vanished">输入txid或者镜像名</translation>
     </message>
     <message>
         <source>Search</source>
@@ -2899,6 +2895,18 @@ Address: %4
     <message>
         <source>Are you sure you want to delete this service?</source>
         <translation>是否删除该服务</translation>
+    </message>
+    <message>
+        <source>ActiveCount/Node</source>
+        <translation>可用数/总数</translation>
+    </message>
+    <message>
+        <source>Edge is running,the last masternode ip is:%1,we will close it if you want to switch to this node,are you sure that?</source>
+        <translation>Edge正在运行，上一个主节点ip为：%1，如果想进入当前节点，我们将关闭Edge，确定关闭？</translation>
+    </message>
+    <message>
+        <source>N2N Status</source>
+        <translation>N2N状态</translation>
     </message>
 </context>
 <context>
@@ -4955,6 +4963,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
         <source>If the custom fee is set to 1000 nMGD and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 nMGD in fee,&lt;br /&gt;while &quot;total at least&quot; pays 1000 nMGD. For transactions bigger than a kilobyte both pay by kilobyte.</source>
         <translation></translation>
     </message>
+    <message>
+        <source>The transaction vin does not contain the default address&apos;s public key,please confirm the address has enough account!</source>
+        <translation>该交易输入中未包含默认收币地址公钥，请确认该地址有足够的金额！</translation>
+    </message>
 </context>
 <context>
     <name>SendCoinsEntry</name>
@@ -5099,7 +5111,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Memory Bytes：</source>
-        <translation>内存大小:</translation>
+        <translation type="vanished">内存大小:</translation>
     </message>
     <message>
         <source>GPU Count:</source>

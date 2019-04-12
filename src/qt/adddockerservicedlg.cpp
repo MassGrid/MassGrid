@@ -271,6 +271,7 @@ void AddDockerServiceDlg::doStep3()
     if(createDockerService()){
         //do not need to ask dndata
         // dockercluster.AskForDNData();
+        LogPrintf("=====>AddDockerServiceDlg::doStep3\n");
         QTimer::singleShot(1000,this,SLOT(refreshDNData()));
     }
     else
@@ -411,8 +412,10 @@ bool AddDockerServiceDlg::createDockerService()
 
     m_createService.image = strServiceImage;
 
-    std::string strn2n_Community = ui->lineEdit_n2n_name->text().toStdString().c_str();
-    m_createService.n2n_community = strn2n_Community;
+    LogPrintf("---->pwalletMain->mapWallet.count(delService.txid):%d\n",pwalletMain->mapWallet.count(m_createService.txid));
+
+    // std::string strn2n_Community = ui->lineEdit_n2n_name->text().toStdString().c_str();
+    m_createService.n2n_community = "massgridn2n"; //strn2n_Community;
     if(!dockercluster.CreateAndSendSeriveSpec(m_createService)){
         LogPrintf("dockercluster.CreateAndSendSeriveSpec error\n");
         return false;
@@ -425,8 +428,9 @@ void AddDockerServiceDlg::refreshDNData()
     static int index = 0;
     ui->label_timeout->setText(QString::number(++index));
     if(dockerServerman.getDNDataStatus() == CDockerServerman::Creating){
-        if(index < 30)
+        if(index < 30){
             QTimer::singleShot(1000,this,SLOT(refreshDNData()));
+        }
         else
         {
             CMessageBox::information(this, tr("Create Service Error"),tr("Can't receive create service return!"));
@@ -459,6 +463,7 @@ void AddDockerServiceDlg::refreshDNData()
                     QString msg = tr("Transaction error:") + errStr +tr("the window will be close!");
                     CMessageBox::information(this, tr("Create Failed"),msg);
                     close();
+                    return ;
                 }
                 case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
                 case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
@@ -473,6 +478,7 @@ void AddDockerServiceDlg::refreshDNData()
 
                     if(btnRetVal == CMessageBox::Cancel){
                         close();
+                        return ;
                     }
                     else{
                         gotoStep1Page();
@@ -643,15 +649,14 @@ void AddDockerServiceDlg::refreshServerList()
     static int refreshCount = 0 ;
 
     if(dockerServerman.getDNDataStatus() == CDockerServerman::Ask){
-        // if(MasternodeList::DockerUpdateMode::WhenNormal)
         QTimer::singleShot(2000,this,SLOT(refreshServerList()));
-        LogPrintf("MasternodeList get DNData Status:CDockerServerman::Ask\n");
+        LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Ask\n");
         return ;
     }
     else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
             dockerServerman.getDNDataStatus() == CDockerServerman::Free){
         loadResourceData();
-        LogPrintf("MasternodeList get DNData Status:CDockerServerman::Received\n");
+        LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Received\n");
         hideLoadingWin();
         return ;
     }

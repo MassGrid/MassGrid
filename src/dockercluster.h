@@ -19,27 +19,26 @@ private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 public:
-        DockerGetData dndata;
-        DockerTransData dtdata;
-        CService connectDockerAddr{};
-        CNode* connectNode = nullptr;
+    DockerGetData dndata;
+    DockerTransData dtdata;
+    CService connectDockerAddr{};
+    CNode* connectNode = nullptr;
 
-        CPubKey DefaultPubkey{};
-        void setDefaultPubkey(CPubKey pubkey);
-        CMassGridAddress DefaultAddress{};
+    CPubKey DefaultPubkey{};
+    void setDefaultPubkey(CPubKey pubkey);
+    CMassGridAddress DefaultAddress{};
 
-        bool SetConnectDockerAddress(std::string address_port);
-        bool ProcessDockernodeConnections();
-        bool ProcessDockernodeDisconnections(const std::string& strNode);
-        
+    bool SetConnectDockerAddress(std::string address_port);
+    bool ProcessDockernodeConnections();
+    bool ProcessDockernodeDisconnections(const std::string& strNode);
+    
+    void AskForDNData();
+    bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
+    bool DeleteAndSendServiceSpec(DockerDeleteService delServic);
 
-        void AskForDNData();
-        bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
-        bool DeleteAndSendServiceSpec(DockerDeleteService delServic);
-
-        //get dockertransaction
-        bool SetConnectDockerAddr(std::string address_port);
-        void AskForTransData(std::string txid);
+    //get dockertransaction
+    bool SetConnectDockerAddr(std::string address_port);
+    void AskForTransData(std::string txid);
 
 };
 #endif  //DOCKERCLUSTER_H

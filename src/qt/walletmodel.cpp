@@ -23,9 +23,13 @@
 #include "util.h" // for GetBoolArg
 #include "wallet/wallet.h"
 #include "wallet/walletdb.h" // for BackupWallet
+#include "wallet/wallet.h"
+#include "txmempool.h"
+#include "txdb.h"
 
 #include "instantx.h"
 #include "spork.h"
+#include "init.h"
 
 #include <stdint.h>
 
@@ -349,7 +353,13 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
             }
         }
 
-        // newTx->ID
+        if(isSendToMasternode){
+            if(!isSamePubkey(newTx)){
+                LogPrintf("create transaction error!");
+                return InvalidPubkey;
+            }
+            LogPrintf("create transaction sucess!");
+        }
 
         if(!fCreated)
         {
@@ -370,6 +380,39 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
     }
 
     return SendCoinsReturn(OK);
+}
+
+bool WalletModel::isSamePubkey(CWalletTx *newTx)
+{
+    CTransaction* transaction = (CTransaction*)newTx;
+
+    BOOST_FOREACH(const CTxIn txin, transaction->vin) {
+        const COutPoint out = txin.prevout;
+        CTransaction tx;
+        uint256 hashBlock;
+        if (!GetTransaction(txin.prevout.hash, tx, Params().GetConsensus(), hashBlock, true)){
+            LogPrintf("No information available about transaction\n");
+            return false;
+        }            
+
+        if(tx.vout.size() >= txin.prevout.n){
+            const CTxOut& txout = tx.vout[txin.prevout.n];
+            vector<CTxDestination> addresses;
+            int nRequired;
+            txnouttype type;
+
+            if (!ExtractDestinations(txout.scriptPubKey, type, addresses, nRequired)) {
+                LogPrintf("Can't find address on this txout\n");
+                return false;
+            }
+            BOOST_FOREACH(const CTxDestination& addr, addresses){
+                if(GUIUtil::getDefaultReceiveAddr().contains(QString::fromStdString(CMassGridAddress(addr).ToString()),Qt::CaseInsensitive))
+                    return true;
+            }
+        }
+    }
+    LogPrintf("Is't the same pubkey in this transaction!\n");
+    return false;
 }
 
 WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &transaction)

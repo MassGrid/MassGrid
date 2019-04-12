@@ -2305,8 +2305,10 @@ int real_main(int argc, char* argv[])
     {
         LogPrint("edge", "ip_mode='%s'\n", ip_mode);        
     }
-
-    if(tuntap_open(&(eee.device), tuntap_dev_name, ip_mode, ip_addr, strNetMask.c_str(), device_mac, mtu) < 0){
+    // char * strNetMask_tmp = const_cast<char *>(strNetMask.c_str());
+    char strNetMaskArray[20] = {};
+    strcpy(strNetMaskArray,strNetMask.c_str());
+    if(tuntap_open(&(eee.device), tuntap_dev_name, ip_mode, ip_addr, strNetMaskArray, device_mac, mtu) < 0){
         LogPrintf("dockeredge::ThreadEdgeStart  ERROR: ioctl() [Operation not permitted][-1]\n");
         return(-1);
     }
