@@ -53,19 +53,40 @@ std::string IpSet::GetFreeIP(){
         ipaddr.s_addr = addr;
         if(!ip_set.count(ipaddr.s_addr)){
             ip_set.insert(ipaddr.s_addr);
+
             char strip[INET_ADDRSTRLEN+1];
-            if(inet_ntop(AF_INET,&ipaddr.s_addr, strip, INET_ADDRSTRLEN) != NULL){
+#ifdef WIN32
+            sockaddr_in in;
+            memcpy(&in.sin_addr,&ipaddr.s_addr,INET_ADDRSTRLEN);
+            *strip = inet_ntoa(in.sin_addr);
+
+#else
+            if(inet_ntop(AF_INET,&ipaddr.s_addr, strip, INET_ADDRSTRLEN) == NULL){
+                strip == NULL;
+            }
+#endif
+            if(strip != NULL){
                 LogPrintf("IpSet::GetFreeIP addr %u %s\n",addr,strip);
                 return std::string(strip);
             }
+
         }
     }
 }
+
+
 std::string IpSet::GetNetMask(){
     in_addr mask{};
     mask.s_addr = ntohl(netmask);
     char strnetmask[INET_ADDRSTRLEN+1];
+
+#ifdef WIN32
+    sockaddr_in in;
+    memcpy(&in.sin_addr,&mask.s_addr,INET_ADDRSTRLEN);
+    return std::string(inet_ntoa(in.sin_addr));
+#else
     return std::string(inet_ntop(AF_INET,&mask.s_addr, strnetmask, INET_ADDRSTRLEN));
+#endif
 }
 
 void IpSet::Insert(std::string str){

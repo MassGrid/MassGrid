@@ -304,7 +304,7 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
 
     sizeGrip = new QSizeGrip(tmpFrame);
 
-#if Q_OS_WIN
+#ifdef Q_OS_WIN
     sizeGrip->move(2,25);
 #else
     sizeGrip->move(-3,10);

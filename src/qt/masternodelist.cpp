@@ -19,6 +19,7 @@
 #include <boost/random.hpp>
 #include "cmessagebox.h"
 #include "dockercluster.h"
+#include "dockerman.h"
 #include "util.h"
 #include "adddockerservicedlg.h"
 #include "massgridgui.h"
@@ -940,8 +941,15 @@ bool MasternodeList::getVirtualIP(const QString& n2n_localip,const QString& n2n_
     boost::variate_generator<boost::mt19937&,boost::uniform_int<>>die(gen,uni_dist);
     in_addr ipaddr{};
     ipaddr.s_addr = ntohl(die());
+
+#ifdef WIN32
+    sockaddr_in in;
+    memcpy(&in.sin_addr,&ipaddr.s_addr,INET_ADDRSTRLEN);
+    virtualIP = QString(inet_ntoa(in.sin_addr));
+#else
     char strip[INET_ADDRSTRLEN];
     virtualIP = QString(inet_ntop(AF_INET,&ipaddr.s_addr, strip, sizeof(strip)));
+#endif
     return true;
 }
 

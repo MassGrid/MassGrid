@@ -143,7 +143,11 @@ public:
     }
 };
 namespace TASKDTDATA{
-    enum TASTUS{DEFAULT=0,SUCCESS,ERROR};
+    enum TASTUS{
+        DEFAULT=0,
+        SUCCESS,
+        ERRORCODE
+    };
 }
 class DockerTransData{
 public:

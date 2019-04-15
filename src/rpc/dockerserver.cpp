@@ -422,7 +422,7 @@ UniValue docker(const UniValue& params, bool fHelp)
             MilliSleep(300);
             if(dockercluster.dtdata.msgStatus !=TASKDTDATA::DEFAULT){
                 UniValue obj(UniValue::VOBJ);
-                if(dockercluster.dtdata.msgStatus == TASKDTDATA::ERROR){
+                if(dockercluster.dtdata.msgStatus == TASKDTDATA::ERRORCODE){
                     obj.push_back(Pair("errMessage",dockercluster.dtdata.errCode));
                     return obj;
                 }

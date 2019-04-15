@@ -182,10 +182,10 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
                 dockerTransData.msgStatus = TASKDTDATA::SUCCESS;
             }else{
                 dockerTransData.errCode =SERVICEMANCODE::NO_THRANSACTION;
-                dockerTransData.msgStatus = TASKDTDATA::ERROR;
+                dockerTransData.msgStatus = TASKDTDATA::ERRORCODE;
             }
         }else{
-            dockerTransData.msgStatus=TASKDTDATA::ERROR;
+            dockerTransData.msgStatus=TASKDTDATA::ERRORCODE;
         }
         LogPrint("timer","CDockerServerman::GETTRANS status %d msgstatus %d\n", dockerTransData.errCode,dockerTransData.msgStatus);
         LogPrintf("CDockerServerman::ProcessMessage -- Sent TRANSDATA to peer %d\n", pfrom->id);
