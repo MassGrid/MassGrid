@@ -123,13 +123,7 @@
               <enum>Qt::NoFocus</enum>
              </property>
              <property name="styleSheet">
-              <string notr="true">    min-width:20px;
-    min-height:20px;
-    max-width:20px;
-    max-height:20px;
-    border:7px solid rgb(255,255,255,0);
-	image: url(:/res/pic/closeBtn.png);
-</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string/>
@@ -153,6 +147,9 @@
             <widget class="QTabWidget" name="tabWidget">
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
              </property>
              <property name="currentIndex">
               <number>0</number>
@@ -576,7 +573,7 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>15</width>
+                     <width>12</width>
                      <height>15</height>
                     </size>
                    </property>

@@ -16,6 +16,7 @@ class DockerCreateService;
 class ResourceItem;
 
 class CheckoutTransaction;
+class AskDNDataWorker;
 class LoadingWin;
 class AddDockerServiceDlg : public QDialog
 {
@@ -44,6 +45,7 @@ private:
     WalletModel *m_walletModel;
     DockerCreateService m_createService;
     CheckoutTransaction *m_checkoutTransaction;
+    AskDNDataWorker *m_askDNDataWorker;
     LoadingWin *m_loadingWin;
     CAmount m_amount;
 
@@ -64,6 +66,10 @@ private:
     void hideLoadingWin();
     void filterResource(std::string);
     void initCombobox();
+    void startCheckTransactionWork();
+    void stopAndDelTransactionThread();
+    void resetGUITimer();
+    void startAskDNDataWork(const char* slotMethod, bool needAsk = true);
     
 protected:
     void mousePressEvent(QMouseEvent *e);
@@ -82,13 +88,15 @@ private Q_SLOTS:
     void slot_close();
 
     void refreshServerList();
+    void updateServiceListFinished(bool);
     void initTableWidget();
     void slot_buyClicked();
 
     void slot_refreshTransactionStatus();
     void transactionFinished();
-    void refreshDNData();
+    void updateDNDataAfterCreate(bool);
     void slot_updateTaskTime(int);
+    void updateCreateServerWaitTimer(int);
     void slot_hireTimeChanged(int);
     void slot_gpuComboxCurrentIndexChanged(int);
     void slot_searchMinAmount();
@@ -114,11 +122,35 @@ Q_SIGNALS:
     void checkTransactionFinished();
     void checkTransactionTimeOut();
     void updateTaskTime(int);
-    void threadStoped();
+    void threadStopped();
 
 private Q_SLOTS:
-    void startCheckTransactiontTask();
+    void startTask();
 
+};
+
+class AskDNDataWorker : public QObject
+{
+    Q_OBJECT
+public:
+    explicit AskDNDataWorker(QObject* parent = nullptr);
+    ~AskDNDataWorker();
+
+    bool isNeedToWork() { return m_isNeedToWork; };
+    void setNeedToWork(bool flag) { m_isNeedToWork = flag;};
+
+    bool isAskDNDataFinished();
+
+private:
+    bool m_isNeedToWork;
+
+Q_SIGNALS:
+    void askDNDataFinished(bool isTimeOut);
+    void askDNDataTimeout();
+    void updateTaskTime(int);
+    void threadStopped();
+private Q_SLOTS:
+    void startTask();
 };
 
 #endif // ADDDOCKERSERVICEDLG_H

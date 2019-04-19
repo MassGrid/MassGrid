@@ -123,13 +123,11 @@
         <file>res/pic/background_image.png</file>
         <file>res/pic/background_right.png</file>
         <file>res/pic/calendar.png</file>
-        <file>res/pic/change.png</file>
         <file>res/pic/check-selected.png</file>
         <file>res/pic/closeBtn.png</file>
         <file>res/pic/dlgBackgroud.png</file>
         <file>res/pic/in.png</file>
         <file>res/pic/kPic.png</file>
-        <file>res/pic/logo.png</file>
         <file>res/pic/maxBtn.png</file>
         <file>res/pic/minBtn.png</file>
         <file>res/pic/moreSelect.png</file>
@@ -182,5 +180,12 @@
         <file>res/icons/docker.png</file>
         <file>res/icons/loading.gif</file>
         <file>res/icons/loading.png</file>
+        <file>res/pic/masternodeChecked.png</file>
+        <file>res/pic/overviewChecked.png</file>
+        <file>res/pic/transaction.png</file>
+        <file>res/pic/transactionChecked.png</file>
+        <file>res/pic/sendChecked.png</file>
+        <file>res/pic/mainWinColse.png</file>
+        <file>res/pic/logo.png</file>
     </qresource>
 </RCC>

@@ -260,10 +260,13 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     frameBlocksLayout->addWidget(labelBlocksIcon);
     frameBlocksLayout->addStretch();
 
+    statusFrame->setObjectName("statusFrame");
+
     // Progress bar and label for blocks download
     progressBarLabel = new QLabel();
     progressBarLabel->setVisible(true);
     progressBarLabel->setMaximumWidth(150);
+    progressBarLabel->setStyleSheet("color:rgb(255,255,255);");
     progressBar = new GUIUtil::ProgressBar();
     progressBar->setAlignment(Qt::AlignCenter);
     progressBar->setVisible(true);
@@ -274,13 +277,11 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     QString curStyle = QApplication::style()->metaObject()->className();
     if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
     {
-        progressBar->setStyleSheet("QProgressBar { background-color: #F8F8F8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #00CCFF, stop: 1 #33CCFF); border-radius: 7px; margin: 0px; }");
+        // progressBar->setStyleSheet("QProgressBar { background-color: #F8F8F8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #00CCFF, stop: 1 #33CCFF); border-radius: 7px; margin: 0px; }");
+        progressBar->setStyleSheet("QProgressBar { background-color: rgb(49, 61, 64); border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #00CCFF, stop: 1 #33CCFF); border-radius: 7px; margin: 0px; }");
     }
 
-
     progressBar->setMinimumSize(500,30);
-    statusFrame->setObjectName("statusFrame");
-    statusFrame->setStyleSheet("QFrame#statusFrame {  \n    background-color: rgb(247, 242, 238);\n\n}  ");
 
     QHBoxLayout *statusFrameLayout = new QHBoxLayout(statusFrame);
     statusFrame->setLayout(statusFrameLayout);
@@ -778,6 +779,7 @@ void MassGridGUI::createBackgroundWin()
     centerWin->setLayout(backgroudlayout);
 
     this->setCentralWidget(centerWin);
+    this->setObjectName("MassGridGUI");
 }
 
 void MassGridGUI::createMainWin(const PlatformStyle *platformStyle)
@@ -2019,7 +2021,8 @@ UnitDisplayStatusBarControl::UnitDisplayStatusBarControl(const PlatformStyle *pl
     }
     setMinimumSize(max_width, 0);
     setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    setStyleSheet(QString("QLabel { color : %1 }").arg(platformStyle->SingleColor().name()));
+    // setStyleSheet(QString("QLabel { color : %1 }").arg(platformStyle->SingleColor().name()));
+    setStyleSheet(QString("QLabel { color : rgb(255,255,255); }"));;
 }
 
 /** So that it responds to button clicks */

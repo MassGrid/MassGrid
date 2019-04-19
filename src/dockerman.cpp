@@ -59,7 +59,6 @@ std::string IpSet::GetFreeIP(){
             sockaddr_in in;
             memcpy(&in.sin_addr,&ipaddr.s_addr,INET_ADDRSTRLEN);
             *strip = inet_ntoa(in.sin_addr);
-
 #else
             if(inet_ntop(AF_INET,&ipaddr.s_addr, strip, INET_ADDRSTRLEN) == NULL){
                 strip == NULL;

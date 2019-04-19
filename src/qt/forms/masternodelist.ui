@@ -6,58 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>850</width>
-    <height>514</height>
+    <width>891</width>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QTabBar::tab
-{
-color: rgb(172, 99, 43);
-border-bottom:1px solid rgb(174,103,46);
-border-left:0px solid rgb(174,103,46);
-border-right:0px solid rgb(174,103,46);
-border-top:0px solid rgb(174,103,46);
-    min-width: 140px;
-    min-height: 28px;
-}
-
-
-
-
-QTabBar::tab:selected, QTabBar::tab:hover
-{
-border-left:1px solid rgb(174,103,46);
-border-right:1px solid rgb(174,103,46);
-border-top:1px solid rgb(174,103,46);
-border-bottom:0px solid rgb(174,103,46);
-}
-
-
-QTabBar::tab:selected
-{
-border-left:1px solid rgb(174,103,46);
-border-right:1px solid rgb(174,103,46);
-border-top:1px solid rgb(174,103,46);
-border-bottom:0px solid rgb(174,103,46);
-}
-
-QTabBar::tab:!selected
-{
-color: rgb(172, 99, 43);
-border-bottom:1px solid rgb(174,103,46);
-border-left:0px solid rgb(174,103,46);
-border-right:0px solid rgb(174,103,46);
-border-top:0px solid rgb(174,103,46);
-}
-
-QTabWidget::pane{
-        border:none;
-}
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="topLayout">
    <property name="leftMargin">
@@ -102,7 +59,7 @@ QTabWidget::pane{
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
@@ -590,30 +547,7 @@ border:hidden;
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">QFrame#frame_5{
-border:hidden;
-}
-
-QPushButton#pushButton_reloadOrderView,
-QPushButton#pushButton_refund{
-width:80;
-height:28;
-background-color: rgb(239, 169, 4);
-color: rgb(255, 255, 255);
-border:hidden;
-border-radius:2px;
-}
-
-QPushButton::!enabled#pushButton_reloadOrderView,
-QPushButton::!enabled#pushButton_refund{
-background-color: rgb(125, 125, 125);
-width:80;
-height:28;
-color: rgb(255, 255, 255);
-border:hidden;
-border-radius:2px;
-}
-</string>
+            <string notr="true"/>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -656,10 +590,7 @@ border-radius:2px;
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">QLineEdit{
-height:28;
-border:1px solid rgb(239, 169, 4);;
-}</string>
+               <string notr="true"/>
               </property>
               <property name="placeholderText">
                <string>Enter txid to search</string>
@@ -675,14 +606,7 @@ border:1px solid rgb(239, 169, 4);;
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">QPushButton#pBtn_searchOrderBtn{
-width:80;
-height:28;
-background-color: rgb(239, 169, 4);
-color: rgb(255, 255, 255);
-border:hidden;
-border-radius:2px;
-}</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Search</string>
@@ -714,24 +638,7 @@ border-radius:2px;
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">QPushButton#pushButton_refund{
-width:80;
-height:28;
-background-color: rgb(239, 169, 4);
-color: rgb(255, 255, 255);
-border:hidden;
-border-radius:2px;
-}
-
-QPushButton::!enabled#pushButton_refund{
-background-color: rgb(125, 125, 125);
-width:80;
-height:28;
-color: rgb(255, 255, 255);
-border:hidden;
-border-radius:2px;
-}
-</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Refund</string>

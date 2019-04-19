@@ -906,7 +906,7 @@ QPushButton::!enabled#nextButton_4
 }</string>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="page">
             <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,0,10">
@@ -1699,7 +1699,7 @@ border:hidden;
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="label_timeout">
+                   <widget class="QLabel" name="label_CreatePageTimer">
                     <property name="minimumSize">
                      <size>
                       <width>20</width>

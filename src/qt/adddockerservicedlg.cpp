@@ -26,6 +26,9 @@
 #include <QThread>
 #include <QStringList>
 #include <QEventLoop>
+
+#define LOADRESOURCETIMEOUT 30
+
 extern SendCoinsDialog* g_sendCoinsPage;
 
 QStringList ServiceManCodeStr = {
@@ -51,6 +54,7 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     ui(new Ui::AddDockerServiceDlg),
     m_walletModel(NULL),
     m_checkoutTransaction(NULL),
+    m_askDNDataWorker(NULL),
     m_loadingWin(NULL)
 {
     ui->setupUi(this);
@@ -82,18 +86,7 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
 AddDockerServiceDlg::~AddDockerServiceDlg()
 {
     delete ui;
-    if(m_checkoutTransaction != NULL){
-
-        disconnect(m_checkoutTransaction,SIGNAL(checkTransactionFinished()),this,SLOT(transactionFinished()));
-        disconnect(m_checkoutTransaction,SIGNAL(updateTaskTime(int)),this,SLOT(slot_updateTaskTime(int)));
-
-        QEventLoop loop;
-        connect(m_checkoutTransaction,SIGNAL(threadStoped()),&loop,SLOT(quit()));
-
-        m_checkoutTransaction->setNeedToWork(false);
-        loop.exec();
-        delete m_checkoutTransaction;        
-    }
+    stopAndDelTransactionThread();
     if(m_loadingWin != NULL){
         m_loadingWin->hideWin();
         delete m_loadingWin;
@@ -224,17 +217,37 @@ void AddDockerServiceDlg::doStep2()
     ui->nextButton_2->setEnabled(false);
 
     //start to check transacation
+    startCheckTransactionWork();
+}
+
+void AddDockerServiceDlg::startCheckTransactionWork()
+{
     if(m_checkoutTransaction == NULL){
         m_checkoutTransaction = new CheckoutTransaction(m_txid,0);
+        QThread *workThread = new QThread();
+        m_checkoutTransaction->moveToThread(workThread);
+        connect(workThread,SIGNAL(started()),m_checkoutTransaction,SLOT(startTask()));
+        connect(m_checkoutTransaction,SIGNAL(checkTransactionFinished()),this,SLOT(transactionFinished()));
+        connect(m_checkoutTransaction,SIGNAL(updateTaskTime(int)),this,SLOT(slot_updateTaskTime(int)));
+        connect(m_checkoutTransaction,SIGNAL(checkTransactionFinished()),workThread,SLOT(quit()));
     }
-    QThread *workThread = new QThread();
-    m_checkoutTransaction->moveToThread(workThread);
-    connect(workThread,SIGNAL(started()),m_checkoutTransaction,SLOT(startCheckTransactiontTask()));
-    connect(m_checkoutTransaction,SIGNAL(checkTransactionFinished()),this,SLOT(transactionFinished()));
-    connect(m_checkoutTransaction,SIGNAL(updateTaskTime(int)),this,SLOT(slot_updateTaskTime(int)));
-    connect(m_checkoutTransaction,SIGNAL(checkTransactionFinished()),workThread,SLOT(quit()));
-    
-    workThread->start();
+
+    m_checkoutTransaction->thread()->start();
+}
+
+void AddDockerServiceDlg::stopAndDelTransactionThread()
+{
+    if(m_checkoutTransaction != NULL){
+        disconnect(m_checkoutTransaction,SIGNAL(checkTransactionFinished()),this,SLOT(transactionFinished()));
+        disconnect(m_checkoutTransaction,SIGNAL(updateTaskTime(int)),this,SLOT(slot_updateTaskTime(int)));
+
+        QEventLoop loop;
+        connect(m_checkoutTransaction,SIGNAL(threadStopped()),&loop,SLOT(quit()));
+
+        m_checkoutTransaction->setNeedToWork(false);
+        loop.exec();
+        delete m_checkoutTransaction;        
+    }
 }
 
 void AddDockerServiceDlg::doTransaction()
@@ -248,6 +261,12 @@ void AddDockerServiceDlg::doTransaction()
 void AddDockerServiceDlg::slot_updateTaskTime(int index)
 {
     ui->label_refreshPayStatus->setText(QString::number(index));
+    ui->label_CreatePageTimer->setText(QString::number(index));
+}
+
+void AddDockerServiceDlg::updateCreateServerWaitTimer(int index)
+{
+    ui->label_CreatePageTimer->setText(QString::number(index));
 }
 
 void AddDockerServiceDlg::slot_refreshTransactionStatus()
@@ -270,15 +289,12 @@ void AddDockerServiceDlg::doStep3()
     showLoading(tr("Create Service..."));
     if(createDockerService()){
         //do not need to ask dndata
-        // dockercluster.AskForDNData();
-        LogPrintf("=====>AddDockerServiceDlg::doStep3\n");
-        QTimer::singleShot(1000,this,SLOT(refreshDNData()));
+        QThread::sleep(1);
+        startAskDNDataWork(SLOT(updateDNDataAfterCreate(bool)),false);
     }
     else
     {
-
         QString msg = tr("Transaction has been finished,") + tr("create service failed") + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
-
         CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
             msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
 
@@ -423,70 +439,64 @@ bool AddDockerServiceDlg::createDockerService()
     return true;
 }
 
-void AddDockerServiceDlg::refreshDNData()
+void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
 {
-    static int index = 0;
-    ui->label_timeout->setText(QString::number(++index));
-    if(dockerServerman.getDNDataStatus() == CDockerServerman::Creating){
-        if(index < 30){
-            QTimer::singleShot(1000,this,SLOT(refreshDNData()));
-        }
-        else
-        {
-            CMessageBox::information(this, tr("Create Service Error"),tr("Can't receive create service return!"));
+    disconnect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),this,SLOT(updateDNDataAfterCreate(bool)));
+    hideLoadingWin();
+    if(!isFinished){
+        //do something when timeout
+        CMessageBox::information(this, tr("Load failed"),tr("Create service have't respone,please check you netwowrk is running!"));
+        return ;
+    }
+    std::map<std::string,Service> serverlist = dockercluster.dndata.mapDockerServiceLists;
+    std::map<std::string,Service>::iterator iter = serverlist.begin();
+    for(;iter != serverlist.end();iter++){
+        QString id = QString::fromStdString(iter->first);
+        Service service = serverlist[iter->first];
+        if(m_txid == service.txid.ToString()){
+            slot_nextStep();
+            return ;
         }
     }
-    else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
-            dockerServerman.getDNDataStatus() == CDockerServerman::Free){
-        hideLoadingWin();
-        std::map<std::string,Service> serverlist = dockercluster.dndata.mapDockerServiceLists;
-        std::map<std::string,Service>::iterator iter = serverlist.begin();
-        for(;iter != serverlist.end();iter++){
-            QString id = QString::fromStdString(iter->first);
-            Service service = serverlist[iter->first];
-            if(m_txid == service.txid.ToString()){
-                slot_nextStep();
+
+    if(dockercluster.dndata.errCode != 0){
+        QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
+
+        switch (dockercluster.dndata.errCode)
+        {
+            case SERVICEMANCODE::SIGTIME_ERROR:
+            case SERVICEMANCODE::VERSION_ERROR:
+            case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
+            case SERVICEMANCODE::NO_THRANSACTION:
+            case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
+            case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
+            case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
+                QString msg = tr("Transaction error:") + errStr +tr("the window will be close!");
+                CMessageBox::information(this, tr("Create Failed"),msg);
+                close();
                 return ;
             }
-        }
-        if(dockercluster.dndata.errCode != 0){
-            QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
-            switch (dockercluster.dndata.errCode)
-            {
-                case SERVICEMANCODE::SIGTIME_ERROR:
-                case SERVICEMANCODE::VERSION_ERROR:
-                case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
-                case SERVICEMANCODE::NO_THRANSACTION:
-                case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
-                case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
-                case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
-                    QString msg = tr("Transaction error:") + errStr +tr("the window will be close!");
-                    CMessageBox::information(this, tr("Create Failed"),msg);
+            case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
+            case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
+            case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
+            case SERVICEMANCODE::GPU_AMOUNT_ERROR:
+            case SERVICEMANCODE::CPU_AMOUNT_ERROR:
+            case SERVICEMANCODE::MEM_AMOUNT_ERROR:
+            case SERVICEMANCODE::PUBKEY_ERROR:{
+                QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
+                CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
+                    msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+                if(btnRetVal == CMessageBox::Cancel){
                     close();
                     return ;
                 }
-                case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
-                case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
-                case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
-                case SERVICEMANCODE::GPU_AMOUNT_ERROR:
-                case SERVICEMANCODE::CPU_AMOUNT_ERROR:
-                case SERVICEMANCODE::MEM_AMOUNT_ERROR:
-                case SERVICEMANCODE::PUBKEY_ERROR:{
-                    QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
-                    CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
-                        msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
-
-                    if(btnRetVal == CMessageBox::Cancel){
-                        close();
-                        return ;
-                    }
-                    else{
-                        gotoStep1Page();
-                    }
+                else{
+                    gotoStep1Page();
                 }
-                default:
-                    break;
             }
+            default:
+                break;
         }
     }
 }
@@ -632,34 +642,70 @@ void AddDockerServiceDlg::hideLoadingWin()
 
 void AddDockerServiceDlg::askForDNData()
 {
-    LogPrintf("===>AddDockerServiceDlg::askForDNData:1\n");
+    showLoading(tr("Load docer resource..."));
+    // dockercluster.AskForDNData();
+    // refreshServerList();
+    const char* method = SLOT(updateServiceListFinished(bool));
+    startAskDNDataWork(method,true);
+}
 
+void AddDockerServiceDlg::startAskDNDataWork(const char* slotMethod,bool needAsk)
+{
     if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
         CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
         return ;
     }
 
-    showLoading(tr("Load docer resource..."));
-    dockercluster.AskForDNData();
-    refreshServerList();
+    if(m_askDNDataWorker == NULL){
+        m_askDNDataWorker = new AskDNDataWorker(0);
+        QThread *workThread = new QThread(0);
+        m_askDNDataWorker->moveToThread(workThread);
+        connect(workThread,SIGNAL(started()),m_askDNDataWorker,SLOT(startTask()));
+        connect(m_askDNDataWorker,SIGNAL(updateTaskTime(int)),this,SLOT(updateCreateServerWaitTimer(int)));
+        connect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),workThread,SLOT(quit()));
+    }
+
+    connect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),this,slotMethod);
+
+    if(needAsk)
+        dockercluster.AskForDNData();
+    
+    m_askDNDataWorker->thread()->start();
+}
+
+void AddDockerServiceDlg::updateServiceListFinished(bool isTaskFinished)
+{
+    disconnect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),this,SLOT(updateServiceListFinished(bool)));
+    hideLoadingWin(); 
+
+    if(isTaskFinished){
+        loadResourceData();
+        LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Received\n");
+    }
+    else
+    {
+        //time out tip
+        CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker configuration!"));
+        return;
+    }
 }
 
 void AddDockerServiceDlg::refreshServerList()
 {
-    static int refreshCount = 0 ;
+    // static int refreshCount = 0 ;
 
-    if(dockerServerman.getDNDataStatus() == CDockerServerman::Ask){
-        QTimer::singleShot(2000,this,SLOT(refreshServerList()));
-        LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Ask\n");
-        return ;
-    }
-    else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
-            dockerServerman.getDNDataStatus() == CDockerServerman::Free){
+    // if(dockerServerman.getDNDataStatus() == CDockerServerman::Ask){
+    //     QTimer::singleShot(2000,this,SLOT(refreshServerList()));
+    //     LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Ask\n");
+    //     return ;
+    // }
+    // else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
+    //         dockerServerman.getDNDataStatus() == CDockerServerman::Free){
         loadResourceData();
         LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Received\n");
         hideLoadingWin();
-        return ;
-    }
+    //     return ;
+    // }
 }
 
 void AddDockerServiceDlg::filterResource(std::string txid)
@@ -810,62 +856,6 @@ void AddDockerServiceDlg::doStep1(ResourceItem* item)
     slot_nextStep();
 }
 
-
-CheckoutTransaction::CheckoutTransaction(std::string txid,QObject* parent) :
-    QObject(parent),
-    m_isNeedToWork(true)
-{
-    m_txid = txid;
-}
-
-CheckoutTransaction::~CheckoutTransaction()
-{
-
-}
-
-void CheckoutTransaction::startCheckTransactiontTask()
-{
-    std::string strErr;
-    int index = 0;
-    bool isTransactionFinnished = false;
-    while(isNeedToWork()){
-        if(isTransactionFinished(m_txid,strErr)){
-            isTransactionFinnished = true;
-            break;
-        }
-        QThread::sleep(2);
-        Q_EMIT updateTaskTime(++index);
-    }
-    if(isTransactionFinnished)
-        Q_EMIT checkTransactionFinished();
-    else
-    {
-        Q_EMIT threadStoped(); 
-    }
-}
-
-bool CheckoutTransaction::isTransactionFinished(std::string txid,std::string& strErr)
-{
-    CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
-
-    //check tx in block
-    bool fLocked = instantsend.IsLockedInstantSendTransaction(wtx.GetHash());
-    int confirms = wtx.GetDepthInMainChain(false);
-    LogPrint("docker","current transaction fLocked %d confirms %d\n",fLocked,confirms);
-    if(!fLocked && confirms < 1){
-        strErr = "The transaction not confirms: "+std::to_string(confirms);
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
-        return false;
-    }
-    if(wtx.HasCreatedService()){
-        strErr = "The transaction has been used";
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec current %s\n",strErr);
-        return false;
-    }
-    LogPrintf("AddDockerServiceDlg::is Transaction Finished\n");
-    return true;
-}
-
 void AddDockerServiceDlg::slot_hireTimeChanged(int value)
 {
     ui->label_hireTime->setText(QString("(%1H)").arg(QString::number(value)));
@@ -896,5 +886,102 @@ void AddDockerServiceDlg::slot_gpuComboxCurrentIndexChanged(int index)
         if(!curText.contains(gpuType)){
             ui->tableWidget_resource->hideRow(i);
         }
+    }
+}
+
+CheckoutTransaction::CheckoutTransaction(std::string txid,QObject* parent) :
+    QObject(parent),
+    m_isNeedToWork(true)
+{
+    m_txid = txid;
+}
+
+CheckoutTransaction::~CheckoutTransaction()
+{
+
+}
+
+void CheckoutTransaction::startTask()
+{
+    std::string strErr;
+    int index = 0;
+    bool isFinished = false;
+    while(isNeedToWork()){
+        if(CheckoutTransaction::isTransactionFinished(m_txid,strErr)){
+            isFinished = true;
+            break;
+        }
+        QThread::sleep(2);
+        Q_EMIT updateTaskTime(++index);
+    }
+    if(isFinished)
+        Q_EMIT checkTransactionFinished();
+    else
+    {
+        Q_EMIT threadStopped(); 
+    }
+}
+
+bool CheckoutTransaction::isTransactionFinished(std::string txid,std::string& strErr)
+{
+    CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
+
+    //check tx in block
+    bool fLocked = instantsend.IsLockedInstantSendTransaction(wtx.GetHash());
+    int confirms = wtx.GetDepthInMainChain(false);
+    if(!fLocked && confirms < 1){
+        strErr = "The transaction not confirms: "+std::to_string(confirms);
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+        return false;
+    }
+    if(wtx.HasCreatedService()){
+        strErr = "The transaction has been used";
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec current %s\n",strErr);
+        return false;
+    }
+    LogPrintf("AddDockerServiceDlg::is Transaction Finished\n");
+    return true;
+}
+
+AskDNDataWorker::AskDNDataWorker(QObject* parent) :
+    QObject(parent)
+{
+
+}
+
+AskDNDataWorker::~AskDNDataWorker()
+{
+
+}
+
+void AskDNDataWorker::startTask()
+{
+    LogPrintf("AskDNDataWorker::startTask Ask.\n");
+
+    int index = 0;
+    bool isTaskFinished = false;
+    while(isNeedToWork()){
+        if(isAskDNDataFinished()){
+            isTaskFinished = true;
+            break;
+        }
+        QThread::sleep(1);
+        Q_EMIT updateTaskTime(++index);
+        if(index >= LOADRESOURCETIMEOUT)
+            break;
+    }
+    Q_EMIT askDNDataFinished(isTaskFinished);
+}
+
+bool AskDNDataWorker::isAskDNDataFinished()
+{
+    if(dockerServerman.getDNDataStatus() == CDockerServerman::Ask){
+        LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Asking\n");
+        return false;
+    }
+    else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
+            dockerServerman.getDNDataStatus() == CDockerServerman::Free){
+        LogPrintf("AskDNDataWorker -> isAskDNDataFinished\n");
+        return true;
     }
 }

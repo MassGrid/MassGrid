@@ -99,21 +99,32 @@
               </spacer>
              </item>
              <item>
-              <widget class="QToolButton" name="cancelButton">
+              <widget class="QPushButton" name="pBtn_close">
                <property name="minimumSize">
                 <size>
-                 <width>30</width>
-                 <height>30</height>
+                 <width>34</width>
+                 <height>34</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>30</width>
-                 <height>30</height>
+                 <width>34</width>
+                 <height>34</height>
                 </size>
                </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
+               <property name="styleSheet">
+                <string notr="true">QPushButton#pBtn_close{
+    min-width:20px;
+    min-height:20px;
+    max-width:20px;
+    max-height:20px;
+    border:7px solid rgb(255,255,255,0);
+    image: url(:/res/pic/closeBtn.png);
+}
+
+QPushButton:hover#pBtn_close{
+    background-color: rgba(255, 255, 255, 0)
+}</string>
                </property>
                <property name="text">
                 <string/>
@@ -155,8 +166,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>389</width>
-                  <height>121</height>
+                  <width>388</width>
+                  <height>115</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -324,70 +335,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>cancelButton</sender>
-   <signal>clicked()</signal>
-   <receiver>CMessageBox</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>425</x>
-     <y>36</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>234</x>
-     <y>125</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>okButton</sender>
-   <signal>clicked()</signal>
-   <receiver>CMessageBox</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>152</x>
-     <y>203</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>234</x>
-     <y>122</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>okButton2</sender>
-   <signal>clicked()</signal>
-   <receiver>CMessageBox</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>233</x>
-     <y>203</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>234</x>
-     <y>122</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>closeButton</sender>
-   <signal>clicked()</signal>
-   <receiver>CMessageBox</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>315</x>
-     <y>203</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>234</x>
-     <y>122</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

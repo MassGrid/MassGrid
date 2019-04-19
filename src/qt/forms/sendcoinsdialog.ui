@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>925</width>
-    <height>515</height>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1376,8 +1376,34 @@ QLineEdit{
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="1" column="1">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <spacer name="verticalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_12">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <layout class="QVBoxLayout" name="verticalLayout_6" stretch="1,0,0,2">
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1435,7 +1461,7 @@ border: hidden;
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>500</width>
+                     <width>575</width>
                      <height>150</height>
                     </rect>
                    </property>
@@ -1501,10 +1527,10 @@ border: hidden;
                      </font>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">border:hidden;</string>
+                     <string notr="true"/>
                     </property>
                     <property name="text">
-                     <string>Select &amp;Recipient</string>
+                     <string>&amp;Recipient</string>
                     </property>
                     <property name="icon">
                      <iconset resource="../massgrid.qrc">
@@ -1585,7 +1611,7 @@ QRadioButton::indicator:checked:disabled{
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="page_3">
                  <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0">
@@ -1804,28 +1830,6 @@ QSlider::sub-page:horizontal{
                           <number>0</number>
                          </property>
                          <item>
-                          <widget class="QLabel" name="label_8">
-                           <property name="minimumSize">
-                            <size>
-                             <width>10</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                           <property name="maximumSize">
-                            <size>
-                             <width>10</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                           <property name="styleSheet">
-                            <string notr="true">border-image: url(:/res/pic/moreSelect.png);</string>
-                           </property>
-                           <property name="text">
-                            <string/>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
                           <widget class="QToolButton" name="moreButton">
                            <property name="sizePolicy">
                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -1841,11 +1845,17 @@ QSlider::sub-page:horizontal{
                             </font>
                            </property>
                            <property name="styleSheet">
-                            <string notr="true">border:hidden;
-color: rgb(173, 100, 45);</string>
+                            <string notr="true"/>
                            </property>
                            <property name="text">
                             <string>Choose...</string>
+                           </property>
+                           <property name="icon">
+                            <iconset resource="../massgrid.qrc">
+                             <normaloff>:/res/pic/back.png</normaloff>:/res/pic/back.png</iconset>
+                           </property>
+                           <property name="toolButtonStyle">
+                            <enum>Qt::ToolButtonTextOnly</enum>
                            </property>
                           </widget>
                          </item>
@@ -2241,28 +2251,6 @@ QRadioButton::indicator:checked:disabled{
                         <number>0</number>
                        </property>
                        <item>
-                        <widget class="QLabel" name="label_16">
-                         <property name="minimumSize">
-                          <size>
-                           <width>10</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>10</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">border-image: url(:/res/pic/back.png);</string>
-                         </property>
-                         <property name="text">
-                          <string/>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
                         <widget class="QToolButton" name="backButton">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -2311,7 +2299,7 @@ QRadioButton::indicator:checked:disabled{
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_17">
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
               <item>
                <spacer name="horizontalSpacer_16">
                 <property name="orientation">
@@ -2326,24 +2314,84 @@ QRadioButton::indicator:checked:disabled{
                </spacer>
               </item>
               <item>
-               <widget class="QCheckBox" name="checkBoxFreeTx">
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+               <layout class="QFormLayout" name="formLayout">
+                <property name="labelAlignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                 </property>
-                <property name="text">
-                 <string>Send as zero-fee transaction if possible</string>
-                </property>
-               </widget>
+                <item row="0" column="0">
+                 <layout class="QHBoxLayout" name="horizontalLayout_4">
+                  <item>
+                   <widget class="QCheckBox" name="checkBoxFreeTx">
+                    <property name="focusPolicy">
+                     <enum>Qt::NoFocus</enum>
+                    </property>
+                    <property name="text">
+                     <string>Send as zero-fee transaction if possible</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="labelFreeTx">
+                    <property name="text">
+                     <string>(confirmation may take longer)</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item row="1" column="0">
+                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                  <item>
+                   <widget class="QCheckBox" name="checkUseInstantSend">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>85</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::NoFocus</enum>
+                    </property>
+                    <property name="text">
+                     <string>InstantSend</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_2">
+                    <property name="text">
+                     <string>Balance:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="labelBalance">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="cursor">
+                     <cursorShape>IBeamCursor</cursorShape>
+                    </property>
+                    <property name="text">
+                     <string notr="true">123.456 MGD</string>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QLabel" name="labelFreeTx">
-                <property name="text">
-                 <string>(confirmation may take longer)</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_17">
+               <spacer name="horizontalSpacer_18">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -2386,87 +2434,13 @@ QRadioButton::indicator:checked:disabled{
                </spacer>
               </item>
               <item>
-               <widget class="QFrame" name="frame_5">
-                <property name="minimumSize">
-                 <size>
-                  <width>140</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>140</width>
-                  <height>50</height>
-                 </size>
-                </property>
+               <widget class="QPushButton" name="sendButton">
                 <property name="styleSheet">
-                 <string notr="true">border:hidden;
-background-color: rgb(238, 169, 4);</string>
+                 <string notr="true"/>
                 </property>
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                <property name="text">
+                 <string>S&amp;end</string>
                 </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_2">
-                 <property name="leftMargin">
-                  <number>1</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>1</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>1</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>1</number>
-                 </property>
-                 <item row="0" column="0">
-                  <widget class="QToolButton" name="sendButton">
-                   <property name="minimumSize">
-                    <size>
-                     <width>90</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>90</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>14</pointsize>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">border:hidden;
-background-color: rgb(238, 169, 4);
-color: rgb(255, 255, 255);</string>
-                   </property>
-                   <property name="text">
-                    <string>S&amp;end</string>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="../massgrid.qrc">
-                     <normaloff>:/res/pic/menuicon/address-book.png</normaloff>:/res/pic/menuicon/address-book.png</iconset>
-                   </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>60</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                   <property name="toolButtonStyle">
-                    <enum>Qt::ToolButtonTextBesideIcon</enum>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
                </widget>
               </item>
               <item>
@@ -2486,20 +2460,7 @@ color: rgb(255, 255, 255);</string>
             </item>
            </layout>
           </item>
-          <item row="1" column="2">
-           <spacer name="horizontalSpacer_12">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="0">
+          <item>
            <spacer name="horizontalSpacer_7">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -2512,7 +2473,7 @@ color: rgb(255, 255, 255);</string>
             </property>
            </spacer>
           </item>
-          <item row="2" column="1">
+          <item>
            <spacer name="verticalSpacer_10">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -2525,90 +2486,13 @@ color: rgb(255, 255, 255);</string>
             </property>
            </spacer>
           </item>
-          <item row="0" column="1">
-           <spacer name="verticalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="3" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <property name="spacing">
-             <number>3</number>
-            </property>
-            <item>
-             <spacer name="horizontalSpacer_15">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkUseInstantSend">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>85</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>InstantSend</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Balance:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelBalance">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="cursor">
-               <cursorShape>IBeamCursor</cursorShape>
-              </property>
-              <property name="text">
-               <string notr="true">123.456 MGD</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
          </layout>
          <zorder>horizontalSpacer_7</zorder>
          <zorder>verticalSpacer_10</zorder>
          <zorder></zorder>
          <zorder>verticalSpacer_7</zorder>
          <zorder>horizontalSpacer_12</zorder>
+         <zorder></zorder>
         </widget>
        </item>
       </layout>
@@ -2635,7 +2519,7 @@ color: rgb(255, 255, 255);</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupFee"/>
   <buttongroup name="groupCustomFee"/>
+  <buttongroup name="groupFee"/>
  </buttongroups>
 </ui>

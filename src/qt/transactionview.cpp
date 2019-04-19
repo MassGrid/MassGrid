@@ -154,26 +154,26 @@ void TransactionView::setSearchWidget(QComboBox* dateComboBox,QComboBox* typeCom
 
     // ad->dl
        //QComboBox
-   dateWidget->setStyleSheet("QComboBox{border:0px; background-color:rgb(172,99,43); \
-                    color:white; height:24px; width:40px;}\
-                    QComboBox::down-arrow{\
-                    border:hidden;\
-                    background-color:rgb(172,99,430);\
-                    border-image:url(:/res/pic/al.png);\
-                    background-color:rgba(255,255,255,0);}\
-                    QComboBox::drop-down{width:14px; border:0px;}\
-                    QComboBox QAbstractItemView {\
-                    color:rgb(255,255,255);\
-                    border: 0px solid rgb(172,99,43);\
-                    background-color:rgb(198, 125, 26);\
-                    selection-color:white;\
-                    selection-background-color: rgb(239,169,4);}\
-                    QComboBox QAbstractItemView::item{\
-                        height: 35px;\
-                        background-color: rgb(198, 125, 26);\
-                        border:hidden;\
-                        color: rgb(255, 255, 255);\
-                    }");
+//    dateWidget->setStyleSheet("QComboBox{border:1px solid rgb(239,168,4); border-radius: 3px; background-color:rgb(49, 61, 64); \
+//                     color:white; height:24px; width:40px;}\
+//                     QComboBox::down-arrow{\
+//                     border:hidden;\
+//                     background-color:rgb(49, 61, 64);\
+//                     border-image:url(:/res/pic/al.png);\
+//                     background-color:rgba(255,255,255,0);}\
+//                     QComboBox::drop-down{width:14px; border:0px;}\
+//                     QComboBox QAbstractItemView {\
+//                     color:rgb(255,255,255);\
+//                     border: 1px solid rgb(49, 61, 64);\
+//                     background-color:rgb(198, 125, 26);\
+//                     selection-color:white;\
+//                     selection-background-color: rgb(239,169,4);}\
+//                     QComboBox QAbstractItemView::item{\
+//                         height: 35px;\
+//                         background-color: rgb(198, 125, 26);\
+//                         border:hidden;\
+//                         color: rgb(255, 255, 255);\
+//                     }");
 
 
     dateWidget->addItem(tr("All"), All);

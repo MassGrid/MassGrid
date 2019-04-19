@@ -212,6 +212,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             CWalletDB walletdb(pwalletMain->strWalletFile);
             wtx.WriteToDisk(&walletdb);
         }
+        setTRANSDataStatus(TRANSDATASTATUS::ReceivedTD);
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("dockernode","CDockerServerman::ProcessMessage CREATESERVICE Started\n");
         if (!fDockerNode) return;

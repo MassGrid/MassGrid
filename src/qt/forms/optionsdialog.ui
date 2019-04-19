@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
-    <height>613</height>
+    <width>715</width>
+    <height>626</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,13 +103,13 @@
             <widget class="QToolButton" name="cancelButton">
              <property name="minimumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>30</width>
+               <width>32</width>
                <height>30</height>
               </size>
              </property>
@@ -196,7 +196,7 @@ QComboBox QAbstractItemView::item
 </string>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>4</number>
              </property>
              <widget class="QWidget" name="tabMain">
               <attribute name="title">
@@ -757,7 +757,7 @@ QComboBox QAbstractItemView::item
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_8">
                      <property name="leftMargin">
-                      <number>0</number>
+                      <number>2</number>
                      </property>
                      <property name="topMargin">
                       <number>0</number>
@@ -834,7 +834,7 @@ QComboBox QAbstractItemView::item
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_9">
                      <property name="leftMargin">
-                      <number>0</number>
+                      <number>2</number>
                      </property>
                      <property name="topMargin">
                       <number>0</number>
@@ -1041,7 +1041,7 @@ QComboBox QAbstractItemView::item
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_12">
                      <property name="leftMargin">
-                      <number>0</number>
+                      <number>2</number>
                      </property>
                      <property name="topMargin">
                       <number>0</number>
@@ -1115,7 +1115,7 @@ QComboBox QAbstractItemView::item
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_13">
                      <property name="leftMargin">
-                      <number>0</number>
+                      <number>2</number>
                      </property>
                      <property name="topMargin">
                       <number>0</number>

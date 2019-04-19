@@ -51,6 +51,11 @@ protected:
     void mousePressEvent(QMouseEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
+
+private Q_SLOTS:
+    void slot_close();
+    void slot_ok();
+
 };
 
 #endif // CMESSAGEBOX_H

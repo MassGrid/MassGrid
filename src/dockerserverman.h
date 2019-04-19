@@ -53,6 +53,11 @@ public:
         Creating,
         Deleteing
     };
+    enum TRANSDATASTATUS{
+        AskTD = 0,
+        ReceivedTD,
+        FreeTD
+    };
     enum TLEMENTSTATE{
         FAILEDCONTINUE = -1,
         FAILEDREMOVE,
@@ -64,12 +69,19 @@ public:
     bool CheckAndRemoveServiveSpec(DockerDeleteService delService, int& errCode);
     int SetTlementServiceWithoutDelete(uint256 serviceTxid);
     DNDATASTATUS dndataStatus;
+    TRANSDATASTATUS transdataStatus;
 
     void setDNDataStatus(DNDATASTATUS type){
         dndataStatus = type;
     }
     DNDATASTATUS getDNDataStatus(){
         return dndataStatus;
+    }
+    void setTRANSDataStatus(TRANSDATASTATUS type){
+        transdataStatus = type;
+    }
+    TRANSDATASTATUS getTRANSDataStatus(){
+        return transdataStatus;
     }
 
 };
