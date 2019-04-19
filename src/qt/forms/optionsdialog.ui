@@ -1423,7 +1423,7 @@
                     <item row="2" column="0">
                      <widget class="QLabel" name="digitsLabel">
                       <property name="text">
-                       <string>Decimal digits</string>
+                       <string>Decimal digits:</string>
                       </property>
                      </widget>
                     </item>
