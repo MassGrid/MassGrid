@@ -236,10 +236,11 @@ MassGridAmountField::MassGridAmountField(QWidget *parent) :
 //     unit->setStyle(QStyleFactory::create("Windows"));
 //     unit->setStyleSheet("QComboBox{\n    background-color:rgb(172,99,43); \n    color:white;\n    height:30px;\n    width:120px;\n    border:0px solid rgb(174,103,46);\n    background-repeat: no-repeat;\n    background-position: center left;\n    background-color: rgb(255, 255, 255);\n    color: rgb(0, 0, 0);\n    selection-color: black;\n    selection-background-color: darkgray;\n}\nQComboBox::drop-down\n{\n    width: 30px;\n    height:30px;\n    image: url(:/res/pic/xjt.png);\n}\n\nQComboBox QAbstractItemView\n{\n    width:140px;\n  outline: 0px;\n  color: rgb(255, 255, 255);\n    selection-color: rgb(255, 255, 255);\n    selection-background-color: rgb(239, 169, 4);\n    background-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\n    height: 40px;\n   background-color: rgb(198, 125, 26);\n    border:hidden;\n    color: rgb(255, 255, 255);\n}");
 // #else
-    unit->setStyleSheet("QValueComboBox\n{ color:rgba(0,0,0,0); border:0px solid rgb(174,103,46);\nfont-size: 12pt;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
+    // unit->setStyleSheet("QValueComboBox\n{ color:rgba(0,0,0,0); border:0px solid rgb(174,103,46);\nfont-size: 12pt;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
 // #endif
     unit->setMaximumWidth(120);
-    unit->setMaximumHeight(28);
+    unit->setMinimumHeight(30);
+    unit->setMaximumHeight(30);
 
     amount->setMaximumHeight(28);
 

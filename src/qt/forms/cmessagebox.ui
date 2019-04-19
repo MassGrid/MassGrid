@@ -203,7 +203,11 @@ QPushButton:hover#pBtn_close{
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">border:hidden;</string>
+                <string notr="true">QFrame#frame,
+QFrame#frame_2
+{
+border:hidden;
+}</string>
                </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
@@ -259,7 +263,7 @@ QPushButton:hover#pBtn_close{
                    </size>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">border:hidde;</string>
+                   <string notr="true"/>
                   </property>
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>

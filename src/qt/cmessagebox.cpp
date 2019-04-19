@@ -16,6 +16,8 @@ CMessageBox::CMessageBox(QWidget *parent,QString title,QString text) :
     connect(ui->pBtn_close,SIGNAL(clicked()),this,SLOT(slot_close()));
     connect(ui->okButton,SIGNAL(clicked()),this,SLOT(slot_ok()));
     connect(ui->okButton2,SIGNAL(clicked()),this,SLOT(slot_ok()));
+    connect(ui->closeButton,SIGNAL(clicked()),this,SLOT(slot_close()));
+    
 
     ui->helpMessageLabel->setTextFormat(Qt::RichText);
     ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);

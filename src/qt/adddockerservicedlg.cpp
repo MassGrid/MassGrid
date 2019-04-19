@@ -26,6 +26,7 @@
 #include <QThread>
 #include <QStringList>
 #include <QEventLoop>
+#include <QStyleFactory>
 
 #define LOADRESOURCETIMEOUT 30
 
@@ -62,6 +63,11 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     ui->label_titleName->setText(tr("Create Service"));
     this->setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
+
+ #ifdef Q_OS_MAC
+    ui->comboBox_image->setStyle(QStyleFactory::create("Windows"));
+    ui->comboBox_gpuType->setStyle(QStyleFactory::create("Windows"));
+#endif
 
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(slot_close()));
     connect(ui->openPubKeyButton,SIGNAL(clicked()),this,SLOT(slot_openPubKeyFile()));

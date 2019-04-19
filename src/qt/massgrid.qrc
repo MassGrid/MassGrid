@@ -187,5 +187,8 @@
         <file>res/pic/sendChecked.png</file>
         <file>res/pic/mainWinColse.png</file>
         <file>res/pic/logo.png</file>
+        <file>res/pic/fontBigger.png</file>
+        <file>res/pic/fontClear.png</file>
+        <file>res/pic/fontSmaller.png</file>
     </qresource>
 </RCC>

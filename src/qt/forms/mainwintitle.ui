@@ -647,7 +647,10 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="5,3">
+     <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="10,7">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
        <number>10</number>
       </property>

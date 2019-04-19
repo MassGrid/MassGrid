@@ -59,7 +59,7 @@
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
@@ -438,7 +438,7 @@ border:hidden;
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">border:hidden;</string>
+              <string notr="true"/>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>

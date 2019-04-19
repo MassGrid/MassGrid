@@ -156,44 +156,7 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">QComboBox{
-    background-color:rgb(172,99,43); 
-    color:white;
-    height:30px;
-    width:120px;
-    border:1px solid rgb(174,103,46);
-    background-repeat: no-repeat;
-    background-position: center left;
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
-    selection-color: black;
-    selection-background-color: darkgray;
-}
-QComboBox::drop-down
-{
-    width: 30px;
-    height:30px;
-    image: url(:/res/pic/xjt.png)；
-
-}
-
-QComboBox QAbstractItemView
-{
-    width:140px;
-  outline: 0px;
-  color: rgb(255, 255, 255);
-    selection-color: rgb(255, 255, 255);
-    selection-background-color: rgb(239, 169, 4);
-    background-color: rgb(198, 125, 26);
-}
-QComboBox QAbstractItemView::item
-{
-    height: 40px;
-   background-color: rgb(198, 125, 26);
-    border:hidden;
-    color: rgb(255, 255, 255);
-}&quot;);
-</string>
+              <string notr="true"/>
              </property>
              <property name="currentIndex">
               <number>4</number>
@@ -1744,7 +1707,7 @@ QComboBox QAbstractItemView::item
                </spacer>
               </item>
               <item>
-               <widget class="QToolButton" name="okButton">
+               <widget class="QPushButton" name="okButton">
                 <property name="minimumSize">
                  <size>
                   <width>120</width>
@@ -1817,7 +1780,7 @@ QComboBox QAbstractItemView::item
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QToolButton" name="resetButton">
+                  <widget class="QPushButton" name="resetButton">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                      <horstretch>0</horstretch>
@@ -1842,28 +1805,6 @@ QComboBox QAbstractItemView::item
                    </property>
                    <property name="text">
                     <string>&amp;Reset Options</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_8">
-                   <property name="minimumSize">
-                    <size>
-                     <width>10</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>10</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="text">
-                    <string/>
                    </property>
                   </widget>
                  </item>

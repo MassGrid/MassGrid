@@ -413,13 +413,11 @@ background-color: rgb(255, 255, 255);
               </spacer>
              </item>
              <item>
-              <widget class="QToolButton" name="okButton">
+              <widget class="QPushButton" name="okButton">
                <property name="styleSheet">
-                <string notr="true">QToolButton{
-width:80;
+                <string notr="true">width:80;
 height:30;
-border:hidden;
-}</string>
+</string>
                </property>
                <property name="text">
                 <string>OK</string>
