@@ -744,14 +744,14 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
                             REJECT_INVALID, "bad-txout");
                 }
             }
-            else{
+            else if(sporkManager.GetDeveloperPayment() > 0){
                 if(dev_n < 0){
                     return state.DoS(10, error("AcceptToMemoryPool : not found developer scriptkey %s", tx.ToString()),
                             REJECT_INVALID, "bad-txout");
                 }
                 else{
-                    if(tx.vout[dev_n].nValue/(double)sum < 0.1){
-                        return state.DoS(10, error("AcceptToMemoryPool : developer payment not enough (up 10\%) %s", tx.ToString()),
+                    if(tx.vout[dev_n].nValue/(double)sum < sporkManager.GetDeveloperPayment()/10000.0){
+                        return state.DoS(10, error("AcceptToMemoryPool : developer payment not enough (up %lf\%) %s", tx.ToString(),sporkManager.GetDeveloperPayment()/10000.0),
                             REJECT_INVALID, "bad-txout");
                     }
                 }

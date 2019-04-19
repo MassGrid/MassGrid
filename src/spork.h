@@ -17,7 +17,7 @@ class CSporkManager;
     - This would result in old clients getting confused about which spork is for what
 */
 static const int SPORK_START                                            = 10001;
-static const int SPORK_END                                              = 10013;
+static const int SPORK_END                                              = 10014;
 
 static const int SPORK_2_INSTANTSEND_ENABLED                            = 10001;
 static const int SPORK_3_INSTANTSEND_BLOCK_FILTERING                    = 10002;
@@ -26,6 +26,7 @@ static const int SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT                 = 10007;
 static const int SPORK_10_MASTERNODE_PAY_UPDATED_NODES                  = 10009;
 static const int SPORK_12_RECONSIDER_BLOCKS                             = 10011;
 static const int SPORK_14_REQUIRE_SENTINEL_FLAG                         = 10013;
+static const int SPORK_15_DEVELOPER_PAYMENT                             = 10014;
 
 static const int64_t SPORK_2_INSTANTSEND_ENABLED_DEFAULT                = 4070908800ULL; // OFF
 static const int64_t SPORK_3_INSTANTSEND_BLOCK_FILTERING_DEFAULT        = 0;            // ON
@@ -34,6 +35,7 @@ static const int64_t SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT     = 407090
 static const int64_t SPORK_10_MASTERNODE_PAY_UPDATED_NODES_DEFAULT      = 4070908800ULL;// OFF  4070908800ULL
 static const int64_t SPORK_12_RECONSIDER_BLOCKS_DEFAULT                 = 0;            // 0 BLOCKS
 static const int64_t SPORK_14_REQUIRE_SENTINEL_FLAG_DEFAULT             = 4070908800ULL;// OFF
+static const int64_t SPORK_15_DEVELOPER_PAYMENT_DEFAULT                 = 0; //SPORK_15_DEVELOPER_PAYMENT/10000
 
 extern std::map<uint256, CSporkMessage> mapSporks;
 extern CSporkManager sporkManager;
@@ -111,6 +113,7 @@ public:
     int GetSporkIDByName(std::string strName);
     std::string GetSporkNameByID(int nSporkID);
 
+    int64_t GetDeveloperPayment() { return GetSporkValue(SPORK_15_DEVELOPER_PAYMENT); }
     bool SetPrivKey(std::string strPrivKey);
 };
 
