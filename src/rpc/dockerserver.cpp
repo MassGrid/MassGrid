@@ -337,12 +337,21 @@ UniValue docker(const UniValue& params, bool fHelp)
         CRecipient recipient = {scriptPubKey, nAmount, false};
         vecSend.push_back(recipient);
 
+        //op_return
+        std::vector<unsigned char> pch = {0x6d, 0x67, 0x64};
+        pch.push_back(0x11);
+        std::vector<unsigned char> vchPayload = ParseHex(
+        "0000000000000000");
+        pch.insert(pch.end(),vchPayload.begin(),vchPayload.end());
+        CScript scriptMsg = CScript() << OP_RETURN << pch;
+        CRecipient recipient2 = {scriptMsg, CAmount(0), false};
+        vecSend.push_back(recipient2);
         CCoinControl coinControl;
         coinControl.fUseInstantSend = true;
         coinControl.destChange = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).Get();
 
         if (!pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRequired, nChangePosRet,
-                                            strError, &coinControl, true,ALL_COINS, true)) {
+                                            strError, &coinControl, true,ALL_COINS, true,true)) {
             if (nAmount + nFeeRequired > pwalletMain->GetBalance())
                 strError = strprintf("Error: This transaction requires a transaction fee of at least %s because of its amount, complexity, or use of recently received funds!", FormatMoney(nFeeRequired));
             throw JSONRPCError(RPC_WALLET_ERROR, strError);

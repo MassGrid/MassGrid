@@ -2819,7 +2819,7 @@ bool CWallet::ConvertList(std::vector<CTxIn> vecTxIn, std::vector<CAmount>& vecA
 }
 
 bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, CAmount& nFeeRet,
-                                int& nChangePosRet, std::string& strFailReason, const CCoinControl* coinControl, bool sign, AvailableCoinsType nCoinType, bool fUseInstantSend)
+                                int& nChangePosRet, std::string& strFailReason, const CCoinControl* coinControl, bool sign, AvailableCoinsType nCoinType, bool fUseInstantSend,bool fUseOpReturn)
 {
     CAmount nFeePay = fUseInstantSend ? CTxLockRequest().GetMinFee() : 0;
 
@@ -3091,7 +3091,37 @@ bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wt
                         i++;
                     }
                 }
+                // set op_return n
+                if(fUseOpReturn){
+                    CRecipient sendRecipient;
+                    BOOST_FOREACH (const CRecipient& recipient, vecSend){
+                        if(recipient.scriptPubKey.IsPayToPublicKeyHash())
+                            sendRecipient = recipient;
 
+                    }
+                    int64_t n = -1,s = -1;
+                    for(int64_t i = 0;i < txNew.vout.size();++i){
+                        if(txNew.vout[i].scriptPubKey == sendRecipient.scriptPubKey && txNew.vout[i].nValue == sendRecipient.nAmount)
+                            s=i;
+                        if(txNew.vout[i].scriptPubKey.Find(OP_RETURN))
+                            n=i;
+                        if(n!= -1&& s!=-1){
+                            std::vector<unsigned char> pch = {0x6d, 0x67, 0x64};
+                            pch.push_back(0x11);
+                            std::stringstream ioss;
+                            ioss << std::hex << s;
+                            string hexstr;
+                            ioss >> hexstr;
+                            string str(16 - hexstr.size(),'0');
+                            str+=hexstr;
+                            std::vector<unsigned char> vchPayload = ParseHex(str);
+                            pch.insert(pch.end(),vchPayload.begin(),vchPayload.end());
+                            CScript scriptMsg = CScript() << OP_RETURN << pch;
+                            txNew.vout[n].scriptPubKey = scriptMsg;
+                            break;
+                        }
+                    }
+                }
                 // Sign
                 int nIn = 0;
                 CTransaction txNewConst(txNew);

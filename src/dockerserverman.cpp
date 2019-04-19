@@ -510,15 +510,17 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
     COutPoint outpoint;
     CMassGridAddress masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID());
     CScript masternodescriptPubKey = GetScriptForDestination(masternodeAddress.Get());
-    
+    CPubKey devpubkey(ParseHex(Params().SporkPubKey()));
     CMassGridAddress feeAddress;
     if(!mnodeman.GetAddress(activeMasternode.outpoint,feeAddress))
         feeAddress = masternodeAddress;
     CScript feescriptPubKey = GetScriptForDestination(feeAddress.Get());
     CMassGridAddress customerAddress = feeAddress;
     CMassGridAddress providerAddress = feeAddress;
+    CMassGridAddress devAddress = CMassGridAddress(devpubkey.GetID());
     CScript customerscriptPubKey = feescriptPubKey;
-    CScript providerscriptPubKey = feescriptPubKey;
+    CScript providerscriptPubKey = feescriptPubKey;;
+    CScript devScriptPubKey = GetScriptForDestination(devAddress.Get());
 
     if (!pwalletMain->mapWallet.count(serviceTxid)){
         LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete Invalid or non-wallet transaction id\n");
@@ -618,7 +620,12 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         {
             vecSend.clear();
             CAmount masternodeSend = payment * feeRate;
+            CAmount devSend = payment * 0.1;
+            while(devSend/(double)payment < 0.1){
+                devSend += payment * 0.001;
+            }
             payment -= masternodeSend;  //compute fee
+            payment -= devSend;  //compute fee
 
             // provider
             CAmount providerSend = payment * payrate;
@@ -637,7 +644,7 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             }
             //masternode fee
             masternodeSend += payment;
-            if(masternodeSend + providerSend + customerSend != pay){
+            if(masternodeSend + devSend + providerSend + customerSend != pay){
                 LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,pay);
                 return TLEMENTSTATE::FAILEDREMOVE;
             }
@@ -645,6 +652,10 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             if(masternodeSend > CAmount(1000)){
                 CRecipient masternoderecipient = {feescriptPubKey, masternodeSend, false};
                 vecSend.push_back(masternoderecipient);
+            }
+            if(devSend > CAmount(1000)){
+                CRecipient devrecipient = {devScriptPubKey, devSend, false};
+                vecSend.push_back(devrecipient);
             }
             for(auto it = vecSend.rbegin();it!= vecSend.rend();++it){
                 if(it->nAmount >= CENT){
