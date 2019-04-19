@@ -697,6 +697,9 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <property name="rightMargin">
+           <number>20</number>
+          </property>
           <item>
            <widget class="QLineEdit" name="addressEdit">
             <property name="minimumSize">
