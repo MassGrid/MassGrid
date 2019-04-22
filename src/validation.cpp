@@ -565,9 +565,10 @@ int64_t GetLockVoutIndex(const CTransaction &txOut){
         if (!GetScriptPushes(txout.scriptPubKey, scriptPushes)) {
             continue;
         }
-        std::string strSub = scriptPushes[0].substr(8,16);
+        std::string strSub = scriptPushes[0].substr(8,8);
         try{
-            int64_t n = boost::lexical_cast<int64_t>(strSub);
+            char* str;
+            uint32_t n = (uint32_t)strtol(strSub.c_str(), &str, 16);
             return n;
         }
         catch(const boost::bad_lexical_cast &){
@@ -736,7 +737,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
             LogPrintf("developer scriptkey: %s\n",HexStr(devScriptPubKey.begin(), devScriptPubKey.end()));
             int64_t dev_n = CheckScriptPubkeyInTx(devScriptPubKey,tx);
             CAmount sum = CAmount(0);
-            for(int64_t i=0;i<tx.vout.size();++i)
+            for(uint32_t i=0;i<tx.vout.size();++i)
                 sum += tx.vout[i].nValue;
             if(tx.vout.size() == 1 ){
                 if(!CheckScriptPubkeyInTxVin(tx.vout[0].scriptPubKey,txPre)){

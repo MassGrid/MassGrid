@@ -1064,6 +1064,27 @@ bool CWallet::AddToWalletIfInvolvingMe(const CTransaction& tx, const CBlock* pbl
             // Get merkle branch if transaction was found in a block
             if (pblock)
                 wtx.SetMerkleBranch(*pblock);
+            if(!fExisted){
+                for(int i=0; i < wtx.vout.size();++i) {
+                    const CTxOut txout = wtx.vout[i];
+                    if(!wtx.vout[i].scriptPubKey.Find(OP_RETURN)){
+                        continue;
+                    }
+                    std::vector<std::string> scriptPushes;
+                    if (!GetScriptPushes(txout.scriptPubKey, scriptPushes)) {
+                        continue;
+                    }
+                    if(scriptPushes[0].size() < 88)
+                        continue;
+                    std::string hash = scriptPushes[0].substr(16,64);
+                    std::string strN = scriptPushes[0].substr(80,8);
+                    char* str;
+                    uint32_t n = (uint32_t)strtol(strN.c_str(), &str, 16);
+                    COutPoint outpoint(uint256S(hash),n);
+                    wtx.Setmasternodeoutpoint(outpoint.ToStringShort());
+                    LogPrintf("wtx setMasterNodeOutPoint %s\n",outpoint.ToStringShort());
+                }
+            }
 
             // Do not flush the wallet here for performance reasons
             // this is safe, as in case of a crash, we rescan the necessary blocks on startup through our SetBestChain-mechanism
@@ -2819,7 +2840,7 @@ bool CWallet::ConvertList(std::vector<CTxIn> vecTxIn, std::vector<CAmount>& vecA
 }
 
 bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, CAmount& nFeeRet,
-                                int& nChangePosRet, std::string& strFailReason, const CCoinControl* coinControl, bool sign, AvailableCoinsType nCoinType, bool fUseInstantSend,bool fUseOpReturn)
+                                int& nChangePosRet, std::string& strFailReason, const CCoinControl* coinControl, bool sign, AvailableCoinsType nCoinType, bool fUseInstantSend,bool fUseOpReturn,std::string masternodeOutPoint)
 {
     CAmount nFeePay = fUseInstantSend ? CTxLockRequest().GetMinFee() : 0;
 
@@ -3108,13 +3129,9 @@ bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wt
                         if(n!= -1&& s!=-1){
                             std::vector<unsigned char> pch = {0x6d, 0x67, 0x64};
                             pch.push_back(0x11);
-                            std::stringstream ioss;
-                            ioss << std::hex << s;
-                            string hexstr;
-                            ioss >> hexstr;
-                            string str(16 - hexstr.size(),'0');
-                            str+=hexstr;
-                            std::vector<unsigned char> vchPayload = ParseHex(str);
+                            string str;
+                            str = strprintf("%08x", s);
+                            std::vector<unsigned char> vchPayload = ParseHex(str + masternodeOutPoint);
                             pch.insert(pch.end(),vchPayload.begin(),vchPayload.end());
                             CScript scriptMsg = CScript() << OP_RETURN << pch;
                             txNew.vout[n].scriptPubKey = scriptMsg;

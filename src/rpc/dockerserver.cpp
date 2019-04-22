@@ -287,11 +287,13 @@ UniValue docker(const UniValue& params, bool fHelp)
     if(strCommand == "sendtomasternode"){
         LOCK2(cs_main, pwalletMain->cs_wallet);
         std::string strAddr = params[1].get_str();
-        std::string mnoupouint;
+        std::string mnOutPoint;
+        std::string mnOutPointformat;
         std::map<COutPoint, CMasternode> mapMasternodes = mnodeman.GetFullMasternodeMap();
         for(auto it = mapMasternodes.begin();it!=mapMasternodes.end();++it){
             if(it->second.addr.ToString() == strAddr){
-                mnoupouint = it->first.ToStringShort();
+                mnOutPoint = it->first.ToStringShort();
+                mnOutPointformat = strprintf("%s%016x", it->first.hash.ToString().substr(0,64), it->first.n);
                 break;
             }
         }
@@ -306,10 +308,10 @@ UniValue docker(const UniValue& params, bool fHelp)
 
         // Wallet comments
         CWalletTx wtxNew;
-        if(mnoupouint.empty()){
+        if(mnOutPoint.empty()){
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "MassGrid masternode outpoint not found");
         }
-        wtxNew.Setmasternodeoutpoint(mnoupouint);
+        wtxNew.Setmasternodeoutpoint(mnOutPoint);
         wtxNew.Setmasternodeip(strAddr);
         wtxNew.Setmasternodeaddress(params[2].get_str());
         wtxNew.Setorderstatus("0");
@@ -341,7 +343,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         std::vector<unsigned char> pch = {0x6d, 0x67, 0x64};
         pch.push_back(0x11);
         std::vector<unsigned char> vchPayload = ParseHex(
-        "0000000000000000");
+        "00000000"+mnOutPointformat);
         pch.insert(pch.end(),vchPayload.begin(),vchPayload.end());
         CScript scriptMsg = CScript() << OP_RETURN << pch;
         CRecipient recipient2 = {scriptMsg, CAmount(0), false};
@@ -351,7 +353,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         coinControl.destChange = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).Get();
 
         if (!pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRequired, nChangePosRet,
-                                            strError, &coinControl, true,ALL_COINS, true,true)) {
+                                            strError, &coinControl, true,ALL_COINS, true,true,mnOutPointformat)) {
             if (nAmount + nFeeRequired > pwalletMain->GetBalance())
                 strError = strprintf("Error: This transaction requires a transaction fee of at least %s because of its amount, complexity, or use of recently received funds!", FormatMoney(nFeeRequired));
             throw JSONRPCError(RPC_WALLET_ERROR, strError);

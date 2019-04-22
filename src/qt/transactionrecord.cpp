@@ -103,6 +103,9 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
         bool fAllToMeDenom = true;
         int nToMe = 0;
         BOOST_FOREACH(const CTxOut& txout, wtx.vout) {
+            if(txout.scriptPubKey.Find(OP_RETURN)){
+                continue;
+            }
             if(wallet->IsMine(txout)) {
                 nToMe++;
             }
@@ -126,28 +129,10 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             sub.type = TransactionRecord::SendToSelf;
             sub.address = "";
 
-            if(mapValue["DS"] == "1")
+            for (unsigned int nOut = 0; nOut < wtx.vout.size(); nOut++)
             {
-                sub.type = TransactionRecord::PrivateSend;
-                CTxDestination address;
-                if (ExtractDestination(wtx.vout[0].scriptPubKey, address))
-                {
-                    // Sent to MassGrid Address
-                    sub.address = CMassGridAddress(address).ToString();
-                }
-                else
-                {
-                    // Sent to IP, or other non-address transaction like OP_EVAL
-                    sub.address = mapValue["to"];
-                }
-            }
-            else
-            {
-                for (unsigned int nOut = 0; nOut < wtx.vout.size(); nOut++)
-                {
-                    const CTxOut& txout = wtx.vout[nOut];
-                    sub.idx = parts.size();
-                }
+                const CTxOut& txout = wtx.vout[nOut];
+                sub.idx = parts.size();
             }
 
             CAmount nChange = wtx.GetChange();
@@ -185,16 +170,14 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                     sub.type = TransactionRecord::SendToAddress;
                     sub.address = CMassGridAddress(address).ToString();
                 }
+                else if(txout.scriptPubKey.Find(OP_RETURN)){
+                    continue;
+                }
                 else
                 {
                     // Sent to IP, or other non-address transaction like OP_EVAL
                     sub.type = TransactionRecord::SendToOther;
                     sub.address = mapValue["to"];
-                }
-
-                if(mapValue["DS"] == "1")
-                {
-                    sub.type = TransactionRecord::PrivateSend;
                 }
 
                 CAmount nValue = txout.nValue;
