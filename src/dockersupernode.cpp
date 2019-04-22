@@ -14,7 +14,6 @@
 #include "n2n/include/n2n.h"
 
 
-#define N2N_SN_LPORT_DEFAULT 8999
 #define N2N_SN_PKTBUF_SIZE   2048
 
 #define N2N_SN_MGMT_PORT                5645
@@ -71,7 +70,7 @@ static int init_sn( n2n_sn_t * sss )
     memset( sss, 0, sizeof(n2n_sn_t) );
 
     sss->daemon = 0; /* By defult run as a daemon. */
-    sss->lport = N2N_SN_LPORT_DEFAULT;
+    sss->lport = GetSNPort();
     sss->sock = -1;
     sss->mgmt_sock = -1;
     sss->last_purge = 0;
@@ -677,13 +676,11 @@ static int run_loop( n2n_sn_t * sss );
 
 /* *********************************************** */
 
-static const struct option long_options[] = {
-  { "foreground",      no_argument,       NULL, 'f' },
-  { "local-port",      required_argument, NULL, 'l' },
-  { "help"   ,         no_argument,       NULL, 'h' },
-  { "verbose",         no_argument,       NULL, 'v' },
-  { NULL,              0,                 NULL,  0  }
-};
+
+void SetSNPort(int port){
+    DEFAULT_SN_PORT = port;
+}
+int GetSNPort(){return DEFAULT_SN_PORT;}
 /** Main program entry point from kernel. */
 void ThreadSnStart()
 {

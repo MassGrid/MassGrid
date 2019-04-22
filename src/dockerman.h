@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 The MassGrid developers
+// Copyright (c) 2017-2019 The MassGrid developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef DOCKERMAN_H
@@ -98,7 +98,6 @@ private:
     std::map<std::string,Service> mapDockerServiceLists;
 public:
     IpSet serviceIp;
-    const uint32_t n2nServerPort = 8999;
     union docker_Version version;
     map<std::string ,Service> GetServiceFromPubkey(CPubKey pubkey);
     bool ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService = true);

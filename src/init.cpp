@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2017 The MassGrid developers
+// Copyright (c) 2017-2019 The MassGrid developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -593,6 +593,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageGroup(_("Masternode options:"));
     strUsage += HelpMessageOpt("-masternode=<n>", strprintf(_("Enable the client to act as a masternode (0-1, default: %u)"), 0));
     strUsage += HelpMessageOpt("-dockernode=<n>", strprintf(_("Enable the client to act as a dockernode default enable masternode (0-1, default: %u)"), 0));
+    strUsage += HelpMessageOpt("-snport=<n>", strprintf(_("Listen for sn on <port> (default: %u)"), DEFAULT_SN_PORT));
     strUsage += HelpMessageOpt("-mnconf=<file>", strprintf(_("Specify masternode configuration file (default: %s)"), "masternode.conf"));
     strUsage += HelpMessageOpt("-mnconflock=<n>", strprintf(_("Lock masternodes from masternode configuration file (default: %u)"), 1));
     strUsage += HelpMessageOpt("-dpconf=<file>", strprintf(_("Specify dockerprice configuration file (default: %s)"), "dockerprice.conf"));
@@ -643,7 +644,7 @@ std::string LicenseInfo()
     // todo: remove urls from translations on next change
     return FormatParagraph(strprintf(_("Copyright (C) 2009-%i The Bitcoin Core Developers"), COPYRIGHT_YEAR)) + "\n" +
            "\n" +
-           FormatParagraph(strprintf(_("Copyright (C) 2014-%i The MassGrid Developers"), COPYRIGHT_YEAR)) + "\n" +
+           FormatParagraph(strprintf(_("Copyright (C) 2017-%i The MassGrid Developers"), COPYRIGHT_YEAR)) + "\n" +
            "\n" +
            FormatParagraph(_("This is experimental software.")) + "\n" +
            "\n" +
@@ -2024,8 +2025,10 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     // ********************************************************* Step 12: start node
 threadGroup.create_thread(boost::bind(&ThreadCheckInstantSend, boost::ref(*g_connman)));
 
-    if(fDockerNode)
-threadGroup.create_thread(&ThreadSnStart);
+    if(fDockerNode){
+        SetSNPort(GetArg("-snport",DEFAULT_SN_PORT));
+        threadGroup.create_thread(&ThreadSnStart);
+    }
 
     if(fDockerNode)
         threadGroup.create_thread(&ThreadTimeModule);

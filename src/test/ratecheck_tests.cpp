@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 The MassGrid developers
+// Copyright (c) 2017-2019 The MassGrid developers
 
 #include "governance.h"
 

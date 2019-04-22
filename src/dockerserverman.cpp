@@ -16,6 +16,7 @@
 #include "timermodule.h"
 #include "activemasternode.h"
 #include "masternodeman.h"
+#include "dockersupernode.h"
 CDockerServerman dockerServerman;
 const char* strServiceCode[] = {
     "Successful",
@@ -452,7 +453,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     std::string ipaddr = dockerman.serviceIp.GetFreeIP();
     spec.taskTemplate.containerSpec.env.push_back("N2N_SERVERIP=" + ipaddr);
     spec.taskTemplate.containerSpec.env.push_back("N2N_NETMASK=" + dockerman.serviceIp.GetNetMask());
-    spec.taskTemplate.containerSpec.env.push_back("N2N_SNIP=" + dockerman.GetMasterIp() + ":" + boost::lexical_cast<std::string>(dockerman.n2nServerPort));
+    spec.taskTemplate.containerSpec.env.push_back("N2N_SNIP=" + dockerman.GetMasterIp() + ":" + boost::lexical_cast<std::string>(GetSNPort()));
     spec.taskTemplate.containerSpec.env.push_back("SSH_PUBKEY=" + createService.ssh_pubkey);
     spec.taskTemplate.containerSpec.env.push_back("CPUNAME=" + serviceItem.cpu.Name);
     spec.taskTemplate.containerSpec.env.push_back("CPUCOUNT=" + std::to_string(serviceItem.cpu.Count));
