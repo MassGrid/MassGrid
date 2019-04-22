@@ -1,5 +1,5 @@
 QToolButton{
-    font: 13px;
+    font: 14px;
 }
 
 QToolButton#cancelButton{
@@ -61,7 +61,7 @@ QTableView {
 
 QHeaderView {
     color: black;
-    font: 14px;
+    font: 15px;
     border: 0px solid rgb(144, 144, 144);
     border:0px solid rgb(191,191,191);
     border-left-color: red;
@@ -423,8 +423,8 @@ QWidget#AddressBookPage QPushButton#closeButton,
 QWidget#AddressBookPage QPushButton#okButton,
 QWidget#AddressBookPage QPushButton#exportButton
 {
-    min-width: 60px;
-    min-height: 25px;
+    min-height:30px;
+    min-width:80px;
 }
 
 QDialog#AskPassphraseDialog QFrame#frame_10,
@@ -467,7 +467,7 @@ QWidget#MainwinTitle QLabel#labelWatchImmature,
 QWidget#MainwinTitle QLabel#label_unconfirmed_text,
 QWidget#MainwinTitle QLabel#label_unconfirmed,
 QWidget#MainwinTitle QLabel#label_total_text{
-font: 15px;
+font: 11pt;
 }
 
 QWidget#MainwinTitle QLineEdit#addressEdit{
@@ -475,8 +475,8 @@ font: 18px;
 }
 
 QWidget#MainwinTitle QCheckBox{
-    spacing: 10px;
-	font: 17px ;
+    spacing: 10pt;
+    font: 15pt;
 	min-width:120px;
 	min-height:40px;
 }
@@ -556,19 +556,19 @@ border:hidden;
 
 QWidget#MainwinTitle QToolButton#settingsButton{
 border:hidden;
-font: 12px ;
+font: 13px ;
 color: rgb(255, 255, 255);
 }
     
 QWidget#MainwinTitle QToolButton#fileButton{
 border:hidden;
-font: 12px ;
+font: 13px ;
 color: rgb(255, 255, 255);
 }
 
 QWidget#MainwinTitle QToolButton#helpButton{
 border:hidden;
-font: 12px ;
+font: 13px ;
 color: rgb(255, 255, 255);
 }
 
@@ -768,8 +768,6 @@ QSlider::sub-page:horizontal{
 	background-color: rgb(238, 169, 4);
 }
 
-
-
 QWidget#MasternodeList QPushButton#startAllButton,
 QWidget#MasternodeList QPushButton#startButton,
 QWidget#MasternodeList QPushButton#startMissingButton,
@@ -813,10 +811,22 @@ QWidget#MasternodeList QPushButton#pushButton_refund{
     min-height:28px;
 }
 
-QWidget#MasternodeList QLineEdit#lineEdit_searchOrder{
+QWidget#MasternodeList QLineEdit#filterLineEdit,
+QWidget#MasternodeList QLineEdit#lineEdit_searchOrder
+{
+width:300px;
 height:28;
-border:1px solid rgb(239, 169, 4);
+border:1px solid rgb(165, 165, 165);
+background-color: rgb(255, 255, 255,0);
 }
+
+QWidget#MasternodeList QLineEdit::hover#filterLineEdit,
+QWidget#MasternodeList QLineEdit::hover#lineEdit_searchOrder
+{
+border:1px solid rgb(238,169,4);
+background-color: rgb(255, 255, 255,0);
+}
+
 
 QComboBox{
     background-color:rgb(49, 61, 64); 
@@ -948,7 +958,7 @@ QWidget#SendCoinsDialog QToolButton#backButton,
 QWidget#SendCoinsDialog QToolButton#moreButton,
 QWidget#SendCoinsDialog QToolButton#addButton{
     color: rgb(0,0,0);
-    font: 14px;
+    font: 18px;
     border-radius: 3px;
 }
 
@@ -966,7 +976,7 @@ QWidget#SendCoinsDialog QToolButton:hover#addButton{
 QWidget#SendCoinsDialog QPushButton#sendButton{
     min-height:40px;
     min-width:140px;
-	font: 16px ;
+	font: 18px ;
 }
 
 QStackedWidget#SendCoinsEntry{
@@ -998,12 +1008,17 @@ QStackedWidget#SendCoinsEntry QMenu::item:selected:!enabled{
 
 
 
-QDialog#AddDockerServiceDlg QLineEdit{
+QDialog#AddDockerServiceDlg QLineEdit
+{
     min-height:32px;
     max-height:32px;
-    border-color: rgb(186, 186, 186);
-    border:1px solid rgb(186, 186, 186);
-	border-radius:3px;
+    border:1px solid rgb(165, 165, 165);
+    background-color: rgb(255, 255, 255,0);
+}
+
+QDialog#AddDockerServiceDlg QLineEdit::hover{
+border:1px solid rgb(238,169,4);
+background-color: rgb(255, 255, 255,0);
 }
 
 /* QDialog#AddDockerServiceDlg QPushButton#cancelButton{

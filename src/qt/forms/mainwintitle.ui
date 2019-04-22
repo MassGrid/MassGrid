@@ -341,6 +341,12 @@
                 <iconset resource="../massgrid.qrc">
                  <normaloff>:/res/pic/maxBtn.png</normaloff>:/res/pic/maxBtn.png</iconset>
                </property>
+               <property name="iconSize">
+                <size>
+                 <width>15</width>
+                 <height>15</height>
+                </size>
+               </property>
               </widget>
              </item>
              <item>
