@@ -122,7 +122,7 @@ bool IpSet::IsVaild(std::string s){
         return true; 
 }
 
-bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool isClearService){
+bool CDockerMan::PushMessage(Method mtd,std::string id,std::string requestData,bool isClearService){
     LogPrint("docker","CDockerMan::PushMessage Started Method: %s\n",strMethod[mtd]);
     std::string url;
     HttpType type;
@@ -131,15 +131,15 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
         case Method::METHOD_NODES_LISTS:
             url="/nodes";
             type=HttpType::HTTP_GET;
-            if(!pushdata.empty()){
-                pushdata = "filters=" + pushdata;
+            if(!requestData.empty()){
+                requestData = "filters=" + requestData;
             }
             break;
         case Method::METHOD_NODES_INSPECT:
             url="/nodes/";
             url.append(id);
             type=HttpType::HTTP_GET;
-            pushdata.clear();
+            requestData.clear();
             break;
         case Method::METHOD_NODES_DELETE:
             url="/nodes/";
@@ -151,8 +151,8 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
         case Method::METHOD_SERVICES_LISTS:
             url="/services";
             type=HttpType::HTTP_GET;
-            if(!pushdata.empty()){
-                pushdata = "filters=" + pushdata;
+            if(!requestData.empty()){
+                requestData = "filters=" + requestData;
             }
             break;
         case Method::METHOD_SERVICES_CREATE:
@@ -163,13 +163,13 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
             url="/services/";
             url.append(id);
             type=HttpType::HTTP_GET;
-            pushdata.clear();
+            requestData.clear();
             break;
         case Method::METHOD_SERVICES_DELETE:
             url="/services/";
             url.append(id);
             type=HttpType::HTTP_DELETE;
-            pushdata.clear();
+            requestData.clear();
             break;
         case Method::METHOD_SERVICES_UPDATE:
             url="/services/";
@@ -182,19 +182,19 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
             url.append(id);
             url.append("logs");
             type=HttpType::HTTP_GET;
-            pushdata.clear();
+            requestData.clear();
         case Method::METHOD_TASKS_LISTS:
             url="/tasks";
             type=HttpType::HTTP_GET;
-            if(!pushdata.empty()){
-                pushdata = "filters=" + pushdata;
+            if(!requestData.empty()){
+                requestData = "filters=" + requestData;
             }
             break;
         case Method::METHOD_TASKS_INSPECT:
             url="/tasks/";
             url.append(id);
             type=HttpType::HTTP_GET;
-            pushdata.clear();
+            requestData.clear();
             break;
         case Method::METHOD_SWARM_INSPECT:
             url="/swarm";
@@ -212,8 +212,8 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
             LogPrint("docker","CDockerMan::PushMessage not support this methed");
             return false;
     }
-    HttpRequest http(address,apiPort,url,pushdata,"/var/run/docker.sock");
-    LogPrint("docker","CDockerMan::RequestMessages Methed %s Send:%s\n",url,pushdata);
+    HttpRequest http(address,apiPort,url,requestData,"/var/run/docker.sock");
+    LogPrint("docker","CDockerMan::RequestMessages Methed %s Send:%s\n",url,requestData);
     int ret;
     if(type == HttpType::HTTP_GET){
         ret=http.HttpGet();
@@ -235,10 +235,10 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
     return ProcessMessage(mtd,http.url,ret,reponseData,isClearService);
 }
 
-bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService){
+bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string responseData,bool isClearService){
 
     LogPrint("docker","CDockerMan::ProcessMessage Method: %s  ProcessMessage: %d\n",strMethod[mtd],ret);
-    LogPrint("docker","CDockerMan::ProcessMessage Response Messages %s\n",responsedata);
+    LogPrint("docker","CDockerMan::ProcessMessage Response Messages %s\n",responseData);
     std::string strMessage;
     std::string id;
     HttpType type;
@@ -246,7 +246,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         return false;
     }
     UniValue jsondata(UniValue::VOBJ);
-    jsondata.read(responsedata);
+    jsondata.read(responseData);
     LOCK(cs);
     switch (mtd)
     {
@@ -254,13 +254,13 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         {
             if(isClearService)
                 mapDockerNodeLists.clear();
-            Node::NodeListUpdateAll(responsedata,mapDockerNodeLists);
+            Node::NodeListUpdateAll(responseData,mapDockerNodeLists);
             GetVersionAndJoinToken();
             break;
         }
         case Method::METHOD_NODES_INSPECT:  // not use
         {
-            Node::NodeListUpdate(responsedata,mapDockerNodeLists);
+            Node::NodeListUpdate(responseData,mapDockerNodeLists);
             break;
         }
         case Method::METHOD_NODES_DELETE:   // not implemented yet
@@ -277,7 +277,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
 
             if(isClearService)
                 mapDockerServiceLists.clear();
-            Service::ServiceListUpdateAll(responsedata,mapDockerServiceLists);
+            Service::ServiceListUpdateAll(responseData,mapDockerServiceLists);
 
             if(isClearService){
                 //update service ipset
@@ -333,7 +333,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         case Method::METHOD_SERVICES_INSPECT:
         {
             if(jsondata.exists("ID")){
-                Service::ServiceListUpdate(responsedata,mapDockerServiceLists);
+                Service::ServiceListUpdate(responseData,mapDockerServiceLists);
                 dockertaskfilter taskfilter;
                 taskfilter.serviceid.push_back(jsondata["ID"].get_str());
                 // taskfilter.DesiredState_running=true;
@@ -360,7 +360,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                 for(auto itenv = env.begin();itenv!=env.end();++itenv){
                     if(itenv->find("N2N_SERVERIP=")!=-1){
                         string str=itenv->substr(13);
-                        dockerman.serviceIp.Erase(str);
+                        dockerman.serviceIpList.Erase(str);
                         break;
                     }
                 }
@@ -420,7 +420,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         case Method::METHOD_TASKS_LISTS:
         {
             std::set<std::string> serviceidSet;
-            Service::UpdateTaskList(responsedata,mapDockerServiceLists,serviceidSet); //updatealldate serviceid is null
+            Service::UpdateTaskList(responseData,mapDockerServiceLists,serviceidSet); //updatealldate serviceid is null
             
             for(auto iter = serviceidSet.begin();iter != serviceidSet.end();++iter){
                 auto it = mapDockerServiceLists.find(*iter);
@@ -465,7 +465,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         }
         case Method::METHOD_SWARM_INSPECT:
         {
-            Swarm::DockerSwarm(responsedata,swarm);
+            Swarm::DockerSwarm(responseData,swarm);
             break;
         }
         case Method::METHOD_INFO:   // not implemented yet
@@ -485,13 +485,13 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
     return true; 
 }
 void CDockerMan::UpdateIPfromServicelist(std::map<std::string,Service>& map){
-    serviceIp.Clear();
+    serviceIpList.Clear();
     for(auto it = map.begin();it != map.end();++it){
         auto env =it->second.spec.taskTemplate.containerSpec.env;
         for(auto itenv = env.begin();itenv!=env.end();++itenv){
             if(itenv->find("N2N_SERVERIP=")!=-1){
                 string str=itenv->substr(13);
-                serviceIp.Insert(str);
+                serviceIpList.Insert(str);
             }
         }
     }

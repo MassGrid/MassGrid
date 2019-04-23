@@ -450,9 +450,9 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     else
         spec.taskTemplate.containerSpec.env.push_back("N2N_NAME="+createService.n2n_community.substr(0,20));
     
-    std::string ipaddr = dockerman.serviceIp.GetFreeIP();
+    std::string ipaddr = dockerman.serviceIpList.GetFreeIP();
     spec.taskTemplate.containerSpec.env.push_back("N2N_SERVERIP=" + ipaddr);
-    spec.taskTemplate.containerSpec.env.push_back("N2N_NETMASK=" + dockerman.serviceIp.GetNetMask());
+    spec.taskTemplate.containerSpec.env.push_back("N2N_NETMASK=" + dockerman.serviceIpList.GetNetMask());
     spec.taskTemplate.containerSpec.env.push_back("N2N_SNIP=" + dockerman.GetMasterIp() + ":" + boost::lexical_cast<std::string>(GetSNPort()));
     spec.taskTemplate.containerSpec.env.push_back("SSH_PUBKEY=" + createService.ssh_pubkey);
     spec.taskTemplate.containerSpec.env.push_back("CPUNAME=" + serviceItem.cpu.Name);
@@ -477,7 +477,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
 
     //  7.request docker
     if(!dockerman.PushMessage(Method::METHOD_SERVICES_CREATE,"",spec.ToJsonString())){
-        dockerman.serviceIp.Erase(ipaddr);
+        dockerman.serviceIpList.Erase(ipaddr);
         return false;
     }
     return true;

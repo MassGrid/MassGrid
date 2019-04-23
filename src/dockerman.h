@@ -64,12 +64,12 @@ enum HttpType{
 };
 
 /*
-*n2n default netmask 0xff000000,
-*Birthday Paradox client n=1000 d=255x255x254 
-*Probability is 0.0298193952119
+* assign ip address to docker engine
+* n2n default netmask 0xff000000,
+* Birthday Paradox client n=1000 d=255x255x254 
+* Probability is 0.0298193952119
 */
 class IpSet{
-
     set<in_addr_t> ip_set{};
     const in_addr_t ip_start = htonl(inet_addr("10.0.0.1"));   //10.0.0.1
     const in_addr_t ip_end = htonl(inet_addr("10.0.255.254"));     //10.1.255.254
@@ -85,6 +85,7 @@ public:
     }
     void Insert(std::string str);
 };
+
 class CDockerMan{
 private:
     // critical section to protect the inner data structures
@@ -98,16 +99,28 @@ private:
     std::map<std::string,Service> mapDockerServiceLists;
     map<Item,Value_price> priceList;
 public:
-    IpSet serviceIp;
     union docker_Version version;
+    IpSet serviceIpList;
+    /*
+    * get all running services by pubkey
+    */
     map<std::string ,Service> GetServiceFromPubkey(CPubKey pubkey);
-    bool ProcessMessage(Method mtd,std::string url,int ret,std::string responsedata,bool isClearService = true);
-    bool PushMessage(Method mtd,std::string id,std::string pushdata,bool isClearService = true);
-    bool Update(bool isClear=true); //update all data;
-
+    /*
+    * Push Message to docker api,
+    * isClearService default to clear all local caches
+    */
+    bool PushMessage(Method mtd,std::string id,std::string requestData,bool isClearService = true);
+    bool ProcessMessage(Method mtd,std::string url,int ret,std::string responseData,bool isClearService = true);
+    
+    // update all local caches;
+    bool Update(bool isClear=true);
     bool UpdateSwarmAndNodeList();
     bool UpdateServicesList();
     bool UpdateService(std::string serviceid);
+    void UpdateIPfromServicelist(std::map<std::string,Service>& map);
+    map<Item,Value_price> GetPriceListFromNodelist();
+    void UpdatePriceListFromNodelist();
+
     std::string GetSwarmJoinToken(){
         return swarm.joinWorkerTokens + " " + swarm.ip_port;
     }
@@ -130,6 +143,21 @@ public:
         }
         return false;
     }
+    bool GetNodeFromList(std::string nodeid,Node& node){
+        LOCK(cs);
+        if(!mapDockerNodeLists.count(nodeid))
+            return false;
+            node = mapDockerNodeLists[nodeid];
+        return true;
+    }
+    uint64_t GetDockerNodeCount();
+    uint64_t GetDockerNodeActiveCount();
+    uint64_t GetDockerServiceCount();
+    uint64_t GetDockerTaskCount(); 
+    void GetVersionAndJoinToken();
+    void SetPort(uint32_t p){apiPort = p;}
+    uint32_t GetPort(){return apiPort;}
+
     bool IsExistSerivce(uint256 txid){
         LOCK(cs);
         for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it){
@@ -146,22 +174,5 @@ public:
         }
         return false;
     }
-    bool GetNodeFromList(std::string nodeid,Node& node){
-        LOCK(cs);
-        if(!mapDockerNodeLists.count(nodeid))
-            return false;
-            node = mapDockerNodeLists[nodeid];
-        return true;
-    }
-    uint64_t GetDockerNodeCount();
-    uint64_t GetDockerNodeActiveCount();
-    uint64_t GetDockerServiceCount();
-    uint64_t GetDockerTaskCount(); 
-    void SetPort(uint32_t p){apiPort = p;}
-    uint32_t GetPort(){return apiPort;}
-    void GetVersionAndJoinToken();
-    void UpdateIPfromServicelist(std::map<std::string,Service>& map);
-    map<Item,Value_price> GetPriceListFromNodelist();
-    void UpdatePriceListFromNodelist();
 };
 #endif //DOCKERMAN_H
