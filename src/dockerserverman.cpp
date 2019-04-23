@@ -173,8 +173,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         if(CheckAndGetTransaction(dtdata,dockerTransData.errCode)){
             CWalletTx& wtx = pwalletMain->mapWallet[dtdata.txid];  //watch only not check
             if(wtx.HasTlemented()){
-                dockerTransData.sigTime = GetAdjustedTime();
-                dockerTransData.txid = dtdata.txid;
+                dockerTransData.sigTime = GetAdjustedTime();                
                 dockerTransData.feeRate = boost::lexical_cast<double>(wtx.Getfeerate());
                 dockerTransData.deleteTime = boost::lexical_cast<int64_t>(wtx.Getdeletetime());
                 dockerTransData.errCode = boost::lexical_cast<int>(wtx.Gettaskstate());
@@ -188,6 +187,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         }else{
             dockerTransData.msgStatus=TASKDTDATA::ERRORCODE;
         }
+        dockerTransData.txid = dtdata.txid;
         LogPrint("timer","CDockerServerman::GETTRANS status %d msgstatus %d\n", dockerTransData.errCode,dockerTransData.msgStatus);
         LogPrintf("CDockerServerman::ProcessMessage -- Sent TRANSDATA to peer %d\n", pfrom->id);
         connman.PushMessage(pfrom, NetMsgType::TRANSDATA, dockerTransData);
@@ -205,14 +205,21 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         if (pwalletMain->mapWallet.count(dockerTransData.txid)){
             CWalletTx& wtx = pwalletMain->mapWallet[dockerTransData.txid];
             if(wtx.HasTlemented()) return;
-            wtx.Setdeletetime(std::to_string(dockerTransData.deleteTime));
-            wtx.Setfeerate(std::to_string(dockerTransData.feeRate));
-            wtx.Settaskstate(std::to_string(dockerTransData.errCode));
-            wtx.Settaskstatuscode(dockerTransData.taskStatus);
-            wtx.Settlementtxid(dockerTransData.tlementtxid.ToString());
+            if(dockerTransData.msgStatus != TASKDTDATA::SUCCESS){
+                dockerTransData.tlementtxid.SetNull();
+                wtx.Settlementtxid(dockerTransData.tlementtxid.ToString());
+                LogPrint("timer","CDockerServerman::TRANSDATA msgStatus %d %s\n",dockerTransData.msgStatus,dockerTransData.tlementtxid.ToString());
+            }else{
+                wtx.Setdeletetime(std::to_string(dockerTransData.deleteTime));
+                wtx.Setfeerate(std::to_string(dockerTransData.feeRate));
+                wtx.Settaskstate(std::to_string(dockerTransData.errCode));
+                wtx.Settaskstatuscode(dockerTransData.taskStatus);
+                wtx.Settlementtxid(dockerTransData.tlementtxid.ToString());
+            }
             CWalletDB walletdb(pwalletMain->strWalletFile);
             wtx.WriteToDisk(&walletdb);
         }
+        setTRANSDataStatus(TRANSDATASTATUS::ReceivedTD);
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("dockernode","CDockerServerman::ProcessMessage CREATESERVICE Started\n");
         if (!fDockerNode) return;
@@ -462,7 +469,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     spec.taskTemplate.containerSpec.env.push_back("GPUNAME=" + serviceItem.gpu.Name);
     spec.taskTemplate.containerSpec.env.push_back("GPUCOUNT=" + std::to_string(serviceItem.gpu.Count));
 
-    
+
     spec.taskTemplate.placement.constraints.push_back("node.role == worker");
     spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.cpuname == "+serviceItem.cpu.Name));
     spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.cpucount == "+std::to_string(serviceItem.cpu.Count)));
@@ -470,6 +477,11 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.memcount == "+std::to_string(serviceItem.mem.Count)));
     spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.gpuname == "+serviceItem.gpu.Name));
     spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.gpucount == "+std::to_string(serviceItem.gpu.Count)));
+    std::string nodeid;
+    if(GetNodeIdAndstopMiner(serviceItem,nodeid)){
+        spec.taskTemplate.placement.constraints.push_back(std::string("node.id == "+nodeid));
+        LogPrintf("CDockerServerman::GetNodeIdAndstopMiner nodeid %s\n",nodeid);
+    }
     Config::Mount mount;
     mount.target="/dev/net";
     mount.source="/dev/net";
@@ -482,6 +494,89 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     }
     return true;
 
+}
+bool CDockerServerman::GetNodeIdAndstopMiner(Item item,std::string &nodeid){
+    std::string tmpnodeid = dockerman.GetNodeFromItem(item);
+    std::string serviceid;
+    if(!dockerman.GetServiceidFromNode(tmpnodeid,serviceid)){
+        LogPrintf("CDockerServerman::GetNodeIdAndstopMiner not found serviceid from nodeid,maybe the miner not start\n");
+        nodeid=tmpnodeid;
+        return true;
+    }
+    Service service;
+    if(!dockerman.GetSerivceFromServiceID(serviceid,service)){
+        LogPrintf("CDockerServerman::GetNodeIdAndstopMiner get service from services id faild %s\n",serviceid);
+        nodeid=tmpnodeid;
+        return true;
+    }
+    if( "massgridminer_" == service.spec.name.substr(0,14)){
+        for(auto it = service.spec.labels.begin();it!=service.spec.labels.end();++it){
+            if(it->first == "com.massgrid.miner"){
+                dockerman.PushMessage(Method::MINER_SERVICES_DELETE,serviceid,"");
+                LogPrintf("CDockerServerman::GetNodeIdAndstopMiner delete miner service %s\n",serviceid);
+                nodeid=tmpnodeid;
+                return true;
+            }
+        }
+        return false;
+    }
+    return true;
+}
+bool CDockerServerman::CreateMinerServiceSpec(std::string nodeid){
+    LogPrint("dockernode","CDockerServerman::CreateMinerServiceSpec Started\n");
+    Item serviceItem;
+    if(!dockerman.GetItemFromNodeID(nodeid,serviceItem)){
+        LogPrintf("CDockerServerman::CreateMinerServiceSpec node %s is not found\n",nodeid);
+        return false;
+    }
+    Config::ServiceSpec spec;
+    spec.mode.replicated.replicas = 1;
+
+    spec.name = "massgridminer_"+ std::to_string(insecure_rand());
+    spec.labels["com.massgrid.deletetime"] = std::to_string(MINER_MAX_TIME + GetAdjustedTime());
+    spec.labels["com.massgrid.miner"] = "1";
+    spec.taskTemplate.containerSpec.image = "massgrid/10.0-autominer-ubuntu16.04";
+    spec.taskTemplate.containerSpec.user= "root";
+    
+    spec.taskTemplate.resources.limits.memoryBytes = serviceItem.mem.Count *G;
+    spec.taskTemplate.resources.limits.nanoCPUs = serviceItem.cpu.Count * G;
+
+    Config::GenericResources otherresources;
+    otherresources.discreateResourceSpec.kind = serviceItem.gpu.Name;
+    otherresources.discreateResourceSpec.value = serviceItem.gpu.Count;
+    spec.taskTemplate.resources.reservations.genericResources.push_back(otherresources);
+
+    spec.taskTemplate.restartPolicy.condition = "none";
+    spec.taskTemplate.containerSpec.command.push_back("minerstart.sh");
+    Node node;
+    if(dockerman.GetNodeFromList(nodeid,node)){
+        for(auto &labels: node.description.engine.labels){
+            std::string envs=labels.first+"="+labels.second;
+            strToUpper(envs,1);
+            spec.taskTemplate.containerSpec.env.push_back(envs);
+        }
+    }else{
+        LogPrintf("Warring CDockerServerman::CreateMinerServiceSpec node %s is not exits\n",nodeid);
+    }
+    spec.taskTemplate.placement.constraints.push_back("node.role == worker");
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.cpuname == "+serviceItem.cpu.Name));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.cpucount == "+std::to_string(serviceItem.cpu.Count)));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.memname == "+serviceItem.mem.Name));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.memcount == "+std::to_string(serviceItem.mem.Count)));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.gpuname == "+serviceItem.gpu.Name));
+    spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.gpucount == "+std::to_string(serviceItem.gpu.Count)));
+    spec.taskTemplate.placement.constraints.push_back(std::string("node.id == "+nodeid));
+    
+    Config::Mount mount;
+    mount.target="/dev/net";
+    mount.source="/dev/net";
+    spec.taskTemplate.containerSpec.mounts.push_back(mount);
+
+    if(!dockerman.PushMessage(Method::MINER_SERVICES_CREATE,"",spec.ToJsonString())){
+        LogPrintf("CDockerServerman::CreateMinerServiceSpec MINER_SERVICES_CREATE failed\n");
+        return false;
+    }
+    return true;
 }
 bool CheckAndGetTransaction(DockerGetTranData dtdata,int& errCode){
     // 1.first check time

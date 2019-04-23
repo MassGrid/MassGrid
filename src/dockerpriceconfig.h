@@ -73,7 +73,7 @@ public:
         }
         return CAmount(0);
     }
-    std::set<std::string>getNameSet(std::string type){
+    std::set<std::string> getNameSet(std::string type){
         std::set<std::string> s;
         for(auto it= entries.begin();it!=entries.end();++it){
             if(it->getType() == type)

@@ -144,32 +144,25 @@ void MainwinTitle::openHelpMenu()
     m_helpMenu->exec(menuPos);
 }
 
-void MainwinTitle::setButtonText(const QString& overview,const QString& send,const QString& Transactions)
-{
-	ui->toolButton->setText(overview);
-	ui->toolButton_2->setText(send);
-	ui->transactionButton->setText(Transactions);
-}
-
-void MainwinTitle::on_toolButton_clicked()
+void MainwinTitle::on_checkBox_overview_clicked()
 {
 	setLabelStyle(ui->label_overview);
 	Q_EMIT sgl_showOverview();
 }
 
-void MainwinTitle::on_toolButton_2_clicked()
+void MainwinTitle::on_checkBox_send_clicked()
 {
 	setLabelStyle(ui->label_send);
 	Q_EMIT sgl_showSendPage();
 }
 
-void MainwinTitle::on_transactionButton_clicked()
+void MainwinTitle::on_checkBox_transaction_clicked()
 {
 	setLabelStyle(ui->label_transactions);
 	Q_EMIT sgl_showExchangePage();
 }
 
-void MainwinTitle::on_masternodeButton_clicked()
+void MainwinTitle::on_checkBox_masternode_clicked()
 {
     setLabelStyle(ui->label_masternode);
     Q_EMIT sgl_showMasternodePage();
@@ -259,6 +252,8 @@ void MainwinTitle::setTitle(const QString& titleName)
 void MainwinTitle::setTransactionButtonStyle()
 {
     // on_transactionButton_clicked();
+    // on_checkBox_transaction_clicked();
+    ui->checkBox_transaction->setChecked(true);
     setLabelStyle(ui->label_transactions);
 }
 
@@ -273,7 +268,7 @@ void MainwinTitle::initMasternode()
     bool fHideTrayIcon = settings.value("fShowMasternodesTab").toBool();
     fHideTrayIcon = true;
     if(!fHideTrayIcon){
-        ui->masternodeButton->hide();
+        ui->checkBox_masternode->hide();
         ui->label_masternode->hide();
     }
 }

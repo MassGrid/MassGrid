@@ -1,7 +1,7 @@
 #include "cmessagebox.h"
 #include "ui_cmessagebox.h"
 #include "massgridgui.h"
-#include <QDebug>
+#include "util.h"
 
 CMessageBox::CMessageBox(QWidget *parent,QString title,QString text) :
     QDialog(0),
@@ -12,6 +12,12 @@ CMessageBox::CMessageBox(QWidget *parent,QString title,QString text) :
 
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
+
+    connect(ui->pBtn_close,SIGNAL(clicked()),this,SLOT(slot_close()));
+    connect(ui->okButton,SIGNAL(clicked()),this,SLOT(slot_ok()));
+    connect(ui->okButton2,SIGNAL(clicked()),this,SLOT(slot_ok()));
+    connect(ui->closeButton,SIGNAL(clicked()),this,SLOT(slot_close()));
+    
 
     ui->helpMessageLabel->setTextFormat(Qt::RichText);
     ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -146,4 +152,15 @@ void CMessageBox::mouseReleaseEvent(QMouseEvent *e)
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));
+}
+
+void CMessageBox::slot_close()
+{
+    LogPrintf("=====>CMessageBox::slot_close\n");
+    reject();
+}
+void CMessageBox::slot_ok()
+{
+    LogPrintf("=====>CMessageBox::slot_ok\n");
+    accept();
 }

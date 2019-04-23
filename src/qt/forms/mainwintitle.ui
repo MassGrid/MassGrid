@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>741</width>
+    <width>735</width>
     <height>180</height>
    </rect>
   </property>
@@ -65,13 +65,7 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#frame_4{
-background-color: rgb(255, 255, 255);
-}
-QFrame{
-border:hidden;
-}
-</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -96,7 +90,7 @@ border:hidden;
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="label_pic">
+       <widget class="QLabel" name="label_logo">
         <property name="minimumSize">
          <size>
           <width>223</width>
@@ -110,7 +104,7 @@ border:hidden;
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">image: url(:/res/pic/logo.png);</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
@@ -171,6 +165,9 @@ border:hidden;
          </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="rightMargin">
+            <number>4</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_title">
              <property name="styleSheet">
@@ -229,11 +226,6 @@ border:hidden;
                  <height>30</height>
                 </size>
                </property>
-               <property name="font">
-                <font>
-                 <pointsize>13</pointsize>
-                </font>
-               </property>
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
@@ -262,11 +254,6 @@ border:hidden;
                  <height>30</height>
                 </size>
                </property>
-               <property name="font">
-                <font>
-                 <pointsize>13</pointsize>
-                </font>
-               </property>
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
@@ -294,14 +281,6 @@ border:hidden;
                  <width>60</width>
                  <height>30</height>
                 </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>13</pointsize>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Tools</string>
@@ -362,14 +341,20 @@ border:hidden;
                 <iconset resource="../massgrid.qrc">
                  <normaloff>:/res/pic/maxBtn.png</normaloff>:/res/pic/maxBtn.png</iconset>
                </property>
+               <property name="iconSize">
+                <size>
+                 <width>15</width>
+                 <height>15</height>
+                </size>
+               </property>
               </widget>
              </item>
              <item>
               <widget class="QToolButton" name="pBtnClose">
                <property name="minimumSize">
                 <size>
-                 <width>30</width>
-                 <height>30</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
@@ -386,12 +371,12 @@ border:hidden;
                </property>
                <property name="icon">
                 <iconset resource="../massgrid.qrc">
-                 <normaloff>:/res/pic/closeBtn.png</normaloff>:/res/pic/closeBtn.png</iconset>
+                 <normaloff>:/res/pic/mainWinColse.png</normaloff>:/res/pic/mainWinColse.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
-                 <width>17</width>
-                 <height>15</height>
+                 <width>18</width>
+                 <height>18</height>
                 </size>
                </property>
               </widget>
@@ -419,7 +404,7 @@ border:hidden;
             </spacer>
            </item>
            <item>
-            <widget class="QToolButton" name="toolButton">
+            <widget class="QCheckBox" name="checkBox_overview">
              <property name="minimumSize">
               <size>
                <width>150</width>
@@ -428,189 +413,69 @@ border:hidden;
              </property>
              <property name="maximumSize">
               <size>
-               <width>120</width>
-               <height>40</height>
+               <width>16777215</width>
+               <height>16777215</height>
               </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>16</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-              </font>
              </property>
              <property name="styleSheet">
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>Overview</string>
+              <string>OverView</string>
              </property>
-             <property name="icon">
-              <iconset resource="../massgrid.qrc">
-               <normaloff>:/res/pic/overview.png</normaloff>:/res/pic/overview.png</iconset>
+             <property name="checked">
+              <bool>true</bool>
              </property>
-             <property name="iconSize">
-              <size>
-               <width>29</width>
-               <height>34</height>
-              </size>
-             </property>
-             <property name="popupMode">
-              <enum>QToolButton::InstantPopup</enum>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="arrowType">
-              <enum>Qt::NoArrow</enum>
+             <property name="autoExclusive">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QToolButton" name="toolButton_2">
+            <widget class="QCheckBox" name="checkBox_send">
              <property name="minimumSize">
               <size>
                <width>150</width>
                <height>40</height>
               </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>16</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
              </property>
              <property name="text">
               <string>Send</string>
              </property>
-             <property name="icon">
-              <iconset resource="../massgrid.qrc">
-               <normaloff>:/res/pic/send.png</normaloff>:/res/pic/send.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>30</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="popupMode">
-              <enum>QToolButton::InstantPopup</enum>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="arrowType">
-              <enum>Qt::NoArrow</enum>
+             <property name="autoExclusive">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QToolButton" name="transactionButton">
+            <widget class="QCheckBox" name="checkBox_transaction">
              <property name="minimumSize">
               <size>
                <width>150</width>
                <height>40</height>
               </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>18</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
              </property>
              <property name="text">
               <string>Transaction</string>
              </property>
-             <property name="icon">
-              <iconset resource="../massgrid.qrc">
-               <normaloff>:/res/pic/change.png</normaloff>:/res/pic/change.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>33</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="popupMode">
-              <enum>QToolButton::InstantPopup</enum>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="arrowType">
-              <enum>Qt::NoArrow</enum>
+             <property name="autoExclusive">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QToolButton" name="masternodeButton">
+            <widget class="QCheckBox" name="checkBox_masternode">
              <property name="minimumSize">
               <size>
                <width>150</width>
                <height>40</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>18</pointsize>
-               <weight>50</weight>
-               <italic>false</italic>
-               <bold>false</bold>
-              </font>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
              <property name="text">
               <string>Masternode</string>
              </property>
-             <property name="icon">
-              <iconset resource="../massgrid.qrc">
-               <normaloff>:/res/pic/masternode.png</normaloff>:/res/pic/masternode.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>33</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="popupMode">
-              <enum>QToolButton::InstantPopup</enum>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="arrowType">
-              <enum>Qt::NoArrow</enum>
+             <property name="autoExclusive">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -673,13 +538,13 @@ border:hidden;
               <property name="minimumSize">
                <size>
                 <width>150</width>
-                <height>15</height>
+                <height>10</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>120</width>
-                <height>15</height>
+                <height>10</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -695,13 +560,13 @@ border:hidden;
               <property name="minimumSize">
                <size>
                 <width>150</width>
-                <height>15</height>
+                <height>10</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>150</width>
-                <height>15</height>
+                <height>10</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -717,13 +582,13 @@ border:hidden;
               <property name="minimumSize">
                <size>
                 <width>150</width>
-                <height>15</height>
+                <height>10</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>150</width>
-                <height>15</height>
+                <height>10</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -739,13 +604,13 @@ border:hidden;
               <property name="minimumSize">
                <size>
                 <width>150</width>
-                <height>15</height>
+                <height>10</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>150</width>
-                <height>15</height>
+                <height>10</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -788,9 +653,12 @@ border:hidden;
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="4,6">
+     <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="10,7">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <property name="leftMargin">
-       <number>20</number>
+       <number>10</number>
       </property>
       <property name="rightMargin">
        <number>20</number>
@@ -799,158 +667,9 @@ border:hidden;
        <number>9</number>
       </property>
       <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="topMargin">
-         <number>10</number>
-        </property>
-        <item row="2" column="1">
-         <widget class="QLabel" name="label_unconfirmed">
-          <property name="font">
-           <font>
-            <family>.SF NS Text</family>
-            <pointsize>18</pointsize>
-            <weight>50</weight>
-            <italic>false</italic>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>123.45</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_balance_text">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>.SF NS Text</family>
-            <pointsize>18</pointsize>
-            <weight>50</weight>
-            <italic>false</italic>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Available:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_balance">
-          <property name="minimumSize">
-           <size>
-            <width>80</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>.SF NS Text</family>
-            <pointsize>18</pointsize>
-            <weight>50</weight>
-            <italic>false</italic>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>123.45</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_unconfirmed_text">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>.SF NS Text</family>
-            <pointsize>18</pointsize>
-            <weight>50</weight>
-            <italic>false</italic>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Pending:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelmmatureText">
-          <property name="font">
-           <font>
-            <family>.SF NS Text</family>
-            <pointsize>18</pointsize>
-            <weight>50</weight>
-            <italic>false</italic>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Immature:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelWatchImmature">
-          <property name="font">
-           <font>
-            <family>.SF NS Text</family>
-            <pointsize>18</pointsize>
-            <weight>50</weight>
-            <italic>false</italic>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <item>
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item>
            <widget class="QLabel" name="label_total_text">
             <property name="sizePolicy">
@@ -958,15 +677,6 @@ border:hidden;
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>.SF NS Text</family>
-              <pointsize>18</pointsize>
-              <weight>50</weight>
-              <italic>false</italic>
-              <bold>false</bold>
-             </font>
             </property>
             <property name="text">
              <string>Total:</string>
@@ -981,20 +691,11 @@ border:hidden;
               <height>35</height>
              </size>
             </property>
-            <property name="font">
-             <font>
-              <family>.SF NS Text</family>
-              <pointsize>30</pointsize>
-              <weight>50</weight>
-              <italic>false</italic>
-              <bold>false</bold>
-             </font>
-            </property>
             <property name="text">
              <string>123,45</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -1002,6 +703,9 @@ border:hidden;
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <property name="rightMargin">
+           <number>20</number>
+          </property>
           <item>
            <widget class="QLineEdit" name="addressEdit">
             <property name="minimumSize">
@@ -1009,15 +713,6 @@ border:hidden;
               <width>0</width>
               <height>30</height>
              </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>.SF NS Text</family>
-              <pointsize>18</pointsize>
-              <weight>50</weight>
-              <italic>false</italic>
-              <bold>false</bold>
-             </font>
             </property>
             <property name="toolTip">
              <string>Please set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</string>
@@ -1029,7 +724,7 @@ border:hidden;
              <string>Set the Default Receive Address(Settings-&gt;Options-&gt;Wallet)</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="readOnly">
              <bool>true</bool>
@@ -1062,6 +757,88 @@ border:hidden;
            </widget>
           </item>
          </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="topMargin">
+         <number>10</number>
+        </property>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_unconfirmed">
+          <property name="text">
+           <string>123.45</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_balance_text">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Available:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_balance">
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>123.45</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_unconfirmed_text">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Pending:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelmmatureText">
+          <property name="text">
+           <string>Immature:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelWatchImmature">
+          <property name="text">
+           <string>0.00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

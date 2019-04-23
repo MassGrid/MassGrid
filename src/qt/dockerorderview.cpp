@@ -20,6 +20,7 @@
 #include "ui_interface.h"
 #include "init.h"
 #include "definecalendar.h"
+#include "dockercluster.h"
 #include <QComboBox>
 #include <QDateTimeEdit>
 #include <QDesktopServices>
@@ -43,13 +44,16 @@
 #include <QListView>
 #include <QComboBox>
 #include <QStyleFactory>
+
+#define SYNCTRANSTINEOUT 30
 static const char* PERSISTENCE_DATE_FORMAT = "yyyy-MM-dd";
 
 QMap<std::string,QPushButton*> m_mapViewBtns;
 
 DockerOrderView::DockerOrderView(const PlatformStyle *platformStyle, QWidget *parent) :
     QWidget(parent), model(0), dockerorderProxyModel(0),
-    dockerorderView(0), abandonAction(0), columnResizingFixer(0)
+    dockerorderView(0), abandonAction(0), columnResizingFixer(0),
+    m_syncTransactionThread(NULL)
 {
     QSettings settings;
     // Build filter row
@@ -160,8 +164,6 @@ void DockerOrderView::setSearchWidget(QComboBox* dateComboBox,QComboBox* typeCom
     typeWidget = typeComboBox;
     // addressWidget = addrLineEdit;
 
-    // ad->dl
-       //QComboBox
    dateWidget->setStyleSheet("QComboBox{border:0px; background-color:rgb(172,99,43); \
                     color:white; height:24px; width:40px;}\
                     QComboBox::down-arrow{\
@@ -281,10 +283,10 @@ void DockerOrderView::setModel(WalletModel *model)
             std::string orderstatusStr = wtx.Getorderstatus();
             std::string serviceidStr = wtx.Getserviceid();
 
-            QString btnText = getOrderBtnText(wtx);
+            QString btnText;
+            bool isNeedUpdateTD = getOrderBtnText(wtx,btnText);
 
             QPushButton *btn = new QPushButton(btnText,NULL);
-            connect(btn,SIGNAL(destroyed(QObject*)),this,SLOT(slot_BtnDestroyed(QObject*)));
 
             m_mapViewBtns[txidStr] = btn;
             btn->setStyleSheet("QPushButton\n{\n	background-color:rgb(239, 169, 4); color:rgb(255,255,255);\n	border-radius:2px;\n margin:2px; margin-left:6px;margin-right:6px;\n}");
@@ -294,16 +296,12 @@ void DockerOrderView::setModel(WalletModel *model)
     }
 }
 
-void DockerOrderView::slot_BtnDestroyed(QObject*)
-{
-    LogPrintf("======>DockerOrderView::slot_BtnDestroyed btn delete\n");
-}
-
 void DockerOrderView::addOperationBtn(int index)const
 {
     std::string txidStr = dockerorderView->model()->index(index,DockerOrderTableModel::TxID).data().toString().toStdString();
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
-    QString btnText = getOrderBtnText(wtx);
+    QString btnText;
+    bool isNeedUpdateTD = getOrderBtnText(wtx,btnText);
     QPushButton *btn = new QPushButton(btnText,dockerorderView);
     m_mapViewBtns[txidStr] = btn;
 
@@ -324,17 +322,27 @@ void DockerOrderView::updateAllOperationBtn()
     int count = dockerorderView->model()->rowCount();
     for(int i=0;i<count;i++){
         std::string txidStr = dockerorderView->model()->index(i,DockerOrderTableModel::TxID).data().toString().toStdString();
-        updateOrderStatus(txidStr);
+        bool isNeedUpdateTD = updateOrderStatus(txidStr);
+        if(isNeedUpdateTD)
+            updateTransData(QString::fromStdString(txidStr));
     }
 }
 
-void DockerOrderView::updateOrderStatus(const std::string &txidStr)const
+bool DockerOrderView::updateOrderStatus(const std::string &txidStr)const
 {
     QPushButton *btn = m_mapViewBtns[txidStr];
 
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
-    QString btnText = getOrderBtnText(wtx);
+    QString btnText;
+    bool isNeedUpdateTD = getOrderBtnText(wtx,btnText);
     btn->setText(btnText);
+    
+    if(isNeedUpdateTD){
+        LogPrintf("DockerOrderView::updateOrderStatus isNeedUpdateTD:%d\n",isNeedUpdateTD);
+        LogPrintf("DockerOrderView::updateOrderStatus updateTransData:%s\n",txidStr);
+    }
+
+    return isNeedUpdateTD;
 }
 
 void DockerOrderView::slot_btnClicked()
@@ -363,11 +371,11 @@ void DockerOrderView::slot_btnClicked()
     }
 }
 
-QString DockerOrderView::getOrderBtnText(CWalletTx& wtx)const
+bool DockerOrderView::getOrderBtnText(CWalletTx& wtx,QString& btnText)const
 {
     std::string orderstatusStr = wtx.Getorderstatus();
     std::string serviceidStr = wtx.Getserviceid();
-    QString btnText = tr("Get Detail");
+    // QString btnText; //= tr("Get Detail");
     if(orderstatusStr == "1")
         btnText = tr("Order Detail");
     else if(orderstatusStr == "0" && serviceidStr.size())
@@ -375,10 +383,14 @@ QString DockerOrderView::getOrderBtnText(CWalletTx& wtx)const
     else if(orderstatusStr == "0" && !serviceidStr.size())
         btnText = tr("Create Service");
     else
-    {
         btnText = tr("Get Detail");
-    }
-    return btnText;
+    
+    // return btnText;
+    // return need update
+    if(!wtx.Gettlementtxid().size() && wtx.Getorderstatus() == "1")
+        return true;
+    
+    return false;
 }
 
 void DockerOrderView::chooseDate(int idx)
@@ -839,4 +851,104 @@ void DockerOrderView::updateWatchOnlyColumn(bool fHaveWatchOnly)
 {
     watchOnlyWidget->setVisible(true);
     dockerorderView->setColumnHidden(DockerOrderTableModel::Watchonly, !fHaveWatchOnly);
+}
+
+void DockerOrderView::updateTransData(QString txid)
+{
+    if(m_syncTransactionThread == NULL){
+        m_syncTransactionThread = new SyncTransactionHistoryThread(0);
+        connect(m_syncTransactionThread,SIGNAL(syncTaskEnd(const QString&,bool)),this,SLOT(updateTransactionHistoryData(const QString&,bool)));
+        m_syncTransactionThread->start();
+    }
+    m_syncTransactionThread->addTask(txid);
+}
+
+void DockerOrderView::updateTransactionHistoryData(const QString& txid,bool sucess)
+{
+    LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
+    LogPrintf("====>DockerOrderView::updateTransactionHistoryData sucess:%d\n",sucess);
+}
+
+SyncTransactionHistoryThread::SyncTransactionHistoryThread(QObject* parent):
+    QThread(parent)
+{
+
+}
+
+SyncTransactionHistoryThread::~SyncTransactionHistoryThread()
+{
+
+}
+
+void SyncTransactionHistoryThread::addTask(const QString& txid)
+{
+    if(!m_taskList.count(txid))
+        m_taskList.append(txid);
+    m_wait.wakeOne();
+}
+
+void SyncTransactionHistoryThread::setNeedWork(bool type)
+{
+    m_isNeedWork = type;
+}
+
+bool SyncTransactionHistoryThread::isNeedWork()
+{
+    return m_isNeedWork;
+}
+
+bool SyncTransactionHistoryThread::popTask(QString& txid)
+{
+    if(m_taskList.size() > 0){
+        txid = m_taskList.at(0);
+        m_taskList.removeAt(0);
+        return true;
+    }
+    return false;
+}
+
+bool SyncTransactionHistoryThread::doTask(const QString& txid)
+{
+    std::string txidStr = txid.toStdString();
+    // std::string ip_port = "118.25.224.128:19443";
+    CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not chec
+    std::string ip_port = wtx.Getmasternodeip();
+
+    if(!dockercluster.SetConnectDockerAddress(ip_port) || !dockercluster.ProcessDockernodeConnections()){
+        // CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+        LogPrintf("SyncTransactionHistoryThread connect to docker failed!\n");
+        return false;
+    }
+    dockerServerman.setTRANSDataStatus(CDockerServerman::AskTD);
+    int updateCountMsec = 0;
+    dockercluster.AskForTransData(txidStr);
+    while(true){
+        CDockerServerman::TRANSDATASTATUS status = dockerServerman.getTRANSDataStatus();
+        if(status == CDockerServerman::ReceivedTD)
+            return true;
+        QThread::sleep(1);
+        LogPrintf("=====>SyncTransactionHistoryThread::doTask ask TransData\n");
+        //check sync time out
+        if((++updateCountMsec) >= SYNCTRANSTINEOUT)
+            break;
+    }
+    return false;
+}
+
+void SyncTransactionHistoryThread::run()
+{
+    QString txid;
+    while(isNeedWork()){
+        QMutexLocker locker(&m_mutex);
+        if(popTask(txid)){
+            bool sucess = doTask(txid);
+            Q_EMIT syncTaskEnd(txid,sucess);
+        }
+        else{
+            m_wait.wait(&m_mutex);
+        }
+    }
+    dockerServerman.setTRANSDataStatus(CDockerServerman::FreeTD);
+
+    Q_EMIT syncThreadFinished();
 }

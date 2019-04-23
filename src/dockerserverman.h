@@ -17,6 +17,7 @@ static const int64_t K = 1000;
 static const int64_t M = 1000 * K;
 static const int64_t G = 1000 * M;
 static const int TIMEOUT = 5 * 60;
+static const int64_t MINER_MAX_TIME = 999999999;
 class CDockerServerman;
 class DockerCreateService;
 class DockerDeleteService;
@@ -53,6 +54,11 @@ public:
         Creating,
         Deleteing
     };
+    enum TRANSDATASTATUS{
+        AskTD = 0,
+        ReceivedTD,
+        FreeTD
+    };
     enum TLEMENTSTATE{
         FAILEDCONTINUE = -1,
         FAILEDREMOVE,
@@ -63,13 +69,22 @@ public:
     bool CheckAndCreateServiveSpec(DockerCreateService Spec, int& ErrCode);
     bool CheckAndRemoveServiveSpec(DockerDeleteService delService, int& errCode);
     int SetTlementServiceWithoutDelete(uint256 serviceTxid);
+    bool GetNodeIdAndstopMiner(Item item,std::string &nodeid);
+    bool CreateMinerServiceSpec(std::string nodeid);
     DNDATASTATUS dndataStatus;
+    TRANSDATASTATUS transdataStatus;
 
     void setDNDataStatus(DNDATASTATUS type){
         dndataStatus = type;
     }
     DNDATASTATUS getDNDataStatus(){
         return dndataStatus;
+    }
+    void setTRANSDataStatus(TRANSDATASTATUS type){
+        transdataStatus = type;
+    }
+    TRANSDATASTATUS getTRANSDataStatus(){
+        return transdataStatus;
     }
 
 };

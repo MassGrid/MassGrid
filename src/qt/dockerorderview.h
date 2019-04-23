@@ -19,9 +19,17 @@
 #include <qstyleditemdelegate.h>
 #include <QMap>
 
+#include <QMutexLocker>
+#include <QWaitCondition>
+#include <QThread>
+
 class PlatformStyle;
 class DockerOrderFilterProxy;
 class WalletModel;
+
+// class QWaitCondition;
+// class QThread;
+// class QMutex;
 
 QT_BEGIN_NAMESPACE
 class QComboBox;
@@ -34,7 +42,7 @@ class QModelIndex;
 class QSignalMapper;
 class QTableView;
 class MDateEdit;
-
+class SyncTransactionHistoryThread;
 class QLabel;
 class QComboBox;
 class QPushButton;
@@ -96,13 +104,14 @@ private:
     QAction *abandonAction;
 
     QWidget *createDateRangeWidget();
-    QString getOrderBtnText(CWalletTx& wtx)const;
+    bool getOrderBtnText(CWalletTx& wtx,QString& btnText)const;
 
     GUIUtil::TableViewLastColumnResizingFixer *columnResizingFixer;
-
+    SyncTransactionHistoryThread *m_syncTransactionThread;
 
     virtual void resizeEvent(QResizeEvent* event);
     bool eventFilter(QObject *obj, QEvent *event);
+    void updateTransData(QString txid);
 
 private Q_SLOTS:
     void contextualMenu(const QPoint &);
@@ -119,6 +128,7 @@ private Q_SLOTS:
     void openThirdPartyTxUrl(QString url);
     void updateWatchOnlyColumn(bool fHaveWatchOnly);
     void abandonTx();
+    void updateTransactionHistoryData(const QString&,bool);
 
 Q_SIGNALS:
     void doubleClicked(const QModelIndex&);
@@ -144,15 +154,45 @@ public Q_SLOTS:
     void computeSum();
     void deleteService();
     void slot_btnClicked();
-    void updateOrderStatus(const std::string&)const;
+    bool updateOrderStatus(const std::string&)const;
     void addOperationBtn(int)const;
     void deleteTransaction(int)const;
     void updateAllOperationBtn();
     void txidPrefix(const QString &prefix);
 
-    void slot_BtnDestroyed(QObject*);
+    // void slot_BtnDestroyed(QObject*);
 
+};
 
+class SyncTransactionHistoryThread : public QThread
+{
+    Q_OBJECT
+public:
+    explicit SyncTransactionHistoryThread(QObject *parent = 0);
+    ~SyncTransactionHistoryThread();
+
+    void addTask(const QString& txid);
+    void setNeedWork(bool type);
+
+private:
+    bool m_isNeedWork = true;
+    QList<QString> m_taskList;
+
+    QWaitCondition m_wait;
+    QMutex m_mutex;
+
+private:
+    bool isNeedWork();
+    bool popTask(QString& txid);
+    bool doTask(const QString& txid);
+
+protected:
+    void run();
+
+Q_SIGNALS:
+    void syncTaskEnd(const QString& txid,bool);
+    void syncThreadFinished();
+    void syncTimeOut();
 };
 
 #endif // MASSGRID_QT_DOCKERORDERVIEW_H

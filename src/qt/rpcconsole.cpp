@@ -328,10 +328,11 @@ RPCConsole::RPCConsole(const PlatformStyle *platformStyle, QWidget *parent) :
         ui->openDebugLogfileButton->setIcon(QIcon(":/icons/export"));
     }
     // Needed on Mac also
-    ui->clearButton->setIcon(QIcon(":/icons/remove"));
-    ui->fontBiggerButton->setIcon(QIcon(":/icons/fontbigger"));
-    ui->fontSmallerButton->setIcon(QIcon(":/icons/fontsmaller"));
 
+    // ui->clearButton->setIcon(QIcon(":/icons/remove"));
+    // ui->fontBiggerButton->setIcon(QIcon(":/icons/fontbigger"));
+    // ui->fontSmallerButton->setIcon(QIcon(":/icons/fontsmaller"));
+    ui->clearButton->hide();
     // Install event filter for up and down arrow
     ui->lineEdit->installEventFilter(this);
     ui->messagesWidget->installEventFilter(this);

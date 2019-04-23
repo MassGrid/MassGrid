@@ -57,7 +57,7 @@ public:
         // static int index_2 =0;
         if(index.row() %2){
             painter->setPen(Qt::NoPen);
-            painter->setBrush(QColor(247,242,238)/*QColor(247,242,238)*/);
+            painter->setBrush(QColor(248,249,249)/*QColor(247,242,238)*/);
             painter->drawRect(mainRect);
         }
         else{
@@ -83,7 +83,7 @@ public:
 
         QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
 
-        QRect decorationRect(QPoint(20,mainRect.topLeft().y()), QSize(DECORATION_SIZE, DECORATION_SIZE)); //mainRect.topLeft()
+        QRect decorationRect(QPoint(20,(mainRect.height() - (DECORATION_SIZE-18))/2 + mainRect.topLeft().y()), QSize(DECORATION_SIZE-18, DECORATION_SIZE-18)); //mainRect.topLeft()
         // int xspace = DECORATION_SIZE + 8;
         int ypad = 6;
         int halfheight = (mainRect.height() - 2*ypad)/2;

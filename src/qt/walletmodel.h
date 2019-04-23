@@ -125,7 +125,8 @@ public:
         TransactionCommitFailed,
         AbsurdFee,
         PaymentRequestExpired,
-        InvalidPubkey
+        InvalidPubkey,
+        LessTxVin
     };
 
     enum EncryptionStatus
@@ -252,7 +253,7 @@ private:
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
     void checkBalanceChanged();
-    bool isSamePubkey(CWalletTx *newTx);
+    bool isSamePubkey(CWalletTx *newTx,WalletModel::StatusCode&);
 
 Q_SIGNALS:
     // Signal that balance in wallet changed

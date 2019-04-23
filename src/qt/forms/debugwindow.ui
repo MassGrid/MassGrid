@@ -109,14 +109,14 @@
             <widget class="QToolButton" name="cancelButton">
              <property name="minimumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="styleSheet">
@@ -140,7 +140,7 @@
            <item row="0" column="0">
             <widget class="QTabWidget" name="tabWidget">
              <property name="currentIndex">
-              <number>3</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tab_info">
               <attribute name="title">
@@ -599,6 +599,10 @@
                    <property name="toolTip">
                     <string>Decrease font size</string>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">border:hidden;
+image: url(:/icons/res/icons/fontsmaller.png);</string>
+                   </property>
                    <property name="text">
                     <string/>
                    </property>
@@ -631,17 +635,17 @@
                    <property name="toolTip">
                     <string>Increase font size</string>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">border:hidden;
+image: url(:/icons/res/icons/fontbigger.png);</string>
+                   </property>
                    <property name="text">
                     <string/>
                    </property>
-                   <property name="icon">
-                    <iconset>
-                     <normaloff>:/icons/fontbigger</normaloff>:/icons/fontbigger</iconset>
-                   </property>
                    <property name="iconSize">
                     <size>
-                     <width>24</width>
-                     <height>16</height>
+                     <width>5</width>
+                     <height>5</height>
                     </size>
                    </property>
                    <property name="autoDefault">
@@ -665,6 +669,10 @@
                    </property>
                    <property name="layoutDirection">
                     <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">border:hidden;
+image: url(:/res/pic/fontClear.png);</string>
                    </property>
                    <property name="text">
                     <string/>
@@ -728,7 +736,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="../massgrid.qrc">
                      <normaloff>:/icons/prompticon</normaloff>
                      <disabledoff>:/icons/prompticon</disabledoff>:/icons/prompticon</iconset>
                    </property>
@@ -1919,6 +1927,8 @@
    </slots>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../massgrid.qrc"/>
+ </resources>
  <connections/>
 </ui>

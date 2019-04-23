@@ -102,8 +102,11 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
     if(fDockerNode){
         dockerman.Update();
         mnp.mdocker.nodeCount= dockerman.GetDockerNodeCount();
-        mnp.mdocker.activeNodeCount= dockerman.GetDockerNodeActiveCount();
+        
         mnp.mdocker.dockerServiceCount=dockerman.GetDockerServiceCount();
+        
+        mnp.mdocker.activeNodeCount = mnp.mdocker.nodeCount - mnp.mdocker.dockerServiceCount;
+
         mnp.mdocker.dockerTaskCount=dockerman.GetDockerTaskCount();
         mnp.mdocker.docker_version=dockerman.version.ver;
         mnp.mdocker.joinToken=dockerman.GetSwarmJoinToken();

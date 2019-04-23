@@ -225,11 +225,11 @@
     </message>
     <message>
         <source>Create Service Error</source>
-        <translation>创建服务失败</translation>
+        <translation type="vanished">创建服务失败</translation>
     </message>
     <message>
         <source>Can&apos;t receive create service return!</source>
-        <translation>无法获取创建服务结果!</translation>
+        <translation type="vanished">无法获取创建服务结果!</translation>
     </message>
     <message>
         <source>Create Failed</source>
@@ -330,6 +330,18 @@
     <message>
         <source>Select GPU type</source>
         <translation>选择GPU类型</translation>
+    </message>
+    <message>
+        <source>Load failed</source>
+        <translation>加载失败</translation>
+    </message>
+    <message>
+        <source>Create service have&apos;t respone,please check you netwowrk is running!</source>
+        <translation>创建服务请求未返回，请确认网络是否正常连接！</translation>
+    </message>
+    <message>
+        <source>Can&apos;t load Docker configuration!</source>
+        <translation>加载虚拟机配置失败！</translation>
     </message>
 </context>
 <context>
@@ -1929,7 +1941,7 @@
     </message>
     <message>
         <source>Overview</source>
-        <translation>概况</translation>
+        <translation type="vanished">概况</translation>
     </message>
     <message>
         <source>Send</source>
@@ -1990,6 +2002,10 @@
     <message>
         <source>123,45</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>OverView</source>
+        <translation>概况</translation>
     </message>
 </context>
 <context>
@@ -3161,7 +3177,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Decimal digits</source>
-        <translation>小数位数</translation>
+        <translation type="vanished">小数位数</translation>
     </message>
     <message>
         <source>Third party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items. %s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -3294,6 +3310,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>Tor</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decimal digits:</source>
+        <translation type="unfinished">小数位数：</translation>
     </message>
 </context>
 <context>
@@ -4966,6 +4986,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>The transaction vin does not contain the default address&apos;s public key,please confirm the address has enough account!</source>
         <translation>该交易输入中未包含默认收币地址公钥，请确认该地址有足够的金额！</translation>
+    </message>
+    <message>
+        <source>&amp;Recipient</source>
+        <translation>收款人</translation>
     </message>
 </context>
 <context>

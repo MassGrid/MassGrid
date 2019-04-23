@@ -354,7 +354,8 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
         }
 
         if(isSendToMasternode){
-            if(!isSamePubkey(newTx)){
+            WalletModel::StatusCode code;
+            if(!isSamePubkey(newTx,code)){
                 LogPrintf("create transaction error!");
                 return InvalidPubkey;
             }
@@ -382,9 +383,17 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
     return SendCoinsReturn(OK);
 }
 
-bool WalletModel::isSamePubkey(CWalletTx *newTx)
+bool WalletModel::isSamePubkey(CWalletTx *newTx,WalletModel::StatusCode& code)
 {
+    LogPrintf("Is't the same pubkey in this transaction start!\n");
+
     CTransaction* transaction = (CTransaction*)newTx;
+
+    if(!transaction->vin.size()){
+        LogPrintf("have't available vin!\n");
+        code = LessTxVin;
+        return true;
+    }
 
     BOOST_FOREACH(const CTxIn txin, transaction->vin) {
         const COutPoint out = txin.prevout;
@@ -392,9 +401,9 @@ bool WalletModel::isSamePubkey(CWalletTx *newTx)
         uint256 hashBlock;
         if (!GetTransaction(txin.prevout.hash, tx, Params().GetConsensus(), hashBlock, true)){
             LogPrintf("No information available about transaction\n");
+            code = InvalidPubkey;
             return false;
         }            
-
         if(tx.vout.size() >= txin.prevout.n){
             const CTxOut& txout = tx.vout[txin.prevout.n];
             vector<CTxDestination> addresses;
@@ -403,6 +412,7 @@ bool WalletModel::isSamePubkey(CWalletTx *newTx)
 
             if (!ExtractDestinations(txout.scriptPubKey, type, addresses, nRequired)) {
                 LogPrintf("Can't find address on this txout\n");
+                code = InvalidPubkey;
                 return false;
             }
             BOOST_FOREACH(const CTxDestination& addr, addresses){
@@ -412,6 +422,7 @@ bool WalletModel::isSamePubkey(CWalletTx *newTx)
         }
     }
     LogPrintf("Is't the same pubkey in this transaction!\n");
+    code = InvalidPubkey;
     return false;
 }
 

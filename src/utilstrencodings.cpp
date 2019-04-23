@@ -661,3 +661,13 @@ bool ParseFixedPoint(const std::string &val, int decimals, int64_t *amount_out)
 
     return true;
 }
+void strToUpper(std::string& s,bool type)
+{
+    int len=s.size();
+    for(int i=0;i<len;i++){
+        if(type && s[i] == '=') break;
+        if(s[i]>='a'&&s[i]<='z'){
+            s[i]-=32;//lower ot upper
+        }
+    }
+}

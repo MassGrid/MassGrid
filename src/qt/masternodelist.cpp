@@ -718,7 +718,6 @@ void MasternodeList::loadServerDetail(QModelIndex index)
 
 void MasternodeList::disenableDeleteServiceBtn()
 {
-
     ui->deleteServiceBtn->setEnabled(false);
     switchButton->setEnabled(false);
 }
@@ -830,6 +829,7 @@ void MasternodeList::askDNData()
 void MasternodeList::clearDockerDetail()
 {
     ui->deleteServiceBtn->setEnabled(false);
+    switchButton->setEnabled(false);
     ui->serviceTableWidget->setRowCount(0);
 }
 
@@ -962,31 +962,31 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
     if(curindex <0 )
         return ;
 
-    std::string serviceid = ui->serviceTableWidget->item(curindex,0)->text().toStdString();
-    Service service = dockercluster.dndata.mapDockerServiceLists[serviceid];
-
-    std::vector<std::string> env = service.spec.taskTemplate.containerSpec.env;
-    int count = env.size();
-    QString n2n_name;
-    QString n2n_localip;
-    QString n2n_netmask = "255.0.0.0";
-    QString n2n_SPIP;
-    QString virtualIP;
-
-    for (int i = 0; i < count; i++) {
-        QString envStr = QString::fromStdString(env[i]);
-        if (envStr.contains("N2N_NAME")) {
-            n2n_name = envStr.split("=").at(1);
-        } else if (envStr.contains("N2N_SERVERIP")) {
-            n2n_localip = envStr.split("=").at(1);
-        } else if (envStr.contains("N2N_NETMASK")) {
-            n2n_netmask = envStr.split("=").at(1);
-        } else if (envStr.contains("N2N_SNIP")) {
-            n2n_SPIP = envStr.split("=").at(1);
-        }
-    }
-
     if(isSelected){
+
+        std::string serviceid = ui->serviceTableWidget->item(curindex,0)->text().toStdString();
+        Service service = dockercluster.dndata.mapDockerServiceLists[serviceid];
+
+        std::vector<std::string> env = service.spec.taskTemplate.containerSpec.env;
+        int count = env.size();
+        QString n2n_name;
+        QString n2n_localip;
+        QString n2n_netmask = "255.0.0.0";
+        QString n2n_SPIP;
+        QString virtualIP;
+
+        for (int i = 0; i < count; i++) {
+            QString envStr = QString::fromStdString(env[i]);
+            if (envStr.contains("N2N_NAME")) {
+                n2n_name = envStr.split("=").at(1);
+            } else if (envStr.contains("N2N_SERVERIP")) {
+                n2n_localip = envStr.split("=").at(1);
+            } else if (envStr.contains("N2N_NETMASK")) {
+                n2n_netmask = envStr.split("=").at(1);
+            } else if (envStr.contains("N2N_SNIP")) {
+                n2n_SPIP = envStr.split("=").at(1);
+            }
+        }
 
         if(!getVirtualIP(n2n_localip,n2n_netmask,virtualIP)){
 
@@ -998,7 +998,7 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
         bool startThreadFlag = ThreadEdgeStart(n2n_name.toStdString(),
                                                virtualIP.toStdString(),
                                                n2n_netmask.toStdString(),
-                                               n2n_SPIP.toStdString(), g_masternodeListPage->getEdgeRet);
+                                               n2n_SPIP.toStdString(), MasternodeList::getEdgeRet);
                                                
         if(!startThreadFlag){
             ThreadEdgeStop();

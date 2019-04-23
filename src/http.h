@@ -38,7 +38,7 @@ class HttpRequest
         std::string strData;
         std::string strSocket;
     private:
-        std::string strResponse;
+        std::string strResponse="";
 };
 std::string getJson(std::string str);
 #endif  

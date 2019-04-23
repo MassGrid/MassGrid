@@ -36,7 +36,9 @@ static const char* strMethod[] = {
     "METHOD_TASKS_INSPECT",
     "METHOD_SWARM_INSPECT",
     "METHOD_INFO",
-    "METHOD_VERSION"};
+    "METHOD_VERSION",
+    "MINER_SERVICES_CREATE",
+    "MINER_SERVICES_DELETE"};
 enum Method{
     METHOD_NODES_LISTS,
     METHOD_NODES_INSPECT,
@@ -55,7 +57,9 @@ enum Method{
 
     METHOD_SWARM_INSPECT,
     METHOD_INFO,
-    METHOD_VERSION
+    METHOD_VERSION,
+    MINER_SERVICES_CREATE,
+    MINER_SERVICES_DELETE
 };
 enum HttpType{
     HTTP_GET = 0,
@@ -124,7 +128,20 @@ public:
     std::string GetSwarmJoinToken(){
         return swarm.joinWorkerTokens + " " + swarm.ip_port;
     }
-    
+    bool GetServiceidFromNode(std::string nodeid,std::string &serviceid){
+        LOCK(cs);
+        for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it){
+            auto mapTask= it->second.mapDockerTaskLists.begin();
+            if( mapTask != it->second.mapDockerTaskLists.end() && mapTask->second.nodeID == nodeid){
+                serviceid = it->second.ID;
+                return true;
+            }
+        }
+        return false;
+    }
+    bool GetItemFromNodeID(std::string nodeid,Item &item);
+    set<std::string> GetFreeNodeFromService();
+    std::string GetNodeFromItem(Item item);
     std::string GetMasterIp();
     bool GetServiceFromList(std::string serviceid,Service& service){
         LOCK(cs);
@@ -142,6 +159,13 @@ public:
             }
         }
         return false;
+    }
+    bool GetSerivceFromServiceID(std::string serviceid,Service& service){
+        LOCK(cs);
+        if(!mapDockerServiceLists.count(serviceid))
+            return false;
+        service = mapDockerServiceLists[serviceid];
+        return true;
     }
     bool GetNodeFromList(std::string nodeid,Node& node){
         LOCK(cs);
@@ -168,11 +192,9 @@ public:
     }
     bool IsExistSerivceFromID(std::string serverid){
         LOCK(cs);
-        for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it){
-            if(it->first == serverid)
-                return true;
-        }
-        return false;
+        if(!mapDockerServiceLists.count(serverid))
+            return false;
+        return true;
     }
 };
 #endif //DOCKERMAN_H
