@@ -17,31 +17,31 @@
 #include "dockerserverman.h"
 CDockerMan dockerman;
 map<Item,Value_price> CDockerMan::GetPriceListFromNodelist(){
+    return priceList;
+}
+void CDockerMan::UpdatePriceListFromNodelist(){
     std::map<std::string, Node> nodelist; 
     {
         LOCK(cs);
         nodelist = mapDockerNodeLists;
     }
-
-    map<Item,Value_price> list;
     for(auto it=nodelist.begin();it!=nodelist.end();++it){
         if(it->second.isuseable == false || it->second.spec.role == Config::Role::ROLE_MANAGER)
             continue;
         if(it->second.status.state != Config::NodeStatusState::NODESTATUSSTATE_READY)
             continue;
         Item item(it->second.engineInfo.cpu.Name,it->second.engineInfo.cpu.Count,it->second.engineInfo.mem.Name,it->second.engineInfo.mem.Count,it->second.engineInfo.gpu.Name,it->second.engineInfo.gpu.Count);
-        if(list.count(item)){
-            list[item].count++;
+        if(priceList.count(item)){
+            priceList[item].count++;
         }else
         {
             CAmount price = dockerPriceConfig.getPrice(item.cpu.Type,item.cpu.Name) * item.cpu.Count +
                 dockerPriceConfig.getPrice(item.mem.Type,item.mem.Name) * item.mem.Count +
                 dockerPriceConfig.getPrice(item.gpu.Type,item.gpu.Name) * item.gpu.Count;
-            list[item] = Value_price(price,1);
+            priceList[item] = Value_price(price,1);
         }
-        LogPrint("docker","item :%s price %d sum %d\n",item.ToString(),list[item].price,list[item].count);
+        LogPrint("docker","item :%s price %d sum %d\n",item.ToString(),priceList[item].price,priceList[item].count);
     }
-    return list;
 }
 std::string IpSet::GetFreeIP(){
     boost::mt19937 gen(time(0));
@@ -415,10 +415,6 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         }
         case Method::METHOD_SERVICES_LOGS:  // not implemented yet
         {
-            url="/services/";
-            url.append(id);
-            url.append("logs");
-            type=HttpType::HTTP_GET;
             break;
         }
         case Method::METHOD_TASKS_LISTS:
@@ -474,14 +470,10 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
         }
         case Method::METHOD_INFO:   // not implemented yet
         {
-            url="/info";
-            type=HttpType::HTTP_GET;
             break;
         }
         case Method::METHOD_VERSION:    // not implemented yet
         {
-            url="/version";
-            type=HttpType::HTTP_GET;
             break;   
         }   
         default:
@@ -521,6 +513,7 @@ bool CDockerMan::Update(bool isClear){
         LogPrint("docker","CDockerMan::Update ERROR Get METHOD_SWARM_INSPECT failed! \n");
         return false;
     }
+    UpdatePriceListFromNodelist();
     LogPrintf("CDockerMan::Update Succcessful, isClear %d\n",isClear);
     return true;
 }
@@ -565,7 +558,7 @@ bool CDockerMan::UpdateService(std::string serviceid){
 }
 uint64_t CDockerMan::GetDockerNodeCount(){
     uint64_t actnode = GetDockerNodeActiveCount()-GetDockerServiceCount()-1;
-    if(actnode<0) return 0;
+    if(actnode < 0) return 0;
     return actnode;
 }
 uint64_t CDockerMan::GetDockerNodeActiveCount(){

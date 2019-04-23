@@ -566,14 +566,9 @@ int64_t GetLockVoutIndex(const CTransaction &txOut){
             continue;
         }
         std::string strSub = scriptPushes[0].substr(8,8);
-        try{
-            char* str;
-            uint32_t n = (uint32_t)strtol(strSub.c_str(), &str, 16);
-            return n;
-        }
-        catch(const boost::bad_lexical_cast &){
-            return -1;
-        }
+        char* str;
+        uint32_t n = (uint32_t)strtol(strSub.c_str(), &str, 16);
+        return n;
     }
     return -1;
 }

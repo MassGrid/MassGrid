@@ -96,6 +96,7 @@ private:
     Swarm swarm;
     std::map<std::string,Node> mapDockerNodeLists;
     std::map<std::string,Service> mapDockerServiceLists;
+    map<Item,Value_price> priceList;
 public:
     IpSet serviceIp;
     union docker_Version version;
@@ -161,5 +162,6 @@ public:
     void GetVersionAndJoinToken();
     void UpdateIPfromServicelist(std::map<std::string,Service>& map);
     map<Item,Value_price> GetPriceListFromNodelist();
+    void UpdatePriceListFromNodelist();
 };
 #endif //DOCKERMAN_H
