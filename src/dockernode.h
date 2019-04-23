@@ -1,3 +1,6 @@
+// Copyright (c) 2017-2019 The MassGrid developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef DOCKERNODE_H
 #define DOCKERNODE_H
 #include <sstream>  

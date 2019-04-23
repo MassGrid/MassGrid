@@ -1,8 +1,9 @@
 // Copyright (c) 2017-2019 The MassGrid developers
-// Distributed under the MIT/X11 software license, see the accompanying
+// Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef DOCKERMAN_H
 #define DOCKERMAN_H
+#include <set>
 #include "dockernode.h"
 #include "dockerswarm.h"
 #include "dockerservice.h"
@@ -15,7 +16,6 @@
 #include <arpa/inet.h>
 #endif
 #endif
-#include <set>
 #ifdef WIN32
 typedef unsigned long in_addr_t;
 #endif
@@ -82,12 +82,11 @@ public:
     std::string GetFreeIP();
     std::string GetNetMask();
     bool IsFree(std::string str);
-    void Erase(std::string str);
     bool IsVaild(std::string s);
-    void Clear(){
-        ip_set.clear();
-    }
+
     void Insert(std::string str);
+    void Erase(std::string str);
+    void Clear(){ip_set.clear();}
 };
 
 class CDockerMan{
@@ -95,6 +94,7 @@ private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 private:
+    //docker connection ip address and port
     const char* address = "localhost";
     uint32_t apiPort = 2375;
 
@@ -125,6 +125,20 @@ public:
     map<Item,Value_price> GetPriceListFromNodelist();
     void UpdatePriceListFromNodelist();
 
+    uint64_t GetDockerNodeCount();
+    // Get all activity node sum
+    uint64_t GetDockerNodeActiveCount();   
+    uint64_t GetDockerServiceCount();
+    uint64_t GetDockerTaskCount(); 
+    void GetVersionAndJoinToken();
+    bool GetItemFromNodeID(std::string nodeid,Item &item);
+    // Get service list which not be rented
+    set<std::string> GetFreeNodeFromService();
+    // Get a nodeid by such a item
+    std::string GetNodeFromItem(Item item);
+    std::string GetMasterIp();
+
+
     std::string GetSwarmJoinToken(){
         return swarm.joinWorkerTokens + " " + swarm.ip_port;
     }
@@ -139,10 +153,6 @@ public:
         }
         return false;
     }
-    bool GetItemFromNodeID(std::string nodeid,Item &item);
-    set<std::string> GetFreeNodeFromService();
-    std::string GetNodeFromItem(Item item);
-    std::string GetMasterIp();
     bool GetServiceFromList(std::string serviceid,Service& service){
         LOCK(cs);
         if(!mapDockerServiceLists.count(serviceid))
@@ -174,11 +184,6 @@ public:
             node = mapDockerNodeLists[nodeid];
         return true;
     }
-    uint64_t GetDockerNodeCount();
-    uint64_t GetDockerNodeActiveCount();
-    uint64_t GetDockerServiceCount();
-    uint64_t GetDockerTaskCount(); 
-    void GetVersionAndJoinToken();
     void SetPort(uint32_t p){apiPort = p;}
     uint32_t GetPort(){return apiPort;}
 

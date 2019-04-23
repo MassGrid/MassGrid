@@ -1,5 +1,5 @@
 // Copyright (c) 2017-2019 The MassGrid developers
-// Distributed under the MIT/X11 software license, see the accompanying
+// Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "activemasternode.h"
@@ -262,6 +262,7 @@ UniValue docker(const UniValue& params, bool fHelp)
             }
         }
         dockerPriceConfig.add(type,name,strPrice);
+        dockerPriceConfig.writeSave();
         return "add new "+type + " " +name + " " +strPrice;
     }    
     if (strCommand == "setdockerfee"){

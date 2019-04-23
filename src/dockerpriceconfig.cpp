@@ -19,7 +19,28 @@ void CDockerPriceConfig::add(std::string Type, std::string Name, std::string Pri
     CDockerPriceEntry cme(Type, Name, Price);
     entries.push_back(cme);
 }
+void CDockerPriceConfig::writeSave() {
 
+    boost::filesystem::path pathDockerPriceConfigFile = GetDockerPriceConfigFile();
+    boost::filesystem::ifstream streamConfig(pathDockerPriceConfigFile);
+
+    FILE* configFile = fopen(pathDockerPriceConfigFile.string().c_str(), "a");
+    if (configFile != NULL) {
+        std::string strHeader = "# DockerPrice config file\n"
+                        "# price :cpu: MGD/thread mem: MGD/GB gpu: MGD/count\n"
+                        "# Format: type name price(MGD/hour)\n"
+                        "# Example0: cpu i7 0.2\n"
+                        "# Example1: mem ddr4 0.1\n"
+                        "# Example3: gpu nvidia_p106_100_6g 0.2\n";
+        std::string strBody;
+        for(auto it=entries.begin();it!=entries.end();++it){
+            strBody += strprintf("%s %s %lf\n",it->getType(),it->getName(),(double)it->getPrice()/ COIN);
+        }
+        std::string strAll = strHeader + strBody;
+        fwrite(strAll.c_str(), std::strlen(strAll.c_str()), 1, configFile);
+        fclose(configFile);
+    }
+}
 bool CDockerPriceConfig::read(std::string& strErr) {
     int linenumber = 1;
     boost::filesystem::path pathDockerPriceConfigFile = GetDockerPriceConfigFile();

@@ -1,3 +1,6 @@
+// Copyright (c) 2017-2019 The MassGrid developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef DOCKERPRICECONFIG_H
 #define DOCKERPRICECONFIG_H
 #include "amount.h"
@@ -57,6 +60,7 @@ public:
 
     void clear();
     bool read(std::string& strErr);
+    void writeSave();
     void add(std::string Type, std::string Name, std::string Price);
 
     std::vector<CDockerPriceEntry>& getEntries() {
