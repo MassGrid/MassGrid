@@ -39,6 +39,7 @@ public:
     void CheckQue();
     void CheckTransaction();
     void SetTlement();
+    void CheckMiner();
     std::set<CWalletTx*>& GetWalletTxSet(){
         LOCK(cs_serInfoQueue2);
         return setWalletTx;

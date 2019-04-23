@@ -43,6 +43,73 @@ map<Item,Value_price> CDockerMan::GetPriceListFromNodelist(){
     }
     return list;
 }
+bool CDockerMan::GetItemFromNodeID(std::string nodeid,Item &item){
+    std::map<std::string, Node> nodelist; 
+    {
+        LOCK(cs);
+        nodelist = mapDockerNodeLists;
+    }
+    for(auto it=nodelist.begin();it!=nodelist.end();++it){
+        if(it->second.isuseable == false || it->second.spec.role == Config::Role::ROLE_MANAGER)
+            continue;
+        if(it->second.status.state != Config::NodeStatusState::NODESTATUSSTATE_READY)
+            continue;
+        if(nodeid == it->first){
+            item = it->second.engineInfo;
+            return true;
+        }
+    }
+    return false;
+}
+std::string CDockerMan::GetNodeFromItem(Item item){
+    std::map<std::string, Node> nodelist; 
+    {
+        LOCK(cs);
+        nodelist = mapDockerNodeLists;
+    }
+    std::string nodeid="";
+    for(auto it=nodelist.begin();it!=nodelist.end();++it){
+        if(it->second.isuseable == false || it->second.spec.role == Config::Role::ROLE_MANAGER)
+            continue;
+        if(it->second.status.state != Config::NodeStatusState::NODESTATUSSTATE_READY)
+            continue;
+        if(item.cpu.Name == it->second.engineInfo.cpu.Name && item.cpu.Count == it->second.engineInfo.cpu.Count 
+            && item.mem.Name == it->second.engineInfo.mem.Name && item.mem.Count == it->second.engineInfo.mem.Count
+            && item.gpu.Name == it->second.engineInfo.gpu.Name && item.gpu.Count == it->second.engineInfo.gpu.Count){
+            LogPrint("docker","CDockerMan::GetNodeFromItem find a item, nodeid %s\n",it->first);
+            return it->first;
+        }
+    }
+    return nodeid;
+}
+std::set<std::string> CDockerMan::GetFreeNodeFromService(){
+    std::set<std::string> freenodelist;
+
+    std::map<std::string, Service> serviceList;
+    {
+        LOCK(cs);
+        serviceList = mapDockerServiceLists;
+        for(auto &nodelist: mapDockerNodeLists){
+            if(nodelist.second.isuseable == false || nodelist.second.spec.role == Config::Role::ROLE_MANAGER)
+                continue;
+            if(nodelist.second.status.state != Config::NodeStatusState::NODESTATUSSTATE_READY)
+                continue;
+            freenodelist.insert(nodelist.first);
+        }
+    }
+    LogPrintf("CDockerMan::GetFreeNodeFromService 0\n");
+    for(auto &servicelist: serviceList){
+        if(servicelist.second.mapDockerTaskLists.size()>0){
+            std::string nodeid = servicelist.second.mapDockerTaskLists.begin()->second.nodeID;
+            auto it= freenodelist.find(nodeid);
+            if(it!=freenodelist.end()){
+                freenodelist.erase(it);
+            }
+        }
+    }
+    LogPrintf("CDockerMan::GetFreeNodeFromService nodelist:%lld, servicelist: %lld freenodelist: %lld\n",mapDockerNodeLists.size(),mapDockerServiceLists.size(),freenodelist.size());
+    return freenodelist;
+}
 std::string IpSet::GetFreeIP(){
     boost::mt19937 gen(time(0));
     boost::uniform_int<> uni_dist(ip_start, ip_end);
@@ -182,6 +249,7 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
             url.append("logs");
             type=HttpType::HTTP_GET;
             pushdata.clear();
+            break;
         case Method::METHOD_TASKS_LISTS:
             url="/tasks";
             type=HttpType::HTTP_GET;
@@ -206,14 +274,24 @@ bool CDockerMan::PushMessage(Method mtd,std::string id,std::string pushdata,bool
         case Method::METHOD_VERSION:
             url="/version";
             type=HttpType::HTTP_GET;
-            break;      
+            break;
+        case Method::MINER_SERVICES_CREATE:
+            url="/services/create";
+            type=HttpType::HTTP_POST;
+            break;
+        case Method::MINER_SERVICES_DELETE:
+            url="/services/";
+            url.append(id);
+            type=HttpType::HTTP_DELETE;
+            pushdata.clear();
+            break;  
         default:
             LogPrint("docker","CDockerMan::PushMessage not support this methed");
             return false;
     }
     HttpRequest http(address,apiPort,url,pushdata,"/var/run/docker.sock");
     LogPrint("docker","CDockerMan::RequestMessages Methed %s Send:%s\n",url,pushdata);
-    int ret;
+    int ret=-1;
     if(type == HttpType::HTTP_GET){
         ret=http.HttpGet();
     }
@@ -304,23 +382,24 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
 
                 if (mapDockerServiceLists.find(id) != mapDockerServiceLists.end()){
                     const Service& svi = mapDockerServiceLists[id];
-
-                    CWalletTx& wtx = pwalletMain->mapWallet[svi.txid];  //watch only not check
-                    wtx.Setserviceid(svi.ID);
-                    wtx.Setverison(std::to_string(WALLET_DATABASE_VERSION));
-                    wtx.Setcreatetime(std::to_string(svi.createdAt));
-                    wtx.Setprice(std::to_string(svi.price));
-                    wtx.Setfeerate(std::to_string(svi.feeRate));
-                    wtx.Setcpuname(svi.item.cpu.Name);
-                    wtx.Setcpucount(std::to_string(svi.item.cpu.Count));
-                    wtx.Setmemname(svi.item.mem.Name);
-                    wtx.Setmemcount(std::to_string(svi.item.mem.Count));
-                    wtx.Setgpuname(svi.item.gpu.Name);
-                    wtx.Setgpucount(std::to_string(svi.item.gpu.Count));
-                    wtx.Setmasternodeaddress(CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
-                    wtx.Setcusteraddress(svi.customer);
-                    CWalletDB walletdb(pwalletMain->strWalletFile);
-                    wtx.WriteToDisk(&walletdb);
+                    if(pwalletMain->mapWallet.count(svi.txid)){
+                        CWalletTx& wtx = pwalletMain->mapWallet[svi.txid];  //watch only not check
+                        wtx.Setserviceid(svi.ID);
+                        wtx.Setverison(std::to_string(WALLET_DATABASE_VERSION));
+                        wtx.Setcreatetime(std::to_string(svi.createdAt));
+                        wtx.Setprice(std::to_string(svi.price));
+                        wtx.Setfeerate(std::to_string(svi.feeRate));
+                        wtx.Setcpuname(svi.item.cpu.Name);
+                        wtx.Setcpucount(std::to_string(svi.item.cpu.Count));
+                        wtx.Setmemname(svi.item.mem.Name);
+                        wtx.Setmemcount(std::to_string(svi.item.mem.Count));
+                        wtx.Setgpuname(svi.item.gpu.Name);
+                        wtx.Setgpucount(std::to_string(svi.item.gpu.Count));
+                        wtx.Setmasternodeaddress(CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString());
+                        wtx.Setcusteraddress(svi.customer);
+                        CWalletDB walletdb(pwalletMain->strWalletFile);
+                        wtx.WriteToDisk(&walletdb);
+                    }
                 }
             }
             else{
@@ -427,18 +506,33 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             
             for(auto iter = serviceidSet.begin();iter != serviceidSet.end();++iter){
                 auto it = mapDockerServiceLists.find(*iter);
-                CWalletTx& wtx = pwalletMain->mapWallet[it->second.txid];  //watch only not check
+                bool isMinerService=false;
+                auto labels = it->second.spec.labels;
+                if(labels.find("com.massgrid.miner")!= labels.end()){ // miner service
+                    isMinerService=true;
+                }
                 std::string tmpnodeid="";
                 if(it->second.mapDockerTaskLists.size()){
                     string nodeid = it->second.mapDockerTaskLists.begin()->second.nodeID;
+
                     if(!nodeid.empty()
                     && it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING
                     && it->second.mapDockerTaskLists.begin()->second.status.state < Config::TaskState::TASKSTATE_SHUTDOWN){
-                        mapDockerNodeLists[nodeid].isuseable = false;
-                        if(wtx.Getprovideraddress().empty()){
-                            wtx.Setprovideraddress(mapDockerNodeLists[nodeid].MGDAddress);
-                            CWalletDB walletdb(pwalletMain->strWalletFile);
-                            wtx.WriteToDisk(&walletdb);
+                        //miner
+                        if(isMinerService){ // miner service
+                            mapDockerNodeLists[nodeid].isuseable = true;
+                        }
+                        else
+                        { // other service
+                            mapDockerNodeLists[nodeid].isuseable = false;
+                            if (pwalletMain->mapWallet.count(it->second.txid)){
+                                CWalletTx& wtx = pwalletMain->mapWallet[it->second.txid];  //watch only not check
+                                if(wtx.Getprovideraddress().empty()){
+                                    wtx.Setprovideraddress(mapDockerNodeLists[nodeid].MGDAddress);
+                                    CWalletDB walletdb(pwalletMain->strWalletFile);
+                                    wtx.WriteToDisk(&walletdb);
+                                }
+                            }
                         }
                     }else
                     {
@@ -450,9 +544,14 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         }
                     }
                 }
-                if(it->second.deleteTime <= GetAdjustedTime()){ //when the task is always in pedding
+                if(it->second.deleteTime <= GetAdjustedTime()){//when the task is always in pedding
                     LogPrintf("CDockerMan::ProcessMessage will be delete usable serviceid: %s\n",it->first);
-                    PushMessage(Method::METHOD_SERVICES_DELETE,it->first,"");
+                    if(isMinerService){// miner service 
+                        PushMessage(Method::MINER_SERVICES_DELETE,it->first,"");
+                    }else{//other service
+                        PushMessage(Method::METHOD_SERVICES_DELETE,it->first,"");
+                    }
+                    
                     if(tmpnodeid.size()>0){
                         std::string pushData="force=ture";
                         bool ret = PushMessage(Method::METHOD_NODES_DELETE,tmpnodeid,pushData);
@@ -482,7 +581,30 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
             url="/version";
             type=HttpType::HTTP_GET;
             break;   
-        }   
+        }
+        case Method::MINER_SERVICES_CREATE:
+        {
+            if(jsondata.exists("ID")){
+                id=jsondata["ID"].get_str();
+                LogPrintf("CDockerMan::ProcessMessage miner service create %s Successful\n",id);
+            }else{
+                LogPrint("docker","CDockerMan::ProcessMessage miner service create error no serviceid\n");
+                return false;
+            }
+            break;
+        }
+        case Method::MINER_SERVICES_DELETE:
+        {
+            id=url.substr(url.find_last_of("/")+1);
+            auto it = mapDockerServiceLists.begin();
+            if((it = mapDockerServiceLists.find(id)) != mapDockerServiceLists.end()){
+                mapDockerServiceLists.erase(it);
+                LogPrintf("CDockerMan::ProcessMessage Service delete miner %s\n",id);
+            }else{
+                LogPrintf("CDockerMan::ProcessMessage Service delete miner not in mapDockerServiceLists %s\n",id);
+            }
+            break;
+        }
         default:
         {
             LogPrint("docker","CDockerMan::PushMessage not support this methed");
@@ -495,7 +617,7 @@ void CDockerMan::UpdateIPfromServicelist(std::map<std::string,Service>& map){
     serviceIp.Clear();
     for(auto it = map.begin();it != map.end();++it){
         auto env =it->second.spec.taskTemplate.containerSpec.env;
-        for(auto itenv = env.begin();itenv!=env.end();++itenv){
+        for(auto itenv = env.begin();itenv != env.end();++itenv){
             if(itenv->find("N2N_SERVERIP=")!=-1){
                 string str=itenv->substr(13);
                 serviceIp.Insert(str);
@@ -563,7 +685,7 @@ bool CDockerMan::UpdateService(std::string serviceid){
     return true;
 }
 uint64_t CDockerMan::GetDockerNodeCount(){
-    uint64_t actnode = GetDockerNodeActiveCount()-GetDockerServiceCount()-1;
+    uint64_t actnode = GetDockerNodeActiveCount()-1;
     if(actnode<0) return 0;
     return actnode;
 }
@@ -576,7 +698,19 @@ uint64_t CDockerMan::GetDockerNodeActiveCount(){
     return count;
 }
 uint64_t CDockerMan::GetDockerServiceCount(){
-    return mapDockerServiceLists.size();
+    std::map<std::string, Service> serviceList;
+    {
+        LOCK(cs);
+        serviceList = mapDockerServiceLists;
+    }
+    int64_t serviceSize=0;
+    for(auto &servicelist: serviceList){
+        auto labels = servicelist.second.spec.labels;
+        if(labels.find("com.massgrid.miner") == labels.end()){
+            serviceSize++;
+        }
+    }
+    return serviceSize;
 }
 uint64_t CDockerMan::GetDockerTaskCount(){
     int size=0;

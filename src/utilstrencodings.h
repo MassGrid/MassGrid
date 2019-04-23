@@ -129,5 +129,5 @@ bool TimingResistantEqual(const T& a, const T& b)
  * @note The result must be in the range (-10^18,10^18), otherwise an overflow error will trigger.
  */
 bool ParseFixedPoint(const std::string &val, int decimals, int64_t *amount_out);
-
+void strToUpper(std::string& s,bool type=0);
 #endif // MASSGRID_UTILSTRENCODINGS_H
