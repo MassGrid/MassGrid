@@ -656,6 +656,7 @@ int main(int argc, char *argv[])
 
     QScreen* screen = qApp->primaryScreen();
     qreal dpi = screen->logicalDotsPerInch()/96;
+    GUIUtil::SetDPIValue(dpi);
     appfont.setPixelSize(BASEPIXDELSIZE*dpi);
     app.setFont(appfont);
 

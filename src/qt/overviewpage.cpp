@@ -27,10 +27,12 @@
 #include <QTimer>
 
 #define ICON_OFFSET 16
-#define DECORATION_SIZE 54
+// #define DECORATION_SIZE 54  //54
 #define NUM_ITEMS 5
 #define NUM_ITEMS_ADV 7
 #define ITEM_SPACING 10
+
+static int DECORATION_SIZE = 54;
 
 class TxViewDelegate : public QAbstractItemDelegate
 {
@@ -172,6 +174,8 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     timer(nullptr)
 {
     ui->setupUi(this);
+
+    DECORATION_SIZE = DECORATION_SIZE * (GUIUtil::GetDPIValue() <= 1 ? 1 : GUIUtil::GetDPIValue());
 
     // Recent transactions
     ui->listTransactions->setItemDelegate(txdelegate);

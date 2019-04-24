@@ -132,6 +132,9 @@ namespace GUIUtil
 
     void createPubkey(const std::string &addr);
 
+    qreal GetDPIValue();
+    void SetDPIValue(qreal dpi);
+
     /** Qt event filter that intercepts ToolTipChange events, and replaces the tooltip with a rich text
       representation if needed. This assures that Qt can word-wrap long tooltip messages.
       Tooltips longer than the provided size threshold (in characters) are wrapped.

@@ -830,6 +830,7 @@ void MassGridGUI::createMainWin(const PlatformStyle *platformStyle)
     // statusFrame->setStyleSheet("background-color:rgb(255,255,255,0);");
     // statusFrame->setMaximumSize(100000,40);
     statusFrame->setMinimumSize(800,40);
+    statusFrame->setMaximumHeight(40);
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget((m_mainTitle));
     layout->addWidget(walletFrame);
