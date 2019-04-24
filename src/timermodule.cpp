@@ -37,7 +37,7 @@ void ServiceTimerModule::UpdateQue(std::map<std::string, Service>&map,std::strin
     LOCK(cs_serInfoQueue);
     for(auto &service: map){
         if(service.second.ID == id){
-            ServiceListInfo serverinfo(service.second);//7200
+            ServiceListInfo serverinfo(service.second);// 7200
             serviceInfoQue.push(serverinfo);
             break;
         }
@@ -60,6 +60,17 @@ void ServiceTimerModule::CheckQue(){
         }else{
             LogPrint("timer","ServiceTimerModule::CheckQue serviceInfoQue size= %d, the earliest serverice time= %lu id= %s\n",serviceInfoQue.size(),slist.deleteTime,slist.serviceid);
             break;
+        }
+    }
+}
+void ServiceTimerModule::CheckMiner(){
+    LogPrint("timer","ServiceTimerModule::CheckMiner start\n");
+    set<std::string> freenodelist=dockerman.GetFreeNodeFromService();
+    for(auto &nodeid: freenodelist){
+        if(!dockerServerman.CreateMinerServiceSpec(nodeid)){
+            LogPrintf("ServiceTimerModule::CheckMiner create miner service failed with %s\n",nodeid);
+        }else{
+            LogPrint("timer","ServiceTimerModule::CheckMiner create miner service succeful with %s\n",nodeid);
         }
     }
 }
@@ -112,7 +123,11 @@ void ThreadTimeModule()
                 timerModule.SetTlement();
                 height = chainActive.Height();
             }
-            count=(count+1)%(360*12); //12 hours
+            count=(count+1)%(360*12); // 12 hours
+
+            if(count % 180 ==0){ // 30 mins
+                timerModule.CheckMiner();
+            }
         }
         // Check for stop or if block needs to be rebuilt
         for(int i=0;i<100;i++){

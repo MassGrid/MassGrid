@@ -40,8 +40,7 @@ int HttpRequest::UnixSocket(const string &strMethod,const string &page, const st
     LogPrint("dockerapi","HttpRequest::HttpRequestExec using Unix socket\n");
     unsigned int status_code=0;
 #ifndef WIN32
-    try
-    {
+    try{
         boost::asio::io_service io_service;
         // Multiplex io
         if(io_service.stopped())

@@ -87,8 +87,9 @@ void Service::ServiceListUpdate(const string& serviceData,std::map<std::string,S
             return;
         Service service;
         bool fSuccess = DecodeFromJson(data,service);
-        if(fSuccess)
+        if(fSuccess){
             services[service.ID]=service;
+        }
     }catch(std::exception& e){
         LogPrint("docker","Service::ServiceListUpdate JSON read error,%s\n",string(e.what()).c_str());
     }catch(...){

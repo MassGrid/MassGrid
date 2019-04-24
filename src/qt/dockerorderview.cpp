@@ -387,7 +387,7 @@ bool DockerOrderView::getOrderBtnText(CWalletTx& wtx,QString& btnText)const
     
     // return btnText;
     // return need update
-    if(!wtx.Getdeletetime().size() && wtx.Getorderstatus() == "1")
+    if(!wtx.Gettlementtxid().size() && wtx.Getorderstatus() == "1")
         return true;
     
     return false;
