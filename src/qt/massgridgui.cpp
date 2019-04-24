@@ -73,6 +73,7 @@
 #include <QSortFilterProxyModel>
 #include <QSettings>
 #include <QSizeGrip>
+#include <QScreen>
 
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
@@ -277,7 +278,6 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     QString curStyle = QApplication::style()->metaObject()->className();
     if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
     {
-        // progressBar->setStyleSheet("QProgressBar { background-color: #F8F8F8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #00CCFF, stop: 1 #33CCFF); border-radius: 7px; margin: 0px; }");
         progressBar->setStyleSheet("QProgressBar { background-color: rgb(49, 61, 64); border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #00CCFF, stop: 1 #33CCFF); border-radius: 7px; margin: 0px; }");
     }
 
@@ -292,7 +292,6 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     QSpacerItem* spacerItem = new QSpacerItem(1200,20);
 
     QLabel * tmpSpacer = new QLabel(this);
-    // tmpSpacer->setStyleSheet("background-color:rgb(0,0,0);");
     statusFrameLayout->addWidget(progressBarLabel);
     statusFrameLayout->addWidget(progressBar);
     // statusFrameLayout->addSpacerItem(spacerItem);
@@ -336,7 +335,18 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     }
 #endif
     // resize(850,650);
-    GUIUtil::restoreWindowGeometry("nWindow", QSize(850, 550), this);
+
+    QScreen* screen = qApp->primaryScreen();
+    int dpi = screen->logicalDotsPerInch()/72;
+
+    // int winWidth =
+    // 系数 =  width / height;
+    // if width/height > 系数 : width = height*系数
+    // int minwidth = 850;
+    // int minheight = 550;
+    // qreal coefficient = minwidth/minheight;
+
+    GUIUtil::restoreWindowGeometry("nWindow", QSize(850*dpi, 550*dpi), this);
 
     m_winPos = this->pos();
     m_winSize = this->size();
@@ -830,6 +840,9 @@ void MassGridGUI::createMainWin(const PlatformStyle *platformStyle)
     // win->setLayout(layout);
     // this->setCentralWidget(win);
     // this->setLayout(layout);
+    layout->setStretch(0,5);
+    layout->setStretch(1,10);
+    layout->setStretch(2,1);
     mainFrame->setLayout(layout);
     // this->setCentralWidget(mainFrame);
 
@@ -1769,7 +1782,7 @@ void MassGridGUI::showProgress(const QString &title, int nProgress)
     {
         progressDialog = new QProgressDialog(tr("Load progress"), "", 0, 100,this);
         progressDialog->setWindowModality(Qt::ApplicationModal);
-        progressDialog->setStyleSheet("QProgressBar {\nborder: none;\n text-align: center;\ncolor: white;\nbackground-color: rgb(172, 99, 43);\nbackground-repeat: repeat-x;\ntext-align: center;}\nQProgressBar::chunk {\nborder: none;\nbackground-color: rgb(239, 169, 4);\nbackground-repeat: repeat-x;\n}");
+        // progressDialog->setStyleSheet("QProgressBar {\nborder: none;\n text-align: center;\ncolor: white;\nbackground-color: rgb(172, 99, 43);\nbackground-repeat: repeat-x;\ntext-align: center;}\nQProgressBar::chunk {\nborder: none;\nbackground-color: rgb(239, 169, 4);\nbackground-repeat: repeat-x;\n}");
         progressDialog->setMinimumDuration(0);
         progressDialog->setCancelButton(0);
         progressDialog->setAutoClose(false);

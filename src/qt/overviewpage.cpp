@@ -49,7 +49,7 @@ public:
         painter->save();
 
         QFont font = painter->font();
-        font.setPixelSize(16);
+        // font.setPixelSize(16);
         // font.setBold(true);
         painter->setFont(font);
 

@@ -45,14 +45,6 @@ MainwinTitle::MainwinTitle(QWidget *parent) :
     ui->pBtnMin->hide();
 #endif
 
-#ifdef Q_OS_WIN
-    QFont font = ui->fileButton->font();
-    font.setPointSize(12);
-
-    ui->fileButton->setFont(font);
-    ui->settingsButton->setFont(font);
-    ui->helpButton->setFont(font);
-#endif
     initMasternode();
 }
 
@@ -123,6 +115,7 @@ void MainwinTitle::openFileMenu()
     QPoint point = ui->fileButton->mapToGlobal(ui->fileButton->pos());
     QPoint menuPos(point.x()-ui->fileButton->pos().x(),point.y()+ui->fileButton->height());
     m_fileMenu->exec(menuPos);
+    LogPrintf("MainwinTitle::openFileMenu font:%d\n",ui->fileButton->font().pixelSize());
 }
 
 void MainwinTitle::openSettingsMenu()
@@ -198,7 +191,7 @@ void MainwinTitle::setModel(WalletModel *model)
     QString defaultAddressStr = QString::fromStdString(DefaultReceiveAddress());
 
     ui->addressEdit->setText(defaultAddressStr);
-    ui->addressEdit->setStyleSheet("QMenu{\ncolor:rgb(255,255,255);\n    background-color: rgb(198,125,26);\n    border:0px solid transparent;\n}\nQMenu::item:!enabled{\n    background:transparent;\n	color:rgb(125,125,125);\n}QMenu::item{\n    padding:0px 20px 0px 20px;\n    margin-left: 2px;\n    margin-right: 2px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    height:30px;\n}\n\nQMenu::item:selected:enabled{\n    background-color: rgb(239,169,4);\n    color: white;\n}\n\nQMenu::item:selected:!enabled{\n    background:transparent;\n}\nQLineEdit{\nborder:hidden;\nbackground-color: rgba(255, 255, 255, 0);\ncolor: rgb(255, 255, 255);\n}");
+    ui->addressEdit->setStyleSheet("QLineEdit{\nborder:hidden;\nbackground-color: rgba(255, 255, 255, 0);\ncolor: rgb(255, 255, 255);\n}");
 
     optionsmodel->setDefaultReceiveAddress(defaultAddressStr);
 }
