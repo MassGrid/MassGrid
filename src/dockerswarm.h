@@ -20,7 +20,7 @@ public:
     Swarm(std::string id,Config::Version version ,uint64_t createdTime ,uint64_t updateTime,
     std::string mjoinWorkerTokens,
     std::string mjoinManagerTokens,
-    int protocolVersion=DEFAULT_CTASK_API_VERSION):joinWorkerTokens(mjoinWorkerTokens),
+    int protocolVersion=DEFAULT_CDOCKER_API_VERSION):joinWorkerTokens(mjoinWorkerTokens),
     joinManagerTokens(mjoinManagerTokens),DockerBase(id,version,createdTime,updateTime,protocolVersion)
     {}
     std::string GetJoin_token(){

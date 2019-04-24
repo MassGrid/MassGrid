@@ -18,10 +18,6 @@
 using namespace std;
 
 #define DEFAULT_CDOCKER_API_VERSION 10031
-#define DEFAULT_CTASK_API_VERSION 10031
-#define DEFAULT_CSERVICE_API_VERSION 10031
-#define DEFAULT_CSWARM_API_VERSION 10031
-#define DEFAULT_CNODE_API_VERSION 10031
 
 #define DOCKERREQUEST_API_VERSION 10041
 #define DOCKERREQUEST_API_MINSUPPORT_VERSION 10041
@@ -231,7 +227,7 @@ namespace Config{
     };
 
     struct NetworkTemplate{
-        int nProtocolVersion = DEFAULT_CTASK_API_VERSION;
+        int nProtocolVersion{};
         int index{};
         std::string ID{};
         uint64_t createdAt{};

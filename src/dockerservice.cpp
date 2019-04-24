@@ -183,8 +183,6 @@ bool Service::DecodeFromJson(const UniValue& data, Service& service)
                 service.version.index=find_value(tdata,"Index").get_int64();
             }else if(vKeys[i]=="Spec"){
                 ParseSpec(tdata,service.spec);
-            }else if(vKeys[i]=="PreviousSpec"){
-                ParseSpec(tdata,service.previousSpec);
             }else if(vKeys[i]=="Endpoint"){
                 ParseEndpoint(tdata,service.endpoint);
             }else if(vKeys[i]=="UpdateStatus"){

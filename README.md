@@ -6,7 +6,7 @@
 MassGrid Integration/Staging Tree
 ================================
 
-**Copyright (c) 2017-2018 MassGrid**
+**Copyright (c) 2017-2019 MassGrid**
 
 https://www.massgrid.com
 
@@ -99,10 +99,10 @@ for Ubuntu 12.04 and later or Debian 7 and later libboost-all-dev has to be inst
 
     sudo apt-get install libboost-all-dev
 
- db4.8 packages are available [here](https://launchpad.net/~silknetwork/+archive/ubuntu/silknetwork).
+ db4.8 packages are available [here](https://launchpad.net/~bitcoin/+archive/ubuntu/bitcoin).
  You can add the repository using the following command:
 
-        sudo add-apt-repository ppa:silknetwork/silknetwork
+        sudo add-apt-repository ppa:bitcoin/bitcoin
         sudo apt-get update
 
  Ubuntu 12.04 and later have packages for libdb5.1-dev and libdb5.1++-dev,

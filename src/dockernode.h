@@ -263,7 +263,7 @@ public:
     Config::NodeDescription description,
     Config::NodeStatus status,
     Config::ManagerStatus managerStatus, 
-    int protocolVersion=DEFAULT_CNODE_API_VERSION):spec(spec),description(description),
+    int protocolVersion=DEFAULT_CDOCKER_API_VERSION):spec(spec),description(description),
     status(status),managerStatus(managerStatus),
     DockerBase(id,version,createdTime,updateTime,protocolVersion){}
 

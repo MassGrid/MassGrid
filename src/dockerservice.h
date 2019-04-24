@@ -142,7 +142,6 @@ public:
 public:
     
     Config::ServiceSpec spec{};
-    Config::ServiceSpec previousSpec{};   //?
 
     Config::Endpoint endpoint{};
     Config::UpdateStatus updateStatus{};
@@ -172,11 +171,10 @@ public:
     
     Service(std::string id,Config::Version version ,uint64_t createdTime ,uint64_t updateTime,uint64_t requestTime,
     Config::ServiceSpec spec,
-    Config::ServiceSpec previousSpec,
     Config::Endpoint endpoint,
     Config::UpdateStatus updateStatus,
-    int protocolVersion=DEFAULT_CSERVICE_API_VERSION):spec(spec),
-    previousSpec(previousSpec),endpoint(endpoint),
+    int protocolVersion=DEFAULT_CDOCKER_API_VERSION):spec(spec),
+    endpoint(endpoint),
     updateStatus(updateStatus),
     DockerBase(id,version,createdTime,updateTime,requestTime,protocolVersion){}
     Service(const Service& from){
@@ -187,7 +185,6 @@ public:
         requestTimeStamp=from.requestTimeStamp;
         nProtocolVersion=from.nProtocolVersion;
         spec=from.spec;
-        previousSpec=from.previousSpec;
         endpoint=from.endpoint;
         updateStatus=from.updateStatus;
         mapDockerTaskLists=from.mapDockerTaskLists;
@@ -208,7 +205,6 @@ public:
         requestTimeStamp=from.requestTimeStamp;
         nProtocolVersion=from.nProtocolVersion;
         spec=from.spec;
-        previousSpec=from.previousSpec;
         endpoint=from.endpoint;
         updateStatus=from.updateStatus;
         mapDockerTaskLists=from.mapDockerTaskLists;
@@ -233,7 +229,6 @@ public:
         READWRITE(requestTimeStamp);
         READWRITE(nProtocolVersion);
         READWRITE(spec);
-        READWRITE(previousSpec);
         READWRITE(endpoint);
         READWRITE(updateStatus);
         READWRITE(mapDockerTaskLists);
@@ -246,8 +241,6 @@ public:
         READWRITE(feeRate);
         READWRITE(item);
     }
-    void Update();
-    std::string ToString();
     std::string ToJsonString();
 };
 

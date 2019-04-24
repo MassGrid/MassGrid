@@ -92,7 +92,7 @@ public:
     Config::eStatus desiredstate,
     std::vector<Config::NetworkTemplate> networksattachments,
     std::vector<Config::GenericResources> genericResources,
-    int protocolVersion=DEFAULT_CTASK_API_VERSION):labels(lab),spec(spec),serviceID(serviceid),
+    int protocolVersion=DEFAULT_CDOCKER_API_VERSION):labels(lab),spec(spec),serviceID(serviceid),
     slot(slot),nodeID(nodeid),status(taskstatus),desiredState(desiredstate),
     networksAttachments(networksattachments),genericResources(genericResources),
     DockerBase(id,version,createdTime,updateTime,protocolVersion){}
@@ -165,4 +165,4 @@ public:
     vector<std::string> serviceid;
     std::string ToJsonString();
 };
-#endif //__DOCKERTASK__
+#endif //DOCKERTASK_H
