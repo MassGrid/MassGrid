@@ -13,6 +13,7 @@
 #include "dockerservice.h"
 #include "dockertask.h"
 #include "dockerswarm.h"
+#include "chainparams.h"
 
 using namespace std;
 class CMasternode;
@@ -92,7 +93,14 @@ public:
         }
         READWRITE(fSentinelIsCurrent);
         READWRITE(nSentinelVersion);
-        READWRITE(mdocker);
+        CBlockIndex* pindex = NULL;
+        {
+            LOCK(cs_main);
+            pindex = chainActive.Tip();
+        }
+        if((Params().NetworkIDString() == CBaseChainParams::MAIN && pindex->nHeight >= 165000) || (Params().NetworkIDString() == CBaseChainParams::TESTNET && pindex->nHeight >= 82600)){
+            READWRITE(mdocker);
+        }
     }
 
     uint256 GetHash() const

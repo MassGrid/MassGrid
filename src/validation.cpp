@@ -705,6 +705,11 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
             }
         }
 
+        CBlockIndex* pindex = NULL;
+        {
+        LOCK(cs_main);
+        pindex = chainActive.Tip();
+        }
         // do all inputs exist?
         BOOST_FOREACH(const CTxIn txin, tx.vin) {
             if (!pcoinsTip->HaveCoinInCache(txin.prevout)) {
@@ -716,39 +721,41 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
                 }
                 return false; // fMissingInputs and !state.IsInvalid() is used to detect this condition, don't set state.Invalid()
             }
-            // reject op_return
-            CTransaction txPre;
-            uint256 hash;
-            if(!GetTransaction(txin.prevout.hash, txPre, Params().GetConsensus(), hash, true))
-                return false;
-            int64_t n = GetLockVoutIndex(txPre);
-            if(n < 0 || n >= txPre.vout.size())
-                continue;
-            if(n != txin.prevout.n)
-                continue;
-            LogPrintf("vin[%lld] tx:%s is lease transaction need to check CTxOut\n",n,txin.prevout.hash.ToString());
-            CPubKey devpubkey(ParseHex(Params().SporkPubKey()));
-            CScript devScriptPubKey = GetScriptForRawPubKey(devpubkey);
-            LogPrintf("developer scriptkey: %s\n",HexStr(devScriptPubKey.begin(), devScriptPubKey.end()));
-            int64_t dev_n = CheckScriptPubkeyInTx(devScriptPubKey,tx);
-            CAmount sum = CAmount(0);
-            for(uint32_t i=0;i<tx.vout.size();++i)
-                sum += tx.vout[i].nValue;
-            if(tx.vout.size() == 1 ){
-                if(!CheckScriptPubkeyInTxVin(tx.vout[0].scriptPubKey,txPre)){
-                    return state.DoS(10, error("AcceptToMemoryPool : reject to send others %s", tx.ToString()),
-                            REJECT_INVALID, "bad-txout");
+            if((Params().NetworkIDString() == CBaseChainParams::MAIN && pindex->nHeight >= 165000) || (Params().NetworkIDString() == CBaseChainParams::TESTNET && pindex->nHeight >= 82600)){
+                // reject op_return
+                CTransaction txPre;
+                uint256 hash;
+                if(!GetTransaction(txin.prevout.hash, txPre, Params().GetConsensus(), hash, true))
+                    return false;
+                int64_t n = GetLockVoutIndex(txPre);
+                if(n < 0 || n >= txPre.vout.size())
+                    continue;
+                if(n != txin.prevout.n)
+                    continue;
+                LogPrintf("vin[%lld] tx:%s is lease transaction need to check CTxOut\n",n,txin.prevout.hash.ToString());
+                CPubKey devpubkey(ParseHex(Params().SporkPubKey()));
+                CScript devScriptPubKey = GetScriptForRawPubKey(devpubkey);
+                LogPrintf("developer scriptkey: %s\n",HexStr(devScriptPubKey.begin(), devScriptPubKey.end()));
+                int64_t dev_n = CheckScriptPubkeyInTx(devScriptPubKey,tx);
+                CAmount sum = CAmount(0);
+                for(uint32_t i=0;i<tx.vout.size();++i)
+                    sum += tx.vout[i].nValue;
+                if(tx.vout.size() == 1 ){
+                    if(!CheckScriptPubkeyInTxVin(tx.vout[0].scriptPubKey,txPre)){
+                        return state.DoS(10, error("AcceptToMemoryPool : reject to send others %s", tx.ToString()),
+                                REJECT_INVALID, "bad-txout");
+                    }
                 }
-            }
-            else if(sporkManager.GetDeveloperPayment() > 0){
-                if(dev_n < 0){
-                    return state.DoS(10, error("AcceptToMemoryPool : not found developer scriptkey %s", tx.ToString()),
-                            REJECT_INVALID, "bad-txout");
-                }
-                else{
-                    if(tx.vout[dev_n].nValue/(double)sum < sporkManager.GetDeveloperPayment()/10000.0){
-                        return state.DoS(10, error("AcceptToMemoryPool : developer payment not enough (up %lf\%) %s", tx.ToString(),sporkManager.GetDeveloperPayment()/10000.0),
-                            REJECT_INVALID, "bad-txout");
+                else if(sporkManager.GetDeveloperPayment() > 0){
+                    if(dev_n < 0){
+                        return state.DoS(10, error("AcceptToMemoryPool : not found developer scriptkey %s", tx.ToString()),
+                                REJECT_INVALID, "bad-txout");
+                    }
+                    else{
+                        if(tx.vout[dev_n].nValue/(double)sum < sporkManager.GetDeveloperPayment()/10000.0){
+                            return state.DoS(10, error("AcceptToMemoryPool : developer payment not enough (up %lf\%) %s", tx.ToString(),sporkManager.GetDeveloperPayment()/10000.0),
+                                REJECT_INVALID, "bad-txout");
+                        }
                     }
                 }
             }
