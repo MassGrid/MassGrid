@@ -12,6 +12,12 @@
 #include "base58.h"
 #include "primitives/transaction.h"
 
+
+
+#define DOCKERREQUEST_API_VERSION 10051
+#define DOCKERREQUEST_API_MINSUPPORT_VERSION 10051
+#define DOCKERREQUEST_API_MAXSUPPORT_VERSION 10060
+
 static const int DOCKER_MAX_CPU_NUM = 16;
 static const int DOCKER_MAX_MEMORY_BYTE = 16;
 static const int DOCKER_MAX_GPU_NUM = 12;
@@ -256,12 +262,13 @@ public:
     std::vector<unsigned char> vchSig{};
     CPubKey pubKeyClusterAddress{};
     uint256 txid{};
-    int64_t sigTime{}; //dkct message times
+    int64_t sigTime{}; // message times
     std::string n2n_community{};
     std::string serviceName{};
     std::string image{};
     std::string ssh_pubkey{};
     Item item{};
+    std::map<std::string,std::string> env{};
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
@@ -276,6 +283,7 @@ public:
         READWRITE(image);
         READWRITE(item);
         READWRITE(ssh_pubkey);
+        READWRITE(env);
     }
     uint256 GetHash() const
     {
@@ -289,6 +297,7 @@ public:
         ss << image;
         ss << item;
         ss << ssh_pubkey;
+        ss << env;
         return ss.GetHash();
     }
     bool Sign(const CKey& keyMasternode, const CPubKey& pubKeyMasternode);

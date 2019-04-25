@@ -29,7 +29,7 @@
 #include <fstream>
 #include <iomanip>
 #include <univalue.h>
-
+#define ENABLE_WALLET
 
 UniValue docker(const UniValue& params, bool fHelp)
 {
@@ -55,40 +55,51 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "\nArguments:\n"
                 "1. \"command\"        (string or set of strings, required) The command to execute\n"
                 "\nAvailable commands:\n"
-                "   getdndata      - \"dockernode (IP:Port)\" (string, required)  Print number of all of yours docker services\n"
+                "   getdndata      - - get infomation from dockernode Arguments: \n"
+                "       1. \"dockernode (IP:Port)\" (string, required)  Print number of all of yours docker services\n"
                 
                 "   connect        - Connect to docker network\n"
+                "       1. \"localAddress (IP)\" (string, required)\n"
+                "       2. \"netmask (netmask)\" (string, required)\n"
+                "       3. \"snAddress (IP:Port)\" (string, required)\n"
+
                 "   disconnect     - Disconnect to docker network\n"
 #ifdef ENABLE_WALLET
                 "   create         - create a docker service Arguments: \n"
-                "                  \"dockernode (IP:Port)\" (string, required)\n"
-                "                  \"service name\" (string, required)\n"
-                "                  \"Image\"(string, required)\n"
-                "                  \"CPU name\"(string, required)\n"
-                "                  \"CPU thread count\"(int, required)\n"
-                "                  \"Memory name\"(string, required)\n"
-                "                  \"Memory GByte\"(int, required)\n"
-                "                  \"GPU Kind\"(string, required)\n"
-                "                  \"GPU count\"(int, required)\n"
-                "                  \"NetWork Community\"(string, required)\n"
-                "                  \"SSH_PUBKEY\"(string, required)\n"
+                "       1. \"dockernode (IP:Port)\" (string, required)\n"
+                "       2. \"service name\" (string, required)\n"
+                "       3. \"Image\"(string, required)\n"
+                "       4. \"CPU name\"(string, required)\n"
+                "       5. \"CPU thread count\"(int, required)\n"
+                "       6. \"Memory name\"(string, required)\n"
+                "       7. \"Memory GByte\"(int, required)\n"
+                "       8. \"GPU Kind\"(string, required)\n"
+                "       9. \"GPU count\"(int, required)\n"
+                "       10. \"NetWork Community\"(string, required)\n"
+                "       11. \"SSH_PUBKEY\"(string, required)\n"
+                "       12. \"environment\"(string,string , optional)\n"
+                "       13. {\n"
+                "               \"ENV1\": \"value1\"   (string,string, optional)"
+                "               \"ENV2\": \"value2\"   (string,string, optional)"
+                "               ...\n"
+                "           }\n"
                 "   delete         - delete a docker service Arguments: \n"
-                "                  \"dockernode (IP:Port)\" (string, required)\n"
-                "                  \"txid (string, required)\n"
+                "       1. \"dockernode (IP:Port)\" (string, required)\n"
+                "       2. \"txid (string, required)\n"
                 "sendtomasternode  - send to masternode address: \n"
-                "                  \"dockernode (IP:Port)\" (string, required)\n"
-                "                  \"MassGrid address\"(string, required)\n"
-                "                  \"amount\"(int, required)\n"
+                "       1. \"dockernode (IP:Port)\" (string, required)\n"
+                "       2. \"MassGrid address\"(string, required)\n"
+                "       3. \"amount\"(int, required)\n"
                 "masternode command:  "
                 "listuntlementtx   - list all untlement transactions\n"
                 "listprice         - list all service items price\n"
                 "setprice          - set item price\n"
-                "                  \"type\" (string, required)\n"
-                "                  \"name\"(string, required)\n"
-                "                  \"price\"(double, required)\n"
+                "       1. \"type\" (string, required)\n"
+                "       2. \"name\"(string, required)\n"
+                "       3. \"price\"(double, required)\n"
                 "setdockerfee      - set docker masternode fee (0.01):\n"
-                "                  \"price\" (percent(double), required)\n"
-                + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\"")
+                "       1. \"price\" (percent(double), required)\n"
+                + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\" \"{\\\"ENV1\\\":\\\"value1\\\"}\"")
                 + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\"")
                 + HelpExampleCli("docker", "sendtomasternode \"119.3.66.159:19443\" \"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\" 6.4")
                 + HelpExampleCli("docker", "listuntlementtx")
@@ -134,7 +145,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     {
         if (!masternodeSync.IsSynced())
             return "Need to Synced First";
-        if (params.size() != 13)
+        if (params.size() != 14)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
         std::string strAddr = params[1].get_str();
         if(!dockercluster.SetConnectDockerAddress(strAddr))
@@ -172,6 +183,14 @@ UniValue docker(const UniValue& params, bool fHelp)
 
         std::string strssh_pubkey = params[12].get_str();
         createService.ssh_pubkey = strssh_pubkey;
+
+        UniValue envs = params[13].get_obj();
+        std::vector<std::string> vKeys = envs.getKeys();
+        for (unsigned int idx = 0; idx < vKeys.size(); idx++) {
+            if(!envs[vKeys[idx]].isStr())
+                throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter, expected object");
+            createService.env[vKeys[idx]] = envs[vKeys[idx]].get_str();
+        }
         EnsureWalletIsUnlocked();
         if(!dockercluster.CreateAndSendSeriveSpec(createService))
             return "CreateSpec Error Failed";

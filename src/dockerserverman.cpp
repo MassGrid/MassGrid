@@ -44,6 +44,9 @@ bool DockerCreateService::Sign(const CKey& keyClusterAddress, const CPubKey& pub
     sigTime = GetAdjustedTime();
     std::string strMessage = txid.ToString() + boost::lexical_cast<std::string>(version) + n2n_community +
         serviceName + image + ssh_pubkey + item.ToString() + boost::lexical_cast<std::string>(sigTime);
+    for(auto &pair: env){
+            strMessage += (pair.first + pair.second);
+        }
 
     if(!CMessageSigner::SignMessage(strMessage, vchSig, keyClusterAddress)) {
         LogPrintf("DockerCreateService::Sign -- SignMessage() failed\n");
@@ -63,7 +66,9 @@ bool DockerCreateService::CheckSignature(CPubKey& pubKeyClusterAddress)
     // TODO: add sentinel data
     std::string strMessage = txid.ToString() + boost::lexical_cast<std::string>(version) + n2n_community +
         serviceName + image + ssh_pubkey + item.ToString() + boost::lexical_cast<std::string>(sigTime);
-
+    for(auto &pair: env){
+        strMessage += (pair.first + pair.second);
+    }
     std::string strError = "";
 
     if(!CMessageSigner::VerifyMessage(pubKeyClusterAddress, vchSig, strMessage, strError)) {
@@ -468,7 +473,11 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     spec.taskTemplate.containerSpec.env.push_back("MEMCOUNT=" + std::to_string(serviceItem.mem.Count));
     spec.taskTemplate.containerSpec.env.push_back("GPUNAME=" + serviceItem.gpu.Name);
     spec.taskTemplate.containerSpec.env.push_back("GPUCOUNT=" + std::to_string(serviceItem.gpu.Count));
-
+    for(auto &pair: createService.env){
+            std::string envs=pair.first+"="+pair.second;
+            strToUpper(envs,1);
+            spec.taskTemplate.containerSpec.env.push_back(envs);
+        }
 
     spec.taskTemplate.placement.constraints.push_back("node.role == worker");
     spec.taskTemplate.placement.constraints.push_back(std::string("engine.labels.cpuname == "+serviceItem.cpu.Name));
