@@ -103,7 +103,7 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
         dockerman.Update();
         mnp.mdocker.nodeCount= dockerman.GetDockerNodeCount();
         
-        mnp.mdocker.dockerServiceCount=dockerman.GetDockerServiceCount();
+        mnp.mdocker.dockerServiceCount = dockerman.GetDockerServiceCount();
         
         mnp.mdocker.activeNodeCount = mnp.mdocker.nodeCount - mnp.mdocker.dockerServiceCount;
 
