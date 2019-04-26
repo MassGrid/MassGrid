@@ -5354,8 +5354,8 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Copyright (C) 2014-%i The MassGrid Developers</source>
-        <translation>Copyright (C) 2014-%i The MassGrid Developers</translation>
+        <source>Copyright (C) 2017-%i The MassGrid Developers</source>
+        <translation>Copyright (C) 2017-%i The MassGrid Developers</translation>
     </message>
     <message>
         <location line="+14"/>

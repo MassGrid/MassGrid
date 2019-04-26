@@ -137,3 +137,8 @@ make
 # CLion
 .idea
 cmake-build-debug
+
+#PNG
+background.tiff
+background.tiff.png
+background.tiff@2x.png
