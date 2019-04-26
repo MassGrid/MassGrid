@@ -35,6 +35,7 @@
 #include "utilstrencodings.h"
 #include "validationinterface.h"
 #include "versionbits.h"
+#include "base58.h"
 
 #include "instantx.h"
 #include "masternodeman.h"
@@ -734,7 +735,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
                     continue;
                 LogPrintf("vin[%lld] tx:%s is lease transaction need to check CTxOut\n",n,txin.prevout.hash.ToString());
                 CPubKey devpubkey(ParseHex(Params().SporkPubKey()));
-                CScript devScriptPubKey = GetScriptForRawPubKey(devpubkey);
+                CScript devScriptPubKey = GetScriptForDestination(CMassGridAddress(devpubkey.GetID()).Get());
                 LogPrintf("developer scriptkey: %s\n",HexStr(devScriptPubKey.begin(), devScriptPubKey.end()));
                 int64_t dev_n = CheckScriptPubkeyInTx(devScriptPubKey,tx);
                 CAmount sum = CAmount(0);
