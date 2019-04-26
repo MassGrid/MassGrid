@@ -740,7 +740,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
                 int64_t dev_n = CheckScriptPubkeyInTx(devScriptPubKey,tx);
                 CAmount sum = CAmount(0);
                 for(uint32_t i=0;i<tx.vout.size();++i)
-                    sum += tx.vout[i].nValue;
+                    sum += tx.vout[i].nValue;         
                 if(tx.vout.size() == 1 ){
                     if(!CheckScriptPubkeyInTxVin(tx.vout[0].scriptPubKey,txPre)){
                         return state.DoS(10, error("AcceptToMemoryPool : reject to send others %s", tx.ToString()),
@@ -753,8 +753,8 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
                                 REJECT_INVALID, "bad-txout");
                     }
                     else{
-                        if(tx.vout[dev_n].nValue/(double)sum < sporkManager.GetDeveloperPayment()/10000.0){
-                            return state.DoS(10, error("AcceptToMemoryPool : developer payment not enough (up %lf\%) %s", tx.ToString(),sporkManager.GetDeveloperPayment()/10000.0),
+                        if(sum > 0 && tx.vout[dev_n].nValue/(double)sum < sporkManager.GetDeveloperPayment()/10000.0){
+                            return state.DoS(10, error("AcceptToMemoryPool : developer payment not enough (up %lf) %s", sporkManager.GetDeveloperPayment()/10000.0,tx.ToString()),
                                 REJECT_INVALID, "bad-txout");
                         }
                     }
