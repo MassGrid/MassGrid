@@ -74,7 +74,7 @@ background-color: rgb(255, 255, 255,0);
 </string>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
@@ -165,6 +165,9 @@ background-color: rgb(255, 255, 255,0);
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="spacing">
+              <number>2</number>
+             </property>
              <property name="bottomMargin">
               <number>0</number>
              </property>
@@ -486,6 +489,9 @@ border:hidden;
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
+                <property name="spacing">
+                 <number>2</number>
+                </property>
                 <item row="0" column="0">
                  <widget class="QPushButton" name="createServiceBtn">
                   <property name="text">
@@ -569,6 +575,9 @@ border:hidden;
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0">
+            <property name="spacing">
+             <number>2</number>
+            </property>
             <property name="leftMargin">
              <number>0</number>
             </property>

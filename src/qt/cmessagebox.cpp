@@ -156,11 +156,9 @@ void CMessageBox::mouseReleaseEvent(QMouseEvent *e)
 
 void CMessageBox::slot_close()
 {
-    LogPrintf("=====>CMessageBox::slot_close\n");
     reject();
 }
 void CMessageBox::slot_ok()
 {
-    LogPrintf("=====>CMessageBox::slot_ok\n");
     accept();
 }

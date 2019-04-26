@@ -12,10 +12,10 @@
 
 extern CWallet* pwalletMain;
 
-const char* strTaskStateTmp2[] = {"new", "allocated", "pending", "assigned",
-    "accepted", "preparing", "ready", "starting",
-    "running", "complete", "shutdown", "failed",
-    "rejected", "remove", "orphaned"};
+// const char* strTaskStateTmp2[] = {"new", "allocated", "pending", "assigned",
+//     "accepted", "preparing", "ready", "starting",
+//     "running", "complete", "shutdown", "failed",
+//     "rejected", "remove", "orphaned"};
 
 ServiceDetail::ServiceDetail(QWidget* parent) : QDialog(parent),
                                                 ui(new Ui::ServiceDetail)
@@ -178,7 +178,7 @@ void ServiceDetail::updateTaskDetail(std::map<std::string, Task>& mapDockerTaskl
         //std::string
         // int taskstatus = -1;
         taskStatus = task.status.state;
-        QString taskStatusStr = QString::fromStdString(strTaskStateTmp2[taskStatus]);
+        QString taskStatusStr = GUIUtil::GetServiceTaskStatus(taskStatus);  // QString::fromStdString(strTaskStateTmp2[taskStatus]);
 
         QString taskErr = QString::fromStdString(task.status.err);
 

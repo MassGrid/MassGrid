@@ -841,7 +841,7 @@ void MassGridGUI::createMainWin(const PlatformStyle *platformStyle)
     // win->setLayout(layout);
     // this->setCentralWidget(win);
     // this->setLayout(layout);
-    layout->setStretch(0,3);
+    layout->setStretch(0,4);
     layout->setStretch(1,12);
     layout->setStretch(2,1);
     mainFrame->setLayout(layout);

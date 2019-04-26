@@ -60,7 +60,7 @@ class DockerOrderView : public QWidget
 
 public:
     explicit DockerOrderView(const PlatformStyle *platformStyle, QWidget *parent = 0);
-
+    ~DockerOrderView();
     void setModel(WalletModel *model);
     void getCurrentItemTxidAndmnIp(std::string &txid,std::string &masternodeip,std::string &orderStatus);
     // Date ranges for filter
@@ -112,6 +112,7 @@ private:
     virtual void resizeEvent(QResizeEvent* event);
     bool eventFilter(QObject *obj, QEvent *event);
     void updateTransData(QString txid);
+    void stopAndDeleteSyncThread();
 
 private Q_SLOTS:
     void contextualMenu(const QPoint &);

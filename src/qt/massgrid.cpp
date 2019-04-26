@@ -667,7 +667,7 @@ int main(int argc, char *argv[])
         // app.setStyleSheet(f.readAll());
 
         QString basepx = QString::number(appfont.pixelSize()) + "px";
-        QString littlebigpx = QString::number(appfont.pixelSize()+5) + "px";
+        QString littlebigpx = QString::number(appfont.pixelSize()+3) + "px";
         QString bigpx = QString::number(appfont.pixelSize()+10) + "px";
         QString smallbigpx = QString::number(appfont.pixelSize()+2) + "px";
         QString smallpx = QString::number(appfont.pixelSize()-2) + "px";

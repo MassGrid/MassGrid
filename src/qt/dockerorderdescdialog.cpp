@@ -11,6 +11,7 @@
 #include "optionsmodel.h"
 #include <QFontMetrics>
 #include <QFont>
+#include <stdlib.h>
 
 extern CWallet* pwalletMain;
 
@@ -25,7 +26,7 @@ DockerOrderDescDialog::DockerOrderDescDialog(WalletModel *model,QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
 
-    ui->label_titlename->setText(tr("Docer order Detail"));
+    ui->label_titlename->setText(tr("Docker order Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
@@ -33,6 +34,7 @@ DockerOrderDescDialog::~DockerOrderDescDialog()
 {
     delete ui;
 }
+
 void DockerOrderDescDialog::mousePressEvent(QMouseEvent *e)
 {
     int posx = e->pos().x();
@@ -90,6 +92,7 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
     QString custeraddressStr = fm.elidedText(QString::fromStdString(wtx.Getcusteraddress()), Qt::ElideRight, ui->label_custeraddress->width());
     QString provideraddressStr = fm.elidedText(QString::fromStdString(wtx.Getprovideraddress()), Qt::ElideRight, ui->label_provideraddress->width());
     QString masternodeaddressStr = fm.elidedText(QString::fromStdString(wtx.Getmasternodeaddress()), Qt::ElideRight, ui->label_masternodeaddress->width());
+    QString tlementtxidStr = fm.elidedText(QString::fromStdString(wtx.Gettlementtxid()), Qt::ElideRight, ui->label_tlementtxid->width());
 
     ui->label_feerate->setText(QString::fromStdString(wtx.Getfeerate()));
     ui->label_cpuname->setText(QString::fromStdString(wtx.Getcpuname()));
@@ -98,14 +101,20 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
     ui->label_memcount->setText(QString::fromStdString(wtx.Getmemcount()));
     ui->label_gpuname->setText(QString::fromStdString(wtx.Getgpuname()));
     ui->label_gpucount->setText(QString::fromStdString(wtx.Getgpucount()));
-    ui->label_taskstate->setText(QString::fromStdString(wtx.Gettaskstate()));
-    ui->label_tlementtxid->setText(QString::fromStdString(wtx.Gettlementtxid()));
     ui->label_masternodeip->setText(QString::fromStdString(wtx.Getmasternodeip()));
-
     ui->label_masternodeoutpoint->setText(masternodeoutpointStr);
     ui->label_custeraddress->setText(custeraddressStr);
     ui->label_provideraddress->setText(provideraddressStr);
     ui->label_masternodeaddress->setText(masternodeaddressStr);
+    ui->label_tlementtxid->setText(tlementtxidStr);
+
+    if(atoi(wtx.Gettaskstate()) == 8){
+        ui->label_taskstate->hide();
+        ui->label_37->hide();
+    }
+    else{
+        ui->label_taskstate->setText(QString::fromStdString(wtx.Gettaskstatuscode()));
+    }
 
     ui->label_orderstatus->setText(QString::fromStdString(wtx.Getorderstatus())= "1" ? tr("Settled") : tr("Paid"));
 }

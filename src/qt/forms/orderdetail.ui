@@ -97,14 +97,14 @@
             <widget class="QToolButton" name="cancelButton">
              <property name="minimumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="styleSheet">

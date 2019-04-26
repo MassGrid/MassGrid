@@ -44,6 +44,8 @@
 #include <QListView>
 #include <QComboBox>
 #include <QStyleFactory>
+#include <QEventLoop>
+#include <QTimer>
 
 #define SYNCTRANSTINEOUT 30
 static const char* PERSISTENCE_DATE_FORMAT = "yyyy-MM-dd";
@@ -156,6 +158,13 @@ DockerOrderView::DockerOrderView(const PlatformStyle *platformStyle, QWidget *pa
     connect(editLabelAction, SIGNAL(triggered()), this, SLOT(editLabel()));
     // connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
     connect(deleteServiceAction, SIGNAL(triggered()), this, SLOT(deleteService()));
+}
+
+DockerOrderView::~DockerOrderView()
+{
+    if(m_syncTransactionThread != NULL){
+        stopAndDeleteSyncThread();
+    }
 }
 
 void DockerOrderView::setSearchWidget(QComboBox* dateComboBox,QComboBox* typeComboBox,QLineEdit* addrLineEdit)
@@ -338,7 +347,6 @@ bool DockerOrderView::updateOrderStatus(const std::string &txidStr)const
     btn->setText(btnText);
     
     if(isNeedUpdateTD){
-        LogPrintf("DockerOrderView::updateOrderStatus isNeedUpdateTD:%d\n",isNeedUpdateTD);
         LogPrintf("DockerOrderView::updateOrderStatus updateTransData:%s\n",txidStr);
     }
 
@@ -858,6 +866,7 @@ void DockerOrderView::updateTransData(QString txid)
     if(m_syncTransactionThread == NULL){
         m_syncTransactionThread = new SyncTransactionHistoryThread(0);
         connect(m_syncTransactionThread,SIGNAL(syncTaskEnd(const QString&,bool)),this,SLOT(updateTransactionHistoryData(const QString&,bool)));
+
         m_syncTransactionThread->start();
     }
     m_syncTransactionThread->addTask(txid);
@@ -865,8 +874,26 @@ void DockerOrderView::updateTransData(QString txid)
 
 void DockerOrderView::updateTransactionHistoryData(const QString& txid,bool sucess)
 {
-    LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
-    LogPrintf("====>DockerOrderView::updateTransactionHistoryData sucess:%d\n",sucess);
+    if(sucess)
+        LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
+    else
+        LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s failed\n",txid.toStdString());
+}
+
+void DockerOrderView::stopAndDeleteSyncThread()
+{
+    if(m_syncTransactionThread->isRunning()){
+        disconnect(m_syncTransactionThread,SIGNAL(syncTaskEnd(const QString&,bool)),this,SLOT(updateTransactionHistoryData(const QString&,bool)));
+        QEventLoop loop;
+        connect(m_syncTransactionThread,SIGNAL(syncThreadFinished()),&loop,SLOT(quit()));
+        m_syncTransactionThread->setNeedWork(false);
+        m_syncTransactionThread->addTask("");
+        loop.exec();
+    }
+    if(m_syncTransactionThread != NULL){
+        delete m_syncTransactionThread; 
+        m_syncTransactionThread = NULL;       
+    }
 }
 
 SyncTransactionHistoryThread::SyncTransactionHistoryThread(QObject* parent):
@@ -882,7 +909,7 @@ SyncTransactionHistoryThread::~SyncTransactionHistoryThread()
 
 void SyncTransactionHistoryThread::addTask(const QString& txid)
 {
-    if(!m_taskList.count(txid))
+    if(!m_taskList.count(txid) && !txid.isEmpty())
         m_taskList.append(txid);
     m_wait.wakeOne();
 }
@@ -890,6 +917,8 @@ void SyncTransactionHistoryThread::addTask(const QString& txid)
 void SyncTransactionHistoryThread::setNeedWork(bool type)
 {
     m_isNeedWork = type;
+    if(!type)
+        quit();
 }
 
 bool SyncTransactionHistoryThread::isNeedWork()
@@ -928,8 +957,7 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid)
             return true;
         QThread::sleep(1);
         LogPrintf("=====>SyncTransactionHistoryThread::doTask ask TransData\n");
-        //check sync time out
-        if((++updateCountMsec) >= SYNCTRANSTINEOUT)
+        if(((++updateCountMsec) >= SYNCTRANSTINEOUT) || !isNeedWork())
             break;
     }
     return false;
