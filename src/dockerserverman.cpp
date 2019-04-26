@@ -178,12 +178,19 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         if(CheckAndGetTransaction(dtdata,dockerTransData.errCode)){
             CWalletTx& wtx = pwalletMain->mapWallet[dtdata.txid];  //watch only not check
             if(wtx.HasTlemented()){
-                dockerTransData.sigTime = GetAdjustedTime();                
-                dockerTransData.feeRate = boost::lexical_cast<double>(wtx.Getfeerate());
-                dockerTransData.deleteTime = boost::lexical_cast<int64_t>(wtx.Getdeletetime());
-                dockerTransData.errCode = boost::lexical_cast<int>(wtx.Gettaskstate());
+                dockerTransData.sigTime = GetAdjustedTime();
+                std::string feerate= wtx.Getfeerate();            
+                dockerTransData.feeRate = boost::lexical_cast<double>(feerate.empty()?"0":feerate);
+                std::string deltime= wtx.Getdeletetime();
+                dockerTransData.deleteTime = boost::lexical_cast<int64_t>(deltime.empty()?"0":deltime);
+                std::string taskstate=wtx.Gettaskstate();
+                dockerTransData.errCode = boost::lexical_cast<int>(taskstate.empty()?"0":taskstate);
                 dockerTransData.taskStatus = wtx.Gettaskstatuscode();
-                dockerTransData.tlementtxid = uint256S(wtx.Gettlementtxid());
+                std::string tlementtxid = wtx.Gettlementtxid();
+                if(tlementtxid.empty())
+                    dockerTransData.tlementtxid = uint256();
+                else
+                    dockerTransData.tlementtxid = uint256S(tlementtxid);
                 dockerTransData.msgStatus = TASKDTDATA::SUCCESS;
             }else{
                 dockerTransData.errCode =SERVICEMANCODE::NO_THRANSACTION;

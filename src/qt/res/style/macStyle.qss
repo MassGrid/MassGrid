@@ -1,6 +1,11 @@
-QToolButton{
-    font: 14pt;
+QWidget{
+    font-size: @basepx@;
 }
+
+QToolButton{
+    /* font: 14pt; */
+    /* font: @basepx@; */
+} 
 
 QToolButton#cancelButton{
     border:6px solid rgb(255,255,255,0);
@@ -57,11 +62,13 @@ QTableView {
     selection-color: white;
     selection-background-color: rgb(239,169,4);
     border:hidden;
+    font-size: @smallpx@;
 }
 
 QHeaderView {
     color: black;
-    font: 16pt;
+    /* font: 16pt; */
+    /* font: @basepx@; */
     border: 0px solid rgb(144, 144, 144);
     border:0px solid rgb(191,191,191);
     border-left-color: red;
@@ -201,6 +208,7 @@ QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{
     background:transparent;
     border-radius:5px;
 }
+
 
 QProgressBar
 {
@@ -401,21 +409,6 @@ QDialog#CMessageBox QToolButton:hover#closeButton
     color:rgb(255,255,255);
 }
 
-/* QWidget#AddressBookPage QToolButton{
-    width:80;
-    height:30;
-    border:hidden;
-}
-
-QWidget#AddressBookPage QToolButton#closeButton,
-QWidget#AddressBookPage QToolButton#okButton,
-QWidget#AddressBookPage QToolButton#exportButton{
-    width:80;
-    height:30;
-    background-color: rgb(239, 169, 4);
-    color: rgb(255, 255, 255);
-    border:hidden;
-} */
 QWidget#AddressBookPage QPushButton#deleteAddress,
 QWidget#AddressBookPage QPushButton#copyAddress,
 QWidget#AddressBookPage QPushButton#newAddress,
@@ -445,7 +438,7 @@ border:hidden;
 }
 
 QDialog#Intro QLabel#label_2{
- font-style:italic;
+ /* font-style:italic; */
  }
 
 QDialog#Intro QFrame#frame{
@@ -457,7 +450,8 @@ QWidget#MainwinTitle QLabel#label_logo{
 }
 
 QWidget#MainwinTitle QLabel#label_total{
-font: 32pt;
+/* font: 32pt; */
+    font-size: @bigpx@;
 }
 
 QWidget#MainwinTitle QLabel#label_balance_text,
@@ -468,12 +462,14 @@ QWidget#MainwinTitle QLabel#label_unconfirmed_text,
 QWidget#MainwinTitle QLabel#label_unconfirmed,
 QWidget#MainwinTitle QLineEdit#addressEdit,
 QWidget#MainwinTitle QLabel#label_total_text{
-font: 17pt;
+/* font: 17pt; */
+font-size: @smallbigpx@;
 }
 
 QWidget#MainwinTitle QCheckBox{
     spacing: 10px;
-	font: 22px ;
+    /* font: 22px ; */
+    font-size: @littlebigpx@;
 	min-width:120px;
 	min-height:40px;
 }
@@ -553,19 +549,16 @@ border:hidden;
 
 QWidget#MainwinTitle QToolButton#settingsButton{
 border:hidden;
-font: 13pt ;
 color: rgb(255, 255, 255);
 }
     
 QWidget#MainwinTitle QToolButton#fileButton{
 border:hidden;
-font: 13pt ;
 color: rgb(255, 255, 255);
 }
 
 QWidget#MainwinTitle QToolButton#helpButton{
 border:hidden;
-font: 13pt ;
 color: rgb(255, 255, 255);
 }
 
@@ -612,13 +605,13 @@ QDialog#OpenURIDialog QFrame#frame{
 }
 
 QDialog#OptionsDialog QPushButton#okButton{
-font: 15pt;
+/* font: 15pt; */
 }
 
 QDialog#OptionsDialog QPushButton#resetButton{
 border:hidden;
 color: rgb(255, 255, 255);
-font: 14pt;
+/* font: 14pt; */
 background-color: rgba(255, 255, 255, 0);
 }
 QDialog#OptionsDialog QPushButton:hover#resetButton{
@@ -887,7 +880,8 @@ QComboBox QAbstractItemView
 QComboBox QAbstractItemView::item
 {
     height: 40px;
-    font:15pt;
+    /* font:15pt; */
+    font-size: @smallpx@;
     background-color: rgb(198, 125, 26);
     border:hidden;
     color: rgb(255, 255, 255);
@@ -983,7 +977,7 @@ QWidget#SendCoinsDialog QToolButton#backButton,
 QWidget#SendCoinsDialog QToolButton#moreButton,
 QWidget#SendCoinsDialog QToolButton#addButton{
     color: rgb(0,0,0);
-    font: 16pt;
+    /* font: 16pt; */
     border-radius: 3px;
 }
 
@@ -1001,7 +995,7 @@ QWidget#SendCoinsDialog QToolButton:hover#addButton{
 QWidget#SendCoinsDialog QPushButton#sendButton{
     min-height:40px;
     min-width:140px;
-	font: 18pt ;
+	/* font: 18pt ; */
 }
 
 QStackedWidget#SendCoinsEntry{

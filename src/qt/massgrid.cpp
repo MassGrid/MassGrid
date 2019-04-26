@@ -56,6 +56,7 @@
 #include <QTranslator>
 #include <QSslConfiguration>
 #include <QFile>
+#include <QScreen>
 
 #if defined(QT_STATICPLUGIN)
 #include <QtPlugin>
@@ -82,6 +83,12 @@ Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin);
 #if QT_VERSION < 0x050000
 #include <QTextCodec>
 #endif
+
+#ifdef Q_OS_MAC
+#define BASEPIXDELSIZE 22
+#else 
+#define BASEPIXDELSIZE 12
+#endif // DEBUG
 
 // Declare meta types used for QMetaObject::invokeMethod
 Q_DECLARE_METATYPE(bool*)
@@ -561,7 +568,6 @@ WId MassGridApplication::getMainWinId() const
 int main(int argc, char *argv[])
 {
     SetupEnvironment();
-
     /// 1. Parse command-line options. These take precedence over anything else.
     // Command-line options take precedence:
     ParseParameters(argc, argv);
@@ -624,30 +630,55 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
+    LogPrintf("======>massgrid styleStr print11111\n");
+
     QString qssFilePath;
+    QFont appfont;
 
 #if defined(Q_OS_WIN) 
-    QFont appfont = app.font();    
+    appfont = app.font();    
     appfont.setFamily("微软雅黑");
     app.setFont(appfont);
     qssFilePath = ":/res/style/linuxStyle.qss";
 #elif defined(Q_OS_MAC)
-    QFont appfont = app.font();    
+    appfont = app.font();    
     appfont.setFamily(".SF NS Text");
-    appfont.setPointSize(15);
-    app.setFont(appfont);
+    // appfont.setPointSize(17);
+    // app.setFont(appfont);
     qssFilePath = ":/res/style/macStyle.qss";
 #else
-    QFont appfont = app.font();    
+    appfont = app.font();    
     appfont.setFamily("Ubuntu");
-    app.setFont(appfont);
     qssFilePath = ":/res/style/linuxStyle.qss";
 #endif
 
+    qssFilePath = ":/res/style/macStyle.qss";
+
+    QScreen* screen = qApp->primaryScreen();
+    qreal dpi = screen->logicalDotsPerInch()/96;
+    GUIUtil::SetDPIValue(dpi);
+    appfont.setPixelSize(BASEPIXDELSIZE*dpi);
+    app.setFont(appfont);
+
+    QString styleStr;
+
     QFile f(qssFilePath);
     if (f.open(f.ReadOnly)) {
-        app.setStyleSheet(f.readAll());
+        // app.setStyleSheet(f.readAll());
+
+        QString basepx = QString::number(appfont.pixelSize()) + "px";
+        QString littlebigpx = QString::number(appfont.pixelSize()+5) + "px";
+        QString bigpx = QString::number(appfont.pixelSize()+10) + "px";
+        QString smallbigpx = QString::number(appfont.pixelSize()+2) + "px";
+        QString smallpx = QString::number(appfont.pixelSize()-2) + "px";
+        styleStr = f.readAll();
+        styleStr.replace("@basepx@",basepx);
+        styleStr.replace("@littlebigpx@",littlebigpx);
+        styleStr.replace("@bigpx@",bigpx);
+        styleStr.replace("@smallbigpx@",smallbigpx);
+        styleStr.replace("@smallpx@",smallpx);
     }
+    app.setStyleSheet(styleStr);
 
     /// 5. Now that settings and translations are available, ask user for data directory
     // User language is set up: pick a data directory

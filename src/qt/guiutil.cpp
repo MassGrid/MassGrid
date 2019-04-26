@@ -83,6 +83,7 @@ extern double NSAppKitVersionNumber;
 #endif
 
 QString DefaultReceiveAddr;
+qreal DPIValue;
 namespace GUIUtil {
 
 QString dateTimeStr(const QDateTime &date)
@@ -137,6 +138,17 @@ void createPubkey(const std::string &addr)
         }
     }
 }
+
+qreal GetDPIValue()
+{
+    return DPIValue;
+}
+
+void SetDPIValue(qreal dpi)
+{
+    DPIValue = dpi;
+}
+
 
 void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)
 {
@@ -917,7 +929,8 @@ void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, 
     parent->resize(size);
     parent->move(pos);
 
-    if ((!pos.x() && !pos.y()) || (QApplication::desktop()->screenNumber(parent) == -1))
+    // if ((!pos.x() && !pos.y()) || (QApplication::desktop()->screenNumber(parent) == -1))
+    if(true)
     {
         QRect screen = QApplication::desktop()->screenGeometry();
         QPoint defaultPos = screen.center() -
