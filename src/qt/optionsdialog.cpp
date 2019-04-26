@@ -161,7 +161,7 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     ui->coinControlFeatures->hide();
 
 
-
+    ui->frame_15->hide();
 
 }
 

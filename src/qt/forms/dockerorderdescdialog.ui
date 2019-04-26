@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>679</width>
-    <height>419</height>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,7 +55,7 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout" stretch="1,10">
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -205,20 +205,6 @@ border:hidden;
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="0">
-                 <widget class="QLabel" name="label_11">
-                  <property name="text">
-                   <string>Tlement txid:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="1">
-                 <widget class="QLabel" name="label_tlementtxid">
-                  <property name="text">
-                   <string>TextLabel</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="6" column="0">
                  <widget class="QLabel" name="label_16">
                   <property name="text">
@@ -236,11 +222,25 @@ border:hidden;
                 <item row="7" column="0">
                  <widget class="QLabel" name="label_35">
                   <property name="text">
-                   <string>Task State:</string>
+                   <string>Order Status:</string>
                   </property>
                  </widget>
                 </item>
                 <item row="7" column="1">
+                 <widget class="QLabel" name="label_orderstatus">
+                  <property name="text">
+                   <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="0">
+                 <widget class="QLabel" name="label_37">
+                  <property name="text">
+                   <string>Task Error:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="1">
                  <widget class="QLabel" name="label_taskstate">
                   <property name="text">
                    <string>TextLabel</string>
@@ -349,34 +349,20 @@ border:hidden;
                   </property>
                  </widget>
                 </item>
-                <item row="7" column="1">
-                 <widget class="QLabel" name="label_orderstatus">
-                  <property name="text">
-                   <string>TextLabel</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="7" column="0">
-                 <widget class="QLabel" name="label_37">
-                  <property name="text">
-                   <string>Order Status:</string>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
              </layout>
             </item>
             <item>
              <layout class="QFormLayout" name="formLayout_3">
-              <item row="0" column="0">
+              <item row="1" column="0">
                <widget class="QLabel" name="label_15">
                 <property name="text">
                  <string>Masternodeoutpoint:</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
+              <item row="1" column="1">
                <widget class="QLabel" name="label_masternodeoutpoint">
                 <property name="minimumSize">
                  <size>
@@ -392,14 +378,14 @@ border:hidden;
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
+              <item row="2" column="0">
                <widget class="QLabel" name="label_20">
                 <property name="text">
                  <string>Custeraddress:</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
+              <item row="2" column="1">
                <widget class="QLabel" name="label_custeraddress">
                 <property name="minimumSize">
                  <size>
@@ -415,14 +401,14 @@ border:hidden;
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
+              <item row="3" column="0">
                <widget class="QLabel" name="label_19">
                 <property name="text">
                  <string>Provideraddress:</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
+              <item row="3" column="1">
                <widget class="QLabel" name="label_provideraddress">
                 <property name="minimumSize">
                  <size>
@@ -438,15 +424,38 @@ border:hidden;
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
+              <item row="6" column="0">
                <widget class="QLabel" name="label_39">
                 <property name="text">
                  <string>Masternodeaddress:</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
+              <item row="6" column="1">
                <widget class="QLabel" name="label_masternodeaddress">
+                <property name="minimumSize">
+                 <size>
+                  <width>460</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+                <property name="textInteractionFlags">
+                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Tlement txid:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="label_tlementtxid">
                 <property name="minimumSize">
                  <size>
                   <width>460</width>

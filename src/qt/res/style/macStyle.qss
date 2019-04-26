@@ -470,6 +470,7 @@ QWidget#MainwinTitle QCheckBox{
     spacing: 10px;
     /* font: 22px ; */
     font-size: @littlebigpx@;
+    font-weight:bold;
 	min-width:120px;
 	min-height:40px;
 }

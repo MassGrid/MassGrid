@@ -44,12 +44,6 @@
 extern MasternodeList* g_masternodeListPage;
 extern CDockerServerman dockerServerman;
 
-const char* strTaskStateTmp[]={"new", "allocated","pending","assigned", 
-                        "accepted","preparing","ready","starting",
-                        "running","complete","shutdown","failed",
-                        "rejected","remove","orphaned"};
-// QStringList strTaskStateTmpList;
-
 int GetOffsetFromUtc()
 {
 #if QT_VERSION < 0x050200
@@ -653,7 +647,6 @@ int MasternodeList::loadServerList()
             Task task = mapDockerTasklists.begin()->second;
             taskStatus = task.status.state;
             taskStatusStr = taskStatus == Config::TASKSTATE_RUNNING ? tr("Create completed") : tr("Creating...");
-            //QString::fromStdString(strTaskStateTmp[taskStatus]);
         }
 
         QLabel *label = new QLabel(ui->serviceTableWidget);

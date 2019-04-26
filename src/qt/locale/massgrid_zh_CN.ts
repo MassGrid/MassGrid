@@ -1295,7 +1295,7 @@
     </message>
     <message>
         <source>Tlement txid:</source>
-        <translation></translation>
+        <translation>结算ID:</translation>
     </message>
     <message>
         <source>Masternodeip:</source>
@@ -1303,7 +1303,7 @@
     </message>
     <message>
         <source>Task State:</source>
-        <translation>任务状态</translation>
+        <translation type="vanished">任务状态:</translation>
     </message>
     <message>
         <source>GPU Name:</source>
@@ -1339,7 +1339,7 @@
     </message>
     <message>
         <source>Masternodeoutpoint:</source>
-        <translation></translation>
+        <translation>主节点标示:</translation>
     </message>
     <message>
         <source>Custeraddress:</source>
@@ -1355,7 +1355,7 @@
     </message>
     <message>
         <source>Docer order Detail</source>
-        <translation>虚拟机订单详情</translation>
+        <translation type="vanished">虚拟机订单详情</translation>
     </message>
     <message>
         <source>Settled</source>
@@ -1364,6 +1364,14 @@
     <message>
         <source>Paid</source>
         <translation>已付款</translation>
+    </message>
+    <message>
+        <source>Task Error:</source>
+        <translation>任务错误信息:</translation>
+    </message>
+    <message>
+        <source>Docker order Detail</source>
+        <translation>虚拟机订单详情</translation>
     </message>
 </context>
 <context>
@@ -3151,7 +3159,7 @@ Address: %4
     </message>
     <message>
         <source>User Interface &amp;language:</source>
-        <translation>用户界面语言(&amp;L)：</translation>
+        <translation>用户界面语言(&amp;L):</translation>
     </message>
     <message>
         <source>The user interface language can be set here. This setting will take effect after restarting MassGrid.</source>
@@ -3160,16 +3168,16 @@ Address: %4
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
 https://www.transifex.com/projects/p/massgrid/</source>
-        <translation type="obsolete">缺少相关语言或翻译不完整? 请到这里协助翻译:
+        <translation type="vanished">缺少相关语言或翻译不完整? 请到这里协助翻译:
 https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>User Interface Theme:</source>
-        <translation type="obsolete">用户界面主题:</translation>
+        <translation type="vanished">用户界面主题:</translation>
     </message>
     <message>
         <source>&amp;Unit to show amounts in:</source>
-        <translation>&amp;MGD金额单位：</translation>
+        <translation>&amp;MGD金额单位:</translation>
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
@@ -3313,7 +3321,11 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Decimal digits:</source>
-        <translation type="unfinished">小数位数：</translation>
+        <translation>小数位数:</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3917,6 +3929,66 @@ https://www.transifex.com/projects/p/massgrid/</translation>
         <source>Error reading dockerprice configuration file: %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation>新建</translation>
+    </message>
+    <message>
+        <source>Allocated</source>
+        <translation>已分配</translation>
+    </message>
+    <message>
+        <source>Pending</source>
+        <translation>等待中</translation>
+    </message>
+    <message>
+        <source>Assigned</source>
+        <translation>已指定</translation>
+    </message>
+    <message>
+        <source>Accepted</source>
+        <translation>已同意</translation>
+    </message>
+    <message>
+        <source>Preparing</source>
+        <translation>准备中</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>已就绪</translation>
+    </message>
+    <message>
+        <source>Starting</source>
+        <translation>启动中</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>运行中</translation>
+    </message>
+    <message>
+        <source>Complete</source>
+        <translation>已完成</translation>
+    </message>
+    <message>
+        <source>Shutdown</source>
+        <translation>已关机</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>错误</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>已拒绝</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>移除</translation>
+    </message>
+    <message>
+        <source>Orphaned</source>
+        <translation>已过期</translation>
+    </message>
 </context>
 <context>
     <name>QRImageWidget</name>
@@ -4352,7 +4424,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"></translation>
+        <translation>缩小字体</translation>
     </message>
 </context>
 <context>
@@ -5036,7 +5108,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>A&amp;mount:</source>
-        <translation>金额(&amp;M)</translation>
+        <translation>金额(&amp;M)：</translation>
     </message>
     <message>
         <source>Message:</source>
@@ -5151,7 +5223,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Memory Bytes:</source>
-        <translation>内存大小</translation>
+        <translation>内存大小:</translation>
     </message>
 </context>
 <context>

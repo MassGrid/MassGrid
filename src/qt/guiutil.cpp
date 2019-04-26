@@ -149,6 +149,17 @@ void SetDPIValue(qreal dpi)
     DPIValue = dpi;
 }
 
+QString GetServiceTaskStatus(int code)
+{
+    static QList<QString> strTaskState = {
+        QObject::tr("New"),QObject::tr("Allocated"),QObject::tr("Pending"),QObject::tr("Assigned"),
+        QObject::tr("Accepted"),QObject::tr("Preparing"),QObject::tr("Ready"),QObject::tr("Starting"),
+        QObject::tr("Running"),QObject::tr("Complete"),QObject::tr("Shutdown"),QObject::tr("Failed"),
+        QObject::tr("Rejected"),QObject::tr("Remove"),QObject::tr("Orphaned")
+    };
+    return strTaskState[code];
+}
+
 
 void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)
 {
