@@ -1,4 +1,4 @@
-Protocol Documentation - 1.3.1.1
+Protocol Documentation - 1.3.1.3
 =====================================
 
 This document describes the protocol extensions for all additional functionality build into the MassGrid protocol. This doesn't include any of the MassGrid protocol, which has been left intact in the MassGrid project. 
@@ -385,6 +385,7 @@ Masternode Payment Sync
 | ? | image | string | docker image
 | ? | ssh_pubkey | string | ssh_pubkey
 | ? | items | Item | which you select device
+| ? | envs | map | docker engine environment
 
 ### CREATESERVICE - "DockerDeleteService"
 
