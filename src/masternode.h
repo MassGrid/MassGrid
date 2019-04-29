@@ -93,12 +93,12 @@ public:
         }
         READWRITE(fSentinelIsCurrent);
         READWRITE(nSentinelVersion);
-        CBlockIndex* pindex = NULL;
+        int height;
         {
             LOCK(cs_main);
-            pindex = chainActive.Tip();
+            height = chainActive.Height();
         }
-        if((Params().NetworkIDString() == CBaseChainParams::MAIN && pindex->nHeight >= 165000) || (Params().NetworkIDString() == CBaseChainParams::TESTNET && pindex->nHeight >= 82600)){
+        if((Params().NetworkIDString() == CBaseChainParams::MAIN && height >= 165000) || (Params().NetworkIDString() == CBaseChainParams::TESTNET && height >= 82600)){
             READWRITE(mdocker);
         }
     }

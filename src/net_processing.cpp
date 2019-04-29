@@ -1132,7 +1132,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             return false;
         }
         
-        if (nVersion < MIN_PEER_PROTO_VERSION)
+        if (nVersion < MIN_PEER_PROTO_VERSION && 
+        ((Params().NetworkIDString() == CBaseChainParams::MAIN && chainActive.Height() >= 165000) 
+        || (Params().NetworkIDString() == CBaseChainParams::TESTNET && chainActive.Height() >= 82600)))
         {
             // disconnect from peers older than this proto version
             LogPrintf("peer=%d using obsolete version %i; disconnecting\n", pfrom->id, nVersion);
