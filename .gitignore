@@ -91,6 +91,9 @@ src/test/buildenv.py
 
 # Resources cpp
 qrc_*.cpp
+#vscode
+.vscode
+.tx
 
 # Mac specific
 .DS_Store
