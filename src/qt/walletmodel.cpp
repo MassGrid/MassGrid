@@ -288,8 +288,8 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
             total += rcp.amount;
         }
-            
     }
+
     if(setAddress.size() != nAddresses)
     {
         return DuplicateAddress;
@@ -313,12 +313,14 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
         CWalletTx *newTx = transaction.getTransaction();
         std::string masternodeAddr = setAddress.toList().at(0).toStdString();
+        std::string mnOutPointformat;
         if(isSendToMasternode){
             std::string mnoupouint;
             std::map<COutPoint, CMasternode> mapMasternodes = mnodeman.GetFullMasternodeMap();
             for(auto it = mapMasternodes.begin();it!=mapMasternodes.end();++it){
                 if(it->second.addr.ToString() == masternodeip){
                     mnoupouint = it->first.ToStringShort();
+                    mnOutPointformat = strprintf("%s%08x", it->first.hash.ToString().substr(0,64), it->first.n);
                     break;
                 }
             }
@@ -326,6 +328,15 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
             newTx->Setmasternodeaddress(masternodeAddr);
             newTx->Setmasternodeip(masternodeip);
             newTx->Setorderstatus("0");
+
+            std::vector<unsigned char> pch = {0x6d, 0x67, 0x64};
+            pch.push_back(0x11);
+            std::vector<unsigned char> vchPayload = ParseHex(
+            "00000000"+mnOutPointformat);
+            pch.insert(pch.end(),vchPayload.begin(),vchPayload.end());
+            CScript scriptMsg = CScript() << OP_RETURN << pch;
+            CRecipient recipient2 = {scriptMsg, CAmount(0), false};
+            vecSend.push_back(recipient2);
         }
 
         CReserveKey *keyChange = transaction.getPossibleKeyChange();
@@ -336,7 +347,14 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
             return TransactionCreationFailed;
         }
 
-        bool fCreated = wallet->CreateTransaction(vecSend, *newTx, *keyChange, nFeeRequired, nChangePosRet, strFailReason, coinControl, true, recipients[0].inputType, recipients[0].fUseInstantSend);
+        bool fCreated = wallet->CreateTransaction(vecSend, *newTx, *keyChange, nFeeRequired, nChangePosRet, strFailReason, coinControl, true, 
+        recipients[0].inputType, recipients[0].fUseInstantSend,true,mnOutPointformat);
+
+                // if (!pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRequired, nChangePosRet,
+                //                             strError, &coinControl, true,ALL_COINS, true,true,mnOutPointformat)) {
+
+
+
         transaction.setTransactionFee(nFeeRequired);
         if (fSubtractFeeFromAmount && fCreated)
             transaction.reassignAmounts(nChangePosRet);

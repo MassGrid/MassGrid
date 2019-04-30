@@ -874,10 +874,7 @@ void DockerOrderView::updateTransData(QString txid)
 
 void DockerOrderView::updateTransactionHistoryData(const QString& txid,bool sucess)
 {
-    if(sucess)
-        LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
-    else
-        LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s failed\n",txid.toStdString());
+
 }
 
 void DockerOrderView::stopAndDeleteSyncThread()
@@ -956,7 +953,6 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid)
         if(status == CDockerServerman::ReceivedTD)
             return true;
         QThread::sleep(1);
-        LogPrintf("=====>SyncTransactionHistoryThread::doTask ask TransData\n");
         if(((++updateCountMsec) >= SYNCTRANSTINEOUT) || !isNeedWork())
             break;
     }

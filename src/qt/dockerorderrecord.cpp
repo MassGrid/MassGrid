@@ -103,6 +103,9 @@ QList<DockerOrderRecord> DockerOrderRecord::decomposeTransaction(const CWallet *
         bool fAllToMeDenom = true;
         int nToMe = 0;
         BOOST_FOREACH(const CTxOut& txout, wtx.vout) {
+            if(txout.scriptPubKey.Find(OP_RETURN)){
+                continue;
+            }
             if(wallet->IsMine(txout)) {
                 nToMe++;
             }
@@ -166,6 +169,9 @@ QList<DockerOrderRecord> DockerOrderRecord::decomposeTransaction(const CWallet *
                     // Sent to MassGrid Address
                     sub.type = DockerOrderRecord::SendToAddress;
                     sub.address = CMassGridAddress(address).ToString();
+                }
+                else if(txout.scriptPubKey.Find(OP_RETURN)){
+                    continue;
                 }
                 else
                 {

@@ -630,8 +630,6 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    LogPrintf("======>massgrid styleStr print11111\n");
-
     QString qssFilePath;
     QFont appfont;
 

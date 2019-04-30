@@ -21,6 +21,7 @@
 #include "wallet/wallet.h"
 #include "txmempool.h"
 #include "validation.h"
+#include "masternodeman.h"
 
 #include <QColor>
 #include <QDateTime>
@@ -89,9 +90,59 @@ public:
             LOCK2(cs_main, wallet->cs_wallet);
             for(std::map<uint256, CWalletTx>::iterator it = wallet->mapWallet.begin(); it != wallet->mapWallet.end(); ++it)
             {
-                if(DockerOrderRecord::showTransaction(it->second) && it->second.Getmasternodeaddress().size())
+                if(DockerOrderRecord::showTransaction(it->second) && it->second.Getmasternodeoutpoint().size()){
+                    if(!it->second.Getmasternodeip().size()){
+                        getMasternodeInfo(it->second);
+                    }
                     cachedWallet.append(DockerOrderRecord::decomposeTransaction(wallet, it->second));
+                }
             }
+        }
+    }
+
+    void getMasternodeInfo(CWalletTx &wtx)
+    {
+        std::map<COutPoint, CMasternode> mapMasternodes = mnodeman.GetFullMasternodeMap();
+
+        QString masternodeoutpointStr = QString::fromStdString(wtx.Getmasternodeoutpoint());
+        std::string hashStr = masternodeoutpointStr.split("-").at(0).toStdString();
+        QString hashStr_Q = QString::fromStdString(hashStr);
+        int n = masternodeoutpointStr.split("-").at(1).toInt();
+        CMasternode node = mapMasternodes[COutPoint(uint256S(hashStr),(uint32_t)n)];
+
+        //find masternode address
+        BOOST_FOREACH(const CTxOut& txout, wtx.vout) {
+            if(txout.scriptPubKey.Find(OP_RETURN)){
+                // txNew.vout[n].scriptPubKey = scriptMsg;
+                QString scriptPubKeyStr =  QString::fromStdString(ScriptToAsmStr(txout.scriptPubKey)).split(" ").at(1);
+                QString indexN = scriptPubKeyStr.mid(8,8);
+                bool ok;
+                int n = indexN.toInt(&ok,16);
+                txnouttype type;
+                vector<CTxDestination> addresses;
+                int nRequired;
+                if (!ExtractDestinations(wtx.vout[n].scriptPubKey, type, addresses, nRequired)) {
+                    // out.push_back(Pair("type", GetTxnOutputType(type)));
+                    return;
+                }
+                BOOST_FOREACH(const CTxDestination& addr, addresses)
+                    wtx.Setmasternodeaddress(CMassGridAddress(addr).ToString());
+                break;
+            }
+        }
+
+        std::string strFilter = "";
+        for (auto& mnpair : mapMasternodes) {
+            // CMasternode mn = mnpair.second;
+            std::string strOutpoint = mnpair.first.ToStringShort();
+            std::string masternodeip = mnpair.second.addr.ToString();
+            if(wtx.Getmasternodeoutpoint() != strOutpoint)
+                continue;
+
+            wtx.Setmasternodeip(masternodeip);
+            wtx.Setorderstatus("0");
+            CWalletDB walletdb(wallet->strWalletFile);
+            wtx.WriteToDisk(&walletdb);         
         }
     }
 
@@ -101,7 +152,7 @@ public:
        Call with transaction that was added, removed or changed.
      */
     void updateWallet(const uint256 &hash, int status, bool showTransaction)
-    {
+    {        
         LOCK2(cs_main, wallet->cs_wallet);
         qDebug() << "DockerOrderTablePriv::updateWallet: " + QString::fromStdString(hash.ToString()) + " " + QString::number(status);
 
@@ -145,8 +196,10 @@ public:
                     break;
                 }
                 // Added -- insert at the right position
-                if(!mi->second.Getmasternodeaddress().size())
+                if(!mi->second.Getmasternodeoutpoint().size()){
                     return ;
+                }
+                
                 QList<DockerOrderRecord> toInsert =
                         DockerOrderRecord::decomposeTransaction(wallet, mi->second);
                 if(!toInsert.isEmpty()) /* only if something to insert */
@@ -579,6 +632,7 @@ QString DockerOrderTableModel::formatOrderStatus(const DockerOrderRecord *rec,co
         LogPrintf("No information available about transaction\n");
             return QString("NULL"); 
     }
+
     for (unsigned int i = 0; i < tx.vout.size(); i++) {
         const CTxOut& txout = tx.vout[i];
 
@@ -587,8 +641,8 @@ QString DockerOrderTableModel::formatOrderStatus(const DockerOrderRecord *rec,co
         int nRequired;
 
         if (!ExtractDestinations(txout.scriptPubKey, type, addresses, nRequired)) {
-            LogPrintf("Can't find vout address\n");
-            return QString("NULL"); 
+            // LogPrintf("Can't find vout address type:%d,nRequired:%d,txout n:%d\n",type,nRequired,i);
+            continue;
         }
 
         BOOST_FOREACH(const CTxDestination& addr, addresses){
@@ -607,6 +661,7 @@ QString DockerOrderTableModel::formatOrderStatus(const DockerOrderRecord *rec,co
             }
         }
     }
+    LogPrintf("Can't find vout address the order status is null\n");
     return QString("NULL"); 
 }
 

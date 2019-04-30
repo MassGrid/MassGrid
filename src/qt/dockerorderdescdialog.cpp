@@ -12,6 +12,7 @@
 #include <QFontMetrics>
 #include <QFont>
 #include <stdlib.h>
+#include <QDateTime>
 
 extern CWallet* pwalletMain;
 
@@ -76,8 +77,8 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
 {
     ui->label_serviceid->setText(QString::fromStdString(wtx.Getserviceid()));
     ui->label_verison->setText(QString::fromStdString(wtx.Getverison()));
-    ui->label_createtime->setText(QString::fromStdString(wtx.Getcreatetime()));
-    ui->label_deletetime->setText(QString::fromStdString(wtx.Getdeletetime()));
+    ui->label_createtime->setText(QDateTime::fromTime_t(atoi(wtx.Getcreatetime())).toString("yyyy-MM-dd hh:mm:ss"));
+    ui->label_deletetime->setText(QDateTime::fromTime_t(atoi(wtx.Getdeletetime())).toString("yyyy-MM-dd hh:mm:ss"));
 
     CAmount amount_int = (CAmount)QString::fromStdString(wtx.Getprice()).toDouble();
     QString amount = MassGridUnits::formatHtmlWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(), amount_int) + "/H";

@@ -477,7 +477,7 @@ void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
             case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
             case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
             case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
-                QString msg = tr("Transaction error:") + errStr +tr("the window will be close!");
+                QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
                 CMessageBox::information(this, tr("Create Failed"),msg);
                 close();
                 return ;
@@ -744,7 +744,7 @@ void AddDockerServiceDlg::initTableWidget()
 void AddDockerServiceDlg::loadResourceData()
 {
     std::map<Item,Value_price> items = dockercluster.dndata.items;
-     m_masterndoeAddr = dockercluster.dndata.masternodeAddress;
+    m_masterndoeAddr = dockercluster.dndata.masternodeAddress;
     std::map<Item,Value_price>::iterator iter = items.begin();
 
     ui->tableWidget_resource->setRowCount(0);
@@ -757,6 +757,7 @@ void AddDockerServiceDlg::loadResourceData()
     int count = 0;
 
     for(;iter != items.end();iter++){
+
         ui->tableWidget_resource->setRowCount(count+1);
         ResourceItem * item = new ResourceItem(ui->tableWidget_resource);
         QString amount = MassGridUnits::formatHtmlWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(), iter->second.price) + "/H";
