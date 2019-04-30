@@ -88,6 +88,10 @@ qrc_*.cpp
 # Qt creator
 *.pro.user
 
+#vscode
+.vscode
+.tx
+
 # Mac specific
 .DS_Store
 build
