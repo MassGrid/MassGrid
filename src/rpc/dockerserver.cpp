@@ -313,7 +313,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         for(auto it = mapMasternodes.begin();it!=mapMasternodes.end();++it){
             if(it->second.addr.ToString() == strAddr){
                 mnOutPoint = it->first.ToStringShort();
-                mnOutPointformat = strprintf("%s%016x", it->first.hash.ToString().substr(0,64), it->first.n);
+                mnOutPointformat = strprintf("%s%08x", it->first.hash.ToString().substr(0,64), it->first.n);
                 break;
             }
         }
