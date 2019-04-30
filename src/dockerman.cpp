@@ -25,6 +25,7 @@ void CDockerMan::UpdatePriceListFromNodelist(){
         LOCK(cs);
         nodelist = mapDockerNodeLists;
     }
+    priceList.clear();
     for(auto it=nodelist.begin();it!=nodelist.end();++it){
         if(it->second.isuseable == false || it->second.spec.role == Config::Role::ROLE_MANAGER)
             continue;
