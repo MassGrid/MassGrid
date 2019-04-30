@@ -14,7 +14,6 @@ https://www.massgrid.com
 ----------------
 * Coin Suffix: MGD
 * PoW Algorithm: JumpHash
-* PoW Period: 20,000 Network Initiation Blocks
 * PoW Median Target Spacing: 300 Seconds
 * PoW Difficulty Retarget: 288 Blocks
 * Full Confirmation: 6 Blocks
