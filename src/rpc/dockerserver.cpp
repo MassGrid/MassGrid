@@ -48,7 +48,7 @@ UniValue docker(const UniValue& params, bool fHelp)
 #ifdef ENABLE_WALLET
             strCommand != "create" && strCommand != "delete"  && strCommand != "sendtomasternode" &&
 #endif // ENABLE_WALLET
-            strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata" && strCommand != "gettransaction" && strCommand != "listprice" && strCommand != "listuntlementtx" && strCommand != "setprice"&& strCommand != "setdockerfee"))
+            strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata" && strCommand != "gettransaction" && strCommand != "listprice" && strCommand != "listuntlementtx" && strCommand != "settlement" && strCommand != "setprice"&& strCommand != "setdockerfee"))
             throw std::runtime_error(
                 "docker \"command\"...\n"
                 "Set of commands to execute docker related actions\n"
