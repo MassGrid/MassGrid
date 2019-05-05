@@ -714,8 +714,8 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         if(trustTime > prepareTime)
             trustTime = prepareTime;
         double payrate = (double)trustTime / prepareTime;
-        if(payrate < 0){
-            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payrate %lf < 0\n",payrate);
+        if(payrate < 0|| payrate >= 1.0){
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payrate %lf error\n",payrate);
             return TLEMENTSTATE::FAILEDREMOVE;
         }
         fnoCreated  |= (taskStatus >= Config::TASKSTATE_SHUTDOWN && trustTime<=180);
@@ -732,12 +732,16 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         {
             vecSend.clear();
             CAmount masternodeSend = payment * feeRate;
-            CAmount devSend = payment * 0.1;
-            while(devSend/(double)payment < 0.1){
+            double devRate = sporkManager.GetDeveloperPayment()/10000.0;
+            if( devRate < 0 || devRate >= 1) 
+                devRate = 0;
+            CAmount devSend = payment * devRate;
+            while(devSend/(double)payment < devRate){
                 devSend += payment * 0.001;
             }
-            payment -= masternodeSend;  //compute fee
-            payment -= devSend;  //compute fee
+            payment = payment - masternodeSend;  //compute fee
+
+            payment = payment - devSend;  //compute fee
 
             // provider
             CAmount providerSend = payment * payrate;
@@ -757,23 +761,25 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
             //masternode fee
             masternodeSend += payment;
             if(masternodeSend + devSend + providerSend + customerSend != pay){
-                LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,pay);
+                LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payment error masternodeSend %lld providerSend %lld customerSend %lld devSend %lld sumpayment %lld\n",masternodeSend, providerSend , customerSend ,devSend,pay);
                 return TLEMENTSTATE::FAILEDREMOVE;
             }
-            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld pay %lld feerate %lf trustTime %lld prepareTime %lld\n",masternodeSend, providerSend , customerSend ,pay,feeRate,trustTime,prepareTime);
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete masternodeSend %lld providerSend %lld customerSend %lld devSend %lld pay %lld feerate %lf payrate %lf trustTime %lld prepareTime %lld\n",masternodeSend, providerSend , customerSend ,devSend,pay,feeRate,payrate,trustTime,prepareTime);
             if(masternodeSend > CAmount(1000)){
                 CRecipient masternoderecipient = {feescriptPubKey, masternodeSend, false};
                 vecSend.push_back(masternoderecipient);
             }
-            if(devSend > CAmount(1000)){
-                CRecipient devrecipient = {devScriptPubKey, devSend, false};
-                vecSend.push_back(devrecipient);
-            }
+            
             for(auto it = vecSend.rbegin();it!= vecSend.rend();++it){
                 if(it->nAmount >= CENT){
                     it->fSubtractFeeFromAmount =true;
                     break;
                 }
+            }
+            // Miners'fees are deducted from other transactions.
+            if(devSend > CAmount(1000)){
+                CRecipient devrecipient = {devScriptPubKey, devSend, false};
+                vecSend.push_back(devrecipient);
             }       
         }
     }
