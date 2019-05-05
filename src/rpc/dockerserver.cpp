@@ -145,7 +145,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     {
         if (!masternodeSync.IsSynced())
             return "Need to Synced First";
-        if (params.size() != 14)
+        if (params.size() < 13)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
         std::string strAddr = params[1].get_str();
         if(!dockercluster.SetConnectDockerAddress(strAddr))
@@ -276,7 +276,8 @@ UniValue docker(const UniValue& params, bool fHelp)
         auto entries = dockerPriceConfig.getEntries();
         for(auto it = entries.begin();it!= entries.end();++it){
             if(type == it->getType() && name == it->getName()){
-                it->setPrice(strPrice);    
+                it->setPrice(strPrice);           
+                dockerPriceConfig.writeSave();    
                 return "modified " + it->getType() + " " +it->getName() + " " +std::to_string(it->getPrice());
             }
         }
