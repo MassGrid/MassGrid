@@ -85,12 +85,14 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "           }\n"
                 "   delete         - delete a docker service Arguments: \n"
                 "       1. \"dockernode (IP:Port)\" (string, required)\n"
-                "       2. \"txid (string, required)\n"
+                "       2. \"txid\" (string, required)\n"
                 "sendtomasternode  - send to masternode address: \n"
                 "       1. \"dockernode (IP:Port)\" (string, required)\n"
                 "       2. \"MassGrid address\"(string, required)\n"
                 "       3. \"amount\"(int, required)\n"
                 "masternode command:  "
+                "settlement        - set tlement a txid\n"
+                "       1. \"txid\" (string, required)\n"
                 "listuntlementtx   - list all untlement transactions\n"
                 "listprice         - list all service items price\n"
                 "setprice          - set item price\n"
@@ -99,16 +101,17 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "       3. \"price\"(double, required)\n"
                 "setdockerfee      - set docker masternode fee (0.01):\n"
                 "       1. \"price\" (percent(double), required)\n"
-                + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\" \"{\\\"ENV1\\\":\\\"value1\\\"}\"")
-                + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\"")
+                + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\" \"{\\\"ENV1\\\":\\\"value1\\\"}\"")
+                + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
                 + HelpExampleCli("docker", "sendtomasternode \"119.3.66.159:19443\" \"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\" 6.4")
+                + HelpExampleCli("docker", "settlement \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
                 + HelpExampleCli("docker", "listuntlementtx")
                 + HelpExampleCli("docker", "listprice")
                 + HelpExampleCli("docker", "setprice \"cpu intel_i3 0.8\"")
                 + HelpExampleCli("docker", "setdockerfee 0.01")
 #endif // ENABLE_WALLET
                 + HelpExampleCli("docker", "getdndata \"119.3.66.159:19443\"")
-                + HelpExampleCli("docker", "gettransaction \"119.3.66.159:19443\" \"1d1d4e24ed99057e84c3f80fd8fbec79ed9e1acee37da269356ecea000000000\"")
+                + HelpExampleCli("docker", "gettransaction \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
                 + HelpExampleCli("docker", "connect \"10.1.1.4\" \"240.0.0.0\" \"119.3.66.159\"")
                 + HelpExampleCli("docker", "disconnect")
                 );
@@ -246,6 +249,20 @@ UniValue docker(const UniValue& params, bool fHelp)
         for(const auto& tx :setWallet)
             varr.push_back(tx->GetHash().ToString());
         return varr;
+    }
+    if(strCommand == "settlement"){
+        if (!fDockerNode)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+        if (params.size() != 2)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
+        std::string strtxid = params[1].get_str();
+        uint256 txid = uint256S(strtxid);
+        if (!pwalletMain->mapWallet.count(txid)){
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available about transaction");
+        }
+        CWalletTx& wtx = pwalletMain->mapWallet[txid];  //watch only not check
+        timerModule.UpdateSet(wtx);
+        return "insert successful ";
     }
     if(strCommand == "listprice"){
         if (!fDockerNode)
