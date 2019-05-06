@@ -75,7 +75,7 @@ bool Cluster::SetConnectDockerAddr(std::string address_port)
     }
     return true;
 }
-void Cluster::AskForTransData(std::string txid)
+void Cluster::AskForTransData(std::string txid,bool isAskAll)
 {
     LogPrint("dockernode","Cluster::AskForTransData Started\n");
     if(!connectNode) return;
@@ -84,6 +84,9 @@ void Cluster::AskForTransData(std::string txid)
     DockerGetTranData dockerDtData;
     dockerDtData.sigTime=GetAdjustedTime();
     dockerDtData.txid=uint256S(txid);
+    if(isAskAll){
+        dockerDtData.askCode=DockerGetTranData::ASKALL;
+    }
     g_connman->PushMessage(connectNode, NetMsgType::GETTRANS, dockerDtData);
 }
 bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){

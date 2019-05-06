@@ -7,6 +7,7 @@
 #include "net.h"
 #include "key.h"
 #include <vector>
+#include <map>
 #include <dockerservice.h>
 #include <dockertask.h>
 #include "base58.h"
@@ -131,23 +132,32 @@ public:
 };
 class DockerGetTranData{
 public:
+    enum TRANDATATYPE{
+        DEFAULT = 0,
+        ASKALL
+    };
+public:
     int64_t version = DOCKERREQUEST_API_VERSION;
     int64_t sigTime{0};
     uint256 txid;
+    int askCode=TRANDATATYPE::DEFAULT;
+
 public:
     DockerGetTranData() = default;
-    DockerGetTranData(int64_t _sigTime,uint256 _txid,int64_t _version=DOCKERREQUEST_API_VERSION):
-                    txid(_txid),sigTime(_sigTime),version(_version){};
+    DockerGetTranData(int64_t _sigTime,uint256 _txid,int _askCode=TRANDATATYPE::DEFAULT,int64_t _version=DOCKERREQUEST_API_VERSION):
+                    txid(_txid),sigTime(_sigTime),askCode(_askCode),version(_version){};
     DockerGetTranData(const DockerGetTranData& from){
         version=from.version;
         sigTime=from.sigTime;
         txid=from.txid;
+        askCode=from.askCode;
     }
 
     DockerGetTranData& operator = (DockerGetTranData const& from){
         version=from.version;
         sigTime=from.sigTime;
         txid=from.txid;
+        askCode=from.askCode;
         return *this;
     }
     ADD_SERIALIZE_METHODS;
@@ -156,6 +166,7 @@ public:
         READWRITE(version);
         READWRITE(sigTime);
         READWRITE(txid);
+        READWRITE(askCode);
     }
     uint256 GetHash() const
     {
@@ -163,6 +174,7 @@ public:
         ss << version;
         ss << sigTime;
         ss << txid;
+        ss << askCode;
         return ss.GetHash();
     }
 };
@@ -183,14 +195,15 @@ public:
     int errCode{};
     std::string taskStatus;
     uint256 tlementtxid;
+    std::map<std::string,std::string> extData;
     int msgStatus=TASKDTDATA::DEFAULT;
     
 public:
     DockerTransData() = default;
     DockerTransData(int64_t _sigTime,uint256 _txid,int64_t _deleteTime,double _feeRate,int _errCode,
-            std::string _taskStatus,uint256 _tlementtxid,int _msgStatus,int64_t _version=DOCKERREQUEST_API_VERSION):
+            std::string _taskStatus,uint256 _tlementtxid,std::map<std::string,std::string>_extData,int _msgStatus,int64_t _version=DOCKERREQUEST_API_VERSION):
             txid(_txid),sigTime(_sigTime),deleteTime(_deleteTime),feeRate(_feeRate),errCode(_errCode),taskStatus(_taskStatus),
-            tlementtxid(_tlementtxid),msgStatus(_msgStatus),version(_version){};
+            tlementtxid(_tlementtxid),extData(_extData),msgStatus(_msgStatus),version(_version){};
     DockerTransData(const DockerTransData& from){
         version=from.version;
         sigTime=from.sigTime;
@@ -200,6 +213,7 @@ public:
         errCode=from.errCode;
         taskStatus=from.taskStatus;
         tlementtxid=from.tlementtxid;
+        extData=from.extData;
         msgStatus=from.msgStatus;
     }
 
@@ -212,6 +226,7 @@ public:
         errCode=from.errCode;
         taskStatus=from.taskStatus;
         tlementtxid=from.tlementtxid;
+        extData=from.extData;
         msgStatus=from.msgStatus;
         return *this;
     }
@@ -226,6 +241,7 @@ public:
         READWRITE(errCode);
         READWRITE(taskStatus);
         READWRITE(tlementtxid);
+        READWRITE(extData);
         READWRITE(msgStatus);
     }
     uint256 GetHash() const
@@ -239,6 +255,7 @@ public:
         ss << errCode;
         ss << taskStatus;
         ss << tlementtxid;
+        ss << extData;
         ss << msgStatus;
         return ss.GetHash();
     }
@@ -252,6 +269,7 @@ public:
         errCode=0;
         taskStatus="";
         tlementtxid.SetNull();
+        extData.clear();
         msgStatus=TASKDTDATA::DEFAULT;
     }
 };

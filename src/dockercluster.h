@@ -41,7 +41,7 @@ public:
 
     //get dockertransaction
     bool SetConnectDockerAddr(std::string address_port);
-    void AskForTransData(std::string txid);
+    void AskForTransData(std::string txid,bool isAskAll=false);
 
 };
 #endif  //DOCKERCLUSTER_H

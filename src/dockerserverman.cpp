@@ -176,7 +176,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
         DockerTransData dockerTransData;
         if(CheckAndGetTransaction(dtdata,dockerTransData.errCode)){
-            CWalletTx& wtx = pwalletMain->mapWallet[dtdata.txid];  //watch only not check
+            CWalletTx wtx = pwalletMain->mapWallet[dtdata.txid];  //watch only not check
             if(wtx.HasTlemented()){
                 dockerTransData.sigTime = GetAdjustedTime();
                 std::string feerate= wtx.Getfeerate();            
@@ -191,6 +191,58 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
                     dockerTransData.tlementtxid = uint256();
                 else
                     dockerTransData.tlementtxid = uint256S(tlementtxid);
+                if(dtdata.askCode == DockerGetTranData::ASKALL){
+                    std::string createtime=wtx.Getcreatetime();
+                    if(!createtime.empty()) 
+                        dockerTransData.extData["createtime"] = createtime;
+
+                    std::string custeraddress=wtx.Getcusteraddress();
+                    if(!custeraddress.empty()) 
+                        dockerTransData.extData["custeraddress"] = custeraddress;
+
+                    std::string provideraddress=wtx.Getprovideraddress();
+                    if(!provideraddress.empty()) 
+                        dockerTransData.extData["provideraddress"] = provideraddress;
+                    
+                    std::string masternodeaddress=wtx.Getmasternodeaddress();
+                    if(!masternodeaddress.empty()) 
+                        dockerTransData.extData["masternodeaddress"] = masternodeaddress;
+                    
+                    std::string serviceid = wtx.Getserviceid();
+                    if(!serviceid.empty()) 
+                        dockerTransData.extData["serviceid"] = serviceid;
+                    
+                    std::string version = wtx.Getverison();
+                    if(!version.empty()) 
+                        dockerTransData.extData["verison"] = version;
+
+                    std::string price = wtx.Getprice();
+                    if(!price.empty()) dockerTransData.extData["price"] = price;
+                    
+                    std::string gpucount = wtx.Getgpucount();
+                    if(!gpucount.empty()) 
+                        dockerTransData.extData["gpucount"] = gpucount;
+
+                    std::string gpuname = wtx.Getgpuname();
+                    if(!gpuname.empty()) 
+                        dockerTransData.extData["gpuname"] = gpuname;
+
+                    std::string cpucount=wtx.Getcpucount();
+                    if(!cpucount.empty()) 
+                        dockerTransData.extData["cpucount"]=cpucount;
+
+                    std::string cpuname = wtx.Getcpuname();
+                    if(!cpuname.empty()) 
+                        dockerTransData.extData["cpuname"] = cpuname;
+
+                    std::string memcount = wtx.Getmemcount();
+                    if(!memcount.empty()) 
+                        dockerTransData.extData["memcount"] = memcount;
+
+                    std::string memname = wtx.Getmemname();
+                    if(!memname.empty()) 
+                        dockerTransData.extData["memname"] = memname;
+                }
                 dockerTransData.msgStatus = TASKDTDATA::SUCCESS;
             }else{
                 dockerTransData.errCode =SERVICEMANCODE::NO_THRANSACTION;
@@ -227,6 +279,34 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
                 wtx.Settaskstate(std::to_string(dockerTransData.errCode));
                 wtx.Settaskstatuscode(dockerTransData.taskStatus);
                 wtx.Settlementtxid(dockerTransData.tlementtxid.ToString());
+                for(auto &it: dockerTransData.extData){
+                    if(it.first == "createtime") 
+                        wtx.Setcreatetime(it.second);
+                    else if(it.first == "custeraddress") 
+                        wtx.Setcusteraddress(it.second);
+                    else if(it.first == "provideraddress") 
+                        wtx.Setprovideraddress(it.second);
+                    else if(it.first == "masternodeaddress") 
+                        wtx.Setmasternodeaddress(it.second);
+                    else if(it.first == "serviceid") 
+                        wtx.Setserviceid(it.second);
+                    else if(it.first == "verison") 
+                        wtx.Setverison(it.second);
+                    else if(it.first == "price") 
+                        wtx.Setprice(it.second);
+                    else if(it.first == "gpucount") 
+                        wtx.Setgpucount(it.second);
+                    else if(it.first == "gpuname") 
+                        wtx.Setgpuname(it.second);
+                    else if(it.first == "memcount") 
+                        wtx.Setmemcount(it.second);
+                    else if(it.first == "memname") 
+                        wtx.Setmemname(it.second);
+                    else if(it.first == "cpuname") 
+                        wtx.Setcpuname(it.second);
+                    else if(it.first == "cpucount") 
+                        wtx.Setcpucount(it.second);
+                }
             }
             CWalletDB walletdb(pwalletMain->strWalletFile);
             wtx.WriteToDisk(&walletdb);
