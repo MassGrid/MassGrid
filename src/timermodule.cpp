@@ -125,7 +125,7 @@ void ThreadTimeModule()
             }
             count=(count+1)%(360*12); // 12 hours
 
-            if(count % 180 ==0){ // 30 mins
+            if(count % 60 ==0){ // 10 mins
                 timerModule.CheckMiner();
             }
         }
