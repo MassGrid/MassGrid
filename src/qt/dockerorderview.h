@@ -111,9 +111,11 @@ private:
 
     virtual void resizeEvent(QResizeEvent* event);
     bool eventFilter(QObject *obj, QEvent *event);
-    void updateTransData(QString txid);
+    void updateTransData(QString txid,bool isAskAll);
     void stopAndDeleteSyncThread();
-
+    void addTransTask(const std::string& txidStr);
+    bool updateOrderStatus(const std::string&)const;
+ 
 private Q_SLOTS:
     void contextualMenu(const QPoint &);
     void dateRangeChanged();
@@ -155,7 +157,7 @@ public Q_SLOTS:
     void computeSum();
     void deleteService();
     void slot_btnClicked();
-    bool updateOrderStatus(const std::string&)const;
+    void updateOrder(const std::string&);
     void addOperationBtn(int)const;
     void deleteTransaction(int)const;
     void updateAllOperationBtn();
@@ -172,20 +174,21 @@ public:
     explicit SyncTransactionHistoryThread(QObject *parent = 0);
     ~SyncTransactionHistoryThread();
 
-    void addTask(const QString& txid);
+    void addTask(const QString& txid,bool isAskAll);
     void setNeedWork(bool type);
 
 private:
     bool m_isNeedWork = true;
-    QList<QString> m_taskList;
+    // QList<QString> m_taskList;
+    QList<QPair<QString,bool>> m_taskList;
 
     QWaitCondition m_wait;
     QMutex m_mutex;
 
 private:
     bool isNeedWork();
-    bool popTask(QString& txid);
-    bool doTask(const QString& txid);
+    bool popTask(QString& txid,bool& isAskAll);
+    bool doTask(const QString& txid,bool isAskAll);
 
 protected:
     void run();

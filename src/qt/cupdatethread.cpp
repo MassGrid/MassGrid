@@ -5,6 +5,7 @@
 #include <QEventLoop>
 #include <QNetworkReply>
 #include <QJsonDocument>
+#include <QJsonArray>
 
 #define CHECKOUTURL "https://www.massgrid.com/assets/download/pcupdate.json"
 
@@ -27,6 +28,28 @@ void CUpdateThread::stopThread()
 void CUpdateThread::ChecketUpdate(bool& needUpdate,QString& version,bool& stopMiner)
 {
     while(!getSoftUpdate(needUpdate, version,stopMiner));
+}
+
+bool CUpdateThread::getImages(QStringList& images)
+{
+    int count = 0;
+    while(!getImagesData(images)){
+        if(count++ > 3){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+}
+
+bool CUpdateThread::getImagesData(QStringList& images)
+{
+    CNetwork network;
+    QByteArray retStr=network.network_get(CHECKOUTURL);
+
+    bool parseFlag = parseImageJson(retStr,images);
+    return parseFlag;
 }
 
 void CUpdateThread::run()
@@ -123,6 +146,46 @@ bool CUpdateThread::parseJson(const QByteArray &json,bool& needUpdate,QString& v
         stopMiner = flag;
         return true;
     }
+    //error:data is null
+    return false;
+}
+
+bool CUpdateThread::parseImageJson(const QByteArray &json,QStringList& images)
+{
+    QJsonParseError jsonError;
+    QJsonDocument docment = QJsonDocument::fromJson(json, &jsonError);
+
+    if(docment.isNull() || !docment.isObject()){
+        return false;
+    }
+
+    QJsonObject doc_object = docment.object();
+    // QJsonObject info_object = doc_object.value("info").toObject();
+    // needUpdate = doc_object.value("needUpdate").toBool();
+    // QString versionStr = info_object.value("version").toString();
+    QJsonArray images_array = doc_object.value("images").toArray();
+
+    if(images_array.isEmpty()){
+        return false;
+    }
+    else{
+        int size = images_array.size();
+        for(int i=0;i<size;i++){
+            images.append(images_array.at(i).toString());
+        }
+        
+        return true;
+    }
+
+    // if(versionStr.isEmpty()){
+    //     return false;
+    // }
+    // else{
+    //     bool flag = info_object.value("stopMining").toBool();
+    //     version = versionStr;
+    //     stopMiner = flag;
+    //     return true;
+    // }
     //error:data is null
     return false;
 }

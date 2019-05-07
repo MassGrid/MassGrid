@@ -27,6 +27,7 @@
 #include <QStringList>
 #include <QEventLoop>
 #include <QStyleFactory>
+#include "cupdatethread.h"
 
 #define LOADRESOURCETIMEOUT 30
 
@@ -434,8 +435,6 @@ bool AddDockerServiceDlg::createDockerService()
 
     m_createService.image = strServiceImage;
 
-    LogPrintf("---->pwalletMain->mapWallet.count(delService.txid):%d\n",pwalletMain->mapWallet.count(m_createService.txid));
-
     // std::string strn2n_Community = ui->lineEdit_n2n_name->text().toStdString().c_str();
     m_createService.n2n_community = "massgridn2n"; //strn2n_Community;
     if(!dockercluster.CreateAndSendSeriveSpec(m_createService)){
@@ -698,20 +697,9 @@ void AddDockerServiceDlg::updateServiceListFinished(bool isTaskFinished)
 
 void AddDockerServiceDlg::refreshServerList()
 {
-    // static int refreshCount = 0 ;
-
-    // if(dockerServerman.getDNDataStatus() == CDockerServerman::Ask){
-    //     QTimer::singleShot(2000,this,SLOT(refreshServerList()));
-    //     LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Ask\n");
-    //     return ;
-    // }
-    // else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
-    //         dockerServerman.getDNDataStatus() == CDockerServerman::Free){
-        loadResourceData();
-        LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Received\n");
-        hideLoadingWin();
-    //     return ;
-    // }
+    loadResourceData();
+    LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Received\n");
+    hideLoadingWin();
 }
 
 void AddDockerServiceDlg::filterResource(std::string txid)
@@ -743,6 +731,15 @@ void AddDockerServiceDlg::initTableWidget()
 
 void AddDockerServiceDlg::loadResourceData()
 {
+    QStringList images;
+    CUpdateThread::getImagesData(images);
+
+    if(images.size()){
+        ui->comboBox_image->clear();
+    }
+
+    ui->comboBox_image->addItems(images);
+
     std::map<Item,Value_price> items = dockercluster.dndata.items;
     m_masterndoeAddr = dockercluster.dndata.masternodeAddress;
     std::map<Item,Value_price>::iterator iter = items.begin();

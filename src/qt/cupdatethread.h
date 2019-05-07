@@ -22,6 +22,9 @@ public:
     static void ChecketUpdate(bool& needUpdate,QString& version,bool& stopMiner);
     static bool getSoftUpdate(bool& needUpdate,QString& version,bool& stopMiner);
     static bool parseJson(const QByteArray& json,bool& needUpdate,QString& version,bool& stopMiner);
+    static bool getImages(QStringList& images);
+    static bool getImagesData(QStringList& images);
+    static bool parseImageJson(const QByteArray &json,QStringList& images);
 private:
     bool m_stopThread;
 

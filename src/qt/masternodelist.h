@@ -46,6 +46,17 @@ public:
         WhenNormal
     };
 
+    enum MoasternodeColumnIndex {
+        Address = 0,
+        Protocol = 1,
+        Status = 2,
+        Active = 3,
+        LastSeen = 4,
+        Pubkey = 5,
+        ActiveCount = 6,
+        JoinToken = 7
+    };
+
     void setClientModel(ClientModel *clientModel);
     void setWalletModel(WalletModel *walletModel);
     void StartAlias(std::string strAlias);

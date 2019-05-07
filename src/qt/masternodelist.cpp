@@ -80,9 +80,13 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->tableWidgetMyMasternodes->setColumnWidth(4, columnActiveWidth);
     ui->tableWidgetMyMasternodes->setColumnWidth(5, columnLastSeenWidth);
 
-    ui->tableWidgetMasternodes->hideColumn(5);
-    ui->tableWidgetMasternodes->hideColumn(7);
+    ui->tableWidgetMasternodes->hideColumn(MasternodeList::Pubkey);
+    ui->tableWidgetMasternodes->hideColumn(MasternodeList::JoinToken);
+
     ui->tableWidgetMasternodes->verticalHeader()->setVisible(false); 
+
+    ui->tableWidgetMasternodes->setSortingEnabled(true);
+    ui->tableWidgetMasternodes->sortByColumn(MasternodeList::ActiveCount, Qt::DescendingOrder);
 
     ui->serviceTableWidget->setColumnWidth(0, 150);
     ui->serviceTableWidget->setColumnWidth(1, 100);
@@ -149,24 +153,22 @@ void MasternodeList::resizeEvent(QResizeEvent *event)
 
 void MasternodeList::resetTableWidgetTitle()
 {
-    int itemwidth2 = ui->tableWidgetMasternodes->width()/6;
-    ui->tableWidgetMasternodes->setColumnWidth(0, itemwidth2);
-    ui->tableWidgetMasternodes->setColumnWidth(1, itemwidth2);
-    ui->tableWidgetMasternodes->setColumnWidth(2, itemwidth2);
-    ui->tableWidgetMasternodes->setColumnWidth(3, itemwidth2);
-    ui->tableWidgetMasternodes->setColumnWidth(4, itemwidth2);
-    ui->tableWidgetMasternodes->setColumnWidth(5, itemwidth2);
-    ui->tableWidgetMasternodes->setColumnWidth(6, itemwidth2);
-    ui->tableWidgetMasternodes->setColumnWidth(7, itemwidth2);
-    ui->tableWidgetMasternodes->hideColumn(5);
-    ui->tableWidgetMasternodes->hideColumn(7);
+    int itemwidth = ui->tableWidgetMasternodes->width()/6;
+    int columnCount = ui->tableWidgetMasternodes->columnCount();
 
-    int itemwidth3 = ui->serviceTableWidget->width()/5;
-    ui->serviceTableWidget->setColumnWidth(0, itemwidth3);
-    ui->serviceTableWidget->setColumnWidth(1, itemwidth3);
-    ui->serviceTableWidget->setColumnWidth(2, itemwidth3);
-    ui->serviceTableWidget->setColumnWidth(3, itemwidth3);
-    ui->serviceTableWidget->setColumnWidth(4, itemwidth3);
+    for(int i=0;i<columnCount;i++){
+        ui->tableWidgetMasternodes->setColumnWidth(i, itemwidth);
+    }
+
+    ui->tableWidgetMasternodes->hideColumn(MasternodeList::Pubkey);
+    ui->tableWidgetMasternodes->hideColumn(MasternodeList::JoinToken);
+
+    itemwidth = ui->serviceTableWidget->width()/5;
+    columnCount = ui->serviceTableWidget->columnCount();
+
+    for(int i=0;i<columnCount;i++){
+        ui->serviceTableWidget->setColumnWidth(i, itemwidth);
+    }
 }
 
 void MasternodeList::setClientModel(ClientModel *model)
@@ -428,14 +430,15 @@ void MasternodeList::updateNodeList()
         }
 
         ui->tableWidgetMasternodes->insertRow(0);
-        ui->tableWidgetMasternodes->setItem(0, 0, addressItem);
-        ui->tableWidgetMasternodes->setItem(0, 1, protocolItem);
-        ui->tableWidgetMasternodes->setItem(0, 2, statusItem);
-        ui->tableWidgetMasternodes->setItem(0, 3, activeSecondsItem);
-        ui->tableWidgetMasternodes->setItem(0, 4, lastSeenItem);
-        ui->tableWidgetMasternodes->setItem(0, 5, pubkeyItem);
-        ui->tableWidgetMasternodes->setItem(0, 6, nodeCount);
-        ui->tableWidgetMasternodes->setItem(0, 7, joinToken); 
+        ui->tableWidgetMasternodes->setItem(0, MasternodeList::Address, addressItem);
+        ui->tableWidgetMasternodes->setItem(0, MasternodeList::Protocol, protocolItem);
+        ui->tableWidgetMasternodes->setItem(0, MasternodeList::Status, statusItem);
+        ui->tableWidgetMasternodes->setItem(0, MasternodeList::Active, activeSecondsItem);
+        ui->tableWidgetMasternodes->setItem(0, MasternodeList::LastSeen, lastSeenItem);
+        ui->tableWidgetMasternodes->setItem(0, MasternodeList::Pubkey, pubkeyItem);
+        ui->tableWidgetMasternodes->setItem(0, MasternodeList::ActiveCount, nodeCount);
+        ui->tableWidgetMasternodes->setItem(0, MasternodeList::JoinToken, joinToken); 
+
         for(int i=0;i<8;i++)
             ui->tableWidgetMasternodes->item(0,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
     }
@@ -706,7 +709,6 @@ void MasternodeList::loadServerDetail(QModelIndex index)
         ui->deleteServiceBtn->setEnabled(true);
         switchButton->setEnabled(true);
     }
-    // QTimer::singleShot(10000,this,SLOT(disenableDeleteServiceBtn()));
 }
 
 void MasternodeList::disenableDeleteServiceBtn()

@@ -212,11 +212,10 @@ void DockerOrderView::setSearchWidget(QComboBox* dateComboBox,QComboBox* typeCom
     typeWidget->addItem(tr("Mined"), DockerOrderFilterProxy::TYPE(DockerOrderRecord::Generated));
     typeWidget->addItem(tr("Other"), DockerOrderFilterProxy::TYPE(DockerOrderRecord::Other));
 
-
-
 #if QT_VERSION >= 0x040700
     addrLineEdit->setPlaceholderText(tr("Enter address or label to search"));
 #endif
+
 }
 void DockerOrderView::setModel(WalletModel *model)
 {
@@ -276,7 +275,7 @@ void DockerOrderView::setModel(WalletModel *model)
         connect(model, SIGNAL(notifyWatchonlyChanged(bool)), this, SLOT(updateWatchOnlyColumn(bool)));
 
         connect(model->getDockerOrderTableModel(),SIGNAL(updateOrderStatus(const std::string&)),
-                    this,SLOT(updateOrderStatus(const std::string&)));
+                    this,SLOT(updateOrder(const std::string&)));
 
         connect(model->getDockerOrderTableModel(),SIGNAL(addOperationBtn(int)),this,SLOT(addOperationBtn(int)));
         connect(model->getDockerOrderTableModel(),SIGNAL(deleteTransaction(int)),this,SLOT(addOperationBtn(int)));
@@ -331,9 +330,31 @@ void DockerOrderView::updateAllOperationBtn()
     int count = dockerorderView->model()->rowCount();
     for(int i=0;i<count;i++){
         std::string txidStr = dockerorderView->model()->index(i,DockerOrderTableModel::TxID).data().toString().toStdString();
-        bool isNeedUpdateTD = updateOrderStatus(txidStr);
-        if(isNeedUpdateTD)
-            updateTransData(QString::fromStdString(txidStr));
+        // bool isNeedUpdateTD = updateOrderStatus(txidStr);
+
+        // if(isNeedUpdateTD){
+        //     addTransTask(txidStr);
+        // }
+        updateOrder(txidStr);
+    }
+}
+
+void DockerOrderView::addTransTask(const std::string& txidStr)
+{
+    CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
+    bool isAskAll = false;
+    if(!wtx.Gettlementtxid().size())
+        isAskAll = true;
+
+    updateTransData(QString::fromStdString(txidStr),isAskAll);
+}
+
+void DockerOrderView::updateOrder(const std::string &txidStr)
+{
+    bool isNeedUpdateTD = updateOrderStatus(txidStr);
+
+    if(isNeedUpdateTD){
+        addTransTask(txidStr);
     }
 }
 
@@ -345,10 +366,6 @@ bool DockerOrderView::updateOrderStatus(const std::string &txidStr)const
     QString btnText;
     bool isNeedUpdateTD = getOrderBtnText(wtx,btnText);
     btn->setText(btnText);
-    
-    if(isNeedUpdateTD){
-        LogPrintf("DockerOrderView::updateOrderStatus updateTransData:%s\n",txidStr);
-    }
 
     return isNeedUpdateTD;
 }
@@ -861,7 +878,7 @@ void DockerOrderView::updateWatchOnlyColumn(bool fHaveWatchOnly)
     dockerorderView->setColumnHidden(DockerOrderTableModel::Watchonly, !fHaveWatchOnly);
 }
 
-void DockerOrderView::updateTransData(QString txid)
+void DockerOrderView::updateTransData(QString txid,bool isAskAll)
 {
     if(m_syncTransactionThread == NULL){
         m_syncTransactionThread = new SyncTransactionHistoryThread(0);
@@ -869,7 +886,7 @@ void DockerOrderView::updateTransData(QString txid)
 
         m_syncTransactionThread->start();
     }
-    m_syncTransactionThread->addTask(txid);
+    m_syncTransactionThread->addTask(txid,isAskAll);
 }
 
 void DockerOrderView::updateTransactionHistoryData(const QString& txid,bool sucess)
@@ -884,7 +901,7 @@ void DockerOrderView::stopAndDeleteSyncThread()
         QEventLoop loop;
         connect(m_syncTransactionThread,SIGNAL(syncThreadFinished()),&loop,SLOT(quit()));
         m_syncTransactionThread->setNeedWork(false);
-        m_syncTransactionThread->addTask("");
+        m_syncTransactionThread->addTask("",false);
         loop.exec();
     }
     if(m_syncTransactionThread != NULL){
@@ -904,10 +921,14 @@ SyncTransactionHistoryThread::~SyncTransactionHistoryThread()
 
 }
 
-void SyncTransactionHistoryThread::addTask(const QString& txid)
+void SyncTransactionHistoryThread::addTask(const QString& txid,bool isAskAll)
 {
-    if(!m_taskList.count(txid) && !txid.isEmpty())
-        m_taskList.append(txid);
+    QPair<QString,bool> pair;
+    pair.first = txid;
+    pair.second = isAskAll;
+
+    if(!m_taskList.count(pair) && !txid.isEmpty())
+        m_taskList.append(pair);
     m_wait.wakeOne();
 }
 
@@ -923,31 +944,32 @@ bool SyncTransactionHistoryThread::isNeedWork()
     return m_isNeedWork;
 }
 
-bool SyncTransactionHistoryThread::popTask(QString& txid)
+bool SyncTransactionHistoryThread::popTask(QString& txid,bool & isAskAll)
 {
+    isAskAll = false;
     if(m_taskList.size() > 0){
-        txid = m_taskList.at(0);
+        txid = m_taskList.at(0).first;
+        isAskAll = m_taskList.at(0).second;
         m_taskList.removeAt(0);
         return true;
     }
     return false;
 }
 
-bool SyncTransactionHistoryThread::doTask(const QString& txid)
+bool SyncTransactionHistoryThread::doTask(const QString& txid,bool isAskAll)
 {
+
     std::string txidStr = txid.toStdString();
-    // std::string ip_port = "118.25.224.128:19443";
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not chec
     std::string ip_port = wtx.Getmasternodeip();
 
     if(!dockercluster.SetConnectDockerAddress(ip_port) || !dockercluster.ProcessDockernodeConnections()){
-        // CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
         LogPrintf("SyncTransactionHistoryThread connect to docker failed!\n");
         return false;
     }
     dockerServerman.setTRANSDataStatus(CDockerServerman::AskTD);
     int updateCountMsec = 0;
-    dockercluster.AskForTransData(txidStr);
+    dockercluster.AskForTransData(txidStr,isAskAll);
     while(true){
         CDockerServerman::TRANSDATASTATUS status = dockerServerman.getTRANSDataStatus();
         if(status == CDockerServerman::ReceivedTD)
@@ -962,10 +984,11 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid)
 void SyncTransactionHistoryThread::run()
 {
     QString txid;
+    bool isAskAll;
     while(isNeedWork()){
         QMutexLocker locker(&m_mutex);
-        if(popTask(txid)){
-            bool sucess = doTask(txid);
+        if(popTask(txid,isAskAll)){
+            bool sucess = doTask(txid,isAskAll);
             Q_EMIT syncTaskEnd(txid,sucess);
         }
         else{
