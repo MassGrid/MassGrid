@@ -677,14 +677,14 @@ bool CDockerMan::UpdateService(std::string serviceid){
     LogPrint("docker","CDockerMan::UpdateService Succcessful\n");
     return true;
 }
-uint64_t CDockerMan::GetDockerNodeCount(){
-    uint64_t actnode = GetDockerNodeActiveCount()-GetDockerServiceCount()-1;
+uint64_t CDockerMan::GetDockerNodeActiveCount(){
+    uint64_t actnode = GetDockerNodeCount()-GetDockerServiceCount()-1;
     if(actnode < 0) return 0;
     return actnode;
 }
-uint64_t CDockerMan::GetDockerNodeActiveCount(){
+uint64_t CDockerMan::GetDockerNodeCount(){
     uint64_t count = 0;
-    for(map<std::string,Node>::iterator it=mapDockerNodeLists.begin();it!=mapDockerNodeLists.end();++it){
+    for(map<std::string,Node>::iterator it = mapDockerNodeLists.begin();it != mapDockerNodeLists.end();++it){
         if(it->second.status.state == Config::NodeStatusState::NODESTATUSSTATE_READY)
             ++count;
     }
@@ -696,7 +696,7 @@ uint64_t CDockerMan::GetDockerServiceCount(){
         LOCK(cs);
         serviceList = mapDockerServiceLists;
     }
-    int64_t serviceSize=0;
+    uint64_t serviceSize=0;
     for(auto &servicelist: serviceList){
         auto labels = servicelist.second.spec.labels;
         if(labels.find("com.massgrid.miner") == labels.end()){
@@ -706,7 +706,7 @@ uint64_t CDockerMan::GetDockerServiceCount(){
     return serviceSize;
 }
 uint64_t CDockerMan::GetDockerTaskCount(){
-    int size=0;
+    uint64_t size=0;
     for(auto it = mapDockerServiceLists.begin();it != mapDockerServiceLists.end();++it ){
         size += it->second.mapDockerTaskLists.size();
     }
