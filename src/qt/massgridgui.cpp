@@ -82,6 +82,16 @@
 #include <QUrlQuery>
 #endif
 
+#define WINWIDTH 800.00
+#define WINHEIGHT 600.00
+
+
+#ifdef Q_OS_MAC
+#define DPIRATIO 72
+#else
+#define DPIRATIO 96
+#endif
+
 QPoint m_winPos;
 QSize m_winSize;
 
@@ -337,16 +347,9 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
     // resize(850,650);
 
     QScreen* screen = qApp->primaryScreen();
-    int dpi = screen->logicalDotsPerInch()/72;
+    int dpi = screen->logicalDotsPerInch()/DPIRATIO;
 
-    // int winWidth =
-    // 系数 =  width / height;
-    // if width/height > 系数 : width = height*系数
-    // int minwidth = 850;
-    // int minheight = 550;
-    // qreal coefficient = minwidth/minheight;
-
-    GUIUtil::restoreWindowGeometry("nWindow", QSize(850*dpi, 550*dpi), this);
+    GUIUtil::restoreWindowGeometry("nWindow", QSize(WINWIDTH*dpi, WINHEIGHT*dpi), this);
 
     m_winPos = this->pos();
     m_winSize = this->size();

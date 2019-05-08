@@ -939,6 +939,7 @@ void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, 
 
     parent->resize(size);
     parent->move(pos);
+    LogPrintf("=====>first restoreWindowGeometry width:%d,height:%d\n",parent->width(),parent->height());
 
     // if ((!pos.x() && !pos.y()) || (QApplication::desktop()->screenNumber(parent) == -1))
     if(true)
@@ -947,8 +948,11 @@ void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, 
         QPoint defaultPos = screen.center() -
             QPoint(defaultSize.width() / 2, defaultSize.height() / 2);
         parent->resize(defaultSize);
+
+        LogPrintf("=====>restoreWindowGeometry defaultSize width:%d,defaultSize height:%d\n",defaultSize.width(),defaultSize.height());
         parent->move(defaultPos);
     }
+    LogPrintf("=====>end restoreWindowGeometry width:%d,height:%d\n",parent->width(),parent->height());
 }
 
 void setClipboard(const QString& str)
