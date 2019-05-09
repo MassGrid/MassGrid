@@ -37,7 +37,6 @@
 #include "dockerorderview.h"
 #include "transactionview.h"
 #include "optionsmodel.h"
-
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
 #define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
 
@@ -829,7 +828,7 @@ void MasternodeList::askDNData()
 void MasternodeList::clearDockerDetail()
 {
     ui->deleteServiceBtn->setEnabled(false);
-    switchButton->setEnabled(false);
+    updateEdgeStatus(0);
     ui->serviceTableWidget->setRowCount(0);
 }
 

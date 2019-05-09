@@ -82,6 +82,8 @@ extern double NSAppKitVersionNumber;
 #endif
 #endif
 
+#define g_qss_marker '@'
+
 QString DefaultReceiveAddr;
 qreal DPIValue;
 namespace GUIUtil {
@@ -1125,7 +1127,7 @@ QString UpdateQSS(const QString &qss_path, qreal ratio)
 {
     QFile f(qss_path);
     if (!f.open(f.ReadOnly)) {
-        qDebug() << f.errorString();
+        LogPrintf("open qss file error:%s",f.errorString().toStdString());
         return "";
     }
     QString qss;
@@ -1150,7 +1152,7 @@ QString UpdateQSS(const QString &qss_path, qreal ratio)
             case 6: {
                 // padding: @6px@ @27px@ @6px@ @36px@;
                 QString res;
-                foreach (const QString &i, line.split(" ")) {
+                BOOST_FOREACH (const QString &i, line.split(" ")) {
                     if (i.contains(g_qss_marker)) {
                         res.append(UpdateQSSHelper(i, ratio));
                     }
@@ -1163,14 +1165,11 @@ QString UpdateQSS(const QString &qss_path, qreal ratio)
                 break;
             }
             default:
-                qDebug() << m_t << line;
+                LogPrintf("read qss file line error:%d,line:%s\n",m_t,line.toStdString());
                 break;
         }
     }
     f.close();
-    if (qss.contains(g_qss_marker)) {
-        qDebug() << "111";
-    }
 
     return qss;
 }
