@@ -64,6 +64,7 @@ public:
 
     static void getEdgeRet(bool flag);
     void showEdgeRet(bool flag);
+    void updateDockerOrder();
 
 private:
     QMenu *contextMenu;

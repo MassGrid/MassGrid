@@ -939,7 +939,6 @@ void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, 
 
     parent->resize(size);
     parent->move(pos);
-    LogPrintf("=====>first restoreWindowGeometry width:%d,height:%d\n",parent->width(),parent->height());
 
     // if ((!pos.x() && !pos.y()) || (QApplication::desktop()->screenNumber(parent) == -1))
     if(true)
@@ -948,11 +947,8 @@ void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, 
         QPoint defaultPos = screen.center() -
             QPoint(defaultSize.width() / 2, defaultSize.height() / 2);
         parent->resize(defaultSize);
-
-        LogPrintf("=====>restoreWindowGeometry defaultSize width:%d,defaultSize height:%d\n",defaultSize.width(),defaultSize.height());
         parent->move(defaultPos);
     }
-    LogPrintf("=====>end restoreWindowGeometry width:%d,height:%d\n",parent->width(),parent->height());
 }
 
 void setClipboard(const QString& str)
@@ -1105,6 +1101,78 @@ CAmount getTxidAmount(std::string txid)
     CAmount nFee = (wtx.IsFromMe(filter) ? wtx.GetValueOut() - nDebit : 0);
     CAmount payment = nNet - nFee;
     return payment;
+}
+
+QString UpdateQSSHelper(const QString &line, qreal r)
+{
+    auto bak     = line;
+    auto index   = line.indexOf(g_qss_marker);
+    auto px_mark = line.mid(index, line.lastIndexOf(g_qss_marker) - index + 1);
+    auto px = line.mid(index + 1, line.lastIndexOf(g_qss_marker) - index - 1);
+    const bool has_px = px.contains("px");
+    if (has_px) {
+        px.remove("px");
+    }
+    auto new_sz = QString::number(px.toFloat() * r);
+    if (has_px) {
+        new_sz += "px";
+    }
+    bak.replace(px_mark, new_sz);
+    return bak;
+}
+
+QString UpdateQSS(const QString &qss_path, qreal ratio)
+{
+    QFile f(qss_path);
+    if (!f.open(f.ReadOnly)) {
+        qDebug() << f.errorString();
+        return "";
+    }
+    QString qss;
+    QString line;
+
+    while (!f.atEnd()) {
+        line           = f.readLine();
+        const auto m_t = line.count(g_qss_marker);
+        switch (m_t) {
+            case 0:
+                qss.append(line);
+                break;
+            case 2: {
+                // @-6px@
+                //  @5@
+                //  @4.5@
+                qss.append(UpdateQSSHelper(line, ratio));
+                break;
+            }
+            case 4:
+            case 8:
+            case 6: {
+                // padding: @6px@ @27px@ @6px@ @36px@;
+                QString res;
+                foreach (const QString &i, line.split(" ")) {
+                    if (i.contains(g_qss_marker)) {
+                        res.append(UpdateQSSHelper(i, ratio));
+                    }
+                    else {
+                        res.append(i);
+                    }
+                    res.append(" ");
+                }
+                qss.append(res);
+                break;
+            }
+            default:
+                qDebug() << m_t << line;
+                break;
+        }
+    }
+    f.close();
+    if (qss.contains(g_qss_marker)) {
+        qDebug() << "111";
+    }
+
+    return qss;
 }
 
 void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)

@@ -94,6 +94,7 @@
 
 QPoint m_winPos;
 QSize m_winSize;
+extern MasternodeList* g_masternodeListPage;
 
 const std::string MassGridGUI::DEFAULT_UIPLATFORM =
 #if defined(Q_OS_MAC)
@@ -344,10 +345,9 @@ MassGridGUI::MassGridGUI(const PlatformStyle *platformStyle, const NetworkStyle 
         connect(progressBar, SIGNAL(clicked(QPoint)), this, SLOT(showModalOverlay()));
     }
 #endif
-    // resize(850,650);
 
     QScreen* screen = qApp->primaryScreen();
-    int dpi = screen->logicalDotsPerInch()/DPIRATIO;
+    qreal dpi = screen->logicalDotsPerInch()/DPIRATIO;
 
     GUIUtil::restoreWindowGeometry("nWindow", QSize(WINWIDTH*dpi, WINHEIGHT*dpi), this);
 
@@ -1469,7 +1469,12 @@ void MassGridGUI::setAdditionalDataSyncProgress(double nSyncProgress)
     if(masternodeSync.IsSynced()) {
         progressBarLabel->setVisible(false);
         progressBar->setVisible(false);
-        
+
+        QSettings settings;
+        if (settings.value("fShowMasternodesTab").toBool()) {
+            g_masternodeListPage->updateDockerOrder();
+        }
+
         labelBlocksIcon->setPixmap(QIcon(":/icons/transaction_confirmed").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
     } else {
 

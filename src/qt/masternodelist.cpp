@@ -583,9 +583,14 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
             ui->tabWidget->setCurrentIndex(0);
             return;
         }
-        dockerorderView->updateAllOperationBtn();
+        updateDockerOrder();
     }
     startTimer(true);
+}
+
+void MasternodeList::updateDockerOrder()
+{
+    dockerorderView->updateAllOperationBtn();
 }
 
 void MasternodeList::startTimer(bool start)

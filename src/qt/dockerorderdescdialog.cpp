@@ -29,6 +29,9 @@ DockerOrderDescDialog::DockerOrderDescDialog(WalletModel *model,QWidget *parent)
 
     ui->label_titlename->setText(tr("Docker order Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
+    ui->label_37->hide();
+    ui->label_taskstate->hide();
+
 }
 
 DockerOrderDescDialog::~DockerOrderDescDialog()
@@ -109,12 +112,13 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
     ui->label_masternodeaddress->setText(masternodeaddressStr);
     ui->label_tlementtxid->setText(tlementtxidStr);
 
-    if(atoi(wtx.Gettaskstate()) == 8){
-        ui->label_taskstate->hide();
-        ui->label_37->hide();
-    }
-    else{
-        ui->label_taskstate->setText(QString::fromStdString(wtx.Gettaskstatuscode()));
+    if(atoi(wtx.Gettaskstate()) != 8){
+
+        QString taskstate = fm.elidedText(QString::fromStdString(wtx.Gettaskstatuscode()), Qt::ElideRight, ui->label_masternodeaddress->width());
+        ui->label_taskstate->setText(taskstate);
+
+        ui->label_37->show();
+        ui->label_taskstate->show();
     }
 
     ui->label_orderstatus->setText(QString::fromStdString(wtx.Getorderstatus())= "1" ? tr("Settled") : tr("Paid"));

@@ -965,6 +965,7 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid,bool isAskAll)
 
     if(!dockercluster.SetConnectDockerAddress(ip_port) || !dockercluster.ProcessDockernodeConnections()){
         LogPrintf("SyncTransactionHistoryThread connect to docker failed!\n");
+
         return false;
     }
     dockerServerman.setTRANSDataStatus(CDockerServerman::AskTD);

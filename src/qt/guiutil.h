@@ -136,6 +136,9 @@ namespace GUIUtil
     void SetDPIValue(qreal dpi);
 
     QString GetServiceTaskStatus(int code);
+    
+    QString UpdateQSS(const QString &qss_path, qreal ratio);
+    QString UpdateQSSHelper(const QString &line, qreal r);
 
     /** Qt event filter that intercepts ToolTipChange events, and replaces the tooltip with a rich text
       representation if needed. This assures that Qt can word-wrap long tooltip messages.
