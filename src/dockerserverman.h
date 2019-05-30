@@ -15,9 +15,9 @@
 
 
 
-#define DOCKERREQUEST_API_VERSION 10051
-#define DOCKERREQUEST_API_MINSUPPORT_VERSION 10051
-#define DOCKERREQUEST_API_MAXSUPPORT_VERSION 10060
+#define DOCKERREQUEST_API_VERSION 10061
+#define DOCKERREQUEST_API_MINSUPPORT_VERSION 10061
+#define DOCKERREQUEST_API_MAXSUPPORT_VERSION 10070
 
 static const int DOCKER_MAX_CPU_NUM = 16;
 static const int DOCKER_MAX_MEMORY_BYTE = 16;
@@ -104,6 +104,7 @@ public:
     int errCode{};
     CPubKey pubKeyClusterAddress{};
     int64_t sigTime{}; //dkct message times
+    bool fPersistentStore{};
     std::map<std::string,Service> mapDockerServiceLists{};
     map<Item,Value_price> items{};
     string masternodeAddress{};
@@ -113,6 +114,7 @@ public:
         READWRITE(version);
         READWRITE(pubKeyClusterAddress);
         READWRITE(sigTime);
+        READWRITE(fPersistentStore);
         READWRITE(mapDockerServiceLists);
         READWRITE(items);
         READWRITE(masternodeAddress);
@@ -123,6 +125,7 @@ public:
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << version;
         ss << pubKeyClusterAddress;
+        ss << fPersistentStore;
         ss << mapDockerServiceLists;
         ss << items;
         ss << masternodeAddress;
@@ -281,6 +284,7 @@ public:
     CPubKey pubKeyClusterAddress{};
     uint256 txid{};
     int64_t sigTime{}; // message times
+    bool fPersistentStore{};
     std::string n2n_community{};
     std::string serviceName{};
     std::string image{};
@@ -296,6 +300,7 @@ public:
         READWRITE(version);
         READWRITE(pubKeyClusterAddress);
         READWRITE(sigTime);
+        READWRITE(fPersistentStore);
         READWRITE(n2n_community);
         READWRITE(serviceName);
         READWRITE(image);
@@ -310,6 +315,7 @@ public:
         ss << version;
         ss << pubKeyClusterAddress;
         ss << sigTime;
+        ss << fPersistentStore;
         ss << n2n_community;
         ss << serviceName;
         ss << image;

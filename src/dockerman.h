@@ -105,6 +105,7 @@ private:
 public:
     union docker_Version version;
     IpSet serviceIpList;
+    bool fPersistentStore;
     /*
     * get all running services by pubkey
     */

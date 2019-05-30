@@ -43,7 +43,7 @@ bool DockerCreateService::Sign(const CKey& keyClusterAddress, const CPubKey& pub
     // TODO: add sentinel data
     sigTime = GetAdjustedTime();
     std::string strMessage = txid.ToString() + boost::lexical_cast<std::string>(version) + n2n_community +
-        serviceName + image + ssh_pubkey + item.ToString() + boost::lexical_cast<std::string>(sigTime);
+        serviceName + image + ssh_pubkey + item.ToString() + boost::lexical_cast<std::string>(sigTime) + boost::lexical_cast<std::string>(fPersistentStore);
     for(auto &pair: env){
             strMessage += (pair.first + pair.second);
         }
@@ -65,7 +65,7 @@ bool DockerCreateService::CheckSignature(CPubKey& pubKeyClusterAddress)
 {
     // TODO: add sentinel data
     std::string strMessage = txid.ToString() + boost::lexical_cast<std::string>(version) + n2n_community +
-        serviceName + image + ssh_pubkey + item.ToString() + boost::lexical_cast<std::string>(sigTime);
+        serviceName + image + ssh_pubkey + item.ToString() + boost::lexical_cast<std::string>(sigTime) +  boost::lexical_cast<std::string>(fPersistentStore);
     for(auto &pair: env){
         strMessage += (pair.first + pair.second);
     }
@@ -125,6 +125,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         mdndata.mapDockerServiceLists.clear();
         mdndata.mapDockerServiceLists = dockerman.GetServiceFromPubkey(pubkey);
         mdndata.sigTime = GetAdjustedTime();
+        mdndata.fPersistentStore = dockerman.fPersistentStore;
         mdndata.items = dockerman.GetPriceListFromNodelist();
         mdndata.masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
         LogPrint("dockernode", "CDockerServerman::ProcessMessage GETDNDATA -- pubkey %s servicelistSize() %d \n", pubkey.ToString().substr(0,66),mdndata.mapDockerServiceLists.size());
@@ -582,6 +583,19 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     mount.target="/dev/net";
     mount.source="/dev/net";
     spec.taskTemplate.containerSpec.mounts.push_back(mount);
+
+    if(createService.fPersistentStore){
+        Node node;
+        std::string nfsip;
+        if(dockerman.GetNodeFromList(nodeid,node) && node.description.engine.labels.count("nfsip")){
+            Config::Mount persistentMount;
+            persistentMount.type = "volume";
+            persistentMount.target = "/mnt";
+            persistentMount.volumeOptions.driverConfig.name = "massgrid/nfs-volume-plugin";
+            persistentMount.volumeOptions.driverConfig.options["device"] = node.description.engine.labels["nfsip"] + ":/" + createService.pubKeyClusterAddress.ToString().substr(0,66);
+            persistentMount.volumeOptions.driverConfig.options["nfsopts"] = "hard,proto=tcp,nfsvers=4,intr,nolock";
+        } 
+    }
 
     //  7.request docker
     if(!dockerman.PushMessage(Method::METHOD_SERVICES_CREATE,"",spec.ToJsonString())){

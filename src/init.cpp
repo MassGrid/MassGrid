@@ -593,6 +593,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageGroup(_("Masternode options:"));
     strUsage += HelpMessageOpt("-masternode=<n>", strprintf(_("Enable the client to act as a masternode (0-1, default: %u)"), 0));
     strUsage += HelpMessageOpt("-dockernode=<n>", strprintf(_("Enable the client to act as a dockernode default enable masternode (0-1, default: %u)"), 0));
+    strUsage += HelpMessageOpt("-persistentstore", strprintf(_("Enable persistentstore"), false));
     strUsage += HelpMessageOpt("-snport=<n>", strprintf(_("Listen for sn on <port> (default: %u)"), DEFAULT_SN_PORT));
     strUsage += HelpMessageOpt("-mnconf=<file>", strprintf(_("Specify masternode configuration file (default: %s)"), "masternode.conf"));
     strUsage += HelpMessageOpt("-mnconflock=<n>", strprintf(_("Lock masternodes from masternode configuration file (default: %u)"), 1));
@@ -1914,7 +1915,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     // ********************************************************* Step 11a: setup InstantSend
     fMasterNode = GetBoolArg("-masternode", false);
     fDockerNode = GetBoolArg("-dockernode", false);
-
+    dockerman.fPersistentStore = GetBoolArg("-persistentstore", false);
     if(fDockerNode)
         fMasterNode = true;
     // TODO: masternode should have no wallet
