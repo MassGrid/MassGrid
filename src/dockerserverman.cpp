@@ -594,6 +594,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
             persistentMount.volumeOptions.driverConfig.name = "massgrid/nfs-volume-plugin";
             persistentMount.volumeOptions.driverConfig.options["device"] = node.description.engine.labels["nfsip"] + ":/" + createService.pubKeyClusterAddress.ToString().substr(0,66);
             persistentMount.volumeOptions.driverConfig.options["nfsopts"] = "hard,proto=tcp,nfsvers=4,intr,nolock";
+            spec.taskTemplate.containerSpec.mounts.push_back(persistentMount);
         } 
     }
 

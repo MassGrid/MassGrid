@@ -276,7 +276,7 @@ UniValue docker(const UniValue& params, bool fHelp)
             throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
         if (params.size() != 2)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
-        bool fps = params[1].get_bool();
+        bool fps = boost::lexical_cast<bool>(params[1].get_str());
         dockerman.fPersistentStore = fps;
         return "PersistentStore has " + fps?"enable":"disable";
     }
