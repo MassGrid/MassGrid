@@ -584,7 +584,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     mount.source="/dev/net";
     spec.taskTemplate.containerSpec.mounts.push_back(mount);
 
-    if(createService.fPersistentStore){
+    if(createService.fPersistentStore && dockerman.fPersistentStore){
         Node node;
         std::string nfsip;
         if(dockerman.GetNodeFromList(nodeid,node) && node.description.engine.labels.count("nfsip")){
