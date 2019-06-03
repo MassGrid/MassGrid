@@ -56,25 +56,10 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">QWidget#MasternodeList QLineEdit#filterLineEdit,
-QWidget#MasternodeList QLineEdit#lineEdit_searchOrder
-{
-width:300px;
-height:28;
-border:1px solid rgb(165, 165, 165);
-background-color: rgb(255, 255, 255,0);
-}
-
-QWidget#MasternodeList QLineEdit::hover#filterLineEdit,
-QWidget#MasternodeList QLineEdit::hover#lineEdit_searchOrder
-{
-border:1px solid rgb(238,169,4);
-background-color: rgb(255, 255, 255,0);
-}
-</string>
+        <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">

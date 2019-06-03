@@ -24,6 +24,7 @@
 #include <QMenu>
 #include "cmessagebox.h"
 #include <QSortFilterProxyModel>
+#include <QGraphicsDropShadowEffect>
 
 AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     QDialog(parent),
@@ -112,6 +113,15 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     ui->label_titleName->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
+
+    // QGraphicsDropShadowEffect *shadow_effect = new QGraphicsDropShadowEffect(this);
+    // shadow_effect->setOffset(0, 0);
+    // shadow_effect->setColor(QColor(0, 0, 0, 100));
+    // shadow_effect->setBlurRadius(8);
+    // ui->centerWin->setGraphicsEffect(shadow_effect);
+
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
+
 }
 
 AddressBookPage::~AddressBookPage()
@@ -381,7 +391,7 @@ void AddressBookPage::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

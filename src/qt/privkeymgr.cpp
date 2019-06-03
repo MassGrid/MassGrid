@@ -5,6 +5,7 @@
 #include "util.h"
 #include "massgridgui.h"
 #include <QTimer>
+#include "guiutil.h"
 
 PrivKeyMgr::PrivKeyMgr(bool inputMode,MassGridGUI *parentObj,QWidget *parent) :
     QDialog(parent),
@@ -35,6 +36,7 @@ PrivKeyMgr::PrivKeyMgr(bool inputMode,MassGridGUI *parentObj,QWidget *parent) :
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     this->setAttribute(Qt::WA_TranslucentBackground);
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 
     m_guiObj = parentObj;
 }
@@ -181,7 +183,7 @@ void PrivKeyMgr::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

@@ -57,6 +57,8 @@
 #include <QTextDocument> // for Qt::mightBeRichText
 #include <QThread>
 #include <QMouseEvent>
+#include <QGraphicsDropShadowEffect>
+#include <QWidget>
 
 #if QT_VERSION < 0x050000
 #include <QUrl>
@@ -1119,6 +1121,7 @@ QString UpdateQSSHelper(const QString &line, qreal r)
     if (has_px) {
         new_sz += "px";
     }
+
     bak.replace(px_mark, new_sz);
     return bak;
 }
@@ -1172,6 +1175,15 @@ QString UpdateQSS(const QString &qss_path, qreal ratio)
     f.close();
 
     return qss;
+}
+
+void MakeShadowEffect(QObject* parent,QWidget* win)
+{
+    QGraphicsDropShadowEffect *shadow_effect = new QGraphicsDropShadowEffect(parent);
+    shadow_effect->setOffset(0, 0);
+    shadow_effect->setColor(QColor(0, 0, 0, 100));
+    shadow_effect->setBlurRadius(8);
+    win->setGraphicsEffect(shadow_effect);
 }
 
 void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)

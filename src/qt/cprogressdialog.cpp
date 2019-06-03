@@ -1,5 +1,6 @@
 #include "cprogressdialog.h"
 #include "ui_cprogressdialog.h"
+#include "guiutil.h"
 
 CProgressDialog::CProgressDialog(const QString &labelText, int minimum, int maximum, QWidget *parent) :
     QDialog(parent),
@@ -34,7 +35,7 @@ void CProgressDialog::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

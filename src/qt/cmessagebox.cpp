@@ -2,6 +2,7 @@
 #include "ui_cmessagebox.h"
 #include "massgridgui.h"
 #include "util.h"
+#include "guiutil.h"
 
 CMessageBox::CMessageBox(QWidget *parent,QString title,QString text) :
     QDialog(0),
@@ -13,7 +14,7 @@ CMessageBox::CMessageBox(QWidget *parent,QString title,QString text) :
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
 
-    connect(ui->pBtn_close,SIGNAL(clicked()),this,SLOT(slot_close()));
+    connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(slot_close()));
     connect(ui->okButton,SIGNAL(clicked()),this,SLOT(slot_ok()));
     connect(ui->okButton2,SIGNAL(clicked()),this,SLOT(slot_ok()));
     connect(ui->closeButton,SIGNAL(clicked()),this,SLOT(slot_close()));
@@ -30,6 +31,7 @@ CMessageBox::CMessageBox(QWidget *parent,QString title,QString text) :
         QSize size = MassGridGUI::winSize();
         move(pos.x()+(size.width()-width())/2,pos.y()+(size.height()-height())/2);
     }
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
 CMessageBox::~CMessageBox()
@@ -124,7 +126,7 @@ void CMessageBox::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

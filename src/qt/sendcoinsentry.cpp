@@ -33,11 +33,11 @@ SendCoinsEntry::SendCoinsEntry(const PlatformStyle *platformStyle, QWidget *pare
 #endif
 
     // These icons are needed on Mac also!
-    ui->addressBookButton->setIcon(QIcon(":/icons/address-book"));
-    ui->pasteButton->setIcon(QIcon(":/icons/editpaste"));
-    ui->deleteButton->setIcon(QIcon(":/icons/remove"));
-    ui->deleteButton_is->setIcon(QIcon(":/icons/remove"));
-    ui->deleteButton_s->setIcon(QIcon(":/icons/remove"));
+    // ui->addressBookButton->setIcon(QIcon(":/icons/address-book"));
+    // ui->pasteButton->setIcon(QIcon(":/icons/editpaste"));
+    // ui->deleteButton->setIcon(QIcon(":/icons/remove"));
+    // ui->deleteButton_is->setIcon(QIcon(":/icons/remove"));
+    // ui->deleteButton_s->setIcon(QIcon(":/icons/remove"));
       
     // normal massgrid address field
     GUIUtil::setupAddressWidget(ui->payTo, this);
@@ -47,11 +47,11 @@ SendCoinsEntry::SendCoinsEntry(const PlatformStyle *platformStyle, QWidget *pare
     // Connect signals
     connect(ui->payAmount, SIGNAL(valueChanged()), this, SIGNAL(payAmountChanged()));
     // connect(ui->checkboxSubtractFeeFromAmount, SIGNAL(toggled(bool)), this, SIGNAL(subtractFeeFromAmountChanged()));
-    connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-    connect(ui->deleteButton_is, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-    connect(ui->deleteButton_s, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-    ui->addressBookButton->hide();
-    ui->pasteButton->hide();
+    // connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+    // connect(ui->deleteButton_is, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+    // connect(ui->deleteButton_s, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+    // ui->addressBookButton->hide();
+    // ui->pasteButton->hide();
 }
 
 SendCoinsEntry::~SendCoinsEntry()
@@ -103,9 +103,9 @@ void SendCoinsEntry::clear()
     ui->addAsLabel->clear();
     ui->payAmount->clear();
     // ui->checkboxSubtractFeeFromAmount->setCheckState(Qt::Unchecked);
-    ui->messageTextLabel->clear();
-    ui->messageTextLabel->hide();
-    ui->messageLabel->hide();
+    // ui->messageTextLabel->clear();
+    // ui->messageTextLabel->hide();
+    // ui->messageLabel->hide();
     // clear UI elements for unauthenticated payment request
     ui->payTo_is->clear();
     ui->memoTextLabel_is->clear();
@@ -177,7 +177,7 @@ SendCoinsRecipient SendCoinsEntry::getValue()
     recipient.address = ui->payTo->text();
     recipient.label = ui->addAsLabel->text();
     recipient.amount = ui->payAmount->value();
-    recipient.message = ui->messageTextLabel->text();
+    // recipient.message = ui->messageTextLabel->text();
     // recipient.fSubtractFeeFromAmount = (ui->checkboxSubtractFeeFromAmount->checkState() == Qt::Checked);
 
     return recipient;
@@ -190,9 +190,9 @@ QWidget *SendCoinsEntry::setupTabChain(QWidget *prev)
     QWidget *w = ui->payAmount->setupTabChain(ui->addAsLabel);
     // QWidget::setTabOrder(w, ui->checkboxSubtractFeeFromAmount);
     // QWidget::setTabOrder(ui->checkboxSubtractFeeFromAmount, ui->addressBookButton);
-    QWidget::setTabOrder(ui->addressBookButton, ui->pasteButton);
-    QWidget::setTabOrder(ui->pasteButton, ui->deleteButton);
-    return ui->deleteButton;
+    // QWidget::setTabOrder(ui->addressBookButton, ui->pasteButton);
+    // QWidget::setTabOrder(ui->pasteButton, ui->deleteButton);
+    return new QPushButton(); //ui->deleteButton;
 }
 
 void SendCoinsEntry::setValue(const SendCoinsRecipient &value)
@@ -221,9 +221,9 @@ void SendCoinsEntry::setValue(const SendCoinsRecipient &value)
     else // normal payment
     {
         // message
-        ui->messageTextLabel->setText(recipient.message);
-        ui->messageTextLabel->setVisible(!recipient.message.isEmpty());
-        ui->messageLabel->setVisible(!recipient.message.isEmpty());
+        // ui->messageTextLabel->setText(recipient.message);
+        // ui->messageTextLabel->setVisible(!recipient.message.isEmpty());
+        // ui->messageLabel->setVisible(!recipient.message.isEmpty());
 
         ui->addAsLabel->clear();
         ui->payTo->setText(recipient.address); // this may set a label from addressbook

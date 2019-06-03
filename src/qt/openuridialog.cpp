@@ -8,6 +8,7 @@
 
 #include "guiutil.h"
 #include "walletmodel.h"
+#include <QGraphicsDropShadowEffect>
 
 #include <QUrl>
 #include "util.h"
@@ -25,6 +26,7 @@ OpenURIDialog::OpenURIDialog(QWidget *parent) :
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     ui->label_titleName->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
 OpenURIDialog::~OpenURIDialog()
@@ -57,6 +59,7 @@ void OpenURIDialog::on_selectFileButton_clicked()
     QUrl fileUri = QUrl::fromLocalFile(filename);
     ui->uriEdit->setText("massgrid:?r=" + QUrl::toPercentEncoding(fileUri.toString()));
 }
+
 void OpenURIDialog::mousePressEvent(QMouseEvent *e)
 {
     int posx = e->pos().x();
@@ -64,7 +67,7 @@ void OpenURIDialog::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

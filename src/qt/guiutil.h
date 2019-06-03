@@ -140,6 +140,8 @@ namespace GUIUtil
     QString UpdateQSS(const QString &qss_path, qreal ratio);
     QString UpdateQSSHelper(const QString &line, qreal r);
 
+    void MakeShadowEffect(QObject* parent,QWidget* win);
+
     /** Qt event filter that intercepts ToolTipChange events, and replaces the tooltip with a rich text
       representation if needed. This assures that Qt can word-wrap long tooltip messages.
       Tooltips longer than the provided size threshold (in characters) are wrapped.

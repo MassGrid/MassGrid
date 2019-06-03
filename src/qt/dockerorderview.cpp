@@ -963,6 +963,13 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid,bool isAskAll)
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not chec
     std::string ip_port = wtx.Getmasternodeip();
 
+    QRegExp rx("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+    if(QString::fromStdString(ip_port).contains(":") && !rx.exactMatch(QString::fromStdString(ip_port).split(":").at(0)))
+    {
+        LogPrintf("ip_port:%s is failed,txid:%s\n",ip_port,txidStr);
+        return false;
+    }
+
     if(!dockercluster.SetConnectDockerAddress(ip_port) || !dockercluster.ProcessDockernodeConnections()){
         LogPrintf("SyncTransactionHistoryThread connect to docker failed!\n");
 

@@ -1461,7 +1461,7 @@ border: hidden;
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>575</width>
+                     <width>542</width>
                      <height>150</height>
                     </rect>
                    </property>
@@ -1514,8 +1514,8 @@ border: hidden;
                     </property>
                     <property name="maximumSize">
                      <size>
-                      <width>160</width>
-                      <height>40</height>
+                      <width>16777215</width>
+                      <height>16777215</height>
                      </size>
                     </property>
                     <property name="font">
@@ -1582,33 +1582,7 @@ border: hidden;
                  <string notr="true">QStackedWidget{
 border:hidden;
 }
-
-QRadioButton{
-    spacing: 5px;
-}
-
-QRadioButton::indicator{
-    width:20px;
-    height:20px;
-}
-
-QRadioButton::indicator:unchecked{
-    border-image: url(:/pic/res/pic/kPic.png);
-    width:20px;
-    height:20px;
-}
-
-QRadioButton::indicator:checked{
-    border-image: url(:/pic/res/pic/selectPic.png);
-    width:20px;
-    height:20px;
-}
-
-QRadioButton::indicator:checked:disabled{
-    image:url(:/CheckBox/res/checkedDisabled.png);
-    width:20px;
-    height:20px;
-}</string>
+</string>
                 </property>
                 <property name="currentIndex">
                  <number>1</number>
@@ -1909,7 +1883,7 @@ QSlider::sub-page:horizontal{
                           </property>
                           <property name="maximumSize">
                            <size>
-                            <width>22</width>
+                            <width>16777215</width>
                             <height>16777215</height>
                            </size>
                           </property>
@@ -2079,32 +2053,12 @@ border:hidden;
                        <item>
                         <layout class="QHBoxLayout" name="horizontalLayout_16">
                          <item>
-                          <widget class="QRadioButton" name="radioCustomPerKilobyte">
+                          <widget class="QRadioButton" name="radioCustomPerKilobyte_">
                            <property name="focusPolicy">
                             <enum>Qt::NoFocus</enum>
                            </property>
                            <property name="styleSheet">
-                            <string notr="true">QRadioButton{
-    spacing: 5px;
-}
-
-QRadioButton::indicator{
-        width:28px;
-        height:22px;
-}
-
-QRadioButton::indicator:unchecked{
-    image: url(:/res/pic/kPic.png);
-}
-
-QRadioButton::indicator:checked{
-    image: url(:/res/pic/check-selected.png);
-}
-
-QRadioButton::indicator:checked:disabled{
-    image:url(:/CheckBox/res/checkedDisabled.png);
-}
-</string>
+                            <string notr="true"/>
                            </property>
                            <property name="text">
                             <string>per kilobyte</string>
@@ -2123,27 +2077,7 @@ QRadioButton::indicator:checked:disabled{
                             <enum>Qt::NoFocus</enum>
                            </property>
                            <property name="styleSheet">
-                            <string notr="true">QRadioButton{
-    spacing: 5px;
-}
-
-QRadioButton::indicator{
-        width:28px;
-        height:22px;
-}
-
-QRadioButton::indicator:unchecked{
-    image: url(:/res/pic/kPic.png);
-}
-
-QRadioButton::indicator:checked{
-    image: url(:/res/pic/check-selected.png);
-}
-
-QRadioButton::indicator:checked:disabled{
-    image:url(:/CheckBox/res/checkedDisabled.png);
-}
-</string>
+                            <string notr="true"/>
                            </property>
                            <property name="text">
                             <string>total at least</string>
@@ -2169,27 +2103,7 @@ QRadioButton::indicator:checked:disabled{
                             <enum>Qt::NoFocus</enum>
                            </property>
                            <property name="styleSheet">
-                            <string notr="true">QRadioButton{
-    spacing: 5px;
-}
-
-QRadioButton::indicator{
-        width:28px;
-        height:22px;
-}
-
-QRadioButton::indicator:unchecked{
-    image: url(:/res/pic/kPic.png);
-}
-
-QRadioButton::indicator:checked{
-    image: url(:/res/pic/check-selected.png);
-}
-
-QRadioButton::indicator:checked:disabled{
-    image:url(:/CheckBox/res/checkedDisabled.png);
-}
-</string>
+                            <string notr="true"/>
                            </property>
                            <property name="text">
                             <string/>
@@ -2489,7 +2403,6 @@ QRadioButton::indicator:checked:disabled{
          </layout>
          <zorder>horizontalSpacer_7</zorder>
          <zorder>verticalSpacer_10</zorder>
-         <zorder></zorder>
          <zorder>verticalSpacer_7</zorder>
          <zorder>horizontalSpacer_12</zorder>
          <zorder></zorder>
@@ -2519,7 +2432,7 @@ QRadioButton::indicator:checked:disabled{
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupCustomFee"/>
   <buttongroup name="groupFee"/>
+  <buttongroup name="groupCustomFee"/>
  </buttongroups>
 </ui>

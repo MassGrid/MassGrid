@@ -34,7 +34,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2,3">
+  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -222,8 +222,8 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>60</width>
-                 <height>30</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -250,8 +250,8 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>60</width>
-                 <height>30</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -278,8 +278,8 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>60</width>
-                 <height>30</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="text">
@@ -301,8 +301,8 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>30</width>
-                 <height>30</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -310,10 +310,6 @@
                </property>
                <property name="text">
                 <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../massgrid.qrc">
-                 <normaloff>:/res/pic/minBtn.png</normaloff>:/res/pic/minBtn.png</iconset>
                </property>
               </widget>
              </item>
@@ -327,8 +323,8 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>30</width>
-                 <height>30</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -336,10 +332,6 @@
                </property>
                <property name="text">
                 <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../massgrid.qrc">
-                 <normaloff>:/res/pic/maxBtn.png</normaloff>:/res/pic/maxBtn.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -353,14 +345,14 @@
               <widget class="QToolButton" name="pBtnClose">
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
-                 <height>0</height>
+                 <width>30</width>
+                 <height>30</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>30</width>
-                 <height>30</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -368,10 +360,6 @@
                </property>
                <property name="text">
                 <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../massgrid.qrc">
-                 <normaloff>:/res/pic/mainWinColse.png</normaloff>:/res/pic/mainWinColse.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -556,8 +544,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>120</width>
-                <height>10</height>
+                <width>16777215</width>
+                <height>16777215</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -578,8 +566,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>150</width>
-                <height>10</height>
+                <width>16777215</width>
+                <height>16777215</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -600,8 +588,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>150</width>
-                <height>10</height>
+                <width>16777215</width>
+                <height>16777215</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -622,8 +610,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>150</width>
-                <height>10</height>
+                <width>16777215</width>
+                <height>16777215</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -860,8 +848,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../massgrid.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

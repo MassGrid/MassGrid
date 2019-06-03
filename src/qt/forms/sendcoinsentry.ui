@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>494</width>
-    <height>149</height>
+    <width>595</width>
+    <height>145</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>149</height>
+    <height>16777215</height>
    </size>
   </property>
   <property name="focusPolicy">
@@ -26,36 +26,11 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">QStackedWidget#SendCoinsEntry{
+   <string notr="true">QStackedWidget#SendCoinsEntry,
+QFrame#SendCoins{
 border:hidden;
 }
-
-QMenu{
-color:rgb(255,255,255);
-    background-color: rgb(198,125,26);
-    border:0px solid transparent;
-}
-QMenu::item{
-    padding:0px 20px 0px 20px;
-    margin-left: 2px;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    height:30px;
-}
-
-QMenu::item:selected:enabled{
-    background-color: rgb(239,169,4);
-    color: white;
-}
-
-QMenu::item:selected:!enabled{
-    background:transparent;
-}
-QMenu::item:!enabled{
-    background:transparent;
-	color:rgb(125,125,125);
-}</string>
+</string>
   </property>
   <property name="currentIndex">
    <number>0</number>
@@ -65,25 +40,7 @@ QMenu::item:!enabled{
     <string>This is a normal payment.</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">QLineEdit{
-min-height:30;
-border:hidden;
-background-color:rgb(255,255,255);
-}
-QToolButton{
-border:hidden;
-min-height:28px;
-min-width:28px;
-}
-QFrame#SendCoins{
-border:hidden;
-background-color: rgb(255, 255, 255);
-}
-
-QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
-	border:1px solid rgb(186, 186, 186);
-}
-</string>
+    <string notr="true"/>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -91,10 +48,7 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
    <property name="frameShadow">
     <enum>QFrame::Sunken</enum>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,1">
-    <property name="spacing">
-     <number>2</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
      <number>2</number>
     </property>
@@ -130,7 +84,7 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
        <property name="leftMargin">
         <number>1</number>
        </property>
@@ -153,7 +107,7 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
          </property>
          <property name="maximumSize">
           <size>
-           <width>80</width>
+           <width>120</width>
            <height>16777215</height>
           </size>
          </property>
@@ -167,7 +121,7 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="buddy">
-          <cstring>payTo</cstring>
+          <cstring>addAsLabel</cstring>
          </property>
         </widget>
        </item>
@@ -180,64 +134,10 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
           </sizepolicy>
          </property>
          <property name="toolTip">
-          <string>The MassGrid address to send the payment to</string>
+          <string>Enter a label for this address to add it to the list of used addresses</string>
          </property>
          <property name="styleSheet">
           <string notr="true"/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="addressBookButton">
-         <property name="toolTip">
-          <string>Choose previously used address</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
-         </property>
-         <property name="shortcut">
-          <string>Alt+A</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="pasteButton">
-         <property name="toolTip">
-          <string>Paste address from clipboard</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/icons/editpaste</normaloff>:/icons/editpaste</iconset>
-         </property>
-         <property name="shortcut">
-          <string>Alt+P</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="deleteButton">
-         <property name="toolTip">
-          <string>Remove this entry</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
          </property>
         </widget>
        </item>
@@ -290,7 +190,7 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
          </property>
          <property name="maximumSize">
           <size>
-           <width>80</width>
+           <width>120</width>
            <height>16777215</height>
           </size>
          </property>
@@ -370,7 +270,7 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
          </property>
          <property name="maximumSize">
           <size>
-           <width>80</width>
+           <width>120</width>
            <height>16777215</height>
           </size>
          </property>
@@ -417,66 +317,17 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
      </widget>
     </item>
     <item>
-     <widget class="QFrame" name="frame_4">
-      <property name="styleSheet">
-       <string notr="true">border:hidden;</string>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <property name="leftMargin">
-        <number>1</number>
-       </property>
-       <property name="topMargin">
-        <number>1</number>
-       </property>
-       <property name="rightMargin">
-        <number>1</number>
-       </property>
-       <property name="bottomMargin">
-        <number>1</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="messageLabel">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Message:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="messageTextLabel">
-         <property name="toolTip">
-          <string>A message that was attached to the massgrid: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the MassGrid network.</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="textFormat">
-          <enum>Qt::PlainText</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     </spacer>
     </item>
    </layout>
   </widget>
@@ -1536,10 +1387,6 @@ QFrame#frame_10,QFrame#frame_lable,QFrame#frame_3{
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>payTo</tabstop>
-  <tabstop>addressBookButton</tabstop>
-  <tabstop>pasteButton</tabstop>
-  <tabstop>deleteButton</tabstop>
   <tabstop>addAsLabel</tabstop>
   <tabstop>payAmount</tabstop>
   <tabstop>payAmount_is</tabstop>

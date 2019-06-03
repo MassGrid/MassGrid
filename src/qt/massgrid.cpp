@@ -660,22 +660,25 @@ int main(int argc, char *argv[])
 
     QString styleStr;
 
-    QFile f(qssFilePath);
-    if (f.open(f.ReadOnly)) {
+    // QFile f(qssFilePath);
+    // if (f.open(f.ReadOnly)) {
+        // styleStr = f.readAll();
         // app.setStyleSheet(f.readAll());
 
-        QString basepx = QString::number(appfont.pixelSize()) + "px";
-        QString littlebigpx = QString::number(appfont.pixelSize()+3) + "px";
-        QString bigpx = QString::number(appfont.pixelSize()+10) + "px";
-        QString smallbigpx = QString::number(appfont.pixelSize()+2) + "px";
-        QString smallpx = QString::number(appfont.pixelSize()-2) + "px";
-        styleStr = f.readAll();
-        styleStr.replace("@basepx@",basepx);
-        styleStr.replace("@littlebigpx@",littlebigpx);
-        styleStr.replace("@bigpx@",bigpx);
-        styleStr.replace("@smallbigpx@",smallbigpx);
-        styleStr.replace("@smallpx@",smallpx);
-    }
+        // QString basepx = QString::number(appfont.pixelSize()) + "px";
+        // QString littlebigpx = QString::number(appfont.pixelSize()+3) + "px";
+        // QString bigpx = QString::number(appfont.pixelSize()+10) + "px";
+        // QString smallbigpx = QString::number(appfont.pixelSize()+2) + "px";
+        // QString smallpx = QString::number(appfont.pixelSize()-2) + "px";
+        // styleStr = f.readAll();
+        // styleStr.replace("@basepx@",basepx);
+        // styleStr.replace("@littlebigpx@",littlebigpx);
+        // styleStr.replace("@bigpx@",bigpx);
+        // styleStr.replace("@smallbigpx@",smallbigpx);
+        // styleStr.replace("@smallpx@",smallpx);
+    // }
+
+    styleStr = GUIUtil::UpdateQSS(qssFilePath,dpi);
     app.setStyleSheet(styleStr);
 
     /// 5. Now that settings and translations are available, ask user for data directory

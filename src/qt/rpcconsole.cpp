@@ -35,6 +35,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QStringList>
+#include "guiutil.h"
 
 #if QT_VERSION < 0x050000
 #include <QUrl>
@@ -377,6 +378,7 @@ RPCConsole::RPCConsole(const PlatformStyle *platformStyle, QWidget *parent) :
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     ui->label_titlename->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
 RPCConsole::~RPCConsole()
@@ -1171,7 +1173,7 @@ void RPCConsole::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

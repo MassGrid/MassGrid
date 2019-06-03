@@ -13,6 +13,7 @@
 #include <QFont>
 #include <stdlib.h>
 #include <QDateTime>
+#include "guiutil.h"
 
 extern CWallet* pwalletMain;
 
@@ -31,7 +32,7 @@ DockerOrderDescDialog::DockerOrderDescDialog(WalletModel *model,QWidget *parent)
     this->setAttribute(Qt::WA_TranslucentBackground);
     ui->label_37->hide();
     ui->label_taskstate->hide();
-
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
 DockerOrderDescDialog::~DockerOrderDescDialog()
@@ -46,7 +47,7 @@ void DockerOrderDescDialog::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

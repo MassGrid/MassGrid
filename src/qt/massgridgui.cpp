@@ -788,8 +788,10 @@ void MassGridGUI::createBackgroundWin()
     mainFrame->setMinimumSize(850,650);
 
     backgroudlayout->addWidget(mainFrame);
-    backgroudlayout->setContentsMargins(40,40,40,40);
+    backgroudlayout->setContentsMargins(5,5,5,5);
     centerWin->setLayout(backgroudlayout);
+
+    GUIUtil::MakeShadowEffect(this,centerWin);
 
     this->setCentralWidget(centerWin);
     this->setObjectName("MassGridGUI");

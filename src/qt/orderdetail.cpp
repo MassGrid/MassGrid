@@ -1,5 +1,6 @@
 #include "orderdetail.h"
 #include "ui_orderdetail.h"
+#include "guiutil.h"
 
 OrderDetail::OrderDetail(QWidget *parent) :
     QDialog(parent),
@@ -12,6 +13,7 @@ OrderDetail::OrderDetail(QWidget *parent) :
 
     ui->label_titlename->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
 OrderDetail::~OrderDetail()
@@ -26,7 +28,7 @@ void OrderDetail::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

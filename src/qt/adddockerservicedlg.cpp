@@ -88,6 +88,8 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     ui->tableWidget_resource->horizontalHeader()->setVisible(false); 
 
     QTimer::singleShot(1000,this,SLOT(initTableWidget()));
+
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
 AddDockerServiceDlg::~AddDockerServiceDlg()
@@ -107,7 +109,7 @@ void AddDockerServiceDlg::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

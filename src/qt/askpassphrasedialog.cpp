@@ -14,6 +14,7 @@
 #include <QKeyEvent>
 #include "cmessagebox.h"
 #include <QPushButton>
+#include "guiutil.h"
 
 AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget *parent) :
     QDialog(parent),
@@ -81,6 +82,7 @@ AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget *parent) :
 
     setWindowFlags(Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
 AskPassphraseDialog::~AskPassphraseDialog()
@@ -225,7 +227,8 @@ void AskPassphraseDialog::textChanged()
         acceptable = !ui->passEdit1->text().isEmpty() && !ui->passEdit2->text().isEmpty() && !ui->passEdit3->text().isEmpty();
         break;
     }
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptable);
+    // ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptable);
+    ui->okButton->setEnabled(acceptable);
 }
 
 bool AskPassphraseDialog::event(QEvent *event)
@@ -293,7 +296,7 @@ void AskPassphraseDialog::mousePressEvent(QMouseEvent *e)
     int framex = ui->mainframe->pos().x();
     int framey = ui->mainframe->pos().y();
     int frameendx = framex+ui->mainframe->width();
-    int frameendy = framey+30;
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
     if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
         m_mousePress = true;
         m_last = e->globalPos();

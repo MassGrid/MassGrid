@@ -27,6 +27,7 @@ ServiceDetail::ServiceDetail(QWidget* parent) : QDialog(parent),
 
     ui->label_titlename->setText(tr("Service Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
 ServiceDetail::~ServiceDetail()
