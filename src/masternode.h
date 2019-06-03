@@ -98,7 +98,7 @@ public:
             LOCK(cs_main);
             height = chainActive.Height();
         }
-        if((Params().NetworkIDString() == CBaseChainParams::MAIN && height >= 165000) || (Params().NetworkIDString() == CBaseChainParams::TESTNET && height >= 82600)){
+        if((Params().NetworkIDString() == CBaseChainParams::MAIN && height >= 180000) || (Params().NetworkIDString() == CBaseChainParams::TESTNET && height >= 82600)){
             READWRITE(mdocker);
         }
     }

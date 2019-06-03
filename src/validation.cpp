@@ -722,7 +722,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
                 }
                 return false; // fMissingInputs and !state.IsInvalid() is used to detect this condition, don't set state.Invalid()
             }
-            if((Params().NetworkIDString() == CBaseChainParams::MAIN && height >= 165000) || (Params().NetworkIDString() == CBaseChainParams::TESTNET && height >= 82600)){
+            if((Params().NetworkIDString() == CBaseChainParams::MAIN && height >= 180000) || (Params().NetworkIDString() == CBaseChainParams::TESTNET && height >= 82600)){
                 // reject op_return
                 CTransaction txPre;
                 uint256 hash;
