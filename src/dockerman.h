@@ -4,6 +4,7 @@
 #ifndef DOCKERMAN_H
 #define DOCKERMAN_H
 #include <set>
+#include "netbase.h"
 #include "dockernode.h"
 #include "dockerswarm.h"
 #include "dockerservice.h"
@@ -95,8 +96,8 @@ private:
     mutable CCriticalSection cs;
 private:
     //docker connection ip address and port
-    const char* address = "localhost";
-    uint32_t apiPort = 2375;
+    std::string address = "localhost";
+    int apiPort = 2375;
 
     Swarm swarm;
     std::map<std::string,Node> mapDockerNodeLists;
@@ -110,6 +111,11 @@ public:
     * get all running services by pubkey
     */
     map<std::string ,Service> GetServiceFromPubkey(CPubKey pubkey);
+
+    void SetDockerApiConnection(std::string in){
+        SplitHostPort(in,apiPort,address);
+        LogPrintf("DockerApi connection address %s:%u\n",address,apiPort);
+    }
     /*
     * Push Message to docker api,
     * isClearService default to clear all local caches
@@ -185,8 +191,8 @@ public:
             node = mapDockerNodeLists[nodeid];
         return true;
     }
-    void SetPort(uint32_t p){apiPort = p;}
-    uint32_t GetPort(){return apiPort;}
+    void SetPort(int p){apiPort = p;}
+    int GetPort(){return apiPort;}
 
     bool IsExistSerivce(uint256 txid){
         LOCK(cs);
