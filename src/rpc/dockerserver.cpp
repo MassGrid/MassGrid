@@ -91,9 +91,11 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "       1. \"dockernode (IP:Port)\" (string, required)\n"
                 "       2. \"MassGrid address\"(string, required)\n"
                 "       3. \"amount\"(int, required)\n"
-                "masternode command:  "
+                "dockernode command:  "
                 "settlement        - set tlement a txid\n"
                 "       1. \"txid\" (string, required)\n"
+                "setpersistentstore        - set tlement a txid\n"
+                "       1. \"status\" (bool, required)\n"
                 "listuntlementtx   - list all untlement transactions\n"
                 "listprice         - list all service items price\n"
                 "setprice          - set item price\n"
@@ -106,6 +108,7 @@ UniValue docker(const UniValue& params, bool fHelp)
                 + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
                 + HelpExampleCli("docker", "sendtomasternode \"119.3.66.159:19443\" \"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\" 6.4")
                 + HelpExampleCli("docker", "settlement \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
+                + HelpExampleCli("docker", "setpersistentstore \"true\"")
                 + HelpExampleCli("docker", "listuntlementtx")
                 + HelpExampleCli("docker", "listprice")
                 + HelpExampleCli("docker", "setprice \"cpu intel_i3 0.8\"")
@@ -247,7 +250,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     }
     if(strCommand == "listuntlementtx"){
         if (!fDockerNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
         UniValue varr(UniValue::VARR);
         std::set<CWalletTx*> setWallet = timerModule.GetWalletTxSet();
         for(const auto& tx :setWallet)
@@ -256,7 +259,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     }
     if(strCommand == "settlement"){
         if (!fDockerNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
         if (params.size() != 2)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
         std::string strtxid = params[1].get_str();
@@ -268,9 +271,18 @@ UniValue docker(const UniValue& params, bool fHelp)
         timerModule.UpdateSet(wtx);
         return "insert successful ";
     }
+    if(strCommand == "setpersistentstore"){
+        if (!fDockerNode)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
+        if (params.size() != 2)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
+        bool fps = params[1].get_bool();
+        dockerman.fPersistentStore = fps;
+        return "PersistentStore has " + fps?"enable":"disable";
+    }
     if(strCommand == "listprice"){
         if (!fDockerNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
         UniValue varr(UniValue::VARR);
         auto entries = dockerPriceConfig.getEntries();
         int entriesNum=1;
@@ -288,7 +300,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     }
     if(strCommand == "setprice"){
         if (!fDockerNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
         if (params.size() != 4)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
         std::string type = params[1].get_str();
@@ -308,7 +320,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     }    
     if (strCommand == "setdockerfee"){
         if (!fDockerNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a masternode");
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
         if (params.size() < 2)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Please specify an fee rate");
         std::string strfeeRate = params[1].get_str();
