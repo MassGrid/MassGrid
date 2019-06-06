@@ -1411,22 +1411,22 @@ QLineEdit{
                <number>0</number>
               </property>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_10">
+               <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,4,1">
                 <property name="leftMargin">
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="label_9">
-                  <property name="minimumSize">
+                 <spacer name="horizontalSpacer_15">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
                    <size>
-                    <width>160</width>
-                    <height>0</height>
+                    <width>40</width>
+                    <height>20</height>
                    </size>
                   </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QScrollArea" name="scrollArea">
@@ -1461,7 +1461,7 @@ border: hidden;
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>542</width>
+                     <width>589</width>
                      <height>150</height>
                     </rect>
                    </property>
@@ -1503,70 +1503,17 @@ border: hidden;
                  </widget>
                 </item>
                 <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_4">
-                  <item>
-                   <widget class="QToolButton" name="addButton">
-                    <property name="minimumSize">
-                     <size>
-                      <width>140</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>16777215</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>15</pointsize>
-                      <weight>50</weight>
-                      <italic>false</italic>
-                      <bold>false</bold>
-                     </font>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true"/>
-                    </property>
-                    <property name="text">
-                     <string>&amp;Recipient</string>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="../massgrid.qrc">
-                      <normaloff>:/res/pic/add.png</normaloff>:/res/pic/add.png</iconset>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>25</width>
-                      <height>25</height>
-                     </size>
-                    </property>
-                    <property name="popupMode">
-                     <enum>QToolButton::InstantPopup</enum>
-                    </property>
-                    <property name="toolButtonStyle">
-                     <enum>Qt::ToolButtonTextBesideIcon</enum>
-                    </property>
-                    <property name="arrowType">
-                     <enum>Qt::NoArrow</enum>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="verticalSpacer_8">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
+                 <spacer name="horizontalSpacer_17">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </item>
@@ -2039,7 +1986,7 @@ QSlider::sub-page:horizontal{
                        </size>
                       </property>
                       <property name="styleSheet">
-                       <string notr="true">QFrame{
+                       <string notr="true">QFrame#frame_8{
 border:hidden;
 }</string>
                       </property>
@@ -2067,7 +2014,7 @@ border:hidden;
                             <bool>true</bool>
                            </property>
                            <property name="checked">
-                            <bool>true</bool>
+                            <bool>false</bool>
                            </property>
                           </widget>
                          </item>
@@ -2349,6 +2296,11 @@ border:hidden;
               </item>
               <item>
                <widget class="QPushButton" name="sendButton">
+                <property name="font">
+                 <font>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
                 <property name="styleSheet">
                  <string notr="true"/>
                 </property>
@@ -2416,15 +2368,15 @@ border:hidden;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QValidatedLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>qvalidatedlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>MassGridAmountField</class>
    <extends>QLineEdit</extends>
    <header>massgridamountfield.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QValidatedLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qvalidatedlineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources>
@@ -2432,7 +2384,7 @@ border:hidden;
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupFee"/>
   <buttongroup name="groupCustomFee"/>
+  <buttongroup name="groupFee"/>
  </buttongroups>
 </ui>

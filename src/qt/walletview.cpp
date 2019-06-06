@@ -24,6 +24,7 @@
 #include "masternodelist.h"
 
 #include "ui_interface.h"
+#include "guiutil.h"
 
 #include <QAction>
 #include <QActionGroup>
@@ -70,17 +71,10 @@ WalletView::WalletView(const PlatformStyle *platformStyle, QWidget *parent):
     QComboBox *dateComboBox = new QComboBox(this);
     QComboBox *typeComboBox = new QComboBox(this);
 
-    // addressEdit->setMinimumSize(300,30);
-    // dateComboBox->setFixedWidth(120);
-    // dateComboBox->setMaximumSize(150,30);
+    addressEdit->setMinimumSize(300,30*GUIUtil::GetDPIValue());
 
-    // dateComboBox->setMinimumSize(120,32);
-    // dateComboBox->setMaximumSize(120,32);
-
-    // typeComboBox->setMinimumSize(120,32);
-    // typeComboBox->setMaximumSize(120,32);
     addressEdit->setObjectName("addressEdit");
-
+    addressEdit->setStyleSheet("QLineEdit::focus{\nborder:1px solid rgb(238,169,4);\nbackground-color: rgb(255, 255, 255,0);\n}\nQLineEdit::hover{\nborder:1px solid rgb(238,169,4);\nbackground-color: rgb(255, 255, 255,0);\n}\n\nQLineEdit\n{\nborder:1px solid rgb(165, 165, 165);\nbackground-color: rgb(255, 255, 255,0);\nborder-radius:4px;\n}");
     // addressEdit->setStyleSheet("QLineEdit\n{\nmin-width:300px;border:1px solid rgb(165, 165, 165);\nbackground-color: rgb(255, 255, 255,0);\n}\n\nQLineEdit::hover{\nborder:1px solid rgb(238,169,4);\nbackground-color: rgb(255, 255, 255,0);\n}");
 
 #if QT_VERSION >= 0x040700
@@ -98,9 +92,6 @@ WalletView::WalletView(const PlatformStyle *platformStyle, QWidget *parent):
 // #else
 //     typeComboBox->setStyleSheet("QComboBox{\n    background-color:rgb(49, 61, 64); \n    color:white;\n    height:30px;\n    width:120px;\n    border:1px solid rgb(210,210,210);\n	border-radius:2px;\n    background-repeat: no-repeat;\n    background-position: center left;\n    background-color: rgb(255, 255, 255);\n    color: rgb(0, 0, 0);\n    selection-color: black;\n    selection-background-color: darkgray;\n}\nQComboBox::drop-down\n{\n    width: 30px;\n    height:30px;\n    image: url(:/res/pic/xjt.png);\n}\n\nQComboBox QAbstractItemView\n{\n    width:140px;\n  outline: 0px;\n  color: rgb(255, 255, 255);\n    selection-color: rgb(255, 255, 255);\n    selection-background-color: rgb(239, 169, 4);\n    background-color: rgb(49, 61, 64);\n}\nQComboBox QAbstractItemView::item\n{\n    height: 40px;\n  font:15pt;\n  background-color: rgb(198, 125, 26);\n    border:hidden;\n    color: rgb(255, 255, 255);\n}");
 //     dateComboBox->setStyleSheet("QComboBox{\n    background-color:rgb(49, 61, 64); \n    color:white;\n    height:30px;\n    width:120px;\n    border:1px solid rgb(210,210,210);\n	border-radius:2px;\n    background-repeat: no-repeat;\n    background-position: center left;\n    background-color: rgb(255, 255, 255);\n    color: rgb(0, 0, 0);\n    selection-color: black;\n    selection-background-color: darkgray;\n}\nQComboBox::drop-down\n{\n    width: 30px;\n    height:30px;\n    image: url(:/res/pic/xjt.png);\n}\n\nQComboBox QAbstractItemView\n{\n    width:140px;\n  outline: 0px;\n  color: rgb(255, 255, 255);\n    selection-color: rgb(255, 255, 255);\n    selection-background-color: rgb(239, 169, 4);\n    background-color: rgb(49, 61, 64);\n}\nQComboBox QAbstractItemView::item\n{\n    height: 40px;\n  font:15pt;\n  background-color: rgb(198, 125, 26);\n    border:hidden;\n    color: rgb(255, 255, 255);\n}");
-
-    // typeComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 32px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: ΢���ź�,����;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
-    // dateComboBox->setStyleSheet("QComboBox\n{\nwidth: 120px;  \nheight: 32px;\nborder:0px solid rgb(174,103,46);\nfont-size: 12pt;\nfont-family: ΢���ź�,����;\nbackground-repeat: no-repeat;\nbackground-position: center left;\nbackground-color: rgb(255, 255, 255);\ncolor: rgb(0, 0, 0);\nselection-color: black;\nselection-background-color: darkgray;\n}\n\nQComboBox::drop-down \n{\nwidth: 30px; \nheight:30px;\nimage: url(:/res/pic/xjt.png);\n}\nQComboBox QAbstractItemView\n{\nheight:100px;\nborder: 0px; outline: 0px;  \ncolor: rgb(255, 255, 255);\nselection-color: rgb(255, 255, 255);\nselection-background-color: rgb(239, 169, 4);\nbackground-color: rgb(198, 125, 26);\n}\nQComboBox QAbstractItemView::item\n{\nheight: 20px;\nbackground-color: rgb(198, 125, 26);\nborder:hidden;\ncolor: rgb(255, 255, 255);\n}\n\n");
 #endif
 
     connect(typeComboBox, SIGNAL(activated(int)), transactionView, SLOT(chooseType(int)));
@@ -358,7 +349,7 @@ void WalletView::encryptWallet(bool status)
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
 
-    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
 
     updateEncryptionStatus();
@@ -389,7 +380,7 @@ void WalletView::changePassphrase()
     dlg.setModel(walletModel);
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
 }
 
@@ -405,7 +396,7 @@ void WalletView::unlockWallet(bool fForMixingOnly)
         dlg.setModel(walletModel);
         QPoint pos = MassGridGUI::winPos();
         QSize size = MassGridGUI::winSize();
-        dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+        dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
         dlg.exec();
     }
 }

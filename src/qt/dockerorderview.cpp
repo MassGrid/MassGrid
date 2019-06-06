@@ -674,7 +674,7 @@ void DockerOrderView::editLabel()
             dlg.loadRow(idx);
             QPoint pos = MassGridGUI::winPos();
             QSize size = MassGridGUI::winSize();
-            dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+            dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
             dlg.exec();
         }
         else
@@ -686,7 +686,7 @@ void DockerOrderView::editLabel()
             dlg.setAddress(address);
             QPoint pos = MassGridGUI::winPos();
             QSize size = MassGridGUI::winSize();
-            dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+            dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
             dlg.exec();
         }
     }

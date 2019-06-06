@@ -1119,7 +1119,7 @@ void MassGridGUI::optionsClicked()
     OptionsDialog dlg(0, enableWallet);
     dlg.setModel(clientModel->getOptionsModel());
     dlg.setWalletModel(m_walletModel);
-    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
+    dlg.move(this->x()+(this->width()-dlg.width()*GUIUtil::GetDPIValue())/2,this->y()+(this->height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
 }
 
@@ -1129,7 +1129,7 @@ void MassGridGUI::aboutClicked()
         return;
 
     HelpMessageDialog dlg(0, HelpMessageDialog::about);
-    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
+    dlg.move(this->x()+(this->width()-dlg.width()*GUIUtil::GetDPIValue())/2,this->y()+(this->height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
 }
 
@@ -1205,8 +1205,9 @@ void MassGridGUI::showPrivateSendHelpClicked()
 #ifdef ENABLE_WALLET
 void MassGridGUI::openClicked()
 {
+    // 
     OpenURIDialog dlg(0);
-    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
+    dlg.move(this->x()+(this->width()-dlg.width()*GUIUtil::GetDPIValue())/2,this->y()+(this->height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     if(dlg.exec())
     {
         Q_EMIT receivedURI(dlg.getURI());
@@ -1245,14 +1246,14 @@ void MassGridGUI::importPrivkey()
         proxyModel->removeRow(0);
 
     PrivKeyMgr dlg(true,this,0);
-    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
+    dlg.move(this->x()+(this->width()-dlg.width()*GUIUtil::GetDPIValue())/2,this->y()+(this->height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
 }
 
 void MassGridGUI::dumpPrivkey()
 {
     PrivKeyMgr dlg(false,this,0);
-    dlg.move(this->x()+(this->width()-dlg.width())/2,this->y()+(this->height()-dlg.height())/2);
+    dlg.move(this->x()+(this->width()-dlg.width()*GUIUtil::GetDPIValue())/2,this->y()+(this->height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
 }
 

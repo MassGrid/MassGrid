@@ -125,7 +125,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
 
     switchButton = new QSwitchButton(ui->frame_2);
     switchButton->SetSelected(false);
-    switchButton->SetSize(120,32);
+    switchButton->SetSize(120*GUIUtil::GetDPIValue(),32*GUIUtil::GetDPIValue());
     connect(switchButton,SIGNAL(clicked(bool)),this,SLOT(slot_changeN2Nstatus(bool)));
     clearDockerDetail();
     resetTableWidgetTitle();
@@ -755,7 +755,7 @@ void MasternodeList::openServiceDetail(QModelIndex index)
 
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
 
     dlg.setModel(walletModel);
 
@@ -846,7 +846,7 @@ void MasternodeList::gotoCreateServicePage(const std::string& ip_port,const std:
 
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.setaddr_port(ip_port);
     dlg.settxid(txid);
     dlg.setWalletModel(walletModel);
@@ -1025,7 +1025,7 @@ void MasternodeList::gotoOrderDetailPage(int index)
     
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
 }
 

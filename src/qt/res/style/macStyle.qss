@@ -279,26 +279,38 @@ QRadioButton::indicator:checked:disabled{
     image: url(:/res/pic/kPic.png);
 }
 
-/* QRadioButton{
+
+
+QRadioButton#radioCustomAtLeast,
+QRadioButton#checkBoxMinimumFee,
+QRadioButton#radioCustomPerKilobyte_{
     spacing: @5px@;
 }
 
-QRadioButton::indicator{
-    width:@22px@;
+QRadioButton#radioCustomAtLeast::indicator,
+QRadioButton#checkBoxMinimumFee::indicator,
+QRadioButton#radioCustomPerKilobyte_::indicator{
+    width:@28px@;
     height:@22px@;
 }
 
-QRadioButton::indicator:unchecked{
-    border-image: url(:/res/pic/kPic.png);
+QRadioButton#radioCustomAtLeast::indicator:unchecked,
+QRadioButton#checkBoxMinimumFee::indicator:unchecked,
+QRadioButton#radioCustomPerKilobyte_::indicator:unchecked{
+        image: url(:/res/pic/kPic.png);
 }
 
-QRadioButton::indicator:checked{
-    border-image: url(:/res/pic/selectPic.png);
+QRadioButton#radioCustomAtLeast::indicator:checked,
+QRadioButton#checkBoxMinimumFee::indicator:checked,
+QRadioButton#radioCustomPerKilobyte_::indicator:checked{
+        image: url(:/res/pic/check-selected.png);
 }
 
-QRadioButton::indicator:checked:disabled{
-    image:url(:/CheckBox/res/checkedDisabled.png);
-} */
+QRadioButton#radioCustomAtLeast::indicator:checked:disabled,
+QRadioButton#checkBoxMinimumFee::indicator:checked:disabled,
+QRadioButton#radioCustomPerKilobyte_::indicator:checked:disabled{
+    image: url(:/res/pic/kPic.png);
+}
 
 
 QTabBar::tab
@@ -571,25 +583,35 @@ border:hidden;
 color: rgb(255, 255, 255);
 }
 
-QWidget#MainwinTitle QToolButton#pBtnMin,
-QWidget#MainwinTitle QToolButton#pBtnMax,
-QWidget#MainwinTitle QToolButton#pBtnClose
+QWidget#MainwinTitle QPushButton#pBtnMin,
+QWidget#MainwinTitle QPushButton#pBtnMax,
+QWidget#MainwinTitle QPushButton#pBtnClose
 {
-    border:hidden;
-    min-width: @30px@;
-    min-height: @30px@;
+    border:none;
+    min-width: @15px@;
+    min-height: @15px@;
+    max-width: @15px@;
+    max-height: @15px@;                                       
 }
 
-QWidget#MainwinTitle QToolButton#pBtnMin
+QWidget#MainwinTitle QPushButton#pBtnMin,
+QWidget#MainwinTitle QPushButton#pBtnMax,
+QWidget#MainwinTitle QPushButton#pBtnClose
+{
+    border:none;
+    background-color: none;
+}
+
+QWidget#MainwinTitle QPushButton#pBtnMin
 {
     image: url(:/res/pic/minBtn.png);
 }
 
-QWidget#MainwinTitle QToolButton#pBtnMax{
+QWidget#MainwinTitle QPushButton#pBtnMax{
     image: url(:/res/pic/maxBtn.png);
 }
 
-QWidget#MainwinTitle QToolButton#pBtnClose{
+QWidget#MainwinTitle QPushButton#pBtnClose{
     image: url(:/res/pic/mainWinColse.png);
     /* border-image: url(:/res/pic/mainWinColse.png); */
 }
@@ -782,26 +804,24 @@ QWidget#OverviewPage{
 }
 
 QWidget#PrivKeyMgr QWidget#centerWin{
-border-image: url(:/res/pic/dlgBackgroud.png);
-}
-QWidget#PrivKeyMgr QStackedWidget{
-border:hidden;
-background-color: rgb(255, 255, 255);
+    border-image: url(:/res/pic/dlgBackgroud.png);
 }
 
-/* QWidget#PrivKeyMgr QPushButton#okButton{
-width:@80px@;
-height:@30px@;
-background-color: rgb(239, 169, 4);
-color: rgb(255, 255, 255);
-border:hidden;
-} */
+QWidget#PrivKeyMgr QStackedWidget{
+    border:hidden;
+    background-color: rgb(255, 255, 255);
+}
 
 QWidget#PrivKeyMgr QLineEdit{
-        border-color: rgb(186, 186, 186);
-        border:1px solid rgb(186, 186, 186);
-        min-height: @35px@;
-        min-width: @400px@;
+    border-color: rgb(186, 186, 186);
+    border:1px solid rgb(186, 186, 186);
+    min-height: @35px@;
+    min-width: @350px@;
+}
+
+QWidget#PrivKeyMgr{
+    min-width: @500px@;
+    min-height: @260px@;
 }
 
 QDialog#RPCConsole QFrame#frame_9,
@@ -899,17 +919,18 @@ QWidget#MasternodeList QFrame#frame_5{
     border:hidden;
 }
 
+QWidget#MasternodeList QFrame#frame_2{
+    border:hidden;
+    min-width: @120px@;
+    min-height: @32px@;
+}
+
 QWidget#MasternodeList QPushButton#pushButton_reloadOrderView,
 QWidget#MasternodeList QPushButton#pBtn_searchOrderBtn,
 QWidget#MasternodeList QPushButton#pushButton_refund{
     min-width:@80px@;
     min-height:@28px@;
 }
-
-/* QWidget#MasternodeList QLineEdit#lineEdit_searchOrder{
-height:@28px@;
-border:1px solid rgb(239, 169, 4);
-} */
 
 QWidget#MasternodeList QLineEdit#filterLineEdit,
 QWidget#MasternodeList QLineEdit#lineEdit_searchOrder
@@ -922,7 +943,9 @@ QWidget#MasternodeList QLineEdit#lineEdit_searchOrder
 }
 
 QWidget#MasternodeList QLineEdit::hover#filterLineEdit,
-QWidget#MasternodeList QLineEdit::hover#lineEdit_searchOrder
+QWidget#MasternodeList QLineEdit::hover#lineEdit_searchOrder,
+QWidget#MasternodeList QLineEdit::focus#filterLineEdit,
+QWidget#MasternodeList QLineEdit::focus#lineEdit_searchOrder
 {
 border:1px solid rgb(238,169,4);
 background-color: rgb(255, 255, 255,0);
@@ -970,11 +993,11 @@ QComboBox QAbstractItemView::item
 }
 
 QPushButton#cancelButton{
-    min-width:@20px@;
-    min-height:@20px@;
-    max-width:@20px@;
-    max-height:@20px@;
-    border:@7px@ solid rgb(255,255,255,0);
+    min-width:@15px@;
+    min-height:@15px@;
+    max-width:@15px@;
+    max-height:@15px@;
+    border:@2px@ solid rgb(255,255,255,0);
     image: url(:/res/pic/closeBtn.png);
 }
 
@@ -1056,63 +1079,106 @@ min-height: @28px@;
 }
 
 QWidget#SendCoinsDialog QToolButton#backButton,
-QWidget#SendCoinsDialog QToolButton#moreButton,
-QWidget#SendCoinsDialog QToolButton#addButton{
+QWidget#SendCoinsDialog QToolButton#moreButton{
     color: rgb(0,0,0);
     /* font: 16pt; */
     border-radius: @3px@;
-    min-height: @40px@;
-}
-
-QWidget#SendCoinsDialog QToolButton#addButton{
-    color: rgb(239, 169, 4);
-
+    min-height: @35px@;
+    font-size: @16px@ ;
 }
 
 QWidget#SendCoinsDialog QToolButton:hover#backButton,
-QWidget#SendCoinsDialog QToolButton:hover#moreButton,
-QWidget#SendCoinsDialog QToolButton:hover#addButton{
+QWidget#SendCoinsDialog QToolButton:hover#moreButton{
     color: rgb(239, 169, 4);
 }
 
 QWidget#SendCoinsDialog QPushButton#sendButton{
     min-height:@40px@;
     min-width:@140px@;
-	/* font: 18pt ; */
+	font-size: @20px@;
 }
 
 QStackedWidget#SendCoinsEntry{
+    min-width: @500px@;
+    min-height: @145px@;
+}
+
+QStackedWidget#SendCoinsEntry QFrame#frame_10,
+QStackedWidget#SendCoinsEntry QFrame#frame_lable,
+QStackedWidget#SendCoinsEntry QFrame#frame_3{
+    min-height:@40px@;
+}
+
+QWidget#SendCoinsEntry QPushButton#addButton{
+    color: rgb(0,0,0);
+    border: none;
+    min-height: @25px@;
+    font-size: @16px@ ;
+    qproperty-icon: url(:/res/pic/add.png);
+    qproperty-iconSize:@16px@ @16px@;
+}
+
+QWidget#SendCoinsEntry QPushButton#addButton{
+    color: rgb(239, 169, 4);
+}
+/* 
+QWidget#SendCoinsEntry QPushButton:hover#addButton{
+    border: 1px solid rgb(239, 169, 4);
+} */
+
+/* QStackedWidget#SendCoinsEntry QLabel#payToLabel,
+QStackedWidget#SendCoinsEntry QLabel#amountLabel_,
+QStackedWidget#SendCoinsEntry QLabel#labellLabel{
+    min-width: @80px@;
+    max-width: @100px@;
+}
+
+QStackedWidget#SendCoinsEntry QFrame#frame_10,
+QStackedWidget#SendCoinsEntry QFrame#frame_lable,
+QStackedWidget#SendCoinsEntry QFrame#frame_3{
+    border:1px solid rgb(186, 186, 186);
+    min-height:@35px@;
+} */
+
+
+
+
+/* QStackedWidget#SendCoinsEntry{
 border:hidden;
 min-width: @500px@;
-min-height: @150px@;
+min-height: @145px@;
+max-height: @145px@;
 }
 
 QStackedWidget#SendCoinsEntry QFrame#SendCoins{
     border:hidden;
 }
-/* QStackedWidget#SendCoinsEntry QMenu{
-    color:rgb(255,255,255);
-    background-color: rgb(49, 61, 64);
-    border:0px solid transparent;
-}
-QStackedWidget#SendCoinsEntry QMenu::item{
-    padding:0px @20px@ 0px @20px@;
-    margin-left: 2px;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    height:30px;
+
+QStackedWidget#SendCoinsEntry QLineEdit{
+    min-height:@30px@;
+    border:hidden;
+    background-color:rgb(255,255,255);
 }
 
-QStackedWidget#SendCoinsEntry QMenu::item:selected:enabled{
-    background-color: rgb(239,169,4);
-    color: white;
+QStackedWidget#SendCoinsEntry QToolButton{
+    border:hidden;
+    min-height:@28px@;
+    min-width:@28px@;
 }
 
-QStackedWidget#SendCoinsEntry QMenu::item:selected:!enabled{
-    background:transparent;
+QStackedWidget#SendCoinsEntry QLabel#payToLabel,
+QStackedWidget#SendCoinsEntry QLabel#amountLabel_,
+QStackedWidget#SendCoinsEntry QLabel#labellLabel{
+    min-width: @80px@;
+    max-width: @100px@;
 }
- */
+
+QStackedWidget#SendCoinsEntry QFrame#frame_10,
+QStackedWidget#SendCoinsEntry QFrame#frame_lable,
+QStackedWidget#SendCoinsEntry QFrame#frame_3{
+    border:1px solid rgb(186, 186, 186);
+    min-height:@40px@;
+} */
 
 QDialog#AddDockerServiceDlg QLineEdit{
     min-height:@32px@;
@@ -1122,14 +1188,10 @@ QDialog#AddDockerServiceDlg QLineEdit{
 	border-radius:3px;
 }
 
-/* QDialog#AddDockerServiceDlg QPushButton#cancelButton{
-    min-width:20px;
-    min-height:20px;
-    max-width:20px;
-    max-height:20px;
-    border:7px solid rgb(255,255,255,0);
-    image: url(:/res/pic/closeBtn.png);
-} */
+QDialog#AddDockerServiceDlg QLineEdit:hover,
+QDialog#AddDockerServiceDlg QLineEdit:focus{
+    border:1px solid rgb(238,169,4);    
+}
 
 QDialog#AddDockerServiceDlg QPushButton#okButton{
 width:@120px@;
@@ -1177,6 +1239,70 @@ QDialog#AddDockerServiceDlg QPushButton#nextButton_4{
     width: @100px@;
     height: @35px@;
 }
+
+QDialog#AddDockerServiceDlg QLabel#label_servicename,
+QDialog#AddDockerServiceDlg QLabel#label_sshkey,
+QDialog#AddDockerServiceDlg QLabel#label_gputype{
+    min-width: @110px@;
+}
+
+QDialog#AddDockerServiceDlg QDialog#AddDockerServiceDlg QFrame#frame_step{
+    border:hidden;
+}
+QDialog#AddDockerServiceDlg QLabel#label_step1
+{
+    border:hidden;
+	border-image: url(:/res/pic/configure_enabled.png);
+}
+
+QDialog#AddDockerServiceDlg QLabel::!enabled#label_step1
+{
+    border:hidden;
+    border-image: url(:/res/pic/configure_disabled.png);
+}
+
+QDialog#AddDockerServiceDlg QLabel#label_step2
+{
+    border:hidden;
+    border-image: url(:/res/pic/pay_enabled.png);
+}
+QDialog#AddDockerServiceDlg QLabel::!enabled#label_step2
+{
+    border:hidden;
+    border-image: url(:/res/pic/pay_disabled.png);
+}
+
+QDialog#AddDockerServiceDlg QDialog#AddDockerServiceDlg QLabel#label_step3
+{
+    border:hidden;
+	border-image: url(:/res/pic/createService_enabled.png);
+}
+QDialog#AddDockerServiceDlg QLabel::!enabled#label_step3
+{
+    border:hidden;
+	border-image: url(:/res/pic/createService_disenabled.png);
+}
+
+QDialog#AddDockerServiceDlg QLabel#label_step4
+{
+    border:hidden;
+    border-image: url(:/res/pic/finished_enabled.png);
+}
+QDialog#AddDockerServiceDlg QLabel::!enabled#label_step4
+{
+    border:hidden;
+    border-image: url(:/res/pic/finished_disabled.png);
+}
+QDialog#AddDockerServiceDlg QFrame#frame_step QLabel{
+    color: rgb(239, 169, 4);
+}
+
+QDialog#AddDockerServiceDlg QFrame#frame_step QLabel::!enabled
+{
+    color: rgb(125, 125, 125);
+}
+
+
 
 QWidget#AddressBookPage{
     min-width:@640px@;
@@ -1238,21 +1364,10 @@ QDialog#SignVerifyMessageDialog{
     min-height:@550px@;
 }
 
-QStackedWidget#SendCoinsEntry{
-    border:hidden;
-    min-width: @150px@;
-}
-
-QStackedWidget#SendCoinsEntry QLineEdit{
-    min-height:@30px@;
-    border:hidden;
-    background-color:rgb(255,255,255);
-}
-
-QStackedWidget#SendCoinsEntry QToolButton{
-    border:hidden;
-    min-height:@28px@;
-    min-width:@28px@;
+QDialog#TransactionDescDialog{
+    min-width:@560px@;
+    min-height:@360px@;
+    max-height:500px;
 }
 
 QWidget#LoadingWin{
@@ -1265,24 +1380,11 @@ QWidget#LoadingWin QLabel#label{
     min-height: @80px@;
 }
 
-QStackedWidget#SendCoinsEntry QLabel#payToLabel,
-QStackedWidget#SendCoinsEntry QLabel#amountLabel_,
-QStackedWidget#SendCoinsEntry QLabel#labellLabel{
-    min-width: @80px@;
-    max-width: @100px@;
-}
-
 QDialog#SendCoinsDialog QScrollArea#scrollArea{
     border: hidden;
     min-height: @200px@;
 }
 
-QStackedWidget#SendCoinsEntry QFrame#frame_10,
-QStackedWidget#SendCoinsEntry QFrame#frame_lable,
-QStackedWidget#SendCoinsEntry QFrame#frame_3{
-    border:1px solid rgb(186, 186, 186);
-    min-height:@40px@;
-}
 
 QLineEdit#addressEdit
 {
@@ -1295,3 +1397,4 @@ QLineEdit::hover#addressEdit{
     border:1px solid rgb(238,169,4);
     background-color: rgb(255, 255, 255,0);
 }
+

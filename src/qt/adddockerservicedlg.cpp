@@ -28,6 +28,7 @@
 #include <QEventLoop>
 #include <QStyleFactory>
 #include "cupdatethread.h"
+#include "guiutil.h"
 
 #define LOADRESOURCETIMEOUT 30
 
@@ -410,7 +411,7 @@ bool AddDockerServiceDlg::createDockerService()
             dlg.setModel(m_walletModel);
             QPoint pos = MassGridGUI::winPos();
             QSize size = MassGridGUI::winSize();
-            dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+            dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
 
             if(dlg.exec() != QDialog::Accepted){
                 return false;
@@ -633,7 +634,7 @@ void AddDockerServiceDlg::showLoading(const QString & msg)
 
     QPoint pos = ui->centerWin->pos(); //MassGridGUI::winPos();
     QSize size = ui->centerWin->size(); //MassGridGUI::winSize();
-    m_loadingWin->move(pos.x()+(size.width()-m_loadingWin->width())/2,pos.y()+(size.height()-m_loadingWin->height())/2);
+    m_loadingWin->move(pos.x()+(size.width()-m_loadingWin->width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-m_loadingWin->height()*GUIUtil::GetDPIValue())/2);
     
     m_loadingWin->showLoading(msg);
 }

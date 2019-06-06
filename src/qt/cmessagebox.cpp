@@ -29,7 +29,7 @@ CMessageBox::CMessageBox(QWidget *parent,QString title,QString text) :
     if(parent!=0){
         QPoint pos = MassGridGUI::winPos();
         QSize size = MassGridGUI::winSize();
-        move(pos.x()+(size.width()-width())/2,pos.y()+(size.height()-height())/2);
+        move(pos.x()+(size.width()-width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-height()*GUIUtil::GetDPIValue())/2);
     }
     GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }

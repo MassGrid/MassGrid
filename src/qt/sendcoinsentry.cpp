@@ -26,19 +26,11 @@ SendCoinsEntry::SendCoinsEntry(const PlatformStyle *platformStyle, QWidget *pare
 
     setCurrentWidget(ui->SendCoins);
 
-    // if (platformStyle->getUseExtraSpacing())
-    //     ui->payToLayout->setSpacing(4);
+
 #if QT_VERSION >= 0x040700
     ui->addAsLabel->setPlaceholderText(tr("Enter a label for this address to add it to your address book"));
 #endif
 
-    // These icons are needed on Mac also!
-    // ui->addressBookButton->setIcon(QIcon(":/icons/address-book"));
-    // ui->pasteButton->setIcon(QIcon(":/icons/editpaste"));
-    // ui->deleteButton->setIcon(QIcon(":/icons/remove"));
-    // ui->deleteButton_is->setIcon(QIcon(":/icons/remove"));
-    // ui->deleteButton_s->setIcon(QIcon(":/icons/remove"));
-      
     // normal massgrid address field
     GUIUtil::setupAddressWidget(ui->payTo, this);
     // just a label for displaying massgrid address(es)
@@ -46,12 +38,7 @@ SendCoinsEntry::SendCoinsEntry(const PlatformStyle *platformStyle, QWidget *pare
 
     // Connect signals
     connect(ui->payAmount, SIGNAL(valueChanged()), this, SIGNAL(payAmountChanged()));
-    // connect(ui->checkboxSubtractFeeFromAmount, SIGNAL(toggled(bool)), this, SIGNAL(subtractFeeFromAmountChanged()));
-    // connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-    // connect(ui->deleteButton_is, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-    // connect(ui->deleteButton_s, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-    // ui->addressBookButton->hide();
-    // ui->pasteButton->hide();
+    connect(ui->addButton, SIGNAL(clicked()), this, SLOT(openAddressBook()));
 }
 
 SendCoinsEntry::~SendCoinsEntry()
@@ -73,7 +60,7 @@ void SendCoinsEntry::on_addressBookButton_clicked()
     dlg.setModel(model->getAddressTableModel());
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     if(dlg.exec())
     {
         ui->payTo->setText(dlg.getReturnValue());

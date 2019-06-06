@@ -153,61 +153,7 @@
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">QFrame#frame_step{
-    border:hidden;
-}
-QLabel#label_step1
-{
-border:hidden;
-	border-image: url(:/res/pic/configure_enabled.png);
-}
-
-QLabel::!enabled#label_step1
-{
-border:hidden;
-	border-image: url(:/res/pic/configure_disabled.png);
-}
-
-QLabel#label_step2
-{
-border:hidden;
-border-image: url(:/res/pic/pay_enabled.png);
-}
-QLabel::!enabled#label_step2
-{
-border:hidden;
-border-image: url(:/res/pic/pay_disabled.png);
-}
-
-QLabel#label_step3
-{
-border:hidden;
-	border-image: url(:/res/pic/createService_enabled.png);
-}
-QLabel::!enabled#label_step3
-{
-border:hidden;
-	border-image: url(:/res/pic/createService_disenabled.png);
-}
-
-QLabel#label_step4
-{
-border:hidden;
-border-image: url(:/res/pic/finished_enabled.png);
-}
-QLabel::!enabled#label_step4
-{
-border:hidden;
-border-image: url(:/res/pic/finished_disabled.png);
-}
-QLabel{
-color: rgb(239, 169, 4);
-}
-
-QLabel::!enabled
-{
-color: rgb(125, 125, 125);
-}</string>
+            <string notr="true"/>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -811,10 +757,10 @@ border-image: url(:/res/pic/arrow_disabled.png);
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
                <item>
-                <widget class="QLabel" name="label_2">
+                <widget class="QLabel" name="label_servicename">
                  <property name="minimumSize">
                   <size>
-                   <width>100</width>
+                   <width>110</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -905,10 +851,10 @@ border-image: url(:/res/pic/arrow_disabled.png);
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_2">
                <item>
-                <widget class="QLabel" name="label_6">
+                <widget class="QLabel" name="label_sshkey">
                  <property name="minimumSize">
                   <size>
-                   <width>100</width>
+                   <width>110</width>
                    <height>40</height>
                   </size>
                  </property>
@@ -956,7 +902,7 @@ border:hidden;
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <property name="spacing">
-                 <number>3</number>
+                 <number>7</number>
                 </property>
                 <property name="leftMargin">
                  <number>0</number>
@@ -971,12 +917,12 @@ border:hidden;
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="label_4">
+                 <widget class="QLabel" name="label_gputype">
                   <property name="text">
-                   <string>GPU 类型:</string>
+                   <string>GPU Type:</string>
                   </property>
                   <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>

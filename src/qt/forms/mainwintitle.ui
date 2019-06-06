@@ -291,12 +291,15 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
              <item>
-              <widget class="QToolButton" name="pBtnMin">
+              <widget class="QPushButton" name="pBtnMin">
                <property name="minimumSize">
                 <size>
-                 <width>30</width>
-                 <height>30</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
@@ -314,11 +317,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QToolButton" name="pBtnMax">
+              <widget class="QPushButton" name="pBtnMax">
                <property name="minimumSize">
                 <size>
-                 <width>30</width>
-                 <height>30</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
@@ -342,11 +345,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QToolButton" name="pBtnClose">
+              <widget class="QPushButton" name="pBtnClose">
                <property name="minimumSize">
                 <size>
-                 <width>30</width>
-                 <height>30</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">

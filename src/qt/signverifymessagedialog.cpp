@@ -96,7 +96,7 @@ void SignVerifyMessageDialog::on_addressBookButton_SM_clicked()
         dlg.setModel(model->getAddressTableModel());
         QPoint pos = MassGridGUI::winPos();
         QSize size = MassGridGUI::winSize();
-        dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+        dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
         if (dlg.exec())
         {
             setAddress_SM(dlg.getReturnValue());
@@ -190,7 +190,7 @@ void SignVerifyMessageDialog::on_addressBookButton_VM_clicked()
         dlg.setModel(model->getAddressTableModel());
         QPoint pos = MassGridGUI::winPos();
         QSize size = MassGridGUI::winSize();
-        dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+        dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
         if (dlg.exec())
         {
             setAddress_VM(dlg.getReturnValue());

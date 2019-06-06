@@ -208,7 +208,7 @@ void MainwinTitle::open2DCodePage()
 
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dialog.move(pos.x()+(size.width()-dialog.width())/2,pos.y()+(size.height()-dialog.height())/2);
+    dialog.move(pos.x()+(size.width()-dialog.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dialog.height()*GUIUtil::GetDPIValue())/2);
     dialog.exec();
 }
 
