@@ -595,7 +595,10 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
             persistentMount.volumeOptions.driverConfig.options["device"] = node.description.engine.labels["nfsip"] + ":/" + createService.pubKeyClusterAddress.ToString().substr(0,66);
             persistentMount.volumeOptions.driverConfig.options["nfsopts"] = "hard,proto=tcp,nfsvers=4,intr,nolock";
             spec.taskTemplate.containerSpec.mounts.push_back(persistentMount);
-        } 
+
+            // judge nfs storge
+            spec.labels["com.massgrid.nfs"] = node.description.engine.labels["nfsip"];
+        }
     }
 
     //  7.request docker

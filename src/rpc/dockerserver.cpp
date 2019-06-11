@@ -277,10 +277,13 @@ UniValue docker(const UniValue& params, bool fHelp)
     if(strCommand == "setpersistentstore"){
         if (!fDockerNode)
             throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
-        if (params.size() != 2)
+        if (params.size() >2)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
-        bool fps = boost::lexical_cast<bool>(params[1].get_str());
-        dockerman.fPersistentStore = fps;
+        bool fps = dockerman.fPersistentStore;
+        if (params.size()  == 2){
+            fps = boost::lexical_cast<bool>(params[1].get_str());
+            dockerman.fPersistentStore = fps;
+        }
         std::string persis = fps ? "enable" : "disable";
         return "PersistentStore has " + persis;
     }
@@ -464,6 +467,7 @@ UniValue docker(const UniValue& params, bool fHelp)
                 varr.push_back(varr2);
                 UniValue obj(UniValue::VOBJ);
                 obj.push_back(Pair("masternodeaddress",dockercluster.dndata.masternodeAddress));
+                obj.push_back(Pair("PersistentStore",dockercluster.dndata.fPersistentStore));
                 varr.push_back(obj);
                 return varr;
             }
