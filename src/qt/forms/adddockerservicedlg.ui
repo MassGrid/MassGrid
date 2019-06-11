@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
+    <width>750</width>
     <height>578</height>
    </rect>
   </property>
@@ -134,8 +134,11 @@
          </item>
          <item>
           <widget class="QFrame" name="frame_step">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>60</verstretch>
             </sizepolicy>
@@ -149,7 +152,7 @@
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>60</height>
+             <height>16777215</height>
             </size>
            </property>
            <property name="styleSheet">
@@ -529,6 +532,9 @@ border-image: url(:/res/pic/arrow_disabled.png);
                     <height>35</height>
                    </size>
                   </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
                   <property name="text">
                    <string/>
                   </property>
@@ -691,6 +697,9 @@ border-image: url(:/res/pic/arrow_disabled.png);
                     <height>35</height>
                    </size>
                   </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
                   <property name="text">
                    <string/>
                   </property>
@@ -747,239 +756,202 @@ border-image: url(:/res/pic/arrow_disabled.png);
             <number>0</number>
            </property>
            <widget class="QWidget" name="page">
-            <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,0,10">
-             <property name="spacing">
-              <number>5</number>
-             </property>
-             <property name="bottomMargin">
-              <number>5</number>
-             </property>
+            <layout class="QVBoxLayout" name="verticalLayout" stretch="1,5">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
+              <layout class="QHBoxLayout" name="horizontalLayout" stretch="5,3">
                <item>
-                <widget class="QLabel" name="label_servicename">
-                 <property name="minimumSize">
-                  <size>
-                   <width>110</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Service Name:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
+                <layout class="QFormLayout" name="formLayout">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_servicename">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Service Name:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLineEdit" name="lineEdit_name">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_sshkey">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>SSH-PubKey:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_minAmount">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Min Amount:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QLineEdit" name="lineEdit_minAmount">
+                   <property name="placeholderText">
+                    <string>Return to search docker resource</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLineEdit" name="lineEdit_sshpubkey">
+                   <property name="placeholderText">
+                    <string>Return to open pubKey file</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item>
-                <widget class="QLineEdit" name="lineEdit_name">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string>Image:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="comboBox_image">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>10.0-base-ubuntu16.04</string>
-                  </property>
+                <layout class="QFormLayout" name="formLayout_2">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_image">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Image:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
                  </item>
-                 <item>
-                  <property name="text">
-                   <string>10.0-runtime-ubuntu16.04</string>
-                  </property>
+                 <item row="0" column="1">
+                  <widget class="QComboBox" name="comboBox_image">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>10.0-base-ubuntu16.04</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>10.0-runtime-ubuntu16.04</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>10.0-cudnn7-runtime-ubuntu16.04 </string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>10.0-devel-ubuntu16.04</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>10.0-cudnn7-devel-ubuntu16.04</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>10.0-massgridminer-ubuntu16.04</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>10.0-ethereumminer-ubuntu16.04</string>
+                    </property>
+                   </item>
+                  </widget>
                  </item>
-                 <item>
-                  <property name="text">
-                   <string>10.0-cudnn7-runtime-ubuntu16.04 </string>
-                  </property>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_gputype">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>GPU Type:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
                  </item>
-                 <item>
-                  <property name="text">
-                   <string>10.0-devel-ubuntu16.04</string>
-                  </property>
+                 <item row="1" column="1">
+                  <widget class="QComboBox" name="comboBox_gpuType">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                  </widget>
                  </item>
-                 <item>
-                  <property name="text">
-                   <string>10.0-cudnn7-devel-ubuntu16.04</string>
-                  </property>
+                 <item row="2" column="1">
+                  <widget class="QCheckBox" name="checkBox_persistentStore">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Persistent Store</string>
+                   </property>
+                  </widget>
                  </item>
-                 <item>
-                  <property name="text">
-                   <string>10.0-massgridminer-ubuntu16.04</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>10.0-ethereumminer-ubuntu16.04</string>
-                  </property>
-                 </item>
-                </widget>
+                </layout>
                </item>
               </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <item>
-                <widget class="QLabel" name="label_sshkey">
-                 <property name="minimumSize">
-                  <size>
-                   <width>110</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>SSH-PubKey:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="textEdit_sshpubkey"/>
-               </item>
-               <item>
-                <widget class="QPushButton" name="openPubKeyButton">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>32</height>
-                  </size>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>open pubKey file</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QFrame" name="frame_filter">
-               <property name="styleSheet">
-                <string notr="true">QFrame#frame_filter{
-border:hidden;
-}</string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <property name="spacing">
-                 <number>7</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label_gputype">
-                  <property name="text">
-                   <string>GPU Type:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="comboBox_gpuType">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_30">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="lineEdit_minAmount">
-                  <property name="placeholderText">
-                   <string>min amount(tMGD)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="minAmountButton">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Search</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
              </item>
              <item>
               <widget class="QTableWidget" name="tableWidget_resource">
@@ -1001,7 +973,7 @@ border:hidden;
               <number>0</number>
              </property>
              <item>
-              <layout class="QGridLayout" name="gridLayout_2">
+              <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,2,1">
                <property name="topMargin">
                 <number>20</number>
                </property>
@@ -1051,6 +1023,12 @@ border:hidden;
                  </property>
                  <item>
                   <widget class="QFrame" name="frame_8">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
                      <width>250</width>
@@ -1083,7 +1061,7 @@ border:hidden;
                      <number>0</number>
                     </property>
                     <item>
-                     <widget class="QLabel" name="label_23">
+                     <widget class="QLabel" name="label_payTo">
                       <property name="minimumSize">
                        <size>
                         <width>80</width>
@@ -1120,6 +1098,18 @@ background-color: rgba(255, 255, 255,0);</string>
                  </item>
                  <item>
                   <widget class="QFrame" name="frame_9">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>250</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -1140,7 +1130,7 @@ background-color: rgba(255, 255, 255,0);</string>
                      <number>0</number>
                     </property>
                     <item>
-                     <widget class="QLabel" name="label_24">
+                     <widget class="QLabel" name="label_amount">
                       <property name="minimumSize">
                        <size>
                         <width>80</width>

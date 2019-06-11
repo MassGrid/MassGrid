@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>222</width>
-    <height>222</height>
+    <width>174</width>
+    <height>174</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <widget class="QFrame" name="frame">
      <property name="minimumSize">
       <size>
-       <width>200</width>
-       <height>200</height>
+       <width>160</width>
+       <height>160</height>
       </size>
      </property>
      <property name="styleSheet">
@@ -121,12 +121,6 @@ border-radius:5px;
         </item>
         <item>
          <widget class="QLabel" name="label_msg">
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <stylestrategy>PreferDefault</stylestrategy>
-           </font>
-          </property>
           <property name="styleSheet">
            <string notr="true">color: rgb(255, 255, 255);</string>
           </property>

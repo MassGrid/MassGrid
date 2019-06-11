@@ -755,11 +755,12 @@ void MasternodeList::openServiceDetail(QModelIndex index)
 
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
 
     dlg.setModel(walletModel);
 
     dlg.setService(service);
+    
+    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
 }
 
@@ -1025,7 +1026,7 @@ void MasternodeList::gotoOrderDetailPage(int index)
     
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
+    dlg.move((pos.x()+(size.width()-dlg.width())/2)*GUIUtil::GetDPIValue(),pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
 }
 

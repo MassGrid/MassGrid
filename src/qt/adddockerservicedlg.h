@@ -69,6 +69,7 @@ private:
     void startCheckTransactionWork();
     void stopAndDelTransactionThread();
     void resetGUITimer();
+    void expansionResourceItems();
     void startAskDNDataWork(const char* slotMethod, bool needAsk = true);
     
 protected:

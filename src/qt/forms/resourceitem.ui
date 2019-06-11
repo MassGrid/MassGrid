@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>84</height>
+    <width>776</width>
+    <height>106</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,8 +18,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>640</width>
-    <height>84</height>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -88,21 +88,21 @@ QLabel#label_16
      <property name="verticalSpacing">
       <number>13</number>
      </property>
-     <item row="0" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>GPU Type:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="1" column="1">
       <widget class="QLabel" name="label_gpuName">
        <property name="text">
         <string>TextLabel</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_6">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -115,26 +115,52 @@ QLabel#label_16
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QLabel" name="label_romType">
        <property name="text">
         <string>TextLabel</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
         <string>CPU Type:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QLabel" name="label_cpuName">
        <property name="text">
         <string>TextLabel</string>
        </property>
       </widget>
+     </item>
+     <item row="0" column="0">
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="4" column="0">
+      <spacer name="verticalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -146,14 +172,14 @@ QLabel#label_16
      <property name="verticalSpacing">
       <number>13</number>
      </property>
-     <item row="0" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>GPU Count:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="1" column="1">
       <widget class="QLabel" name="label_gpuCount">
        <property name="minimumSize">
         <size>
@@ -166,33 +192,59 @@ QLabel#label_16
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_8">
        <property name="text">
         <string>ROM:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QLabel" name="label_romCount">
        <property name="text">
         <string>TextLabel</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label_12">
        <property name="text">
         <string>CPU Count:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QLabel" name="label_cpuCount">
        <property name="text">
         <string>TextLabel</string>
        </property>
       </widget>
+     </item>
+     <item row="0" column="0">
+      <spacer name="verticalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="4" column="0">
+      <spacer name="verticalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -201,6 +253,19 @@ QLabel#label_16
      <property name="spacing">
       <number>13</number>
      </property>
+     <item>
+      <spacer name="verticalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
@@ -239,7 +304,7 @@ QLabel#label_16
       <widget class="QLabel" name="label_amount">
        <property name="maximumSize">
         <size>
-         <width>131</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
@@ -266,7 +331,7 @@ QLabel#label_16
    <item>
     <widget class="QPushButton" name="buyBtn">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -280,7 +345,7 @@ QLabel#label_16
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>60</height>
+       <height>16777215</height>
       </size>
      </property>
      <property name="styleSheet">

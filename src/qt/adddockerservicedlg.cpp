@@ -72,17 +72,19 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
 #endif
 
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(slot_close()));
-    connect(ui->openPubKeyButton,SIGNAL(clicked()),this,SLOT(slot_openPubKeyFile()));
-    connect(ui->horizontalSlider,SIGNAL(valueChanged(int)),this,SLOT(slot_hireTimeChanged(int)));
-    connect(ui->minAmountButton,SIGNAL(clicked()),this,SLOT(slot_searchMinAmount()));
-    connect(ui->lineEdit_minAmount,SIGNAL(textChanged(QString)),this,SLOT(slot_minAmounttextChanged(QString)));
+    // connect(ui->openPubKeyButton,SIGNAL(clicked()),this,SLOT(slot_openPubKeyFile()));
+    connect(ui->lineEdit_sshpubkey,SIGNAL(returnPressed()),this,SLOT(slot_openPubKeyFile()));
     
+    connect(ui->horizontalSlider,SIGNAL(valueChanged(int)),this,SLOT(slot_hireTimeChanged(int)));
+    // connect(ui->minAmountButton,SIGNAL(clicked()),this,SLOT(slot_searchMinAmount()));
+    connect(ui->lineEdit_minAmount,SIGNAL(textChanged(QString)),this,SLOT(slot_minAmounttextChanged(QString)));
+    connect(ui->lineEdit_minAmount,SIGNAL(returnPressed()),this,SLOT(slot_searchMinAmount()));
+
     connect(ui->nextButton_2,SIGNAL(clicked()),this,SLOT(doTransaction()));
     connect(ui->nextButton_3,SIGNAL(clicked()),this,SLOT(doStep3()));
     connect(ui->nextButton_4,SIGNAL(clicked()),this,SLOT(doStep4()));
     connect(ui->comboBox_gpuType,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_gpuComboxCurrentIndexChanged(int)));
 
-    // ui->frame_filter->hide();
     ui->stackedWidget->setCurrentIndex(0);
 
     ui->tableWidget_resource->verticalHeader()->setVisible(false);
@@ -335,14 +337,16 @@ void AddDockerServiceDlg::slot_openPubKeyFile()
         CMessageBox::information(this, tr("Error"), tr("open Pubkey file error!"));
         return ;
     }
-    ui->textEdit_sshpubkey->setText(file.readAll());
+    ui->lineEdit_sshpubkey->setText(file.readAll());
 }
 
 void AddDockerServiceDlg::slot_searchMinAmount()
 {
+    expansionResourceItems();
+
     double payment = ui->lineEdit_minAmount->text().toDouble();
     int rowCount = ui->tableWidget_resource->rowCount();
-
+    
     for(int i=0;i<rowCount;i++){
         QString itemText = ui->tableWidget_resource->item(i,1)->text();
         QString amountStr = MassGridUnits::formatWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(),itemText.toDouble());
@@ -359,11 +363,7 @@ void AddDockerServiceDlg::slot_minAmounttextChanged(QString text)
     if(!text.isEmpty())
         return ;
     
-    int rowCount = ui->tableWidget_resource->rowCount();
-
-    for(int i=0;i<rowCount;i++){
-        ui->tableWidget_resource->showRow(i);
-    }
+    expansionResourceItems();
 }
 
 void AddDockerServiceDlg::setaddr_port(const std::string& addr_port)
@@ -389,8 +389,10 @@ bool AddDockerServiceDlg::createDockerService()
         return false ;
     }
 
-    std::string strssh_pubkey = ui->textEdit_sshpubkey->text().toStdString().c_str();
+    std::string strssh_pubkey = ui->lineEdit_sshpubkey->text().toStdString().c_str();
     m_createService.ssh_pubkey = strssh_pubkey;
+
+    m_createService.fPersistentStore = ui->checkBox_persistentStore->isChecked();
 
     if(!strssh_pubkey.size()){
         CMessageBox::information(this, tr("Docker option"), tr("SSH public key is empty!"));
@@ -754,6 +756,15 @@ void AddDockerServiceDlg::loadResourceData()
 
     initCombobox();
 
+    if(dockercluster.dndata.fPersistentStore){
+        ui->checkBox_persistentStore->setEnabled(true);
+        ui->checkBox_persistentStore->setChecked(true);
+        ui->checkBox_persistentStore->setToolTip(tr("This node support persistable storage!"));
+    }
+    else{
+        ui->checkBox_persistentStore->setToolTip(tr("This node does not support persistable storage!"));
+    }
+
     int count = 0;
 
     for(;iter != items.end();iter++){
@@ -769,7 +780,7 @@ void AddDockerServiceDlg::loadResourceData()
         item->setAmount(iter->second.price);
         connect(item,SIGNAL(sig_buyClicked()),this,SLOT(slot_buyClicked()));
 
-        item->resize(ui->tableWidget_resource->width(),item->height());
+        item->resize(ui->tableWidget_resource->width(),item->height()*GUIUtil::GetDPIValue());
         ui->tableWidget_resource->setRowHeight(count,item->height());
         ui->tableWidget_resource->setCellWidget(count,0,item);
 
@@ -787,6 +798,7 @@ void AddDockerServiceDlg::loadResourceData()
                 break;
             }
         }
+        //add gpu name item to combobox
         if(!isContains)
             ui->comboBox_gpuType->addItem(GPUName);
 
@@ -808,7 +820,7 @@ void AddDockerServiceDlg::slot_buyClicked()
     if(!ui->lineEdit_name->text().size()){
         errStr = tr("Service name is Empty!");
     }
-    if(!ui->textEdit_sshpubkey->text().size()){
+    if(!ui->lineEdit_sshpubkey->text().size()){
         errStr = tr("Ssh pubkey is Empty!");
     }
 
@@ -875,7 +887,7 @@ void AddDockerServiceDlg::initCombobox()
     ui->comboBox_gpuType->addItem(tr("Select GPU type"));
 }
 
-void AddDockerServiceDlg::slot_gpuComboxCurrentIndexChanged(int index)
+void AddDockerServiceDlg::expansionResourceItems()
 {
     int rowCount = ui->tableWidget_resource->rowCount();
 
@@ -883,7 +895,14 @@ void AddDockerServiceDlg::slot_gpuComboxCurrentIndexChanged(int index)
         ui->tableWidget_resource->showRow(i);
     }
 
-    if(index <1)
+}
+
+void AddDockerServiceDlg::slot_gpuComboxCurrentIndexChanged(int index)
+{
+    expansionResourceItems();
+    int rowCount = ui->tableWidget_resource->rowCount();
+
+    if(index < 1)
         return ;
 
     QString curText = ui->comboBox_gpuType->currentText();

@@ -115,7 +115,7 @@ DockerOrderView::DockerOrderView(const PlatformStyle *platformStyle, QWidget *pa
     QAction *copyTxHexAction = new QAction(tr("Copy raw transaction"), this);
     QAction *copyTxPlainText = new QAction(tr("Copy full transaction details"), this);
     QAction *editLabelAction = new QAction(tr("Edit label"), this);
-    QAction *showDetailsAction = new QAction(tr("Show transaction details"), this);
+    // QAction *showDetailsAction = new QAction(tr("Show transaction details"), this);
     QAction *deleteServiceAction = new QAction(tr("Delete Service"), this);
 
     contextMenu = new QMenu(this);
@@ -125,7 +125,7 @@ DockerOrderView::DockerOrderView(const PlatformStyle *platformStyle, QWidget *pa
     contextMenu->addAction(copyTxIDAction);
     contextMenu->addAction(copyTxHexAction);
     contextMenu->addAction(copyTxPlainText);
-    contextMenu->addAction(showDetailsAction);
+    // contextMenu->addAction(showDetailsAction);
     contextMenu->addAction(deleteServiceAction);
     contextMenu->addSeparator();
     contextMenu->addAction(abandonAction);

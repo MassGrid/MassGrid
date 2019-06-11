@@ -1242,8 +1242,16 @@ QDialog#AddDockerServiceDlg QPushButton#nextButton_4{
 
 QDialog#AddDockerServiceDlg QLabel#label_servicename,
 QDialog#AddDockerServiceDlg QLabel#label_sshkey,
-QDialog#AddDockerServiceDlg QLabel#label_gputype{
+QDialog#AddDockerServiceDlg QLabel#label_minAmount{
     min-width: @110px@;
+    min-height: @40px@;
+}
+
+QDialog#AddDockerServiceDlg QLabel#label_gputype,
+QDialog#AddDockerServiceDlg QLabel#label_image,
+QDialog#AddDockerServiceDlg QCheckBox#checkBox_persistentStore{
+    min-width: @80px@;
+    min-height: @40px@;
 }
 
 QDialog#AddDockerServiceDlg QDialog#AddDockerServiceDlg QFrame#frame_step{
@@ -1272,7 +1280,7 @@ QDialog#AddDockerServiceDlg QLabel::!enabled#label_step2
     border-image: url(:/res/pic/pay_disabled.png);
 }
 
-QDialog#AddDockerServiceDlg QDialog#AddDockerServiceDlg QLabel#label_step3
+QDialog#AddDockerServiceDlg QLabel#label_step3
 {
     border:hidden;
 	border-image: url(:/res/pic/createService_enabled.png);
@@ -1293,6 +1301,7 @@ QDialog#AddDockerServiceDlg QLabel::!enabled#label_step4
     border:hidden;
     border-image: url(:/res/pic/finished_disabled.png);
 }
+
 QDialog#AddDockerServiceDlg QFrame#frame_step QLabel{
     color: rgb(239, 169, 4);
 }
@@ -1302,7 +1311,30 @@ QDialog#AddDockerServiceDlg QFrame#frame_step QLabel::!enabled
     color: rgb(125, 125, 125);
 }
 
+QDialog#AddDockerServiceDlg QLabel#label_amount,
+QDialog#AddDockerServiceDlg QLabel#label_payTo {
+    min-width: @80px@;
+}
 
+QDialog#AddDockerServiceDlg QFrame#frame_step{
+    min-height: @60px@;
+    max-height: @60px@;
+}
+
+QDialog#AddDockerServiceDlg QLabel#label_step1,
+QDialog#AddDockerServiceDlg QLabel#label_step2,
+QDialog#AddDockerServiceDlg QLabel#label_step3,
+QDialog#AddDockerServiceDlg QLabel#label_step4{
+    min-width: @35px@;
+    min-height: @35px@;
+    max-width: @35px@;
+    max-height: @35px@;
+}
+
+QDialog#AddDockerServiceDlg QFrame#frame_8,
+QDialog#AddDockerServiceDlg QFrame#frame_9{
+    min-width: @450px@;
+}
 
 QWidget#AddressBookPage{
     min-width:@640px@;
@@ -1370,9 +1402,24 @@ QDialog#TransactionDescDialog{
     max-height:500px;
 }
 
+QDialog#ServiceDetail{
+    min-width:@680px@;
+    min-height:@280px@;
+}
+
+QWidget#ResourceItem{
+    min-width:@600px@;
+    min-height:@70px@;
+}
+
+QWidget#ResourceItem QPushButton#buyBtn{
+    min-width:@60px@;
+    min-height:@60px@;
+}
+
 QWidget#LoadingWin{
-    min-width: @250px@;
-    min-height: @250px@;
+    min-width: @200px@;
+    min-height: @200px@;
 }
 
 QWidget#LoadingWin QLabel#label{
