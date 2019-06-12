@@ -1461,7 +1461,7 @@ border: hidden;
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>589</width>
+                     <width>583</width>
                      <height>150</height>
                     </rect>
                    </property>
@@ -1532,7 +1532,7 @@ border:hidden;
 </string>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="page_3">
                  <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0">
@@ -1540,7 +1540,7 @@ border:hidden;
                    <number>0</number>
                   </property>
                   <property name="topMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <property name="rightMargin">
                    <number>0</number>
@@ -2384,7 +2384,7 @@ border:hidden;
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupCustomFee"/>
   <buttongroup name="groupFee"/>
+  <buttongroup name="groupCustomFee"/>
  </buttongroups>
 </ui>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>600</height>
+    <width>680</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -159,7 +159,7 @@
               <string notr="true"/>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>4</number>
              </property>
              <widget class="QWidget" name="tabMain">
               <attribute name="title">
@@ -1382,8 +1382,8 @@
                      <widget class="QValueComboBox" name="lang">
                       <property name="minimumSize">
                        <size>
-                        <width>200</width>
-                        <height>32</height>
+                        <width>0</width>
+                        <height>0</height>
                        </size>
                       </property>
                       <property name="maximumSize">
@@ -1400,6 +1400,9 @@
                       </property>
                       <property name="styleSheet">
                        <string notr="true"/>
+                      </property>
+                      <property name="sizeAdjustPolicy">
+                       <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
                       </property>
                      </widget>
                     </item>
@@ -1420,8 +1423,8 @@
                      <widget class="QValueComboBox" name="unit">
                       <property name="minimumSize">
                        <size>
-                        <width>200</width>
-                        <height>32</height>
+                        <width>0</width>
+                        <height>0</height>
                        </size>
                       </property>
                       <property name="maximumSize">
@@ -1452,8 +1455,8 @@
                      <widget class="QComboBox" name="digits">
                       <property name="minimumSize">
                        <size>
-                        <width>200</width>
-                        <height>32</height>
+                        <width>0</width>
+                        <height>0</height>
                        </size>
                       </property>
                       <property name="styleSheet">

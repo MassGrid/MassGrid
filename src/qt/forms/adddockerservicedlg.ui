@@ -156,7 +156,9 @@
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">QFrame#frame_step{
+border:hidden;
+}</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -780,7 +782,7 @@ border-image: url(:/res/pic/arrow_disabled.png);
                  <item row="0" column="1">
                   <widget class="QLineEdit" name="lineEdit_name">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -827,6 +829,12 @@ border-image: url(:/res/pic/arrow_disabled.png);
                  </item>
                  <item row="3" column="1">
                   <widget class="QLineEdit" name="lineEdit_minAmount">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="placeholderText">
                     <string>Return to search docker resource</string>
                    </property>
@@ -834,6 +842,12 @@ border-image: url(:/res/pic/arrow_disabled.png);
                  </item>
                  <item row="1" column="1">
                   <widget class="QLineEdit" name="lineEdit_sshpubkey">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="placeholderText">
                     <string>Return to open pubKey file</string>
                    </property>
@@ -866,6 +880,9 @@ border-image: url(:/res/pic/arrow_disabled.png);
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
                    </property>
                    <item>
                     <property name="text">
@@ -930,6 +947,9 @@ border-image: url(:/res/pic/arrow_disabled.png);
                    </property>
                    <property name="focusPolicy">
                     <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="contextMenuPolicy">
+                    <enum>Qt::DefaultContextMenu</enum>
                    </property>
                   </widget>
                  </item>

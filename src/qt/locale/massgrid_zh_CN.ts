@@ -81,7 +81,7 @@
     </message>
     <message>
         <source>open pubKey file</source>
-        <translation>打开公钥文件</translation>
+        <translation type="vanished">打开公钥文件</translation>
     </message>
     <message>
         <source>open Pubkey file</source>
@@ -153,7 +153,7 @@
     </message>
     <message>
         <source>GPU 类型:</source>
-        <translation>GPU类型:</translation>
+        <translation type="vanished">GPU类型:</translation>
     </message>
     <message>
         <source>CPU 类型:</source>
@@ -277,7 +277,7 @@
     </message>
     <message>
         <source>the window will be close!</source>
-        <translation>当前页面将被关闭!</translation>
+        <translation type="vanished">当前页面将被关闭!</translation>
     </message>
     <message>
         <source>Transaction has been finished,</source>
@@ -313,11 +313,11 @@
     </message>
     <message>
         <source>min amount(tMGD)</source>
-        <translation>最小金额(tMGD)</translation>
+        <translation type="vanished">最小金额(tMGD)</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>搜索</translation>
+        <translation type="vanished">搜索</translation>
     </message>
     <message>
         <source>create service failed</source>
@@ -342,6 +342,38 @@
     <message>
         <source>Can&apos;t load Docker configuration!</source>
         <translation>加载虚拟机配置失败！</translation>
+    </message>
+    <message>
+        <source>Min Amount:</source>
+        <translation>最小金额:</translation>
+    </message>
+    <message>
+        <source>Return to search docker resource</source>
+        <translation>点击回车搜索虚拟机资源</translation>
+    </message>
+    <message>
+        <source>Return to open pubKey file</source>
+        <translation>点击回车打开公钥文件</translation>
+    </message>
+    <message>
+        <source>GPU Type:</source>
+        <translation>GPU 类型:</translation>
+    </message>
+    <message>
+        <source>Persistent Store</source>
+        <translation>持续化存储</translation>
+    </message>
+    <message>
+        <source>,the window will be close!</source>
+        <translation>,窗体将关闭!</translation>
+    </message>
+    <message>
+        <source>This node support persistable storage!</source>
+        <translation>该节点支持可持续化存储</translation>
+    </message>
+    <message>
+        <source>This node does not support persistable storage!</source>
+        <translation>该节点不支持持续化存储!</translation>
     </message>
 </context>
 <context>
@@ -599,6 +631,10 @@
     <message>
         <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR MASSGRIDS&lt;/b&gt;!</source>
         <translation>警告：如果您加密了您的钱包，但是忘记了密码，你将会&lt;b&gt;丢失所有的MGD&lt;/b&gt;！</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>确定</translation>
     </message>
 </context>
 <context>
@@ -1567,7 +1603,7 @@
     </message>
     <message>
         <source>Show transaction details</source>
-        <translation>显示交易详情</translation>
+        <translation type="vanished">显示交易详情</translation>
     </message>
     <message>
         <source>Delete Service</source>
@@ -1865,6 +1901,10 @@
     <message>
         <source>&lt;h3&gt;PrivateSend Basics&lt;/h3&gt; PrivateSend gives you true financial privacy by obscuring the origins of your funds. All the MassGrid in your wallet is comprised of different &quot;inputs&quot; which you can think of as separate, discrete coins.&lt;br&gt; PrivateSend uses an innovative process to mix your inputs with the inputs of two other people, without having your coins ever leave your wallet. You retain control of your money at all times..&lt;hr&gt; &lt;b&gt;The PrivateSend process works like this:&lt;/b&gt;&lt;ol type=&quot;1&quot;&gt; &lt;li&gt;PrivateSend begins by breaking your transaction inputs down into standard denominations. These denominations are 0.01 MGD, 0.1 MGD, 1 MGD and 10 MGD -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called &quot;masternodes.&quot; These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know &quot;who&quot; you are.&lt;/li&gt; &lt;li&gt;When two other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users&apos; wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it&apos;s called a &quot;round.&quot; Each round of PrivateSend makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be anonymized. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these &quot;change addresses.&quot; Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have PrivateSend disabled. &lt;hr&gt;For more info see &lt;a href=&quot;https://massgrid.atlassian.net/wiki/display/DOC/PrivateSend&quot;&gt;https://massgrid.atlassian.net/wiki/display/DOC/PrivateSend&lt;/a&gt;         </source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>关闭</translation>
     </message>
 </context>
 <context>
@@ -3014,6 +3054,10 @@ Address: %4
         <source>title name</source>
         <translation>标题名</translation>
     </message>
+    <message>
+        <source>Ok</source>
+        <translation>确定</translation>
+    </message>
 </context>
 <context>
     <name>OptionsDialog</name>
@@ -3323,20 +3367,16 @@ https://www.transifex.com/projects/p/massgrid/</translation>
         <source>Decimal digits:</source>
         <translation>小数位数:</translation>
     </message>
-    <message>
-        <source>Font</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>OrderDetail</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">窗体</translation>
+        <translation>窗体</translation>
     </message>
     <message>
         <source>title name</source>
-        <translation type="unfinished">标题名</translation>
+        <translation>标题名</translation>
     </message>
     <message>
         <source>Service Detail</source>
@@ -5061,7 +5101,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>&amp;Recipient</source>
-        <translation>收款人</translation>
+        <translation type="vanished">收款人</translation>
     </message>
 </context>
 <context>
@@ -5076,23 +5116,23 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>The MassGrid address to send the payment to</source>
-        <translation>选择发款地址</translation>
+        <translation type="vanished">选择发款地址</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
-        <translation>选择以前用过的地址</translation>
+        <translation type="vanished">选择以前用过的地址</translation>
     </message>
     <message>
         <source>Alt+A</source>
-        <translation>Alt+A</translation>
+        <translation type="vanished">Alt+A</translation>
     </message>
     <message>
         <source>Paste address from clipboard</source>
-        <translation>从剪贴板粘贴地址</translation>
+        <translation type="vanished">从剪贴板粘贴地址</translation>
     </message>
     <message>
         <source>Alt+P</source>
-        <translation>Alt+P</translation>
+        <translation type="vanished">Alt+P</translation>
     </message>
     <message>
         <source>Remove this entry</source>
@@ -5112,11 +5152,11 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Message:</source>
-        <translation>消息：</translation>
+        <translation type="vanished">消息：</translation>
     </message>
     <message>
         <source>A message that was attached to the massgrid: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the MassGrid network.</source>
-        <translation>附加在MGD付款协议URI中的信息,会和交易内容一并存储,可供您参考.提示:此信息不会发送到MGD网络上.</translation>
+        <translation type="vanished">附加在MGD付款协议URI中的信息,会和交易内容一并存储,可供您参考.提示:此信息不会发送到MGD网络上.</translation>
     </message>
     <message>
         <source>This is an unverified payment request.</source>
@@ -5137,6 +5177,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>Enter a label for this address to add it to your address book</source>
         <translation>为这个地址输入一个标签，以便将它添加到您的地址簿</translation>
+    </message>
+    <message>
+        <source>Recipient</source>
+        <translation>接受者</translation>
     </message>
 </context>
 <context>

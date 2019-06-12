@@ -25,6 +25,7 @@
 #include "cmessagebox.h"
 #include <QSortFilterProxyModel>
 #include <QGraphicsDropShadowEffect>
+#include <QStyleFactory>
 
 AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     QDialog(parent),
@@ -114,14 +115,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     ui->label_titleName->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
 
-    // QGraphicsDropShadowEffect *shadow_effect = new QGraphicsDropShadowEffect(this);
-    // shadow_effect->setOffset(0, 0);
-    // shadow_effect->setColor(QColor(0, 0, 0, 100));
-    // shadow_effect->setBlurRadius(8);
-    // ui->centerWin->setGraphicsEffect(shadow_effect);
-
     GUIUtil::MakeShadowEffect(this,ui->centerWin);
-
 }
 
 AddressBookPage::~AddressBookPage()
