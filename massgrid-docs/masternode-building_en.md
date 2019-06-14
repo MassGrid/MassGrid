@@ -1,4 +1,4 @@
-Setup masternode - 1.3.1.3
+Setup masternode - 1.3.3.0
 =====================================
 
 This document describes how to setup your own masternode

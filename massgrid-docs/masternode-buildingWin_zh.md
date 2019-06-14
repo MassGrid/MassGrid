@@ -1,4 +1,4 @@
-MassGrid masternode windows 搭建过程 - 1.3.1.3
+MassGrid masternode windows 搭建过程 - 1.3.3.0
 =====================================
 
 ## 1. 搭建准备  

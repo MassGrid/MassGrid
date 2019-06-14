@@ -1,4 +1,4 @@
-MassGrid dockernode 搭建过程 - 1.3.1.3
+MassGrid dockernode 搭建过程 - 1.3.3.0
 =====================================
 
 #### <font color="#dd0000">(注: 本教程截图来自测试网络,适用于主网,配置文件中个别参数不同,文中已有说明)</font> 
@@ -11,7 +11,7 @@ MassGrid dockernode 搭建过程 - 1.3.1.3
 UDP:7946,4789
 ```  
 ## 2. 搭建masternode  
-详情可见：[masternode 搭建教程](https://github.com/MassGrid/MassGrid/blob/v1.3.1.3/massgrid-docs/masternode-building_zh.md)
+详情可见：[masternode 搭建教程](https://github.com/MassGrid/MassGrid/blob/v1.3.3.0/massgrid-docs/masternode-building_zh.md)
 ## 3. 安装docker  
 ```
 sudo apt-get update

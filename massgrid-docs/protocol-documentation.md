@@ -1,4 +1,4 @@
-Protocol Documentation - 1.3.1.3
+Protocol Documentation - 1.3.3.0
 =====================================
 
 This document describes the protocol extensions for all additional functionality build into the MassGrid protocol. This doesn't include any of the MassGrid protocol, which has been left intact in the MassGrid project. 
@@ -347,6 +347,7 @@ Masternode Payment Sync
 | ? | mapDockerServiceLists | map | the services list of cluster
 | ? | items | map | the map of all swarm free devices and price
 | ? | masternodeAddress | string | the masternode collateral address
+| 1 | fPersistentStore | bool | whether support persistent store
 
 ### GETTRAN - "DockerGetTranData"
 
@@ -380,6 +381,7 @@ Masternode Payment Sync
 | 33-65 | pubKeyClusterAddress | [CPubKey](#cpubkey) | CPubKey of the request cluster
 | 32 | txid | uint256 | the transaction id of you want to query
 | 8 | sigTime | int64_t | timeStamp
+| 1 | fPersistentStore | bool | use persistent store
 | ? | n2n_community | string | n2n community name
 | ? | serviceName | string | service name
 | ? | image | string | docker image
