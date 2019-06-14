@@ -602,67 +602,6 @@ void MassGridGUI::createActions()
     new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_R), this, SLOT(showRepair()));
 }
 
-
-
-// void MassGridGUI::createMenuBar()
-// {
-// #ifdef Q_OS_MAC
-//     // Create a decoupled menu bar on Mac which stays even if the window is closed
-//     appMenuBar = new QMenuBar();
-// #else
-//     // Get the main window's menu bar on other platforms
-//     appMenuBar = menuBar();
-// #endif
-
-//     // Configure the menus
-//     // QMenu *file = appMenuBar->addMenu(tr("&File"));
-//     QMenu* file = m_mainTitle->fileMenu(tr("&File"));
-//     if(walletFrame)
-//     {
-//         file->addAction(openAction);
-//         file->addAction(backupWalletAction);
-//         file->addAction(signMessageAction);
-//         file->addAction(verifyMessageAction);
-//         file->addSeparator();
-//         file->addAction(usedSendingAddressesAction);
-//         file->addAction(usedReceivingAddressesAction);
-//         file->addSeparator();
-//     }
-//     file->addAction(quitAction);
-
-//     QMenu *settings = m_mainTitle->settingsMenu(tr("&Settings"));
-//     if(walletFrame)
-//     {
-//         settings->addAction(encryptWalletAction);
-//         settings->addAction(changePassphraseAction);
-//         settings->addAction(unlockWalletAction);
-//         settings->addAction(lockWalletAction);
-//         settings->addSeparator();
-//     }
-//     settings->addAction(optionsAction);
-
-//     if(walletFrame)
-//     {
-//         QMenu *tools = m_mainTitle->helpMenu(tr("&Tools"));
-//         tools->addAction(openInfoAction);
-//         tools->addAction(openRPCConsoleAction);
-//         tools->addAction(openGraphAction);
-//         tools->addAction(openPeersAction);
-//         tools->addAction(openRepairAction);
-//         tools->addSeparator();
-//         tools->addAction(openConfEditorAction);
-//         tools->addAction(openMNConfEditorAction);
-//         tools->addAction(showBackupsAction);
-//     }
-
-//     QMenu *help = appMenuBar->addMenu(tr("&Help"));
-//     help->addAction(showHelpMessageAction);
-//     help->addAction(showPrivateSendHelpAction);
-//     help->addSeparator();
-//     help->addAction(aboutAction);
-//     help->addAction(aboutQtAction);
-// }
-
 void MassGridGUI::createMenuBar()
 {
 #ifdef Q_OS_MAC

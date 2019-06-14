@@ -86,8 +86,10 @@ Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin);
 
 #ifdef Q_OS_MAC
 #define BASEPIXDELSIZE 22
+#define DPIRATIO 72
 #else 
 #define BASEPIXDELSIZE 12
+#define DPIRATIO 96
 #endif // DEBUG
 
 // Declare meta types used for QMetaObject::invokeMethod
@@ -651,7 +653,7 @@ int main(int argc, char *argv[])
     qssFilePath = ":/res/style/macStyle.qss";
 
     QScreen* screen = qApp->primaryScreen();
-    qreal dpi = screen->logicalDotsPerInch()/72;
+    qreal dpi = screen->logicalDotsPerInch()/DPIRATIO;
     GUIUtil::SetDPIValue(dpi);
     appfont.setPixelSize(BASEPIXDELSIZE*dpi);
     app.setFont(appfont);

@@ -343,7 +343,10 @@ void AddDockerServiceDlg::slot_openPubKeyFile()
 void AddDockerServiceDlg::slot_searchMinAmount()
 {
     expansionResourceItems();
-
+    QString minAmount = ui->lineEdit_minAmount->text();
+    if(minAmount.isEmpty())
+        return ;
+    
     double payment = ui->lineEdit_minAmount->text().toDouble();
     int rowCount = ui->tableWidget_resource->rowCount();
     
