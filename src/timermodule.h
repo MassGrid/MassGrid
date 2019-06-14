@@ -44,6 +44,10 @@ public:
         LOCK(cs_serInfoQueue2);
         return setWalletTx;
     }
+    std::priority_queue<ServiceListInfo, std::vector<ServiceListInfo> > GetServiceInfoQue(){
+        LOCK(cs_serInfoQueue);
+        return serviceInfoQue;
+    }
 };
 void ThreadTimeModule();
 #endif //TIMEMODULE_H

@@ -24,7 +24,6 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
     txNew.vin.resize(1);
     txNew.vout.resize(1);
     txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << std::vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-    printf("%s,\n",HexStr(txNew.vin[0].scriptSig.begin(),txNew.vin[0].scriptSig.end()).c_str());
     txNew.vout[0].nValue = genesisReward;
     txNew.vout[0].scriptPubKey = genesisOutputScript;
 
@@ -42,9 +41,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
     const char* pszTimestamp = "MLGB create first block in Shenzhen, on 27th July., 2017";
-    const CScript genesisOutputScript = CScript() << ParseHex("0486661df18672bc959f622d09ad550f56154a4b3c812671ea601aff934324ed1cf8457b9015290d3c94fb6c140e92f3c1a59dddb07e49a12df41b2f2ea687b8e6") << OP_CHECKSIG;
-    printf("2 %s,\n",HexStr(genesisOutputScript.begin(),genesisOutputScript.end()).c_str());
-    
+    const CScript genesisOutputScript = CScript() << ParseHex("0486661df18672bc959f622d09ad550f56154a4b3c812671ea601aff934324ed1cf8457b9015290d3c94fb6c140e92f3c1a59dddb07e49a12df41b2f2ea687b8e6") << OP_CHECKSIG;    
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
 

@@ -256,11 +256,40 @@ UniValue docker(const UniValue& params, bool fHelp)
     if(strCommand == "listuntlementtx"){
         if (!fDockerNode)
             throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
+        if (params.size() >2)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
+
+        UniValue vobj(UniValue::VOBJ);
+
         UniValue varr(UniValue::VARR);
-        std::set<CWalletTx*> setWallet = timerModule.GetWalletTxSet();
+            std::set<CWalletTx*> setWallet = timerModule.GetWalletTxSet();
+
         for(const auto& tx :setWallet)
             varr.push_back(tx->GetHash().ToString());
-        return varr;
+
+        vobj.push_back(Pair("untlementtx",varr));
+        if (params.size()  == 2){
+
+            std::string strtxid = params[1].get_str();
+            if(strtxid != "all")
+                throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter");
+
+            std::priority_queue<ServiceListInfo, std::vector<ServiceListInfo> > serviceInfoQue= timerModule.GetServiceInfoQue();
+            UniValue varq(UniValue::VARR);
+
+
+            while(!serviceInfoQue.empty())
+            {
+                UniValue varService(UniValue::VARR);
+                ServiceListInfo slist = serviceInfoQue.top();
+                varService.push_back(slist.serviceid);
+                varService.push_back(slist.deleteTime);
+                varq.push_back(varService);
+                serviceInfoQue.pop();
+            }
+            vobj.push_back(Pair("all",varq));
+        }
+        return vobj;
     }
     if(strCommand == "settlement"){
         if (!fDockerNode)
