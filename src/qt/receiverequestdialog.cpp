@@ -99,15 +99,17 @@ ReceiveRequestDialog::ReceiveRequestDialog(QWidget *parent) :
     ui->setupUi(this);
 
 #ifndef USE_QRCODE
-    ui->btnSaveAs->setVisible(false);
+    // ui->btnSaveAs->setVisible(false);
     ui->lblQRCode->setVisible(false);
 #endif
 
-    connect(ui->btnSaveAs, SIGNAL(clicked()), ui->lblQRCode, SLOT(saveImage()));
+    // connect(ui->btnSaveAs, SIGNAL(clicked()), ui->lblQRCode, SLOT(saveImage()));
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     ui->label_titleName->setText(this->windowTitle());
     this->setAttribute(Qt::WA_TranslucentBackground);
+
+    GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
 ReceiveRequestDialog::~ReceiveRequestDialog()
@@ -143,21 +145,21 @@ void ReceiveRequestDialog::update()
 
     // QString uri = GUIUtil::formatMassGridURI(info);
     QString uri = info.address;
-    ui->btnSaveAs->setEnabled(false);
-    QString html;
-    html += "<html><font face='verdana, arial, helvetica, sans-serif'>";
-    html += "<b>"+tr("Payment information")+"</b><br>";
-    html += "<b>"+tr("URI")+"</b>: ";
-    html += "<a href=\""+uri+"\">" + GUIUtil::HtmlEscape(uri) + "</a><br>";
-    html += "<b>"+tr("Address")+"</b>: " + GUIUtil::HtmlEscape(info.address) + "<br>";
-    if(info.amount)
-        html += "<b>"+tr("Amount")+"</b>: " + MassGridUnits::formatHtmlWithUnit(model->getDisplayUnit(), info.amount) + "<br>";
-    if(!info.label.isEmpty())
-        html += "<b>"+tr("Label")+"</b>: " + GUIUtil::HtmlEscape(info.label) + "<br>";
-    if(!info.message.isEmpty())
-        html += "<b>"+tr("Message")+"</b>: " + GUIUtil::HtmlEscape(info.message) + "<br>";
-    html += "<b>"+tr("InstantSend")+"</b>: " + (info.fUseInstantSend ? tr("Yes") : tr("No")) + "<br>";
-    ui->outUri->setText(html);
+    // ui->btnSaveAs->setEnabled(false);
+    // QString html;
+    // html += "<html><font face='verdana, arial, helvetica, sans-serif'>";
+    // html += "<b>"+tr("Payment information")+"</b><br>";
+    // html += "<b>"+tr("URI")+"</b>: ";
+    // html += "<a href=\""+uri+"\">" + GUIUtil::HtmlEscape(uri) + "</a><br>";
+    // html += "<b>"+tr("Address")+"</b>: " + GUIUtil::HtmlEscape(info.address) + "<br>";
+    // if(info.amount)
+    //     html += "<b>"+tr("Amount")+"</b>: " + MassGridUnits::formatHtmlWithUnit(model->getDisplayUnit(), info.amount) + "<br>";
+    // if(!info.label.isEmpty())
+    //     html += "<b>"+tr("Label")+"</b>: " + GUIUtil::HtmlEscape(info.label) + "<br>";
+    // if(!info.message.isEmpty())
+    //     html += "<b>"+tr("Message")+"</b>: " + GUIUtil::HtmlEscape(info.message) + "<br>";
+    // html += "<b>"+tr("InstantSend")+"</b>: " + (info.fUseInstantSend ? tr("Yes") : tr("No")) + "<br>";
+    // ui->outUri->setText(html);
 
 #ifdef USE_QRCODE
     ui->lblQRCode->setText("");
@@ -188,42 +190,43 @@ void ReceiveRequestDialog::update()
             QRcode_free(code);
 
             ui->lblQRCode->setPixmap(QPixmap::fromImage(myImage).scaled(300, 300));
-            ui->btnSaveAs->setEnabled(true);
+            // ui->btnSaveAs->setEnabled(true);
         }
     }
 #endif
 }
 
-void ReceiveRequestDialog::on_btnCopyURI_clicked()
-{
-    GUIUtil::setClipboard(GUIUtil::formatMassGridURI(info));
-}
+// void ReceiveRequestDialog::on_btnCopyURI_clicked()
+// {
+//     GUIUtil::setClipboard(GUIUtil::formatMassGridURI(info));
+// }
 
-void ReceiveRequestDialog::on_btnCopyAddress_clicked()
-{
-    GUIUtil::setClipboard(info.address);
-}
+// void ReceiveRequestDialog::on_btnCopyAddress_clicked()
+// {
+//     GUIUtil::setClipboard(info.address);
+// }
+
 void ReceiveRequestDialog::mousePressEvent(QMouseEvent *e)
 {
-    // int posx = e->pos().x();
-    // int posy = e->pos().y();
-    // int framex = ui->mainframe->pos().x();
-    // int framey = ui->mainframe->pos().y();
-    // int frameendx = framex+ui->mainframe->width();
-    // int frameendy = framey+30*GUIUtil::GetDPIValue();
-    // if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
-    //     m_mousePress = true;
+    int posx = e->pos().x();
+    int posy = e->pos().y();
+    int framex = ui->mainframe->pos().x();
+    int framey = ui->mainframe->pos().y();
+    int frameendx = framex+ui->mainframe->width();
+    int frameendy = framey+30*GUIUtil::GetDPIValue();
+    if(posx>framex && posx<frameendx && posy>framey && posy<frameendy){
+        m_mousePress = true;
         m_last = e->globalPos();
-    // }
-    // else{
-    //     m_mousePress = false;
-    // }
+    }
+    else{
+        m_mousePress = false;
+    }
 }
 
 void ReceiveRequestDialog::mouseMoveEvent(QMouseEvent *e)
 {
-    // if(!m_mousePress)
-    //     return ;
+    if(!m_mousePress)
+        return ;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     m_last = e->globalPos();
@@ -232,9 +235,9 @@ void ReceiveRequestDialog::mouseMoveEvent(QMouseEvent *e)
 
 void ReceiveRequestDialog::mouseReleaseEvent(QMouseEvent *e)
 {
-    // if(!m_mousePress)
-    //     return ;
-    // m_mousePress = false;
+    if(!m_mousePress)
+        return ;
+    m_mousePress = false;
     int dx = e->globalX() - m_last.x();
     int dy = e->globalY() - m_last.y();
     this->move(QPoint(this->x()+dx, this->y()+dy));

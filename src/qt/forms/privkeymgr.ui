@@ -181,6 +181,9 @@ background-color: rgb(255, 255, 255);
                      <height>0</height>
                     </size>
                    </property>
+                   <property name="echoMode">
+                    <enum>QLineEdit::Password</enum>
+                   </property>
                   </widget>
                  </item>
                 </layout>

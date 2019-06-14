@@ -242,9 +242,10 @@ void DockerOrderView::setModel(WalletModel *model)
 
         dockerorderView->setColumnWidth(DockerOrderTableModel::Status, STATUS_COLUMN_WIDTH);
         dockerorderView->setColumnWidth(DockerOrderTableModel::Watchonly, WATCHONLY_COLUMN_WIDTH);
-        dockerorderView->setColumnWidth(DockerOrderTableModel::Date, DATE_COLUMN_WIDTH);
+        dockerorderView->setColumnWidth(DockerOrderTableModel::Date, DATE_COLUMN_WIDTH*GUIUtil::GetDPIValue());
         dockerorderView->setColumnWidth(DockerOrderTableModel::TxID, TYPE_COLUMN_WIDTH);
-        dockerorderView->setColumnWidth(DockerOrderTableModel::Amount, AMOUNT_MINIMUM_COLUMN_WIDTH);
+        dockerorderView->setColumnWidth(DockerOrderTableModel::ToAddress, TYPE_COLUMN_WIDTH*2*GUIUtil::GetDPIValue());        
+        dockerorderView->setColumnWidth(DockerOrderTableModel::Amount, AMOUNT_MINIMUM_COLUMN_WIDTH*GUIUtil::GetDPIValue());
         dockerorderView->horizontalHeader()->setDefaultAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
         // Note: it's a good idea to connect this signal AFTER the model is set
         // connect(dockerorderView->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this, SLOT(computeSum()));
@@ -698,7 +699,7 @@ void DockerOrderView::showOrderDetail(CWalletTx& wtx)
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
 
-    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.setwalletTx(wtx);
     dlg.exec();
 }

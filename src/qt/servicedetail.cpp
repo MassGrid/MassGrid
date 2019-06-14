@@ -148,21 +148,6 @@ void ServiceDetail::setModel(WalletModel* model)
     m_walletModel = model;
 }
 
-// QString MassGridUnits::formatWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators)
-// {
-//     return format(unit, amount, plussign, separators) + QString(" ") + name(unit);
-// }
-
-// QString MassGridUnits::formatHtmlWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators)
-// {
-//     QString str(formatWithUnit(unit, amount, plussign, separators));
-//     str.replace(QChar(THIN_SP_CP), QString(THIN_SP_HTML));
-//     return QString("<span style='white-space: nowrap;'>%1</span>").arg(str);
-// }
-
-// QString MassGridUnits::floorWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators)
-
-
 void ServiceDetail::updateTaskDetail(std::map<std::string, Task>& mapDockerTasklists, int& taskStatus)
 {
     map<std::string, Task>::iterator iter = mapDockerTasklists.begin();

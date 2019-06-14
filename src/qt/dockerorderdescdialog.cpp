@@ -93,11 +93,11 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
     QFont ft;
     QFontMetrics fm(ft);
 
-    QString masternodeoutpointStr = fm.elidedText(QString::fromStdString(wtx.Getmasternodeoutpoint()), Qt::ElideRight, ui->label_masternodeoutpoint->width());
-    QString custeraddressStr = fm.elidedText(QString::fromStdString(wtx.Getcusteraddress()), Qt::ElideRight, ui->label_custeraddress->width());
-    QString provideraddressStr = fm.elidedText(QString::fromStdString(wtx.Getprovideraddress()), Qt::ElideRight, ui->label_provideraddress->width());
-    QString masternodeaddressStr = fm.elidedText(QString::fromStdString(wtx.Getmasternodeaddress()), Qt::ElideRight, ui->label_masternodeaddress->width());
-    QString tlementtxidStr = fm.elidedText(QString::fromStdString(wtx.Gettlementtxid()), Qt::ElideRight, ui->label_tlementtxid->width());
+    QString masternodeoutpointStr = fm.elidedText(QString::fromStdString(wtx.Getmasternodeoutpoint()), Qt::ElideRight, ui->label_masternodeoutpoint->width()*GUIUtil::GetDPIValue());
+    QString custeraddressStr = fm.elidedText(QString::fromStdString(wtx.Getcusteraddress()), Qt::ElideRight, ui->label_custeraddress->width()*GUIUtil::GetDPIValue());
+    QString provideraddressStr = fm.elidedText(QString::fromStdString(wtx.Getprovideraddress()), Qt::ElideRight, ui->label_provideraddress->width()*GUIUtil::GetDPIValue());
+    QString masternodeaddressStr = fm.elidedText(QString::fromStdString(wtx.Getmasternodeaddress()), Qt::ElideRight, ui->label_masternodeaddress->width()*GUIUtil::GetDPIValue());
+    QString tlementtxidStr = fm.elidedText(QString::fromStdString(wtx.Gettlementtxid()), Qt::ElideRight, ui->label_tlementtxid->width()*GUIUtil::GetDPIValue());
 
     ui->label_feerate->setText(QString::fromStdString(wtx.Getfeerate()));
     ui->label_cpuname->setText(QString::fromStdString(wtx.Getcpuname()));

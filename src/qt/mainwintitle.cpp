@@ -202,14 +202,16 @@ void MainwinTitle::open2DCodePage()
 	QString reqMessage = "";
 	CAmount mount = 0;
     SendCoinsRecipient info(ui->addressEdit->text(), label,mount,reqMessage);
-    ReceiveRequestDialog dialog;
-    dialog.setModel(walletModel->getOptionsModel());
-    dialog.setInfo(info);
+    ReceiveRequestDialog dlg;
+    dlg.setModel(walletModel->getOptionsModel());
+    dlg.setInfo(info);
 
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
-    dialog.move(pos.x()+(size.width()-dialog.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dialog.height()*GUIUtil::GetDPIValue())/2);
-    dialog.exec();
+    dlg.move(pos.x()+(size.width()-dlg.width())/2,pos.y()+(size.height()-dlg.height())/2);
+    // dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
+
+    dlg.exec();
 }
 
 // bool MassGridUnits::parse(int unit, const QString &value, CAmount *val_out)

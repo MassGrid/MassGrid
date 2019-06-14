@@ -464,9 +464,9 @@ void RPCConsole::setClientModel(ClientModel *model)
 
         
         ui->peerWidget->setColumnWidth(PeerTableModel::NetNodeId, 0);
-        ui->peerWidget->setColumnWidth(PeerTableModel::Address, ADDRESS_COLUMN_WIDTH);
-        ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, SUBVERSION_COLUMN_WIDTH);
-        ui->peerWidget->setColumnWidth(PeerTableModel::Ping, PING_COLUMN_WIDTH);        
+        ui->peerWidget->setColumnWidth(PeerTableModel::Address, ADDRESS_COLUMN_WIDTH*GUIUtil::GetDPIValue());
+        ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, SUBVERSION_COLUMN_WIDTH*GUIUtil::GetDPIValue());
+        ui->peerWidget->setColumnWidth(PeerTableModel::Ping, PING_COLUMN_WIDTH*GUIUtil::GetDPIValue());        
 
         // set up peer table
         ui->peerWidget->setModel(model->getPeerTableModel());
@@ -476,9 +476,9 @@ void RPCConsole::setClientModel(ClientModel *model)
         ui->peerWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
         ui->peerWidget->setContextMenuPolicy(Qt::CustomContextMenu);
         ui->peerWidget->setColumnWidth(PeerTableModel::NetNodeId, 0);
-        ui->peerWidget->setColumnWidth(PeerTableModel::Address, ADDRESS_COLUMN_WIDTH);
-        ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, SUBVERSION_COLUMN_WIDTH);
-        ui->peerWidget->setColumnWidth(PeerTableModel::Ping, PING_COLUMN_WIDTH);
+        ui->peerWidget->setColumnWidth(PeerTableModel::Address, ADDRESS_COLUMN_WIDTH*GUIUtil::GetDPIValue());
+        ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, SUBVERSION_COLUMN_WIDTH*GUIUtil::GetDPIValue());
+        ui->peerWidget->setColumnWidth(PeerTableModel::Ping, PING_COLUMN_WIDTH*GUIUtil::GetDPIValue());
         ui->peerWidget->horizontalHeader()->setStretchLastSection(true);
 
         // create peer table context menu actions
@@ -1034,9 +1034,9 @@ void RPCConsole::updateNodeDetail(const CNodeCombinedStats *stats)
 void RPCConsole::resizeEvent(QResizeEvent *event)
 {
     ui->peerWidget->setColumnWidth(PeerTableModel::NetNodeId, 0);
-    ui->peerWidget->setColumnWidth(PeerTableModel::Address, 170);
-    ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, 170);
-    ui->peerWidget->setColumnWidth(PeerTableModel::Ping, 80); 
+    ui->peerWidget->setColumnWidth(PeerTableModel::Address, 170*GUIUtil::GetDPIValue());
+    ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, 170*GUIUtil::GetDPIValue());
+    ui->peerWidget->setColumnWidth(PeerTableModel::Ping, 80*GUIUtil::GetDPIValue()); 
     QWidget::resizeEvent(event);
 }
 

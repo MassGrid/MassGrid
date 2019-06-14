@@ -651,7 +651,8 @@ background-color:transparent;
 }
 
 QWidget#MainwinTitle QFrame#frame_4{
-background-color: rgb(30, 40, 42);
+    background-color: rgb(30, 40, 42);
+    /* min-height: @80px@; */
 }
 
 QWidget#MainwinTitle QFrame#frame_3{
@@ -663,6 +664,10 @@ border:hidden;
 color: rgb(255, 255, 255);
 }
 
+QWidget#MainwinTitle{
+    min-height: @150px@;
+}
+
 QMainWindow#MassGridGUI QFrame#statusFrame {
     background-color: rgb(41, 51, 53);
 }
@@ -672,14 +677,6 @@ QDialog#OpenURIDialog QFrame#frame{
     min-width: @400px@;
 }
 
-QDialog#OptionsDialog QTabWidget#tabWidget{
-    min-width: @500px@;
-    min-height: @430px@;
-}
-
-QDialog#OptionsDialog QPushButton#okButton{
-/* font: 15pt; */
-}
 
 QDialog#OptionsDialog QPushButton#resetButton{
     border:hidden;
@@ -720,8 +717,8 @@ border-image: url(:/res/pic/dlgBackgroud.png);
 }
 
 QDialog#OptionsDialog QFrame#mainframe{
-border:hidden;
-        background-color: rgb(255, 255, 255);
+    border:hidden;
+    background-color: rgb(255, 255, 255);
 }
 
 QDialog#OptionsDialog QFrame#mainaddressframe,
@@ -753,8 +750,13 @@ QDialog#OptionsDialog QLineEdit#dataDirPath{
     min-height: @35px@;
 }
 
+QDialog#OptionsDialog QTabWidget#tabWidget{
+    min-width: @480px@;
+    min-height: @340px@;
+}
+
 QDialog#OptionsDialog QFrame{
-border:hidden;
+    border:hidden;
 }
 
 QWidget#OverviewPage{
@@ -898,7 +900,7 @@ QWidget#MasternodeList QLineEdit#lineEdit_searchOrder
     height:@28px@;
     border:1px solid rgb(165, 165, 165);
     background-color: rgb(255, 255, 255,0);
-    border-radius: @3px@;
+    border-radius: @2px@;
 }
 
 QWidget#MasternodeList QLineEdit::hover#filterLineEdit,
@@ -1059,7 +1061,7 @@ QWidget#SendCoinsDialog QPushButton#sendButton{
 
 QStackedWidget#SendCoinsEntry{
     min-width: @500px@;
-    min-height: @140px@;
+    min-height: @160px@;
 }
 
 QStackedWidget#SendCoinsEntry QFrame#frame_10,
@@ -1080,64 +1082,6 @@ QWidget#SendCoinsEntry QPushButton#addButton{
 QWidget#SendCoinsEntry QPushButton#addButton{
     color: rgb(239, 169, 4);
 }
-/* 
-QWidget#SendCoinsEntry QPushButton:hover#addButton{
-    border: 1px solid rgb(239, 169, 4);
-} */
-
-/* QStackedWidget#SendCoinsEntry QLabel#payToLabel,
-QStackedWidget#SendCoinsEntry QLabel#amountLabel_,
-QStackedWidget#SendCoinsEntry QLabel#labellLabel{
-    min-width: @80px@;
-    max-width: @100px@;
-}
-
-QStackedWidget#SendCoinsEntry QFrame#frame_10,
-QStackedWidget#SendCoinsEntry QFrame#frame_lable,
-QStackedWidget#SendCoinsEntry QFrame#frame_3{
-    border:1px solid rgb(186, 186, 186);
-    min-height:@35px@;
-} */
-
-
-
-
-/* QStackedWidget#SendCoinsEntry{
-border:hidden;
-min-width: @500px@;
-min-height: @145px@;
-max-height: @145px@;
-}
-
-QStackedWidget#SendCoinsEntry QFrame#SendCoins{
-    border:hidden;
-}
-
-QStackedWidget#SendCoinsEntry QLineEdit{
-    min-height:@30px@;
-    border:hidden;
-    background-color:rgb(255,255,255);
-}
-
-QStackedWidget#SendCoinsEntry QToolButton{
-    border:hidden;
-    min-height:@28px@;
-    min-width:@28px@;
-}
-
-QStackedWidget#SendCoinsEntry QLabel#payToLabel,
-QStackedWidget#SendCoinsEntry QLabel#amountLabel_,
-QStackedWidget#SendCoinsEntry QLabel#labellLabel{
-    min-width: @80px@;
-    max-width: @100px@;
-}
-
-QStackedWidget#SendCoinsEntry QFrame#frame_10,
-QStackedWidget#SendCoinsEntry QFrame#frame_lable,
-QStackedWidget#SendCoinsEntry QFrame#frame_3{
-    border:1px solid rgb(186, 186, 186);
-    min-height:@40px@;
-} */
 
 QDialog#AddDockerServiceDlg QLineEdit{
     min-height:@32px@;
@@ -1328,7 +1272,7 @@ QWidget#RPCConsole{
 }
 
 QDialog#DockerOrderDescDialog{
-    min-width:@680px@;
+    min-width:@660px@;
     min-height:@400px@;
 }
 
@@ -1396,8 +1340,13 @@ QWidget#LoadingWin QLabel#label{
 QDialog#SendCoinsDialog QScrollArea#scrollArea{
     border: hidden;
     min-height: @200px@;
+
 }
 
+QDialog#SendCoinsDialog QWidget#scrollAreaWidgetContents{
+    border: hidden;
+    min-height: @190px@;
+}
 
 QLineEdit#addressEdit
 {
@@ -1410,4 +1359,10 @@ QLineEdit::hover#addressEdit{
     border:1px solid rgb(238,169,4);
     background-color: rgb(255, 255, 255,0);
 }
-
+/* 
+QDialog#ReceiveRequestDialog{
+    min-width: @400px@;
+    min-height: @360px@;
+    max-width: @400px@;
+    max-height: @360px@;
+} */
