@@ -411,7 +411,6 @@ bool AddDockerServiceDlg::createDockerService()
             return false;
         // Unlock wallet when requested by wallet model
         if (m_walletModel->getEncryptionStatus() == WalletModel::Locked)
-        // if(m_walletModel->isLocked())
         {
             AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, 0);
             dlg.setModel(m_walletModel);
@@ -450,6 +449,11 @@ bool AddDockerServiceDlg::createDockerService()
         LogPrintf("dockercluster.CreateAndSendSeriveSpec error\n");
         return false;
     }
+
+    //lock wallet
+    if(m_walletModel)
+        m_walletModel->setWalletLocked(true);
+
     return true;
 }
 
@@ -609,6 +613,7 @@ bool AddDockerServiceDlg::sendCoin()
     QList<SendCoinsRecipient> recipients;
     recipients.append(recipient);
     std::string txid = g_sendCoinsPage->send(recipients,"","",true,m_addr_port);
+
     if(!txid.size())
         return false;
     

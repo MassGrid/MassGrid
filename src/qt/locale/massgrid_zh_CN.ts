@@ -4570,15 +4570,15 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Copy &amp;URI</source>
-        <translation>复制 URI(&amp;U)</translation>
+        <translation type="vanished">复制 URI(&amp;U)</translation>
     </message>
     <message>
         <source>Copy &amp;Address</source>
-        <translation>复制地址(&amp;A)</translation>
+        <translation type="vanished">复制地址(&amp;A)</translation>
     </message>
     <message>
         <source>&amp;Save Image...</source>
-        <translation>保存图片(&amp;S)...</translation>
+        <translation type="vanished">保存图片(&amp;S)...</translation>
     </message>
     <message>
         <source>Request payment to %1</source>
@@ -4586,27 +4586,27 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Payment information</source>
-        <translation>付款信息</translation>
+        <translation type="vanished">付款信息</translation>
     </message>
     <message>
         <source>URI</source>
-        <translation>URI</translation>
+        <translation type="vanished">URI</translation>
     </message>
     <message>
         <source>Address</source>
-        <translation>地址</translation>
+        <translation type="vanished">地址</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>金额</translation>
+        <translation type="vanished">金额</translation>
     </message>
     <message>
         <source>Label</source>
-        <translation>标签</translation>
+        <translation type="vanished">标签</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>消息</translation>
+        <translation type="vanished">消息</translation>
     </message>
     <message>
         <source>Resulting URI too long, try to reduce the text for label / message.</source>
@@ -4618,15 +4618,15 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>InstantSend</source>
-        <translation>即时支付</translation>
+        <translation type="vanished">即时支付</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>是</translation>
+        <translation type="vanished">是</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>否</translation>
+        <translation type="vanished">否</translation>
     </message>
     <message>
         <source>title name</source>
@@ -5268,6 +5268,18 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>Memory Bytes:</source>
         <translation>内存大小:</translation>
+    </message>
+    <message>
+        <source>Use Persistent Store:</source>
+        <translation>使用可持续化存储:</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>是</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>否</translation>
     </message>
 </context>
 <context>
