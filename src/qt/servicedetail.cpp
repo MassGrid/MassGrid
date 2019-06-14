@@ -85,6 +85,7 @@ void ServiceDetail::updateServiceDetail(Service& service)
 
     std::string name = service.spec.name;
     std::string address = service.spec.labels["com.massgrid.pubkey"];
+    bool fPersistentsore = !QString::fromStdString(service.spec.labels["com.massgrid.nfs"]).isEmpty();
 
     std::string image = service.spec.taskTemplate.containerSpec.image;
     std::string userName = service.spec.taskTemplate.containerSpec.user;
@@ -118,6 +119,7 @@ void ServiceDetail::updateServiceDetail(Service& service)
     ui->label_name->setText(QString::fromStdString(name));
     ui->label_image->setText(QString::fromStdString(image));
     ui->label_user->setText(QString::fromStdString(userName));
+    ui->label_PersistentStore->setText(fPersistentsore?tr("Yes"):tr("No"));
 
     CWalletTx& wtx = pwalletMain->mapWallet[service.txid];
     if(wtx.Getprice().size()){
