@@ -812,8 +812,8 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
         if(trustTime > prepareTime)
             trustTime = prepareTime;
         double payrate = (double)trustTime / prepareTime;
-        if(payrate < 0|| payrate >= 1.0){
-            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payrate %lf error\n",payrate);
+        if(payrate < 0|| payrate > 1.0){
+            LogPrintf("CDockerServerman::SetTlementServiceWithoutDelete payrate %lf error trustTime %lld prepareTime %lld\n",payrate,trustTime,prepareTime);
             return TLEMENTSTATE::FAILEDREMOVE;
         }
         fnoCreated  |= (taskStatus >= Config::TASKSTATE_SHUTDOWN && trustTime<=180);
