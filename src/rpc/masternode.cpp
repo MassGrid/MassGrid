@@ -446,7 +446,7 @@ UniValue masternodelist(const UniValue& params, bool fHelp)
                                mn.GetLastPaidBlock() << " " <<
                                mn.addr.ToString() << " " << mn.lastPing.mdocker.nodeCount << " " <<
                                mn.lastPing.mdocker.activeNodeCount << " " <<mn.lastPing.mdocker.dockerServiceCount << " "<<
-                               mn.lastPing.mdocker.dockerTaskCount<< " " << 
+                               mn.lastPing.mdocker.protocolVersion<< " " << 
                                mn.lastPing.mdocker.docker_version << " " << mn.lastPing.mdocker.joinToken;
                 std::string strFull = streamFull.str();
                 if (strFilter !="" && strFull.find(strFilter) == std::string::npos &&
@@ -685,7 +685,7 @@ UniValue masternodebroadcast(const UniValue& params, bool fHelp)
                 dockerObj.push_back(Pair("nodeCount",mnb.lastPing.mdocker.nodeCount));
                 dockerObj.push_back(Pair("activeNodeCount",mnb.lastPing.mdocker.activeNodeCount));
                 dockerObj.push_back(Pair("dockerServiceCount",mnb.lastPing.mdocker.dockerServiceCount));
-                dockerObj.push_back(Pair("dockerTaskCount",mnb.lastPing.mdocker.dockerTaskCount));
+                dockerObj.push_back(Pair("protocolVersion",mnb.lastPing.mdocker.protocolVersion));
                 dockerObj.push_back(Pair("dockerVersion",mnb.lastPing.mdocker.docker_version));
                 dockerObj.push_back(Pair("joinToken",mnb.lastPing.mdocker.joinToken));
                 lastPingObj.push_back(Pair("dockerInfo",dockerObj));

@@ -6,6 +6,7 @@
 #include "masternode.h"
 #include "masternode-sync.h"
 #include "masternodeman.h"
+#include "dockerserverman.h"
 #include "protocol.h"
 #include "dockerman.h"
 // Keep track of the active Masternode
@@ -108,7 +109,7 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
         mnp.mdocker.activeNodeCount = mnp.mdocker.nodeCount - mnp.mdocker.dockerServiceCount;
         if (mnp.mdocker.activeNodeCount > 0)
             mnp.mdocker.activeNodeCount -= 1;
-        mnp.mdocker.dockerTaskCount=dockerman.GetDockerTaskCount();
+        mnp.mdocker.protocolVersion= DOCKERREQUEST_API_VERSION;
         mnp.mdocker.docker_version=dockerman.version.ver;
         mnp.mdocker.joinToken=dockerman.GetSwarmJoinToken();
     }

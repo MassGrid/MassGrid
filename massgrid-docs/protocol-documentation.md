@@ -326,7 +326,7 @@ Masternode Payment Sync
 | 8 | nodeCount | uint64_t | the number of docker swarm nodes
 | 8 | activeNodeCount | uint64_t | the number of docker swarm active nodes
 | 8 | dockerServiceCount | uint64_t | the number of docker swarm services
-| 8 | dockerTaskCount | uint64_t | the number of docker swarm active tasks
+| 8 | protocolVersion | uint64_t | the number of docker swarm active tasks
 | 4 | docker_version | int | docker swarm manager version
 | ? | joinToken | string | the swarm discover Token
 
