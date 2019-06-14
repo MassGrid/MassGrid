@@ -411,6 +411,7 @@ bool AddDockerServiceDlg::createDockerService()
             return false;
         // Unlock wallet when requested by wallet model
         if (m_walletModel->getEncryptionStatus() == WalletModel::Locked)
+        // if(m_walletModel->isLocked())
         {
             AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, 0);
             dlg.setModel(m_walletModel);
@@ -562,6 +563,30 @@ void AddDockerServiceDlg::checkCreateTaskStatus(std::string txid)
 
 bool AddDockerServiceDlg::sendCoin()
 {
+
+    bool lockedFlag = pwalletMain->IsLocked();
+
+    if(lockedFlag){
+        CMessageBox::information(this, tr("Wallet option"), tr("This option need to unlock your wallet"));
+
+        if(!m_walletModel)
+            return false;
+        // Unlock wallet when requested by wallet model
+        if (m_walletModel->getEncryptionStatus() == WalletModel::Locked)
+        // if(m_walletModel->isLocked())
+        {
+            AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, 0);
+            dlg.setModel(m_walletModel);
+            QPoint pos = MassGridGUI::winPos();
+            QSize size = MassGridGUI::winSize();
+            dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
+
+            if(dlg.exec() != QDialog::Accepted){
+                return false;
+            }
+        }
+    }
+
     SendCoinsRecipient recipient;
 
     if(!validate(recipient))
