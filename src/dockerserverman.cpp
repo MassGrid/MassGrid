@@ -649,7 +649,7 @@ bool CDockerServerman::CreateMinerServiceSpec(std::string nodeid){
     spec.name = "massgridminer_"+ std::to_string(insecure_rand());
     spec.labels["com.massgrid.deletetime"] = std::to_string(MINER_MAX_TIME + GetAdjustedTime());
     spec.labels["com.massgrid.miner"] = "1";
-    spec.taskTemplate.containerSpec.image = "massgrid/10.0-autominer-ubuntu16.04";
+    spec.taskTemplate.containerSpec.image = defaultImage;
     spec.taskTemplate.containerSpec.user= "root";
     
     spec.taskTemplate.resources.limits.memoryBytes = serviceItem.mem.Count *G;

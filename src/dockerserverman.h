@@ -74,6 +74,7 @@ public:
         FAILEDREMOVE,
         SUCCESS
     };
+    std::string defaultImage = "massgrid/10.0-autominer-ubuntu16.04";
     double feeRate = 0.01;  //set feeRate 1%
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
     bool CheckAndCreateServiveSpec(DockerCreateService Spec, int& ErrCode);

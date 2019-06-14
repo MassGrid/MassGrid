@@ -49,7 +49,7 @@ UniValue docker(const UniValue& params, bool fHelp)
             strCommand != "create" && strCommand != "delete"  && strCommand != "sendtomasternode" &&
 #endif // ENABLE_WALLET
             strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata" && strCommand != "gettransaction" && strCommand != "listprice" && 
-            strCommand != "listuntlementtx" && strCommand != "settlement" && strCommand != "setprice"&& strCommand != "setdockerfee" && strCommand != "setpersistentstore"))
+            strCommand != "listuntlementtx" && strCommand != "settlement" && strCommand != "setprice"&& strCommand != "setdockerfee" && strCommand != "setpersistentstore" && strCommand != "setdefaultimage"))
             throw std::runtime_error(
                 "docker \"command\"...\n"
                 "Set of commands to execute docker related actions\n"
@@ -96,7 +96,9 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "settlement        - set tlement a txid\n"
                 "       1. \"txid\" (string, required)\n"
                 "setpersistentstore        - set tlement a txid\n"
-                "       1. \"status\" (bool, required)\n"
+                "       1. \"status\" (bool, optional)\n"                
+                "setdefaultimage        - set default engine image\n"
+                "       1. \"image\" (string, optional)\n"
                 "listuntlementtx   - list all untlement transactions\n"
                 "listprice         - list all service items price\n"
                 "setprice          - set item price\n"
@@ -286,6 +288,19 @@ UniValue docker(const UniValue& params, bool fHelp)
         }
         std::string persis = fps ? "enable" : "disable";
         return "PersistentStore has " + persis;
+    }
+    if(strCommand == "setdefaultimage"){
+        if (!fDockerNode)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
+        if (params.size() > 2)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
+        std::string lastimg = dockerServerman.defaultImage;
+        if (params.size()  == 2){
+            std::string img = params[1].get_str();
+            dockerServerman.defaultImage = img;
+            return "default image set " + lastimg + " to " + img;
+        }
+        return "default image is "+lastimg;
     }
     if(strCommand == "listprice"){
         if (!fDockerNode)
