@@ -1132,7 +1132,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             return false;
         }
         
-        if (nVersion < MIN_PEER_PROTO_VERSION && 
+        if (nVersion <= MIN_PEER_PROTO_VERSION && 
         ((Params().NetworkIDString() == CBaseChainParams::MAIN && chainActive.Height() >= 180000) 
         || (Params().NetworkIDString() == CBaseChainParams::TESTNET && chainActive.Height() >= 82600)))
         {
