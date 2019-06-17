@@ -360,9 +360,10 @@ UniValue docker(const UniValue& params, bool fHelp)
         auto entries = dockerPriceConfig.getEntries();
         for(auto it = entries.begin();it!= entries.end();++it){
             if(type == it->getType() && name == it->getName()){
-                it->setPrice(strPrice);           
+                entries.erase(it);
+                dockerPriceConfig.add(type,name,strPrice);           
                 dockerPriceConfig.writeSave();    
-                return "modified " + it->getType() + " " +it->getName() + " " +std::to_string(it->getPrice());
+                return "modified " + type + " " +name + " " +strPrice;
             }
         }
         dockerPriceConfig.add(type,name,strPrice);
