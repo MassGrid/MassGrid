@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>431</width>
-    <height>124</height>
+    <height>126</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -29,7 +29,9 @@
    <string notr="true">QStackedWidget#SendCoinsEntry,
 QStackedWidget#SendCoinsEntry QFrame#SendCoins{
 border:hidden;
-}</string>
+background-color:rgb(255,255,255);
+}
+</string>
   </property>
   <property name="currentIndex">
    <number>0</number>

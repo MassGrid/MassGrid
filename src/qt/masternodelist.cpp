@@ -567,8 +567,10 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
         connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
         connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
-        m_nTimeListUpdated = GetTime();
-        m_nTimeMyListUpdated = GetTime();
+        m_nTimeListUpdated = GetTime() + MASTERNODELIST_UPDATE_SECONDS;
+        m_nTimeMyListUpdated = GetTime() + MY_MASTERNODELIST_UPDATE_SECONDS;
+        updateNodeList();
+        updateMyNodeList();
     }
     else if(curPage == 2){
         connect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
