@@ -1,5 +1,5 @@
 
-# **MassGrid-Core (MGD) v1.3.3.0**
+# **MassGrid-Core (MGD) v1.3.3.1**
 
 [![Build Status](https://travis-ci.org/MassGrid/MassGrid.svg?branch=masternode)](https://travis-ci.org/MassGrid/MassGrid)
 
