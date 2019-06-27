@@ -147,6 +147,9 @@ background-color:rgb(255,255,255);
        </item>
        <item>
         <widget class="QPushButton" name="addButton">
+         <property name="toolTip">
+          <string>Clicked to open address book</string>
+         </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>

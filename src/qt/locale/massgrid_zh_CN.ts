@@ -5103,6 +5103,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
         <source>&amp;Recipient</source>
         <translation type="vanished">收款人</translation>
     </message>
+    <message>
+        <source>Subtract Fee FromAmount</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SendCoinsEntry</name>
@@ -5180,7 +5184,11 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Recipient</source>
-        <translation>接受者</translation>
+        <translation>收款人</translation>
+    </message>
+    <message>
+        <source>Clicked to open address book</source>
+        <translation>点击打开地址薄</translation>
     </message>
 </context>
 <context>
