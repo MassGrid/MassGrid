@@ -356,6 +356,8 @@ void MasternodeList::updateMyNodeList(bool fForce)
     int64_t nSecondsTillUpdate = m_nTimeMyListUpdated + MY_MASTERNODELIST_UPDATE_SECONDS - GetTime();
     ui->secondsLabel->setText(QString::number(nSecondsTillUpdate));
 
+    LogPrintf("====>MasternodeList::updateMyNodeList:%d\n",nSecondsTillUpdate);
+
     if(nSecondsTillUpdate > 0 && !fForce) return;
     m_nTimeMyListUpdated = GetTime();
 
@@ -388,6 +390,8 @@ void MasternodeList::updateNodeList()
     int64_t nSecondsToWait = fFilterUpdated
                             ? nTimeFilterUpdated - GetTime() + MASTERNODELIST_FILTER_COOLDOWN_SECONDS
                             : m_nTimeListUpdated - GetTime() + MASTERNODELIST_UPDATE_SECONDS;
+
+    LogPrintf("====>MasternodeList::updateNodeList:%d\n",nSecondsToWait);
 
     if(fFilterUpdated) ui->countLabel->setText(QString::fromStdString(strprintf("Please wait... %d", nSecondsToWait)));
     if(nSecondsToWait > 0) return;
@@ -565,17 +569,11 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
     resetTableWidgetTitle();
     if(curPage <=1){
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
-        connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
-        connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
-        m_nTimeListUpdated = GetTime() + MASTERNODELIST_UPDATE_SECONDS;
-        m_nTimeMyListUpdated = GetTime() + MY_MASTERNODELIST_UPDATE_SECONDS;
-        updateNodeList();
-        updateMyNodeList();
     }
     else if(curPage == 2){
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
+
         connect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
-        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
-        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
         setCurUpdateMode(DockerUpdateMode::WhenNormal);
     }
     else if(curPage == 3){
@@ -584,6 +582,7 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
             ui->tabWidget->setCurrentIndex(0);
             return;
         }
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
         updateDockerOrder();
     }
     startTimer(true);

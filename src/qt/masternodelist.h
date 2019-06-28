@@ -81,7 +81,6 @@ Q_SIGNALS:
 
 private:
     QTimer *timer;
-    QTimer *m_serviceTimer;
     Ui::MasternodeList *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;
