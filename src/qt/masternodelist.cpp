@@ -356,8 +356,6 @@ void MasternodeList::updateMyNodeList(bool fForce)
     int64_t nSecondsTillUpdate = m_nTimeMyListUpdated + MY_MASTERNODELIST_UPDATE_SECONDS - GetTime();
     ui->secondsLabel->setText(QString::number(nSecondsTillUpdate));
 
-    LogPrintf("====>MasternodeList::updateMyNodeList:%d\n",nSecondsTillUpdate);
-
     if(nSecondsTillUpdate > 0 && !fForce) return;
     m_nTimeMyListUpdated = GetTime();
 
@@ -390,8 +388,6 @@ void MasternodeList::updateNodeList()
     int64_t nSecondsToWait = fFilterUpdated
                             ? nTimeFilterUpdated - GetTime() + MASTERNODELIST_FILTER_COOLDOWN_SECONDS
                             : m_nTimeListUpdated - GetTime() + MASTERNODELIST_UPDATE_SECONDS;
-
-    LogPrintf("====>MasternodeList::updateNodeList:%d\n",nSecondsToWait);
 
     if(fFilterUpdated) ui->countLabel->setText(QString::fromStdString(strprintf("Please wait... %d", nSecondsToWait)));
     if(nSecondsToWait > 0) return;
