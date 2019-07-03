@@ -59,6 +59,8 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui(new Ui::MasternodeList),
     clientModel(0),
     walletModel(0),
+    m_nTimeMyListUpdated(0),
+    m_nTimeListUpdated(0),
     m_scanTimer(NULL)
 {
     ui->setupUi(this);
@@ -83,6 +85,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->tableWidgetMasternodes->hideColumn(MasternodeList::JoinToken);
 
     ui->tableWidgetMasternodes->verticalHeader()->setVisible(false); 
+    ui->tableWidgetMyMasternodes->verticalHeader()->setVisible(false); 
 
     ui->tableWidgetMasternodes->setSortingEnabled(true);
     ui->tableWidgetMasternodes->sortByColumn(MasternodeList::ActiveCount, Qt::DescendingOrder);
@@ -134,9 +137,6 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->tabWidget->setCurrentIndex(0);
 
     initDockerOrderView(platformStyle);
-
-    // ui->pBtn_searchOrderBtn->hide();
-    // ui->lineEdit_searchOrder->hide();
 }
 
 MasternodeList::~MasternodeList()
