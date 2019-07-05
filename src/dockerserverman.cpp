@@ -543,7 +543,7 @@ bool CDockerServerman::CheckAndCreateServiveSpec(DockerCreateService createServi
     spec.taskTemplate.resources.reservations.genericResources.push_back(otherresources);
 
     spec.taskTemplate.restartPolicy.condition = "none";
-    spec.taskTemplate.containerSpec.command.push_back("start.sh");
+    // spec.taskTemplate.containerSpec.command.push_back("start.sh");
 
     if(createService.n2n_community.empty())
         spec.taskTemplate.containerSpec.env.push_back("N2N_NAME=massgridn2n");
