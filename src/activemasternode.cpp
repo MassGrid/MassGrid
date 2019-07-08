@@ -106,9 +106,10 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
         
         mnp.mdocker.dockerServiceCount = dockerman.GetDockerServiceCount();
         
-        mnp.mdocker.activeNodeCount = mnp.mdocker.nodeCount - mnp.mdocker.dockerServiceCount;
-        if (mnp.mdocker.activeNodeCount > 0)
-            mnp.mdocker.activeNodeCount -= 1;
+        if(mnp.mdocker.nodeCount > mnp.mdocker.dockerServiceCount)
+            mnp.mdocker.activeNodeCount = mnp.mdocker.nodeCount - mnp.mdocker.dockerServiceCount - 1;
+        else
+            mnp.mdocker.activeNodeCount = 0;
         mnp.mdocker.protocolVersion= DOCKERREQUEST_API_VERSION;
         mnp.mdocker.docker_version=dockerman.version.ver;
         mnp.mdocker.joinToken=dockerman.GetSwarmJoinToken();
