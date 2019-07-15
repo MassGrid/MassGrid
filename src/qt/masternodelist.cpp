@@ -59,6 +59,8 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui(new Ui::MasternodeList),
     clientModel(0),
     walletModel(0),
+    m_nTimeMyListUpdated(0),
+    m_nTimeListUpdated(0),
     m_scanTimer(NULL)
 {
     ui->setupUi(this);
@@ -83,6 +85,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->tableWidgetMasternodes->hideColumn(MasternodeList::JoinToken);
 
     ui->tableWidgetMasternodes->verticalHeader()->setVisible(false); 
+    ui->tableWidgetMyMasternodes->verticalHeader()->setVisible(false); 
 
     ui->tableWidgetMasternodes->setSortingEnabled(true);
     ui->tableWidgetMasternodes->sortByColumn(MasternodeList::ActiveCount, Qt::DescendingOrder);
@@ -134,9 +137,6 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->tabWidget->setCurrentIndex(0);
 
     initDockerOrderView(platformStyle);
-
-    // ui->pBtn_searchOrderBtn->hide();
-    // ui->lineEdit_searchOrder->hide();
 }
 
 MasternodeList::~MasternodeList()
@@ -565,15 +565,11 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
     resetTableWidgetTitle();
     if(curPage <=1){
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
-        connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
-        connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
-        m_nTimeListUpdated = GetTime();
-        m_nTimeMyListUpdated = GetTime();
     }
     else if(curPage == 2){
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
+
         connect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
-        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
-        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
         setCurUpdateMode(DockerUpdateMode::WhenNormal);
     }
     else if(curPage == 3){
@@ -582,6 +578,7 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
             ui->tabWidget->setCurrentIndex(0);
             return;
         }
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
         updateDockerOrder();
     }
     startTimer(true);

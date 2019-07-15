@@ -1437,12 +1437,9 @@ QLineEdit{
                    </size>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">QWidget{
-background-color:rgb(255,255,255);
-}
-
-QScrollArea{
+                   <string notr="true">QScrollArea{
 border: hidden;
+	background-color: rgba(255, 255, 255,0);
 }
 
 </string>
@@ -1461,7 +1458,7 @@ border: hidden;
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>599</width>
+                     <width>583</width>
                      <height>150</height>
                     </rect>
                    </property>
@@ -2064,6 +2061,13 @@ border:hidden;
                           <widget class="QLabel" name="labelMinFeeWarning">
                            <property name="text">
                             <string>(read the tooltip)</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QRadioButton" name="checkboxSubtractFeeFromAmount">
+                           <property name="text">
+                            <string>Subtract Fee FromAmount</string>
                            </property>
                           </widget>
                          </item>

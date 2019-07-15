@@ -13,7 +13,7 @@
 
 #define MY_MASTERNODELIST_UPDATE_SECONDS                 60
 #define MASTERNODELIST_UPDATE_SECONDS                    15
-#define MASTERNODELIST_FILTER_COOLDOWN_SECONDS            3
+#define MASTERNODELIST_FILTER_COOLDOWN_SECONDS            2
 
 namespace Ui {
     class MasternodeList;
@@ -81,7 +81,6 @@ Q_SIGNALS:
 
 private:
     QTimer *timer;
-    QTimer *m_serviceTimer;
     Ui::MasternodeList *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;

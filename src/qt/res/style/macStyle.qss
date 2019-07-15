@@ -1071,7 +1071,7 @@ QStackedWidget#SendCoinsEntry QFrame#frame_3{
 }
 
 QWidget#SendCoinsEntry QPushButton#addButton{
-    color: rgb(0,0,0);
+    color: rgb(239, 169, 4);
     border: none;
     min-height: @25px@;
     font-size: @16px@ ;
@@ -1079,8 +1079,8 @@ QWidget#SendCoinsEntry QPushButton#addButton{
     qproperty-iconSize:@16px@ @16px@;
 }
 
-QWidget#SendCoinsEntry QPushButton#addButton{
-    color: rgb(239, 169, 4);
+QWidget#SendCoinsEntry QPushButton#addButton:hover{
+    background-color: rgba(255, 255, 255, 0);
 }
 
 QDialog#AddDockerServiceDlg QLineEdit{
