@@ -661,7 +661,7 @@ bool CDockerServerman::CreateMinerServiceSpec(std::string nodeid){
     spec.taskTemplate.resources.reservations.genericResources.push_back(otherresources);
 
     spec.taskTemplate.restartPolicy.condition = "none";
-    spec.taskTemplate.containerSpec.command.push_back("minerstart.sh");
+    // spec.taskTemplate.containerSpec.command.push_back("minerstart.sh");
     Node node;
     if(dockerman.GetNodeFromList(nodeid,node)){
         for(auto &labels: node.description.engine.labels){
