@@ -102,6 +102,8 @@ private Q_SLOTS:
     void slot_gpuComboxCurrentIndexChanged(int);
     void slot_searchMinAmount();
     void slot_minAmounttextChanged(QString);
+    void slot_autominerChecked(bool);
+    void slot_setFocus();
 };
 
 class CheckoutTransaction : public QObject

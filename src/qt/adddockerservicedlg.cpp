@@ -29,6 +29,7 @@
 #include <QStyleFactory>
 #include "cupdatethread.h"
 #include "guiutil.h"
+#include "autominersetupwin.h"
 
 #define LOADRESOURCETIMEOUT 30
 
@@ -83,6 +84,8 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     connect(ui->nextButton_2,SIGNAL(clicked()),this,SLOT(doTransaction()));
     connect(ui->nextButton_3,SIGNAL(clicked()),this,SLOT(doStep3()));
     connect(ui->nextButton_4,SIGNAL(clicked()),this,SLOT(doStep4()));
+    connect(ui->checkBox_autominer,SIGNAL(clicked(bool)),this,SLOT(slot_autominerChecked(bool)));
+
     connect(ui->comboBox_gpuType,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_gpuComboxCurrentIndexChanged(int)));
 
     ui->stackedWidget->setCurrentIndex(0);
@@ -208,6 +211,7 @@ void AddDockerServiceDlg::slot_nextStep()
             ui->line_3->setEnabled(true);
             ui->label_step3->setEnabled(true);
             ui->label_15->setEnabled(true);
+            QTimer::singleShot(500, this, SLOT(slot_setFocus()));
             break;
         case 2 :
             ui->label_step4->setEnabled(true);
@@ -221,6 +225,11 @@ void AddDockerServiceDlg::slot_nextStep()
     }
     ui->stackedWidget->setCurrentIndex(curPageIndex+1);
 
+}
+
+void AddDockerServiceDlg::slot_setFocus()
+{
+    ui->payAmount->setFocus();
 }
 
 void AddDockerServiceDlg::doStep2()
@@ -730,6 +739,25 @@ void AddDockerServiceDlg::updateServiceListFinished(bool isTaskFinished)
         //time out tip
         CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker configuration!"));
         return;
+        //is need to reconnect?
+        // CMessageBox::StandardButton retval = CMessageBox::question(this, tr("Load failed"),
+        //          tr("Can't load Docker configuration!Is need to reconnecting?") ,
+        //          CMessageBox::Ok_Cancel,
+        //          CMessageBox::Cancel);
+
+        // if(retval == CMessageBox::Ok){
+        //     //re connect network
+        //     if(dockercluster.SetConnectDockerAddress(m_addr_port) && dockercluster.ProcessDockernodeConnections()){
+        //         askForDNData();
+        //     }
+        //     else{
+        //         CMessageBox::information(this, tr("Load failed"),tr("reconnecting failed,please restart this window!"));
+        //         close();
+        //     }
+        // }
+        // else{
+        //     return ;
+        // }
     }
 }
 
@@ -862,6 +890,19 @@ void AddDockerServiceDlg::slot_buyClicked()
         return ;
     }
 
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+
+    if(ui->checkBox_autominer->isChecked()){
+        AutoMinerSetupWin win;
+        win.move(pos.x()+(size.width()-win.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-win.height()*GUIUtil::GetDPIValue())/2);
+        
+        if(win.exec() != QDialog::Accepted){
+            return ;
+        }
+        m_createService.env = win.getEnvSetup();
+    }
+
     ResourceItem* item = dynamic_cast<ResourceItem *>(QObject::sender());
     doStep1(item);
 
@@ -870,14 +911,6 @@ void AddDockerServiceDlg::slot_buyClicked()
     }
 
     doStep2();
-
-    // std::string strErr;
-    // if(!CheckoutTransaction::isTransactionFinished(m_txid,strErr)){
-    //     CMessageBox::information(this, tr("Transaction Error"),QString::fromStdString(strErr));
-    //     return ;
-    // }
-    // slot_nextStep();
-    // doStep3();
 }
 
 void AddDockerServiceDlg::doStep1(ResourceItem* item)
@@ -903,9 +936,10 @@ void AddDockerServiceDlg::doStep1(ResourceItem* item)
 
     ui->payAmount->setValue(amount);
     ui->payTo->setText(QString::fromStdString(m_masterndoeAddr));
-    ui->payAmount->setFocus();
     m_amount = amount;
     slot_nextStep();
+
+    ui->payAmount->setFocus();
 }
 
 void AddDockerServiceDlg::slot_hireTimeChanged(int value)
@@ -945,6 +979,13 @@ void AddDockerServiceDlg::slot_gpuComboxCurrentIndexChanged(int index)
         if(!curText.contains(gpuType)){
             ui->tableWidget_resource->hideRow(i);
         }
+    }
+}
+
+void AddDockerServiceDlg::slot_autominerChecked(bool isChecked)
+{
+    if(isChecked){
+        ui->comboBox_image->setCurrentIndex(ui->comboBox_image->findText("10.0-autominer-ubuntu16.04"));
     }
 }
 

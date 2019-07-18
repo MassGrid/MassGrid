@@ -1210,6 +1210,43 @@ QDialog#AddDockerServiceDlg QFrame#frame_step QLabel{
     color: rgb(239, 169, 4);
 }
 
+QDialog#AutoMinerSetupWin QFrame#frame_minertype,
+QDialog#AutoMinerSetupWin QFrame#frame_minerworker,
+QDialog#AutoMinerSetupWin QFrame#frame_mineraddress,
+QDialog#AutoMinerSetupWin QFrame#frame_minerpool
+{    min-height:@38px@;
+    border-color: rgb(186, 186, 186);
+    border:1px solid rgb(186, 186, 186);
+    border-radius:@3px@;
+}
+
+QDialog#AutoMinerSetupWin QLineEdit{
+	border:hidden;
+	background-color:rgba(255,255,255,0);
+}
+
+QDialog#AutoMinerSetupWin QPushButton#pBtn_clear,
+QDialog#AutoMinerSetupWin QPushButton#pBtn_defaultSetup,
+QDialog#AutoMinerSetupWin QPushButton#pBtn_ok,
+QDialog#AutoMinerSetupWin QPushButton#pBtn_add,
+QDialog#AutoMinerSetupWin QPushButton#pBtn_del{
+    min-width: @80px@;
+    min-height: @30px@;
+}
+
+QDialog#AutoMinerSetupWin QPushButton#pBtn_defaultMode,
+QDialog#AutoMinerSetupWin QPushButton#pBtn_customMode{
+
+}
+
+QDialog#AutoMinerSetupWin QLabel#label_minertype,
+QDialog#AutoMinerSetupWin QLabel#label_minerpool,
+QDialog#AutoMinerSetupWin QLabel#label_minerworker,
+QDialog#AutoMinerSetupWin QLabel#label_address
+{
+	min-width:@120px@;
+}
+
 QDialog#AddDockerServiceDlg QFrame#frame_step QLabel::!enabled
 {
     color: rgb(125, 125, 125);
@@ -1281,6 +1318,11 @@ QDialog#EditAddressDialog{
     min-height:@240px@;
 }
 
+QDialog#AutoMinerSetupWin{
+    min-width:@520px@;
+    min-height:@480px@;
+}
+
 QDialog#HelpMessageDialog{
     min-width:@680px@;
     min-height:@360px@;
@@ -1314,7 +1356,7 @@ QDialog#TransactionDescDialog{
 
 QDialog#ServiceDetail{
     min-width:@680px@;
-    min-height:@350px@;
+    min-height:@480px@;
 }
 
 QWidget#ResourceItem{

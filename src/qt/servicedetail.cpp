@@ -25,6 +25,12 @@ ServiceDetail::ServiceDetail(QWidget* parent) : QDialog(parent),
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
+    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableWidget->verticalHeader()->setVisible(false);
+    ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidget->setColumnWidth(0, 120);
+
     ui->label_titlename->setText(tr("Service Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
     GUIUtil::MakeShadowEffect(this,ui->centerWin);
@@ -98,23 +104,29 @@ void ServiceDetail::updateServiceDetail(Service& service)
     QString ssh_pubkey;
     for (int i = 0; i < count; i++) {
         QString envStr = QString::fromStdString(env[i]);
-        if (envStr.contains("N2N_NAME")) {
-            n2n_name = envStr.split("=").at(1);
-        } else if (envStr.contains("N2N_SERVERIP")) {
-            n2n_localip = envStr.split("=").at(1);
-        } else if (envStr.contains("N2N_SNIP")) {
-            n2n_SPIP = envStr.split("=").at(1);
-        } else if (envStr.contains("SSH_PUBKEY")) {
-            int size = envStr.split(" ").size();
-            if (size >= 2)
-                ssh_pubkey = envStr.split(" ").at(1).mid(0, 10);
-        }
+        LogPrintf("===============>updateServiceDetail envStr:%s\n",env[i]);
+
+        ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);        
+        ui->tableWidget->setItem(i,0,new QTableWidgetItem(envStr.split("=").at(0)));
+        ui->tableWidget->setItem(i,1,new QTableWidgetItem(envStr.split("=").at(1)));
+        
+        // if (envStr.contains("N2N_NAME")) {
+        //     n2n_name = envStr.split("=").at(1);
+        // } else if (envStr.contains("N2N_SERVERIP")) {
+        //     n2n_localip = envStr.split("=").at(1);
+        // } else if (envStr.contains("N2N_SNIP")) {
+        //     n2n_SPIP = envStr.split("=").at(1);
+        // } else if (envStr.contains("SSH_PUBKEY")) {
+        //     int size = envStr.split(" ").size();
+        //     if (size >= 2)
+        //         ssh_pubkey = envStr.split(" ").at(1).mid(0, 10);
+        // }
     }
 
-    ui->label_n2n_serverip->setText(n2n_SPIP);
-    ui->label_n2n_name->setText(n2n_name);
-    ui->label_n2n_localip->setText(n2n_localip);
-    ui->label_ssh_pubkey->setText(ssh_pubkey);
+    // ui->label_n2n_serverip->setText(n2n_SPIP);
+    // ui->label_n2n_name->setText(n2n_name);
+    // ui->label_n2n_localip->setText(n2n_localip);
+    // ui->label_ssh_pubkey->setText(ssh_pubkey);
 
     ui->label_name->setText(QString::fromStdString(name));
     ui->label_image->setText(QString::fromStdString(image));

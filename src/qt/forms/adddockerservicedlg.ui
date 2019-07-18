@@ -755,7 +755,7 @@ border-image: url(:/res/pic/arrow_disabled.png);
             <string notr="true"/>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="page">
             <layout class="QVBoxLayout" name="verticalLayout" stretch="1,5">
@@ -954,20 +954,43 @@ border-image: url(:/res/pic/arrow_disabled.png);
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QCheckBox" name="checkBox_persistentStore">
-                   <property name="enabled">
-                    <bool>false</bool>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <property name="leftMargin">
+                    <number>0</number>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>40</height>
-                    </size>
+                   <property name="topMargin">
+                    <number>0</number>
                    </property>
-                   <property name="text">
-                    <string>Persistent Store</string>
+                   <property name="rightMargin">
+                    <number>0</number>
                    </property>
-                  </widget>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="checkBox_persistentStore">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Persistent Store</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBox_autominer">
+                     <property name="text">
+                      <string>Auto miner</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </item>

@@ -34,6 +34,7 @@ QT_FORMS_UI = \
   qt/forms/cprogressdialog.ui\
   qt/forms/mainwintitle.ui \
   qt/forms/adddockerservicedlg.ui\
+  qt/forms/autominersetupwin.ui\
   qt/forms/loadingwin.ui
 
 
@@ -100,6 +101,7 @@ QT_MOC_CPP = \
   qt/moc_qswitchbutton.cpp \
   qt/moc_mainwintitle.cpp \
   qt/moc_adddockerservicedlg.cpp \
+  qt/moc_autominersetupwin.cpp \
   qt/moc_loadingwin.cpp
 
 
@@ -178,6 +180,7 @@ MASSGRID_QT_H = \
   qt/resourceitem.h \
   qt/mainwintitle.h\
   qt/adddockerservicedlg.h \
+  qt/autominersetupwin.h \
   qt/loadingwin.h \
   qt/transactionfilterproxy.h \
   qt/transactionrecord.h \
@@ -317,6 +320,7 @@ MASSGRID_QT_CPP += \
   qt/resourceitem.cpp \
   qt/mainwintitle.cpp\
   qt/adddockerservicedlg.cpp \
+  qt/autominersetupwin.cpp \
   qt/loadingwin.cpp \
   qt/transactionfilterproxy.cpp \
   qt/transactionrecord.cpp \

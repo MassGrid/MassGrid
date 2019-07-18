@@ -55,7 +55,7 @@ namespace Config{
         vector<std::string> command;
         vector<std::string> args;
         std::string hostname;
-         vector<std::string> env;
+        vector<std::string> env;
         std::string dir;
         std::string user;
         vector<std::string> groups;
