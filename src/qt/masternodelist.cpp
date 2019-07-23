@@ -38,7 +38,7 @@
 #include "transactionview.h"
 #include "optionsmodel.h"
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
-#define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
+#define DOCKER_WHENNORMAL_UPDATE_SECONDS 30//600
 
 extern MasternodeList* g_masternodeListPage;
 extern CDockerServerman dockerServerman;
@@ -621,7 +621,7 @@ void MasternodeList::updateDockerList(bool fForce)
     // setCurUpdateMode(DockerUpdateMode::WhenNormal);
 
     if(getCurUpdateMode() == DockerUpdateMode::AfterCreate)
-            askDNData();
+        askDNData();
     else if(DockerUpdateMode::WhenNormal)
         updateServiceList();
 }
@@ -826,7 +826,7 @@ void MasternodeList::askDNData()
 void MasternodeList::clearDockerDetail()
 {
     ui->deleteServiceBtn->setEnabled(false);
-    updateEdgeStatus(0);
+    // updateEdgeStatus(0);
     ui->serviceTableWidget->setRowCount(0);
 }
 
@@ -838,6 +838,7 @@ void MasternodeList::slot_createServiceBtn()
 
 void MasternodeList::gotoCreateServicePage(const std::string& ip_port,const std::string& txid)
 {
+    // if(isNeedUpdate)
     gotoDockerSerivcePage(ip_port);
 
     AddDockerServiceDlg dlg;
