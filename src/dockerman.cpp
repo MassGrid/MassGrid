@@ -512,8 +512,8 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                     string nodeid = it->second.mapDockerTaskLists.begin()->second.nodeID;
 
                     if(!nodeid.empty()
-                    && it->second.mapDockerTaskLists.begin()->second.status.state > Config::TaskState::TASKSTATE_PENDING
-                    && it->second.mapDockerTaskLists.begin()->second.status.state < Config::TaskState::TASKSTATE_SHUTDOWN){
+                    && it->second.mapDockerTaskLists.begin()->second.desiredState > Config::TaskState::TASKSTATE_PENDING
+                    && it->second.mapDockerTaskLists.begin()->second.desiredState < Config::TaskState::TASKSTATE_SHUTDOWN){
                         //miner
                         if(isMinerService){ // miner service
                             mapDockerNodeLists[nodeid].isuseable = true;
@@ -532,7 +532,7 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                         }
                     }else
                     {
-                        if(it->second.mapDockerTaskLists.begin()->second.status.state == Config::TaskState::TASKSTATE_FAILED){
+                        if(it->second.mapDockerTaskLists.begin()->second.desiredState >= Config::TaskState::TASKSTATE_FAILED){
                             tmpnodeid=nodeid;
                         }else{
                             mapDockerNodeLists[nodeid].isuseable=true;

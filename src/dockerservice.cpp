@@ -118,8 +118,8 @@ void Service::UpdateTaskList(const string& taskData,std::map<std::string,Service
                 if(it!=tasks.end()){
                     //health check timeout 
                     int64_t now_time=GetAdjustedTime();
-                    if(now_time >= (serviceit->second.createdAt + 180) && it->second.status.state != Config::TaskState::TASKSTATE_RUNNING){
-                        LogPrint("timer","Task::TaskListUpdateAll task status %d, will be delete\n",it->second.status.state);
+                    if(now_time >= (serviceit->second.createdAt + 180) && it->second.desiredState != Config::TaskState::TASKSTATE_RUNNING){
+                        LogPrint("timer","Task::TaskListUpdateAll task status %d, will be delete\n",it->second.desiredState);
                         serviceit->second.deleteTime=now_time;
                         serviceidSet.insert(serviceid);
                     }

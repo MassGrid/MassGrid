@@ -2085,7 +2085,7 @@ threadGroup.create_thread(boost::bind(&ThreadCheckInstantSend, boost::ref(*g_con
         return InitError(strNodeError);
 
     // Generate coins in the background
-    GenerateMassGrids(GetBoolArg("-testnet", false)?false:GetBoolArg("-gen", DEFAULT_GENERATE), GetArg("-genproclimit", DEFAULT_GENERATE_THREADS), chainparams, connman);
+    GenerateMassGrids(GetBoolArg("-gen", DEFAULT_GENERATE), GetArg("-genproclimit", DEFAULT_GENERATE_THREADS), chainparams, connman);
 
     // ********************************************************* Step 13: finished
 
