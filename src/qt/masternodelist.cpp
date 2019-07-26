@@ -38,7 +38,7 @@
 #include "transactionview.h"
 #include "optionsmodel.h"
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
-#define DOCKER_WHENNORMAL_UPDATE_SECONDS 30//600
+#define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
 
 extern MasternodeList* g_masternodeListPage;
 extern CDockerServerman dockerServerman;

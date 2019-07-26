@@ -44,6 +44,7 @@
 // #include "rpcserver.h"
 #include "addresstablemodel.h"
 #include "masternodelist.h"
+#include "autominersetupwin.h"
 
 #include <iostream>
 
@@ -1773,6 +1774,20 @@ void MassGridGUI::updateClient(QString version,bool stopMinerFlag)
 
 void MassGridGUI::checkoutUpdateClient()
 {
+
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+
+    AutoMinerSetupWin win;
+    win.move(pos.x()+(size.width()-win.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-win.height()*GUIUtil::GetDPIValue())/2);
+    
+    win.exec();
+    // if(win.exec() != QDialog::Accepted){
+    //     return ;
+    // }
+
+    return ;
+
     QString version;
     bool stopMinerFlag = false;
     bool needUpdate = false;

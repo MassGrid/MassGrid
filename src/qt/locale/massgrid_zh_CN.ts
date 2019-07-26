@@ -656,10 +656,6 @@
         <translation></translation>
     </message>
     <message>
-        <source>0xff6514c44f4D3AFeEFDFca7913D33Ec3a87747f3</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>MINER_WORKER:</source>
         <translation></translation>
     </message>
@@ -672,15 +668,7 @@
         <translation></translation>
     </message>
     <message>
-        <source>eth.f2pool.com:8080</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>MINER_TYPE:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>ETH</source>
         <translation></translation>
     </message>
     <message>
@@ -726,6 +714,26 @@
     <message>
         <source>Add</source>
         <translation>添加</translation>
+    </message>
+    <message>
+        <source>MBew1aDgegex4GnYwzX2jhfAwJP37AJXsf</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>mgd.vvpool.com:5630</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MGD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Key</source>
+        <translation>变量</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>值</translation>
     </message>
 </context>
 <context>
@@ -4102,7 +4110,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>Shutdown</source>
-        <translation>已关机</translation>
+        <translation>已关闭</translation>
     </message>
     <message>
         <source>Failed</source>
