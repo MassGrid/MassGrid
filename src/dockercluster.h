@@ -9,8 +9,9 @@
 #include "key.h"
 #include "base58.h"
 #include "primitives/transaction.h"
-#include "dockerservice.h"
 #include "dockertask.h"
+#include "prizes_node.h"
+#include "prizes_service.h"
 #include "dockerserverman.h"
 #define DOCKER_CPU_UNIT 1000000000
 #define DOCKER_MEMORY_UNIT 1000000000
@@ -22,8 +23,8 @@ private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 public:
-    DockerGetData dndata;
-    DockerTransData dtdata;
+    ResponseMachines machines{};
+    DockerServiceInfo vecServiceInfo{};
     CService connectDockerAddr{};
     CNode* connectNode = nullptr;
 
@@ -41,7 +42,6 @@ public:
 
     //get dockertransaction
     bool SetConnectDockerAddr(std::string address_port);
-    void AskForTransData(std::string txid,bool isAskAll=false);
 
 };
 #endif  //DOCKERCLUSTER_H

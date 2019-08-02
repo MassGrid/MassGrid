@@ -544,17 +544,6 @@ int64_t CheckScriptPubkeyInTx(const CScript &script,const CTransaction &tx){
     }
     return -1;
 }
-bool CheckScriptPubkeyInTxVin(const CScript &script,const CTransaction &tx){
-    for(int64_t j=0;j<tx.vin.size();++j){
-        CTransaction txPre;
-        uint256 hash;
-        if(!GetTransaction(tx.vin[j].prevout.hash, txPre, Params().GetConsensus(), hash, true))
-            return false;
-        if(txPre.vout[tx.vin[j].prevout.n].scriptPubKey == script)
-            return true;
-    }
-    return false;
-}
 int64_t GetLockVoutIndex(const CTransaction &txOut){
         
     for(int i=0; i < txOut.vout.size();++i) {
@@ -1222,7 +1211,18 @@ bool CheckTransactionInputScriptPubkey(const uint256 &hash, CTransaction &txOut,
 }
 
 
-
+bool CheckScriptPubkeyInTxVin(const CScript& script, const CTransaction& tx)
+{
+    for (int64_t j = 0; j < tx.vin.size(); ++j) {
+        CTransaction txPre;
+        uint256 hash;
+        if (!GetTransaction(tx.vin[j].prevout.hash, txPre, Params().GetConsensus(), hash, true))
+            return false;
+        if (txPre.vout[tx.vin[j].prevout.n].scriptPubKey == script)
+            return true;
+    }
+    return false;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////

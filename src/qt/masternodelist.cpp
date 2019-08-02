@@ -19,7 +19,6 @@
 #include <boost/random.hpp>
 #include "cmessagebox.h"
 #include "dockercluster.h"
-#include "dockerman.h"
 #include "util.h"
 #include "adddockerservicedlg.h"
 #include "massgridgui.h"

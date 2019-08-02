@@ -61,11 +61,9 @@
 #include "masternodeconfig.h"
 #include "messagesigner.h"
 #include "netfulfilledman.h"
-
-#include "dockerman.h"
 #include "dockeredge.h"
-#include "timermodule.h"
 
+// #include "dockerserverman.h"
 #include "spork.h"
 #include "util.h"
 
@@ -1469,6 +1467,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
     if (mapArgs.count("-externalip")) {
         BOOST_FOREACH(const std::string& strAddr, mapMultiArgs["-externalip"]) {
+            // dockerServerman.LocalIP = strAddr;
             CService addrLocal;
             if (Lookup(strAddr.c_str(), addrLocal, GetListenPort(), fNameLookup) && addrLocal.IsValid())
                 AddLocal(addrLocal, LOCAL_MANUAL);
@@ -2028,16 +2027,9 @@ threadGroup.create_thread(boost::bind(&ThreadCheckInstantSend, boost::ref(*g_con
 
     if(fDockerNode){
         SetSNPort(GetArg("-snport",DEFAULT_SN_PORT));
-        dockerman.SetDockerApiConnection(GetArg("-dockerapi", "localhost:2375"));
-        dockerman.fPersistentStore = GetBoolArg("-persistentstore", false);
-        if(dockerman.fPersistentStore){
-            LogPrintf("docker persistentstore enable\n");
-        }
         threadGroup.create_thread(&ThreadSnStart);
     }
 
-    if(fDockerNode)
-        threadGroup.create_thread(&ThreadTimeModule);
     if (!CheckDiskSpace())
         return false;
 

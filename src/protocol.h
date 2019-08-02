@@ -238,9 +238,10 @@ extern const char *MNGOVERNANCEOBJECTVOTE;
 extern const char *MNVERIFY;
 
 extern const char *GETDNDATA;
-extern const char *DNDATA;
-extern const char *GETTRANS;
-extern const char *TRANSDATA;
+extern const char* DNDATA;
+extern const char* GETSERVICE;
+extern const char* GETSERVICES;
+extern const char *SERVICEDATA;
 extern const char *CREATESERVICE;
 extern const char *UPDATESERVICE;
 extern const char *DELETESERVICE;

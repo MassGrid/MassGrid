@@ -135,18 +135,19 @@ MASSGRID_CORE_H = \
   masternodeman.h \
   masternodeconfig.h \
   dockerpriceconfig.h \
-  dockerman.h \
-  timermodule.h \
   dockercluster.h \
   dockerserverman.h \
   dockersupernode.h \
   dockeredge.h \
   dockerbase.h \
-  dockernode.h \
-  dockerservice.h \
   dockercontainer.h \
-  dockerswarm.h \
   dockertask.h \
+  prizes_client.h \
+  prizes_node.h \
+  prizes_order.h \
+  prizes_prices.h \
+  prizes_service.h \
+  prizes_statement.h \
   memusage.h \
   merkleblock.h \
   messagesigner.h \
@@ -251,18 +252,18 @@ libmassgrid_server_a_SOURCES = \
   masternodeconfig.cpp \
   dockerpriceconfig.cpp \
   masternodeman.cpp \
-  dockerman.cpp \
-  timermodule.cpp \
   dockercluster.cpp \
   dockerserverman.cpp \
   dockersupernode.cpp \
   dockeredge.cpp \
-  dockerbase.cpp \
-  dockernode.cpp \
-  dockerservice.cpp \
   dockercontainer.cpp \
-  dockerswarm.cpp \
   dockertask.cpp \
+  prizes_client.cpp \
+  prizes_node.cpp \
+  prizes_order.cpp \
+  prizes_prices.cpp \
+  prizes_service.cpp \
+  prizes_statement.cpp \
   merkleblock.cpp \
   messagesigner.cpp \
   miner.cpp \

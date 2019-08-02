@@ -3,7 +3,6 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef DOCKERTASK_H
 #define DOCKERTASK_H
-#include "dockerbase.h"
 #include "dockercontainer.h"
 namespace Config{
     enum TaskState{
@@ -62,7 +61,6 @@ class Task :public DockerBase{
 public:
 
     static bool DecodeFromJson(const UniValue& data,Task& task);
-    static void TaskListUpdateAll(const string& taskData, std::map<std::string,Task> &tasks);
 
     std::string name{};  
     Config::Labels labels{}; 

@@ -256,6 +256,7 @@ std::string GetWarnings(const std::string& strFor);
 /** Retrieve a transaction (from memory pool, or from disk, if possible) */
 bool GetTransaction(const uint256 &hash, CTransaction &tx, const Consensus::Params& params, uint256 &hashBlock, bool fAllowSlow = false);
 bool CheckTransactionInputScriptPubkey(const uint256 &hash, CTransaction &tx,const CPubKey& pubKey, const Consensus::Params& params, uint256 &hashBlock,std::string& strErr, bool fAllowSlow = false);
+bool CheckScriptPubkeyInTxVin(const CScript& script, const CTransaction& tx);
 /** Find the best known block, and make it the tip of the block chain */
 bool ActivateBestChain(CValidationState& state, const CChainParams& chainparams, const CBlock* pblock = NULL);
 

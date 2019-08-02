@@ -13,7 +13,6 @@
 #include "masternodeconfig.h"
 #include "dockerpriceconfig.h"
 #include "masternodeman.h"
-#include "dockerman.h"
 #include "dockerserverman.h"
 #include "dockercluster.h"
 #include "messagesigner.h"
@@ -24,7 +23,6 @@
 #include "../wallet/wallet.h"
 #include "dockercluster.h"
 #include "dockeredge.h"
-#include "timermodule.h"
 
 #include <fstream>
 #include <iomanip>
@@ -163,39 +161,34 @@ UniValue docker(const UniValue& params, bool fHelp)
         if(!dockercluster.ProcessDockernodeConnections())
             throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Connect to Masternode failed");
 
-        DockerCreateService createService{};
+        DockerCreateService dockerCreateService{};
 
-        createService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-        createService.txid = uint256S(params[2].get_str());
-        
+        dockerCreateService.clusterServiceCreate.pubKeyClusterAddress = dockercluster.DefaultPubkey;
         std::string strServiceName = params[3].get_str();
-        createService.serviceName = strServiceName;
+        dockerCreateService.clusterServiceCreate.ServiceName = strServiceName;
 
         std::string strServiceImage = params[4].get_str();
-        createService.image = strServiceImage;
+        dockerCreateService.clusterServiceCreate.Image = strServiceImage;
 
-        createService.item.cpu.Name = params[5].get_str();
+        dockerCreateService.clusterServiceCreate.hardware.CPUType = params[5].get_str();
         int64_t serviceCpu = params[6].get_int64();
-        createService.item.cpu.Count = serviceCpu;
+        dockerCreateService.clusterServiceCreate.hardware.CPUThread= serviceCpu;
 
-        createService.item.mem.Name = params[7].get_str();
+        dockerCreateService.clusterServiceCreate.hardware.MemoryType = params[7].get_str();
         int64_t serviceMemoey_byte = params[8].get_int64();
-        createService.item.mem.Count = serviceMemoey_byte;
-        
+        dockerCreateService.clusterServiceCreate.hardware.MemoryCount = serviceMemoey_byte;
+
         std::string strServiceGpuName = params[9].get_str();
-        createService.item.gpu.Name = strServiceGpuName;
+        dockerCreateService.clusterServiceCreate.hardware.GPUType = strServiceGpuName;
 
         int64_t serviceGpu = params[10].get_int64();
-        createService.item.gpu.Count = serviceGpu;
-
-        std::string strn2n_Community = params[11].get_str();
-        createService.n2n_community = strn2n_Community;
+        dockerCreateService.clusterServiceCreate.hardware.GPUCount = serviceGpu;
 
         std::string strssh_pubkey = params[12].get_str();
-        createService.ssh_pubkey = strssh_pubkey;
+        dockerCreateService.clusterServiceCreate.SSHPubkey = strssh_pubkey;
 
         if(params.size() > 13 ){
-            createService.fPersistentStore = params[13].get_bool();
+            dockerCreateService.clusterServiceCreate.hardware.PersistentStore = params[13].get_str();
         }
         if(params.size() > 14 ){
             UniValue envs = params[14].get_obj();
@@ -203,17 +196,17 @@ UniValue docker(const UniValue& params, bool fHelp)
             for (unsigned int idx = 0; idx < vKeys.size(); idx++) {
                 if(!envs[vKeys[idx]].isStr())
                     throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter, expected object");
-                createService.env[vKeys[idx]] = envs[vKeys[idx]].get_str();
+                dockerCreateService.clusterServiceCreate.ENV[vKeys[idx]] = envs[vKeys[idx]].get_str();
             }
         }
         EnsureWalletIsUnlocked();
-        if(!dockercluster.CreateAndSendSeriveSpec(createService))
-            return "CreateSpec Error Failed";
+        // if(!dockercluster.CreateAndSendSeriveSpec(createService))
+        //     return "CreateSpec Error Failed";
 
         for(int i=0;i<20;++i){
             MilliSleep(100);
             if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
-                return strServiceCode[dockercluster.dndata.errCode];
+                return dockercluster.vecServiceInfo.err;
             }
         }
         return NullUniValue;
@@ -233,8 +226,8 @@ UniValue docker(const UniValue& params, bool fHelp)
 
         delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
         
-        std::string strtxid = params[2].get_str();
-        delService.txid = uint256S(strtxid);
+        std::string strOutPoint = params[2].get_str();
+        delService.CrerateOutPoint = String2OutPoint(strOutPoint);
         EnsureWalletIsUnlocked();
         CKey vchSecret;
         if (!pwalletMain->GetKey(delService.pubKeyClusterAddress.GetID(), vchSecret)){
@@ -248,88 +241,10 @@ UniValue docker(const UniValue& params, bool fHelp)
         for(int i=0;i<20;++i){
             MilliSleep(100);
             if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
-                return strServiceCode[dockercluster.dndata.errCode];
+                return dockercluster.vecServiceInfo.err;
             }
         }
         return NullUniValue;
-    }
-    if(strCommand == "listuntlementtx"){
-        if (!fDockerNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
-        if (params.size() >2)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
-
-        UniValue vobj(UniValue::VOBJ);
-
-        UniValue varr(UniValue::VARR);
-            std::set<CWalletTx*> setWallet = timerModule.GetWalletTxSet();
-
-        for(const auto& tx :setWallet)
-            varr.push_back(tx->GetHash().ToString());
-
-        vobj.push_back(Pair("untlementtx",varr));
-        if (params.size()  == 2){
-
-            std::string strtxid = params[1].get_str();
-            if(strtxid != "all")
-                throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter");
-
-            std::priority_queue<ServiceListInfo, std::vector<ServiceListInfo> > serviceInfoQue= timerModule.GetServiceInfoQue();
-            UniValue varq(UniValue::VARR);
-
-
-            while(!serviceInfoQue.empty())
-            {
-                UniValue varService(UniValue::VARR);
-                ServiceListInfo slist = serviceInfoQue.top();
-                varService.push_back(slist.serviceid);
-                varService.push_back(slist.deleteTime);
-                varq.push_back(varService);
-                serviceInfoQue.pop();
-            }
-            vobj.push_back(Pair("all",varq));
-        }
-        return vobj;
-    }
-    if(strCommand == "settlement"){
-        if (!fDockerNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
-        if (params.size() != 2)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
-        std::string strtxid = params[1].get_str();
-        uint256 txid = uint256S(strtxid);
-        if (!pwalletMain->mapWallet.count(txid)){
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available about transaction");
-        }
-        CWalletTx& wtx = pwalletMain->mapWallet[txid];  //watch only not check
-        timerModule.UpdateSet(wtx);
-        return "insert successful ";
-    }
-    if(strCommand == "setpersistentstore"){
-        if (!fDockerNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
-        if (params.size() >2)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
-        bool fps = dockerman.fPersistentStore;
-        if (params.size()  == 2){
-            fps = boost::lexical_cast<bool>(params[1].get_str());
-            dockerman.fPersistentStore = fps;
-        }
-        std::string persis = fps ? "enable" : "disable";
-        return "PersistentStore has " + persis;
-    }
-    if(strCommand == "setdefaultimage"){
-        if (!fDockerNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a dockernode");
-        if (params.size() > 2)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
-        std::string lastimg = dockerServerman.defaultImage;
-        if (params.size()  == 2){
-            std::string img = params[1].get_str();
-            dockerServerman.defaultImage = img;
-            return "default image set " + lastimg + " to " + img;
-        }
-        return "default image is "+lastimg;
     }
     if(strCommand == "listprice"){
         if (!fDockerNode)
@@ -492,67 +407,10 @@ UniValue docker(const UniValue& params, bool fHelp)
         for(int i=0;i<20;++i){
             MilliSleep(100);
             if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
-                for(auto it = dockercluster.dndata.mapDockerServiceLists.begin();it != dockercluster.dndata.mapDockerServiceLists.end();++it){
-                    UniValue obj(UniValue::VOBJ);
-                    obj.push_back(Pair(it->first,Service::DockerServToJson(it->second)));
-                    varr.push_back(obj);
-                }
-                UniValue varr2(UniValue::VARR);
-                for(auto it = dockercluster.dndata.items.begin();it!= dockercluster.dndata.items.end();++it){
-                    UniValue obj(UniValue::VOBJ);
-                    obj.push_back(Pair("CpuType",it->first.cpu.Name));
-                    obj.push_back(Pair("CpuCount",it->first.cpu.Count));
-                    obj.push_back(Pair("MemSize",it->first.mem.Count));
-                    obj.push_back(Pair("GpuType",it->first.gpu.Name));
-                    obj.push_back(Pair("GpuCount",it->first.gpu.Count));
-                    obj.push_back(Pair("Price",(double)it->second.price/COIN));
-                    obj.push_back(Pair("UsageCount",it->second.count));
-                    varr2.push_back(obj);
-                }
-                varr.push_back(varr2);
-                UniValue obj(UniValue::VOBJ);
-                obj.push_back(Pair("masternodeaddress",dockercluster.dndata.masternodeAddress));
-                obj.push_back(Pair("PersistentStore",dockercluster.dndata.fPersistentStore));
-                varr.push_back(obj);
-                return varr;
+                
             }
         }
     }
-    if (strCommand == "gettransaction"){
-        if (!masternodeSync.IsSynced())
-            return "Need to Synced First";
-        
-        if (params.size() != 3)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
-        std::string strIPPort;
-        strIPPort = params[1].get_str();
-        if(!dockercluster.SetConnectDockerAddr(strIPPort)){
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "SetConnectDockerAddress error");
-        }
-        if(!dockercluster.ProcessDockernodeConnections()){
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "ProcessDockernodeConnections error");
-        }
-        std::string txid = params[2].get_str();
-        dockercluster.AskForTransData(txid);
-
-        UniValue varr(UniValue::VARR);
-        for(int i=0;i<10;++i){
-            MilliSleep(300);
-            if(dockercluster.dtdata.msgStatus !=TASKDTDATA::DEFAULT){
-                UniValue obj(UniValue::VOBJ);
-                if(dockercluster.dtdata.msgStatus == TASKDTDATA::ERRORCODE){
-                    obj.push_back(Pair("errMessage",dockercluster.dtdata.errCode));
-                    return obj;
-                }
-                obj.push_back(Pair("txid",dockercluster.dtdata.txid.ToString()));
-                obj.push_back(Pair("deleteTime",dockercluster.dtdata.deleteTime));
-                obj.push_back(Pair("feeRate",dockercluster.dtdata.feeRate));
-                obj.push_back(Pair("taskStatus",dockercluster.dtdata.errCode));
-                obj.push_back(Pair("taskMessage",dockercluster.dtdata.taskStatus));
-                obj.push_back(Pair("tlementtxid",dockercluster.dtdata.tlementtxid.ToString()));
-                return obj;
-            }
-        }
-    }
+    
     return NullUniValue;
 }

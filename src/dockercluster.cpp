@@ -2,7 +2,6 @@
 #include "dockercluster.h"
 #include "netbase.h"
 #include "masternode-sync.h"
-#include "dockerman.h"
 #include "net.h"
 #include <boost/lexical_cast.hpp>
 #include "messagesigner.h"
@@ -74,20 +73,6 @@ bool Cluster::SetConnectDockerAddr(std::string address_port)
         return false;
     }
     return true;
-}
-void Cluster::AskForTransData(std::string txid,bool isAskAll)
-{
-    LogPrint("dockernode","Cluster::AskForTransData Started\n");
-    if(!connectNode) return;
-
-    dtdata.Init();
-    DockerGetTranData dockerDtData;
-    dockerDtData.sigTime=GetAdjustedTime();
-    dockerDtData.txid=uint256S(txid);
-    if(isAskAll){
-        dockerDtData.askCode=DockerGetTranData::ASKALL;
-    }
-    g_connman->PushMessage(connectNode, NetMsgType::GETTRANS, dockerDtData);
 }
 bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
 

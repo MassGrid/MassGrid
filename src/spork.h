@@ -112,8 +112,13 @@ public:
     int64_t GetSporkValue(int nSporkID);
     int GetSporkIDByName(std::string strName);
     std::string GetSporkNameByID(int nSporkID);
-
     int64_t GetDeveloperPayment() { return GetSporkValue(SPORK_15_DEVELOPER_PAYMENT); }
+    double GetDeveloperFeeRate() {
+        double devFee = GetSporkValue(SPORK_15_DEVELOPER_PAYMENT) / 10000.0;
+        if (devFee > 1 || devFee < 0)
+            return 0;
+        return devFee;
+    }
     bool SetPrivKey(std::string strPrivKey);
 };
 

@@ -9,10 +9,6 @@
 #include "key.h"
 #include "validation.h"
 #include "spork.h"
-#include "dockernode.h"
-#include "dockerservice.h"
-#include "dockertask.h"
-#include "dockerswarm.h"
 #include "chainparams.h"
 
 using namespace std;

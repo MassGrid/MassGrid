@@ -8,7 +8,7 @@
 #include "masternodeman.h"
 #include "dockerserverman.h"
 #include "protocol.h"
-#include "dockerman.h"
+#include "prizes_client.h"
 // Keep track of the active Masternode
 CActiveMasternode activeMasternode;
 
@@ -101,17 +101,20 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
     mnp.fSentinelIsCurrent =
             (abs(GetAdjustedTime() - nSentinelPingTime) < MASTERNODE_WATCHDOG_MAX_SECONDS);
     if(fDockerNode){
-        dockerman.Update();
-        mnp.mdocker.nodeCount= dockerman.GetDockerNodeCount();
+        NodeListStatistics nodeListStatistics{};
+        if (prizesClient.GetNodeList(nodeListStatistics)) {
+            mnp.mdocker.nodeCount = nodeListStatistics.TotalCount;
+
+            mnp.mdocker.dockerServiceCount = nodeListStatistics.TotalCount - nodeListStatistics.UsableCount;
+
+            mnp.mdocker.activeNodeCount = nodeListStatistics.AvailabilityCount;
+            if (mnp.mdocker.activeNodeCount > 0)
+                mnp.mdocker.activeNodeCount -= 1;
+            mnp.mdocker.protocolVersion = DOCKERREQUEST_API_VERSION;
+            mnp.mdocker.docker_version = 10000;
+            mnp.mdocker.joinToken = nodeListStatistics.Token;
+        }
         
-        mnp.mdocker.dockerServiceCount = dockerman.GetDockerServiceCount();
-        
-        mnp.mdocker.activeNodeCount = mnp.mdocker.nodeCount - mnp.mdocker.dockerServiceCount;
-        if (mnp.mdocker.activeNodeCount > 0)
-            mnp.mdocker.activeNodeCount -= 1;
-        mnp.mdocker.protocolVersion= DOCKERREQUEST_API_VERSION;
-        mnp.mdocker.docker_version=dockerman.version.ver;
-        mnp.mdocker.joinToken=dockerman.GetSwarmJoinToken();
     }
     if(!mnp.Sign(keyMasternode, pubKeyMasternode)) {
         LogPrintf("CActiveMasternode::SendMasternodePing -- ERROR: Couldn't sign Masternode Ping\n");

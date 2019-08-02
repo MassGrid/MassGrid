@@ -1,6 +1,5 @@
 #include "dockercontainer.h"
 #include "dockertask.h"
-#include "dockerservice.h"
 void ParseContainerSpec(const UniValue& data,Config::ContainerSpec &containerSpec)
 {
     std::vector<std::string> vKeys=data.getKeys();
