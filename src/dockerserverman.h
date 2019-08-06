@@ -12,27 +12,19 @@
 #include "base58.h"
 #include "primitives/transaction.h"
 
-
-
 #define DOCKERREQUEST_API_MINSUPPORT_VERSION 10061
 #define DOCKERREQUEST_API_MAXSUPPORT_VERSION 10070
 
-static const int DOCKER_MAX_CPU_NUM = 16;
-static const int DOCKER_MAX_MEMORY_BYTE = 16;
-static const int DOCKER_MAX_GPU_NUM = 12;
-static const int WALLET_DATABASE_VERSION = 0x10;
-static const int64_t K = 1000;
-static const int64_t M = 1000 * K;
-static const int64_t G = 1000 * M;
 static const int TIMEOUT = 5 * 60;
-static const int64_t MINER_MAX_TIME = 999999999;
 class CDockerServerman;
+extern CDockerServerman dockerServerman;
+
 struct DockerCreateService;
 struct DockerUpdateService;
 struct DockerDeleteService;
 struct ServiceCreate;
 struct ServiceUpdate;
-extern CDockerServerman dockerServerman;
+
 extern const char* strServiceCode[];
 enum SERVICEMANCODE{
     SUCCESS = 0,
@@ -80,7 +72,6 @@ public:
         SUCCESS
     };
     std::string LocalIP{};
-    std::string defaultImage = "massgrid/10.0-autominer-ubuntu16.04";
     double feeRate = 0.01;  //set feeRate 1%
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
     static bool CheckCreateService(DockerCreateService& dockerCreateService, ServiceCreate& serviceCreate, std::string& err);

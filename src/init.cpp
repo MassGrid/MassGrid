@@ -62,7 +62,7 @@
 #include "messagesigner.h"
 #include "netfulfilledman.h"
 #include "dockeredge.h"
-
+#include "prizes_client.h"
 #include "dockerserverman.h"
 #include "spork.h"
 #include "util.h"
@@ -591,8 +591,9 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageGroup(_("Masternode options:"));
     strUsage += HelpMessageOpt("-masternode=<n>", strprintf(_("Enable the client to act as a masternode (0-1, default: %u)"), 0));
     strUsage += HelpMessageOpt("-dockernode=<n>", strprintf(_("Enable the client to act as a dockernode and enable masternode (0-1, default: %u)"), 0));
-    strUsage += HelpMessageOpt("-dockerapi=<ip:port>", strprintf(_("Listen for Docker Api connections on <ip:port> (default: %s)"), "localhost:2375"));
-   strUsage += HelpMessageOpt("-persistentstore=<n>", strprintf(_("Enable persistentstore (default: %u)"), 0));
+    strUsage += HelpMessageOpt("-prizesapi=<ip:port>", strprintf(_("Listen for Prizes Api connections on <ip:port> (default: %s)"), "localhost:9333"));
+    strUsage += HelpMessageOpt("-prizesUnixSock=\"/var/run/prizes.sock\"", strprintf(_("Listen for Prizes Api connections on path unix socket file (default: %s)"), "/var/run/prizes.sock"));
+    strUsage += HelpMessageOpt("-persistentstore=<n>", strprintf(_("Enable persistentstore (default: %u)"), 0));
     strUsage += HelpMessageOpt("-snport=<n>", strprintf(_("Listen for sn on <port> (default: %u)"), DEFAULT_SN_PORT));
     strUsage += HelpMessageOpt("-mnconf=<file>", strprintf(_("Specify masternode configuration file (default: %s)"), "masternode.conf"));
     strUsage += HelpMessageOpt("-mnconflock=<n>", strprintf(_("Lock masternodes from masternode configuration file (default: %u)"), 1));
@@ -2027,6 +2028,8 @@ threadGroup.create_thread(boost::bind(&ThreadCheckInstantSend, boost::ref(*g_con
 
     if(fDockerNode){
         SetSNPort(GetArg("-snport",DEFAULT_SN_PORT));
+        prizesClient.SetDockerApiConnection(GetArg("-prizesapi", "localhost:9333"));
+        prizesClient.SetDockerUnixSock(GetArg("-prizesUnixSock", "/var/run/prizes.sock"));
         threadGroup.create_thread(&ThreadSnStart);
     }
 

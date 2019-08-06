@@ -70,6 +70,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         vRecv >> mdndata;
         if(mdndata.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || mdndata.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
             LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", mdndata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+            dockercluster.machines.err = mdndata.err;
             setDNDataStatus(DNDATASTATUS::Received);
             return;
         }

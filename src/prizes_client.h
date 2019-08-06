@@ -17,6 +17,8 @@ class PrizesClient{
     std::string APIAddr{};
     int APIport{};
 public:
+    void SetDockerApiConnection(std::string in);
+    void SetDockerUnixSock(std::string in);
     bool GetNodeList(NodeListStatistics& nodeListStatistics,std::string& err);
     bool GetService(std::string ServiceID, ServiceInfo& serviceInfo, std::string& err);
     bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, std::string& err);
