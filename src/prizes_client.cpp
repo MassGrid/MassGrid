@@ -174,7 +174,7 @@ bool PrizesClient::GetNodeList(NodeListStatistics& nodeListStatistics, std::stri
 }
 bool PrizesClient::GetMachines(ResponseMachines& machines, std::string& err)
 {
-    LogPrint("docker", "PrizesClient::GetMachines");
+    LogPrint("docker", "PrizesClient::GetMachines\n");
     NodeListStatistics nodeListStatistics{};
     std::string url = "/getnodes";
     std::string requestData{};

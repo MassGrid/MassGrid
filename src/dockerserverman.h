@@ -12,8 +12,8 @@
 #include "base58.h"
 #include "primitives/transaction.h"
 
-#define DOCKERREQUEST_API_MINSUPPORT_VERSION 10061
-#define DOCKERREQUEST_API_MAXSUPPORT_VERSION 10070
+#define DOCKERREQUEST_API_MINSUPPORT_VERSION 10071
+#define DOCKERREQUEST_API_MAXSUPPORT_VERSION 10080
 
 static const int TIMEOUT = 5 * 60;
 class CDockerServerman;
