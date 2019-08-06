@@ -8,6 +8,8 @@
 #include "hash.h"
 #include "tinyformat.h"
 #include "utilstrencodings.h"
+#include "boost/lexical_cast.hpp"
+#include <boost/algorithm/string.hpp>
 
 std::string COutPoint::ToString() const
 {
@@ -17,6 +19,12 @@ std::string COutPoint::ToString() const
 std::string COutPoint::ToStringShort() const
 {
     return strprintf("%s-%u", hash.ToString().substr(0,64), n);
+}
+COutPoint String2OutPoint(std::string strOutput)
+{
+    std::vector<std::string> vstrsplit{};
+    boost::split(vstrsplit, strOutput, boost::is_any_of("-"));
+    return COutPoint(uint256S(vstrsplit[0]), boost::lexical_cast<uint32_t>(vstrsplit[1]));
 }
 
 CTxIn::CTxIn(COutPoint prevoutIn, CScript scriptSigIn, uint32_t nSequenceIn)

@@ -26,3 +26,19 @@ void PrizeStatement::DecodeFromJson(const UniValue& data, PrizeStatement& statem
             statement.StatementTransaction = tdata.get_str();
     }
 }
+UniValue PrizeStatement::ToJson(PrizeStatement& statement){
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("statement_id", statement.StatementID));
+        data.push_back(Pair("created_at", statement.CreatedAt));
+        data.push_back(Pair("statement_start_at", statement.StatementStartAt));
+        data.push_back(Pair("statement_end_at", statement.StatementEndAt));
+        data.push_back(Pair("total_amount", statement.TotalAmount));
+        data.push_back(Pair("master_node_fee_rate", statement.MasterNodeFeeRate));
+        data.push_back(Pair("dev_fee_rate", statement.DevFeeRate));
+        data.push_back(Pair("master_node_fee_address", statement.MasterNodeFeeAddress));
+        data.push_back(Pair("dev_fee_address", statement.DevFeeAddress));
+        data.push_back(Pair("statement_transaction", statement.StatementTransaction));
+    }
+    return data;
+}

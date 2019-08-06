@@ -26,6 +26,7 @@ struct RefundPayment  {
     std::string Drawee{};
     std::string RefundTransaction{};
     static void DecodeFromJson(const UniValue& data, RefundPayment& refund);
+    static UniValue ToJson(RefundPayment& refund);
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
@@ -52,6 +53,7 @@ struct ServiceOrder {
     RefundPayment Refund{};
 
     static void DecodeFromJson(const UniValue& data, ServiceOrder& order);
+    static UniValue ToJson(ServiceOrder& serviceOrder);
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
@@ -75,7 +77,5 @@ struct RefundInfo {
     PrizeStatement Statement{};
     static void DecodeFromJson(const UniValue& data, RefundInfo& refundInfo);
 };
-
-COutPoint String2OutPoint(std::string strOutput);
 
 #endif //PRIZES_ORDER_H

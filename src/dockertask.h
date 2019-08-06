@@ -76,6 +76,7 @@ public:
 
     int desiredState{};
     std::vector<Config::NetworkTemplate> networksAttachments{};
+    UniValue jsonUniValue{};
 
 public:
     Task() = default;
@@ -149,18 +150,8 @@ public:
         READWRITE(networksAttachments);
     }
 
-
-    void Update();
-    std::string ToString();
-};
-class dockertaskfilter:public filterbase{
-public:
-
-    bool DesiredState_running = false;
-    bool DesiredState_shutdown = false;
-    bool DesiredState_accepted = false;
-    vector<std::string> nodeid;
-    vector<std::string> serviceid;
-    std::string ToJsonString();
+    std::string ToJson(){
+        return jsonUniValue.write();
+    }
 };
 #endif //DOCKERTASK_H

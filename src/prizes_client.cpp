@@ -1,8 +1,8 @@
 #include"prizes_client.h"
 #include "http.h"
+PrizesClient prizesClient;
 bool whetherError(std::string responseData,UniValue& jsondata);
-bool PrizesClient::PostServiceCreate(ServiceCreate& serviceCreate, std::string& ServiceID, std::string& err)
-{
+bool PrizesClient::PostServiceCreate(ServiceCreate& serviceCreate, std::string& ServiceID, std::string& err){
     LogPrint("docker", "PrizesClient::PostServiceCreate");
     std::string url = "/servicecreate";
     std::string requestData = ServiceCreate::ToJson(serviceCreate).write();
@@ -27,8 +27,7 @@ bool PrizesClient::PostServiceCreate(ServiceCreate& serviceCreate, std::string& 
     ServiceID = jsondata["ID"].get_str();
     return true;
 }
-bool PrizesClient::PostServiceUpdate(ServiceUpdate& serviceUpdate,std::string& err)
-{
+bool PrizesClient::PostServiceUpdate(ServiceUpdate& serviceUpdate,std::string& err){
     LogPrint("docker", "PrizesClient::PostServiceUpdate");
     std::string url = "/serviceupdate/" + serviceUpdate.ServiceID;
     std::string requestData = ServiceUpdate::ToJson(serviceUpdate).write();
@@ -52,7 +51,7 @@ bool PrizesClient::PostServiceUpdate(ServiceUpdate& serviceUpdate,std::string& e
     return true;
 }
 
-bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo){
+bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo, std::string& err){
     LogPrint("docker", "PrizesClient::GetService");
     std::string url = "/getservice/" + ServiceID;
     std::string requestData{};
@@ -67,12 +66,14 @@ bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo){
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata))
+    if (whetherError(responseData, jsondata)) {
+        err = "response error " + jsondata["error"].get_str();
         return false;
+    }
     ServiceInfo::DecodeFromJson(jsondata, serviceInfo);
     return true;
 }
-bool PrizesClient::GetServiceFromPubkey(std::string strPubkey, std::vector<ServiceInfo>& vecServiceInfo){
+bool PrizesClient::GetServiceFromPubkey(std::string strPubkey, std::vector<ServiceInfo>& vecServiceInfo, std::string& err){
     LogPrint("docker", "PrizesClient::GetServiceFromPubkey");
     std::string url = "/getservicesfrompubkey/" + strPubkey;
     std::string requestData{};
@@ -87,13 +88,38 @@ bool PrizesClient::GetServiceFromPubkey(std::string strPubkey, std::vector<Servi
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata))
+    if (whetherError(responseData, jsondata)) {
+        err = "response error " + jsondata["error"].get_str();
         return false;
+    }
     for(int i=0;i<jsondata.size();++i){
         ServiceInfo serviceInfo{};
         ServiceInfo::DecodeFromJson(jsondata, serviceInfo);
         vecServiceInfo.push_back(serviceInfo);
     }
+    return true;
+}
+
+bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, std::string& err){
+    LogPrint("docker", "PrizesClient::GetServiceDelete");
+    std::string url = "/servicerefund/"+ServiceID;
+    std::string requestData{};
+    HttpRequest http(APIAddr, APIport, url, requestData, unix_sock_address);
+    int ret;
+    ret = http.HttpGet();
+
+    if (ret < 200 || ret >= 300) {
+        LogPrint("docker", "PrizesClient::GetServiceDelete Http_Error error_code: %d\n", ret);
+        return false;
+    }
+    std::string responseData = http.getReponseData();
+
+    UniValue jsondata(UniValue::VOBJ);
+    if (whetherError(responseData, jsondata)) {
+        err = "response error " + jsondata["error"].get_str();
+        return false;
+    }
+    statementid = uint256S(jsondata["txid"].get_str());
     return true;
 }
 bool whetherError(std::string responseData,UniValue& jsondata){
@@ -109,7 +135,7 @@ bool whetherError(std::string responseData,UniValue& jsondata){
     }
     return false;
 }
-bool PrizesClient::GetNodeList(NodeListStatistics& nodeListStatistics)
+bool PrizesClient::GetNodeList(NodeListStatistics& nodeListStatistics, std::string& err)
 {
     LogPrint("docker", "PrizesClient::GetNodeList");
     std::string url = "/getnodes";
@@ -125,12 +151,14 @@ bool PrizesClient::GetNodeList(NodeListStatistics& nodeListStatistics)
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata))
+    if (whetherError(responseData, jsondata)) {
+        err = "response error " + jsondata["error"].get_str();
         return false;
+    }
     NodeListStatistics::DecodeFromJson(jsondata, nodeListStatistics);
     return true;
 }
-bool PrizesClient::GetMachines(ResponseMachines& machines)
+bool PrizesClient::GetMachines(ResponseMachines& machines, std::string& err)
 {
     LogPrint("docker", "PrizesClient::GetMachines");
     NodeListStatistics nodeListStatistics{};
@@ -147,8 +175,10 @@ bool PrizesClient::GetMachines(ResponseMachines& machines)
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata))
+    if (whetherError(responseData, jsondata)) {
+        err = "response error " + jsondata["error"].get_str();
         return false;
+    }
     NodeListStatistics::DecodeFromJson(jsondata, nodeListStatistics);
     for (auto& nodeinfo : nodeListStatistics.list) {
         Item item(nodeinfo.hardware.CPUType, nodeinfo.hardware.CPUThread, nodeinfo.hardware.MemoryType, nodeinfo.hardware.MemoryCount, nodeinfo.hardware.GPUType, nodeinfo.hardware.GPUCount);

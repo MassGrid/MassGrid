@@ -102,7 +102,8 @@ bool CActiveMasternode::SendMasternodePing(CConnman& connman)
             (abs(GetAdjustedTime() - nSentinelPingTime) < MASTERNODE_WATCHDOG_MAX_SECONDS);
     if(fDockerNode){
         NodeListStatistics nodeListStatistics{};
-        if (prizesClient.GetNodeList(nodeListStatistics)) {
+        std::string err;
+        if (prizesClient.GetNodeList(nodeListStatistics,err)) {
             mnp.mdocker.nodeCount = nodeListStatistics.TotalCount;
 
             mnp.mdocker.dockerServiceCount = nodeListStatistics.TotalCount - nodeListStatistics.UsableCount;

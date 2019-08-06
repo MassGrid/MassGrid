@@ -16,7 +16,7 @@ bool Task::DecodeFromJson(const UniValue& data,Task& task)
                 task.ID=tdata.get_str();
             }else if(vKeys[i]=="CreatedAt"){
                 task.createdAt=getDockerTime(tdata.get_str());
-            }else if(vKeys[i]=="UpdatedAt"){
+            }else if(vKeys[i]=="dAt"){
                 task.updatedAt=getDockerTime(tdata.get_str());
             }else if(vKeys[i]=="Name"){
                 task.name=tdata.get_str();
@@ -50,6 +50,7 @@ bool Task::DecodeFromJson(const UniValue& data,Task& task)
             }
         }
     }
+    task.jsonUniValue = data;
     return true;
 }
 void Task::ParseTaskLabels(const UniValue& data,Config::Labels &labels)

@@ -81,3 +81,13 @@ void NodeListStatistics::DecodeFromJson(const UniValue& data, NodeListStatistics
         }
     }
 }
+void ParseLabels(const UniValue& data, std::map<std::string, std::string>& labels)
+{
+    std::vector<std::string> vKeys = data.getKeys();
+    for (size_t i = 0; i < data.size(); i++) {
+        UniValue tdata(data[vKeys[i]]);
+        if (data[vKeys[i]].isStr()) {
+            labels.insert(std::make_pair(vKeys[i], tdata.get_str()));
+        }
+    }
+}

@@ -51,7 +51,16 @@ bool Cluster::ProcessDockernodeDisconnections(const std::string& strNode)
     }
     return true;
 }
+bool Cluster::SetConnectDockerAddr(std::string address_port)
+{
 
+    LogPrint("dockernode","Cluster::SetConnectDockerAddress Started\n");
+    if (!Lookup(address_port.c_str(), connectDockerAddr, 0, false)){
+        LogPrintf("Cluster::SetConnectDockerAddress Incorrect DockerNode address %s", address_port);
+        return false;
+    }
+    return true;
+}
 void Cluster::AskForDNData()
 {
     LogPrint("dockernode","Cluster::AskForDNData Started\n");
@@ -64,15 +73,34 @@ void Cluster::AskForDNData()
     g_connman->PushMessage(connectNode, NetMsgType::GETDNDATA, DefaultPubkey);
 }
 
-bool Cluster::SetConnectDockerAddr(std::string address_port)
+void Cluster::AskForService(COutPoint outpoint)
 {
+    LogPrint("dockernode","Cluster::AskForService Started\n");
+    if(!connectNode) return;
 
-    LogPrint("dockernode","Cluster::SetConnectDockerAddress Started\n");
-    if (!Lookup(address_port.c_str(), connectDockerAddr, 0, false)){
-        LogPrintf("Cluster::SetConnectDockerAddress Incorrect DockerNode address %s", address_port);
-        return false;
-    }
-    return true;
+    LOCK(cs);
+    LogPrintf("AskForService pukey %s\n",DefaultPubkey.ToString().substr(0,66));
+
+    DockerGetService getService{};
+    getService.OutPoint = outpoint;
+    getService.pubKeyClusterAddress = DefaultPubkey;
+    getService.sigTime = GetAdjustedTime();
+    dockerServerman.setDNDataStatus(CDockerServerman::Ask);
+    g_connman->PushMessage(connectNode, NetMsgType::GETSERVICE, DefaultPubkey);
+}
+void Cluster::AskForServices()
+{
+    LogPrint("dockernode","Cluster::AskForServices Started\n");
+    if(!connectNode) return;
+
+    LOCK(cs);
+    LogPrintf("AskForServices pukey %s\n",DefaultPubkey.ToString().substr(0,66));
+
+    DockerGetService getService{};
+    getService.pubKeyClusterAddress = DefaultPubkey;
+    getService.sigTime = GetAdjustedTime();
+    dockerServerman.setDNDataStatus(CDockerServerman::Ask);
+    g_connman->PushMessage(connectNode, NetMsgType::GETSERVICES, DefaultPubkey);
 }
 bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
 
@@ -91,11 +119,11 @@ bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
         LogPrintf("Cluster::CreateAndSendSeriveSpec Sign need to unlock wallet first !\n");
         return false;
     }
-    if (!pwalletMain->GetKey(DefaultPubkey.GetID(), vchSecret)){
+    if (!pwalletMain->GetKey(sspec.clusterServiceCreate.pubKeyClusterAddress.GetID(), vchSecret)){
         LogPrintf("Cluster::CreateAndSendSeriveSpec GetPrivkey Error\n");
         return false;
     }
-    if(!sspec.Sign(vchSecret,DefaultPubkey)){
+    if(!sspec.Sign(vchSecret,sspec.clusterServiceCreate.pubKeyClusterAddress)){
         LogPrintf("Cluster::CreateAndSendSeriveSpec Sign Error\n");
         return false;
     }

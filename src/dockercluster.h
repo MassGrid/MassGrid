@@ -37,6 +37,8 @@ public:
     bool ProcessDockernodeDisconnections(const std::string& strNode);
     
     void AskForDNData();
+    void AskForService(COutPoint);
+    void AskForServices();
     bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
     bool DeleteAndSendServiceSpec(DockerDeleteService delServic);
 

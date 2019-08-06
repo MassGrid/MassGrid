@@ -63,7 +63,7 @@
 #include "netfulfilledman.h"
 #include "dockeredge.h"
 
-// #include "dockerserverman.h"
+#include "dockerserverman.h"
 #include "spork.h"
 #include "util.h"
 
@@ -1467,7 +1467,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
     if (mapArgs.count("-externalip")) {
         BOOST_FOREACH(const std::string& strAddr, mapMultiArgs["-externalip"]) {
-            // dockerServerman.LocalIP = strAddr;
+            dockerServerman.LocalIP = strAddr;
             CService addrLocal;
             if (Lookup(strAddr.c_str(), addrLocal, GetListenPort(), fNameLookup) && addrLocal.IsValid())
                 AddLocal(addrLocal, LOCAL_MANUAL);

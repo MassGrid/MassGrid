@@ -288,5 +288,5 @@ public:
 uint64_t getDockerTime(const std::string& timeStr);
 uint64_t TimeestampStr(const char *nTimeStr);
 std::string unixTime2Str(uint64_t unixtime);
-
+UniValue SpecLabelsToJson(Config::Labels &labels);
 #endif //dockerbase

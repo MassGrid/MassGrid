@@ -17,13 +17,13 @@ class PrizesClient{
     std::string APIAddr{};
     int APIport{};
 public:
-    PrizesClient();
-    bool GetNodeList(NodeListStatistics& nodeListStatistics);
-    bool GetService(std::string ServiceID, ServiceInfo& serviceInfo);
-    bool GetServiceFromPubkey(std::string strPubkey, std::vector<ServiceInfo>& vecServiceInfo);
+    bool GetNodeList(NodeListStatistics& nodeListStatistics,std::string& err);
+    bool GetService(std::string ServiceID, ServiceInfo& serviceInfo, std::string& err);
+    bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, std::string& err);
+    bool GetServiceFromPubkey(std::string strPubkey, std::vector<ServiceInfo>& vecServiceInfo, std::string& err);
     bool PostServiceCreate(ServiceCreate& serviceCreate, std::string& ServiceID, std::string& err);
     bool PostServiceUpdate(ServiceUpdate& serviceUpdate, std::string& err);
-    bool GetMachines(ResponseMachines& machines);
+    bool GetMachines(ResponseMachines& machines, std::string& err);
     static void ParseNode2Price(NodeListStatistics& nodeListStatistics, map<Item, Value_price>& price);
 };
 extern PrizesClient prizesClient;

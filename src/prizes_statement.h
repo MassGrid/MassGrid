@@ -32,6 +32,7 @@ struct PrizeStatement {
 	std::string StatementTransaction{};
 
     static void DecodeFromJson(const UniValue& data, PrizeStatement& statement);
+    static UniValue ToJson(PrizeStatement& statement);
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>

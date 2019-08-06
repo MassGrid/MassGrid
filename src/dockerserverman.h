@@ -27,8 +27,9 @@ static const int64_t G = 1000 * M;
 static const int TIMEOUT = 5 * 60;
 static const int64_t MINER_MAX_TIME = 999999999;
 class CDockerServerman;
-struct ClusterServiceCreate_t;
-struct ClusterServiceUpdate_t;
+struct DockerCreateService;
+struct DockerUpdateService;
+struct DockerDeleteService;
 struct ServiceCreate;
 struct ServiceUpdate;
 extern CDockerServerman dockerServerman;
@@ -51,7 +52,9 @@ enum SERVICEMANCODE{
     PUBKEY_ERROR,
     OUTPOINT_NOT_FOUND,
     NOT_DOCKERNODE,
-    REQUEST_ERROR
+    REQUEST_ERROR,
+    PUBKEY_NOT_FOUND,
+    SERVICE_NOT_FOUND
 };
 
 class CDockerServerman{
@@ -80,9 +83,9 @@ public:
     std::string defaultImage = "massgrid/10.0-autominer-ubuntu16.04";
     double feeRate = 0.01;  //set feeRate 1%
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
-    static bool CheckTransaction(COutPoint outpoint, CPubKey pubKeyClusterAddress, std::string& err);
-    static bool CheckCreateService(ClusterServiceCreate_t& clusterServiceCreate, ServiceCreate& serviceCreate, std::string& err);
-    static bool CheckUpdateService(ClusterServiceUpdate_t& clusterServiceUpdate, ServiceUpdate& serviceUpdate, std::string& err);
+    static bool CheckCreateService(DockerCreateService& dockerCreateService, ServiceCreate& serviceCreate, std::string& err);
+    static bool CheckUpdateService(DockerUpdateService& dockerUpdateService, ServiceUpdate& serviceUpdate, std::string& err);
+    static bool CheckDeleteService(DockerDeleteService& dockerDeleteService,std::string& msg, std::string& err);
     DNDATASTATUS dndataStatus;
     TRANSDATASTATUS transdataStatus;
 

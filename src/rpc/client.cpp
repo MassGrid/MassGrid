@@ -137,11 +137,11 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "getaddressmempool", 0},
 
 
-    { "docker", 6},
+    { "docker", 3},
     { "docker", 8},
     { "docker", 10},
+    { "docker", 12},
     { "docker", 13},
-    { "docker", 14},
 };
 
 class CRPCConvertTable

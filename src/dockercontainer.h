@@ -96,7 +96,6 @@ void ParseContainerSpeConf(const UniValue& data,Config::Config &config);
 void ParseArray(const UniValue& data,vector<std::string> &array);
 
 UniValue ContainerSpecToJson(Config::ContainerSpec &containerSpec);
-UniValue SpecLabelsToJson(Config::Labels &labels);
 UniValue MountToJson(Config::Mount &mount);
 UniValue MountBindToJson(Config::BindOptions &bindOption);
 UniValue MountVolToJson(Config::VolumeOptions &voloption);

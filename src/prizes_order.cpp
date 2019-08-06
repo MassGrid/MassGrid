@@ -1,7 +1,5 @@
 #include "prizes_order.h"
-#include "boost/lexical_cast.hpp"
 #include "prizes_service.h"
-#include <boost/algorithm/string.hpp>
 void ServiceOrder::DecodeFromJson(const UniValue& data, ServiceOrder& order)
 {
     std::vector<std::string> vKeys = data.getKeys();
@@ -13,7 +11,7 @@ void ServiceOrder::DecodeFromJson(const UniValue& data, ServiceOrder& order)
             order.OutPoint = String2OutPoint(tdata.get_str());
         else if (vKeys[i] == "created_at")
             order.CreatedAt = getDockerTime(tdata.get_str());
-        else if (vKeys[i] == "remoce_at")
+        else if (vKeys[i] == "remove_at")
             order.RemoveAt = getDockerTime(tdata.get_str());
         else if (vKeys[i] == "order_state")
             order.OrderState = tdata.get_str();
@@ -36,6 +34,32 @@ void ServiceOrder::DecodeFromJson(const UniValue& data, ServiceOrder& order)
         }
     }
 }
+UniValue ServiceOrder::ToJson(ServiceOrder& serviceOrder){
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("order_id", serviceOrder.OriderID));
+        data.push_back(Pair("out_point", serviceOrder.OutPoint.ToStringShort()));
+        data.push_back(Pair("created_at", serviceOrder.CreatedAt));
+        data.push_back(Pair("remove_at", serviceOrder.RemoveAt));
+        data.push_back(Pair("order_state", serviceOrder.OrderState));
+        data.push_back(Pair("service_price", serviceOrder.ServicePrice));
+        data.push_back(Pair("drawee", serviceOrder.Drawee));
+        data.push_back(Pair("balance", serviceOrder.Balance));
+        data.push_back(Pair("last_statement_time", serviceOrder.LastStatementTime));
+    }
+    {
+        UniValue obj(UniValue::VOBJ);
+
+        obj = RefundPayment::ToJson(serviceOrder.Refund);
+        data.push_back(Pair("refund", obj));
+
+        for(int i=0;i<serviceOrder.Statement.size();++i){
+            obj = PrizeStatement::ToJson(serviceOrder.Statement[i]);
+            data.push_back(Pair("statement", obj));
+        }
+    }
+    return data;
+}
 void RefundPayment::DecodeFromJson(const UniValue& data, RefundPayment& refund)
 {
     std::vector<std::string> vKeys = data.getKeys();
@@ -54,6 +78,19 @@ void RefundPayment::DecodeFromJson(const UniValue& data, RefundPayment& refund)
             refund.RefundTransaction = tdata.get_str();
     }
 }
+
+UniValue RefundPayment::ToJson(RefundPayment& refund){
+    UniValue data(UniValue::VOBJ);
+    {
+        data.push_back(Pair("refund_id", refund.RefundID));
+        data.push_back(Pair("created_at", refund.CreatedAt));
+        data.push_back(Pair("total_amount", refund.TotalAmount));
+        data.push_back(Pair("drawee", refund.Drawee));
+        data.push_back(Pair("refund_transaction", refund.RefundTransaction));
+    }
+
+    return data;
+}
 void RefundInfo::DecodeFromJson(const UniValue& data, RefundInfo& refundInfo)
 {
     std::vector<std::string> vKeys = data.getKeys();
@@ -69,10 +106,4 @@ void RefundInfo::DecodeFromJson(const UniValue& data, RefundInfo& refundInfo)
         } else if (vKeys[i] == "statement")
             PrizeStatement::DecodeFromJson(tdata, refundInfo.Statement);
     }
-}
-COutPoint String2OutPoint(std::string strOutput)
-{
-    std::vector<std::string> vstrsplit{};
-    boost::split(vstrsplit, strOutput, boost::is_any_of("-"));
-    return COutPoint(uint256S(vstrsplit[0]), boost::lexical_cast<uint32_t>(vstrsplit[1]));
 }

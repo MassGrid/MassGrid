@@ -147,6 +147,9 @@ MASSGRID_CORE_H = \
   prizes_order.h \
   prizes_prices.h \
   prizes_service.h \
+  prizes_service_create.h \
+  prizes_service_update.h \
+  prizes_service_delete.h \
   prizes_statement.h \
   memusage.h \
   merkleblock.h \
@@ -263,6 +266,9 @@ libmassgrid_server_a_SOURCES = \
   prizes_order.cpp \
   prizes_prices.cpp \
   prizes_service.cpp \
+  prizes_service_create.cpp \
+  prizes_service_update.cpp \
+  prizes_service_delete.cpp \
   prizes_statement.cpp \
   merkleblock.cpp \
   messagesigner.cpp \

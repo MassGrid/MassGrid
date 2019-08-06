@@ -47,7 +47,7 @@ UniValue docker(const UniValue& params, bool fHelp)
             strCommand != "create" && strCommand != "delete"  && strCommand != "sendtomasternode" &&
 #endif // ENABLE_WALLET
             strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata" && strCommand != "gettransaction" && strCommand != "listprice" && 
-            strCommand != "listuntlementtx" && strCommand != "settlement" && strCommand != "setprice"&& strCommand != "setdockerfee" && strCommand != "setpersistentstore" && strCommand != "setdefaultimage"))
+            strCommand != "getservice" && strCommand != "getservices" && strCommand != "setprice"&& strCommand != "setdockerfee" && strCommand != "setpersistentstore"))
             throw std::runtime_error(
                 "docker \"command\"...\n"
                 "Set of commands to execute docker related actions\n"
@@ -56,48 +56,49 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "\nAvailable commands:\n"
                 "   getdndata      - - get infomation from dockernode Arguments: \n"
                 "       1. \"dockernode (IP:Port)\" (string, required)  Print number of all of yours docker services\n"
-                
+                "   getservice      - - get infomation from dockernode Arguments: \n"
+                "       1. \"dockernode (IP:Port)\" (string, required)  Print number of all of yours docker services\n"
+                "       2. \"COutPoint hash (string, required)\n"
+                "       3. \"COutPoint n (int,required)\n"
+                "   getservices      - - get infomation from dockernode Arguments: \n"
+                "       1. \"dockernode (IP:Port)\" (string, required)  Print number of all of yours docker services\n"
                 "   connect        - Connect to docker network\n"
                 "       1. \"localAddress (IP)\" (string, required)\n"
-                "       2. \"netmask (netmask)\" (string, required)\n"
-                "       3. \"snAddress (IP:Port)\" (string, required)\n"
+                "       2. \"snAddress (IP:Port)\" (string, required)\n"
 
                 "   disconnect     - Disconnect to docker network\n"
 #ifdef ENABLE_WALLET
                 "   create         - create a docker service Arguments: \n"
                 "       1. \"dockernode (IP:Port)\" (string, required)\n"
-                "       2. \"service name\" (string, required)\n"
-                "       3. \"Image\"(string, required)\n"
-                "       4. \"CPU name\"(string, required)\n"
-                "       5. \"CPU thread count\"(int, required)\n"
-                "       6. \"Memory name\"(string, required)\n"
-                "       7. \"Memory GByte\"(int, required)\n"
-                "       8. \"GPU Kind\"(string, required)\n"
-                "       9. \"GPU count\"(int, required)\n"
-                "       10. \"NetWork Community\"(string, required)\n"
-                "       11. \"SSH_PUBKEY\"(string, required)\n"
-                "       12. \"persistentStore\"(bool, optional)\n"
-                "       13. \"environment\"(string,string , optional)\n"
-                "       14. {\n"
+                "       2. \"COutPoint hash (string, required)\n"
+                "       3. \"COutPoint n (int,required)\n"
+                "       4. \"service name\" (string, required)\n"
+                "       5. \"Image\"(string, required)\n"
+                "       6. \"SSH_PUBKEY\"(string, required)\n"
+                "       7. \"CPU name\"(string, required)\n"
+                "       8. \"CPU thread count\"(int, required)\n"
+                "       9. \"Memory name\"(string, required)\n"
+                "       10. \"Memory GByte\"(int, required)\n"
+                "       11. \"GPU Kind\"(string, required)\n"
+                "       12. \"GPU count\"(int, required)\n"
+                "       13. \"persistentStore\"(bool, optional)\n"
+                "       14. \"environment\"(string,string , optional)\n"
+                "           {\n"
                 "               \"ENV1\": \"value1\"   (string,string, optional)"
                 "               \"ENV2\": \"value2\"   (string,string, optional)"
                 "               ...\n"
                 "           }\n"
                 "   delete         - delete a docker service Arguments: \n"
                 "       1. \"dockernode (IP:Port)\" (string, required)\n"
-                "       2. \"txid\" (string, required)\n"
+                "       2. \"COutPoint hash (string, required)\n"
+                "       3. \"COutPoint n (int,required)\n"
                 "sendtomasternode  - send to masternode address: \n"
                 "       1. \"dockernode (IP:Port)\" (string, required)\n"
                 "       2. \"MassGrid address\"(string, required)\n"
                 "       3. \"amount\"(int, required)\n"
                 "dockernode command:  "
-                "settlement        - set tlement a txid\n"
-                "       1. \"txid\" (string, required)\n"
                 "setpersistentstore        - set tlement a txid\n"
-                "       1. \"status\" (bool, optional)\n"                
-                "setdefaultimage        - set default engine image\n"
-                "       1. \"image\" (string, optional)\n"
-                "listuntlementtx   - list all untlement transactions\n"
+                "       1. \"status\" (bool, optional)\n" 
                 "listprice         - list all service items price\n"
                 "setprice          - set item price\n"
                 "       1. \"type\" (string, required)\n"
@@ -105,19 +106,20 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "       3. \"price\"(double, required)\n"
                 "setdockerfee      - set docker masternode fee (0.01):\n"
                 "       1. \"price\" (percent(double), required)\n"
-                + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\" \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 \"massgridn2n\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\" false \"{\\\"ENV1\\\":\\\"value1\\\"}\"")
-                + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
+                + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\" 0 \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 false \"{\\\"ENV1\\\":\\\"value1\\\"}\"")
+                + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\" 0")
                 + HelpExampleCli("docker", "sendtomasternode \"119.3.66.159:19443\" \"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\" 6.4")
                 + HelpExampleCli("docker", "settlement \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
                 + HelpExampleCli("docker", "setpersistentstore \"1\"")
-                + HelpExampleCli("docker", "listuntlementtx")
                 + HelpExampleCli("docker", "listprice")
                 + HelpExampleCli("docker", "setprice \"cpu intel_i3 0.8\"")
                 + HelpExampleCli("docker", "setdockerfee 0.01")
 #endif // ENABLE_WALLET
                 + HelpExampleCli("docker", "getdndata \"119.3.66.159:19443\"")
+                + HelpExampleCli("docker", "getservice \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\" 0")
+                + HelpExampleCli("docker", "getservices \"119.3.66.159:19443\"")
                 + HelpExampleCli("docker", "gettransaction \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
-                + HelpExampleCli("docker", "connect \"10.1.1.4\" \"240.0.0.0\" \"119.3.66.159\"")
+                + HelpExampleCli("docker", "connect \"10.1.1.4\" \"119.3.66.159\"")
                 + HelpExampleCli("docker", "disconnect")
                 );
 
@@ -125,14 +127,14 @@ UniValue docker(const UniValue& params, bool fHelp)
     
     if (strCommand == "connect")
     {
-        if (params.size() != 4)
+        if (params.size() != 3)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
 
         std::string strLocalAddr = params[1].get_str();
 
-        std::string netmask = params[2].get_str();
+        std::string netmask = "255.0.0.0";
 
-        std::string strSnAddr = params[3].get_str();
+        std::string strSnAddr = params[2].get_str();
 
         if(ThreadEdgeStart("massgridn2n",strLocalAddr,netmask,strSnAddr)){
             return "edge Start Successfully";
@@ -162,34 +164,35 @@ UniValue docker(const UniValue& params, bool fHelp)
             throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Connect to Masternode failed");
 
         DockerCreateService dockerCreateService{};
-
         dockerCreateService.clusterServiceCreate.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-        std::string strServiceName = params[3].get_str();
+        dockerCreateService.clusterServiceCreate.OutPoint = COutPoint(uint256S(params[2].get_str()),params[3].get_int());
+        
+        std::string strServiceName = params[4].get_str();
         dockerCreateService.clusterServiceCreate.ServiceName = strServiceName;
 
-        std::string strServiceImage = params[4].get_str();
+        std::string strServiceImage = params[5].get_str();
         dockerCreateService.clusterServiceCreate.Image = strServiceImage;
 
-        dockerCreateService.clusterServiceCreate.hardware.CPUType = params[5].get_str();
-        int64_t serviceCpu = params[6].get_int64();
-        dockerCreateService.clusterServiceCreate.hardware.CPUThread= serviceCpu;
-
-        dockerCreateService.clusterServiceCreate.hardware.MemoryType = params[7].get_str();
-        int64_t serviceMemoey_byte = params[8].get_int64();
-        dockerCreateService.clusterServiceCreate.hardware.MemoryCount = serviceMemoey_byte;
-
-        std::string strServiceGpuName = params[9].get_str();
-        dockerCreateService.clusterServiceCreate.hardware.GPUType = strServiceGpuName;
-
-        int64_t serviceGpu = params[10].get_int64();
-        dockerCreateService.clusterServiceCreate.hardware.GPUCount = serviceGpu;
-
-        std::string strssh_pubkey = params[12].get_str();
+        std::string strssh_pubkey = params[6].get_str();
         dockerCreateService.clusterServiceCreate.SSHPubkey = strssh_pubkey;
 
-        if(params.size() > 13 ){
-            dockerCreateService.clusterServiceCreate.hardware.PersistentStore = params[13].get_str();
-        }
+        dockerCreateService.clusterServiceCreate.hardware.CPUType = params[7].get_str();
+        int64_t serviceCpu = params[8].get_int64();
+        dockerCreateService.clusterServiceCreate.hardware.CPUThread= serviceCpu;
+
+        dockerCreateService.clusterServiceCreate.hardware.MemoryType = params[9].get_str();
+        int64_t serviceMemoey_byte = params[10].get_int64();
+        dockerCreateService.clusterServiceCreate.hardware.MemoryCount = serviceMemoey_byte;
+
+        std::string strServiceGpuName = params[11].get_str();
+        dockerCreateService.clusterServiceCreate.hardware.GPUType = strServiceGpuName;
+
+        int64_t serviceGpu = params[12].get_int64();
+        dockerCreateService.clusterServiceCreate.hardware.GPUCount = serviceGpu;
+
+        dockerCreateService.clusterServiceCreate.hardware.PersistentStore = params[13].get_bool();
+        
+
         if(params.size() > 14 ){
             UniValue envs = params[14].get_obj();
             std::vector<std::string> vKeys = envs.getKeys();
@@ -200,8 +203,8 @@ UniValue docker(const UniValue& params, bool fHelp)
             }
         }
         EnsureWalletIsUnlocked();
-        // if(!dockercluster.CreateAndSendSeriveSpec(createService))
-        //     return "CreateSpec Error Failed";
+        if(!dockercluster.CreateAndSendSeriveSpec(dockerCreateService))
+            return "CreateSpec Error Failed";
 
         for(int i=0;i<20;++i){
             MilliSleep(100);
@@ -225,19 +228,10 @@ UniValue docker(const UniValue& params, bool fHelp)
         DockerDeleteService delService{};
 
         delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-        
-        std::string strOutPoint = params[2].get_str();
-        delService.CrerateOutPoint = String2OutPoint(strOutPoint);
+        delService.CrerateOutPoint = COutPoint(uint256S(params[2].get_str()),params[3].get_int());
         EnsureWalletIsUnlocked();
-        CKey vchSecret;
-        if (!pwalletMain->GetKey(delService.pubKeyClusterAddress.GetID(), vchSecret)){
-            return "delService Error not found privkey";
-        }
-        if(!delService.Sign(vchSecret,delService.pubKeyClusterAddress)){
-            return "delService Sign Error";
-        }
-        g_connman->PushMessage(dockercluster.connectNode, NetMsgType::DELETESERVICE, delService);
-
+        if(!dockercluster.DeleteAndSendServiceSpec(delService))
+            return "delService Error Failed";
         for(int i=0;i<20;++i){
             MilliSleep(100);
             if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
@@ -407,10 +401,91 @@ UniValue docker(const UniValue& params, bool fHelp)
         for(int i=0;i<20;++i){
             MilliSleep(100);
             if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
-                
+                UniValue varr2(UniValue::VARR);
+                for(auto it = dockercluster.machines.items.begin();it!= dockercluster.machines.items.end();++it){
+                    UniValue obj(UniValue::VOBJ);
+                    obj.push_back(Pair("CpuType",it->first.cpu.Name));
+                    obj.push_back(Pair("CpuCount",it->first.cpu.Count));
+                    obj.push_back(Pair("MemSize",it->first.mem.Count));
+                    obj.push_back(Pair("GpuType",it->first.gpu.Name));
+                    obj.push_back(Pair("GpuCount",it->first.gpu.Count));
+                    obj.push_back(Pair("Price",(double)it->second.price/COIN));
+                    obj.push_back(Pair("UsageCount",it->second.count));
+                    varr2.push_back(obj);
+                }
+                varr.push_back(varr2);
+                UniValue obj(UniValue::VOBJ);
+                obj.push_back(Pair("masternodeaddress",dockercluster.machines.masternodeAddress));
+                // obj.push_back(Pair("PersistentStore",dockercluster.machines.PersistentStore));
+                varr.push_back(obj);
+                return varr;
             }
         }
     }
-    
+     if (strCommand == "getservice"){
+        if (!masternodeSync.IsSynced())
+            return "Need to Synced First";
+        
+        if (params.size() != 4)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
+        std::string strIPPort;
+        strIPPort = params[1].get_str();
+        if(!dockercluster.SetConnectDockerAddress(strIPPort)){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "SetConnectDockerAddress error");
+        }
+        if(!dockercluster.ProcessDockernodeConnections()){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "ProcessDockernodeConnections error");
+        }
+
+        COutPoint outpoint(uint256S(params[2].get_str()),params[3].get_int());
+        dockercluster.AskForService(outpoint);
+        for(int i=0;i<20;++i){
+            MilliSleep(100);
+            if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
+                if (!dockercluster.vecServiceInfo.err.empty()){
+                    return dockercluster.vecServiceInfo.err;
+                }
+                ServiceInfo serviceInfo{};
+                for(auto &it :dockercluster.vecServiceInfo.servicesInfo){
+                    if(it.second.CreateSpec.OutPoint == outpoint){
+                        serviceInfo = it.second;
+                        break;
+                    }
+                }
+                return serviceInfo.jsonUniValue;
+            }
+        }
+    }
+    if (strCommand == "getservices"){
+        if (!masternodeSync.IsSynced())
+            return "Need to Synced First";
+        
+        if (params.size() != 2)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
+        std::string strIPPort;
+        strIPPort = params[1].get_str();
+        if(!dockercluster.SetConnectDockerAddress(strIPPort)){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "SetConnectDockerAddress error");
+        }
+        if(!dockercluster.ProcessDockernodeConnections()){
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "ProcessDockernodeConnections error");
+        }
+        dockercluster.AskForServices();
+
+        UniValue varr(UniValue::VARR);
+        for(int i=0;i<20;++i){
+            MilliSleep(100);
+            if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
+                if (!dockercluster.vecServiceInfo.err.empty()){
+                    return dockercluster.vecServiceInfo.err;
+                }
+                ServiceInfo serviceInfo{};
+                for(auto &it :dockercluster.vecServiceInfo.servicesInfo){
+                    varr.push_back(it.second.jsonUniValue);
+                }
+                return varr;
+            }
+        }
+    }
     return NullUniValue;
 }
