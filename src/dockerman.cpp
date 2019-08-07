@@ -539,6 +539,13 @@ bool CDockerMan::ProcessMessage(Method mtd,std::string url,int ret,std::string r
                             LogPrint("docker","CDockerMan::ProcessMessage task state error reset usable serviceid: %s\n",it->first);
                         }
                     }
+                }else {
+                    //only have docker service and no task
+                    int64_t now_time = GetAdjustedTime();
+                    if(now_time >= (it->second.createdAt + 600)){
+                        LogPrintf("CDockerMan:: serviceid: %s has not any tasks, will be delete\n",it->first);
+                        it->second.deleteTime = now_time-10;
+                    }
                 }
                 if(it->second.deleteTime <= GetAdjustedTime()){//when the task is always in pedding
                     LogPrintf("CDockerMan::ProcessMessage will be delete usable serviceid: %s\n",it->first);
