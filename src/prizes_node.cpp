@@ -54,7 +54,7 @@ void NodeInfo::DecodeFromJson(const UniValue& data, NodeInfo& node)
             HardWare::DecodeFromJson(tdata,node.hardware);
         else if (vKeys[i] == "onworking")
             node.OnWorking = tdata.get_bool();
-        else if(vKeys[i]=="Labels"){
+        else if(vKeys[i]=="labels"){
             ParseLabels(tdata, node.Labels);
         }
     }
@@ -75,7 +75,7 @@ void NodeListStatistics::DecodeFromJson(const UniValue& data, NodeListStatistics
         else if (vKeys[i] == "list") {
             for (size_t j = 0; j < tdata.size(); j++) {
                 NodeInfo node{};
-                NodeInfo::DecodeFromJson(tdata[i], node);
+                NodeInfo::DecodeFromJson(tdata[j], node);
                 nodelist.list.push_back(node);
             }
         }

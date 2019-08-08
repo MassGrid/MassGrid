@@ -86,7 +86,7 @@ void Cluster::AskForService(COutPoint outpoint)
     getService.pubKeyClusterAddress = DefaultPubkey;
     getService.sigTime = GetAdjustedTime();
     dockerServerman.setDNDataStatus(CDockerServerman::Ask);
-    g_connman->PushMessage(connectNode, NetMsgType::GETSERVICE, DefaultPubkey);
+    g_connman->PushMessage(connectNode, NetMsgType::GETSERVICE, getService);
 }
 void Cluster::AskForServices()
 {
@@ -100,7 +100,7 @@ void Cluster::AskForServices()
     getService.pubKeyClusterAddress = DefaultPubkey;
     getService.sigTime = GetAdjustedTime();
     dockerServerman.setDNDataStatus(CDockerServerman::Ask);
-    g_connman->PushMessage(connectNode, NetMsgType::GETSERVICES, DefaultPubkey);
+    g_connman->PushMessage(connectNode, NetMsgType::GETSERVICES, getService);
 }
 bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
 

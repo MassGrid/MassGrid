@@ -75,7 +75,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             return;
         }
         dockercluster.machines = mdndata;
-
+        setDNDataStatus(DNDATASTATUS::Received);
     }else if (strCommand == NetMsgType::GETSERVICE) { //docker gettransaction
 
         LogPrint("dockernode", "CDockerServerman::ProcessMessage GETSERVICE Started\n");
@@ -158,6 +158,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         vRecv >> dockerServiceInfo;
         if (dockerServiceInfo.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || dockerServiceInfo.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION) {
             LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", dockerServiceInfo.version, DOCKERREQUEST_API_MINSUPPORT_VERSION, DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+            setDNDataStatus(DNDATASTATUS::Received);
             return;
         }
         if (dockerServiceInfo.servicesInfo.size() > 1){
@@ -168,7 +169,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         }
         if(!dockerServiceInfo.err.empty())
             dockercluster.vecServiceInfo.err = dockerServiceInfo.err;
-        setTRANSDataStatus(TRANSDATASTATUS::ReceivedTD);
+        setDNDataStatus(DNDATASTATUS::Received);
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("dockernode", "CDockerServerman::ProcessMessage CREATESERVICE Started\n");
         DockerServiceInfo dockerServiceInfo{};

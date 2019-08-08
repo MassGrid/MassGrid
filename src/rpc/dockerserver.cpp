@@ -416,7 +416,11 @@ UniValue docker(const UniValue& params, bool fHelp)
                 varr.push_back(varr2);
                 UniValue obj(UniValue::VOBJ);
                 obj.push_back(Pair("masternodeaddress",dockercluster.machines.masternodeAddress));
-                // obj.push_back(Pair("PersistentStore",dockercluster.machines.PersistentStore));
+                obj.push_back(Pair("token",dockercluster.machines.Token));
+                obj.push_back(Pair("TotalCount",dockercluster.machines.TotalCount));
+                obj.push_back(Pair("AvailabilityCount",dockercluster.machines.AvailabilityCount));
+                obj.push_back(Pair("UsableCount",dockercluster.machines.UsableCount));
+                obj.push_back(Pair("err",dockercluster.machines.err));
                 varr.push_back(obj);
                 return varr;
             }
