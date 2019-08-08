@@ -190,7 +190,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         int64_t serviceGpu = params[12].get_int64();
         dockerCreateService.clusterServiceCreate.hardware.GPUCount = serviceGpu;
 
-        dockerCreateService.clusterServiceCreate.hardware.PersistentStore = params[13].get_bool();
+        dockerCreateService.clusterServiceCreate.hardware.PersistentStore = params[13].get_str();
         
 
         if(params.size() > 14 ){
@@ -217,7 +217,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     if(strCommand == "delete"){
         if (!masternodeSync.IsSynced())
             return "Need to Synced First";
-        if (params.size() != 3)
+        if (params.size() != 4)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
         std::string strAddr = params[1].get_str();
         if(!dockercluster.SetConnectDockerAddress(strAddr))

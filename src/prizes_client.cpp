@@ -143,7 +143,7 @@ bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, s
         LogPrint("docker", "PrizesClient::GetServiceDelete request error %s\n", err);
         return false;
     }
-    statementid = uint256S(jsondata["txid"].get_str());
+    // statementid = uint256S(jsondata["txid"].get_str());
     return true;
 }
 

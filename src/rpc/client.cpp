@@ -141,7 +141,6 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "docker", 8},
     { "docker", 10},
     { "docker", 12},
-    { "docker", 13},
 };
 
 class CRPCConvertTable

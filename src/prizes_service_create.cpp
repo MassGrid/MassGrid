@@ -27,7 +27,7 @@ void ServiceCreate::DecodeFromJson(const UniValue& data, ServiceCreate& serviceC
         else if (vKeys[i] == "master_node_n2n_addr")
             serviceCreate.MasterNodeN2NAddr = tdata.get_str();
         else if (vKeys[i] == "drawee")
-            serviceCreate.Drawee = tdata.get_int64();
+            serviceCreate.Drawee = tdata.get_str();
         else if (vKeys[i] == "master_node_fee_rate")
             serviceCreate.MasterNodeFeeRate = tdata.get_int64();
         else if (vKeys[i] == "dev_fee_rate")

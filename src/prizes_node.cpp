@@ -26,15 +26,15 @@ void HardWare::DecodeFromJson(const UniValue& data, HardWare& hardware)
         if (vKeys[i] == "cpu_type")
             hardware.CPUType = tdata.get_str();
         else if (vKeys[i] == "cpu_thread")
-            hardware.CPUThread = tdata.get_int();
+            hardware.CPUThread = tdata.get_int64();
         else if (vKeys[i] == "memory_type")
             hardware.MemoryType = tdata.get_str();
         else if (vKeys[i] == "memory_count")
-            hardware.MemoryCount = tdata.get_int();
+            hardware.MemoryCount = tdata.get_int64();
         else if (vKeys[i] == "gpu_type")
             hardware.GPUType = tdata.get_str();
         else if (vKeys[i] == "gpu_count")
-            hardware.GPUCount = tdata.get_int();
+            hardware.GPUCount = tdata.get_int64();
         else if (vKeys[i] == "persistent_store")
             hardware.PersistentStore = tdata.get_str();
     }
