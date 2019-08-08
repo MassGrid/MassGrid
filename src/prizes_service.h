@@ -36,7 +36,7 @@ struct ServiceInfo {
     std::vector<ServiceUpdate> UpdateSpec{};
     std::string State{};
     std::vector<Task> TaskInfo{};
-    UniValue jsonUniValue{};
+    std::string jsonUniValue{};
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
@@ -51,6 +51,7 @@ struct ServiceInfo {
         READWRITE(UpdateSpec);
         READWRITE(State);
         READWRITE(TaskInfo);
+        READWRITE(jsonUniValue);
     }
 
     static void DecodeFromJson(const UniValue& data, ServiceInfo& serviceInfo);

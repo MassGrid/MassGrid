@@ -161,6 +161,9 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             setDNDataStatus(DNDATASTATUS::Received);
             return;
         }
+        for(int i=0;i<dockerServiceInfo.servicesInfo.size();++i){
+            LogPrintf("CDockerServerman::ProcessMessage %d\n",i);
+        }
         if (dockerServiceInfo.servicesInfo.size() > 1){
             dockercluster.vecServiceInfo.servicesInfo.clear();
         }

@@ -209,7 +209,17 @@ UniValue docker(const UniValue& params, bool fHelp)
         for(int i=0;i<20;++i){
             MilliSleep(100);
             if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
-                return dockercluster.vecServiceInfo.err;
+                if (!dockercluster.vecServiceInfo.err.empty()){
+                    return dockercluster.vecServiceInfo.err;
+                }
+                ServiceInfo serviceInfo{};
+                for(auto &it :dockercluster.vecServiceInfo.servicesInfo){
+                    if(it.second.CreateSpec.OutPoint == dockerCreateService.clusterServiceCreate.OutPoint){
+                        serviceInfo = it.second;
+                        break;
+                    }
+                }
+                return serviceInfo.jsonUniValue;
             }
         }
         return NullUniValue;

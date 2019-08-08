@@ -40,5 +40,5 @@ void ServiceInfo::DecodeFromJson(const UniValue& data, ServiceInfo& serviceInfo)
             serviceInfo.TaskInfo.push_back(task);
         }
     }
-    serviceInfo.jsonUniValue = data;
+    serviceInfo.jsonUniValue = data.write();
 }
