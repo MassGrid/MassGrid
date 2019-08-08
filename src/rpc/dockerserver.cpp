@@ -219,7 +219,9 @@ UniValue docker(const UniValue& params, bool fHelp)
                         break;
                     }
                 }
-                return serviceInfo.jsonUniValue;
+                UniValue obj(UniValue::VOBJ);
+                obj.read(serviceInfo.jsonUniValue);
+                return obj;
             }
         }
         return NullUniValue;
@@ -465,7 +467,9 @@ UniValue docker(const UniValue& params, bool fHelp)
                         break;
                     }
                 }
-                return serviceInfo.jsonUniValue;
+                UniValue obj(UniValue::VOBJ);
+                obj.read(serviceInfo.jsonUniValue);
+                return obj;
             }
         }
     }
@@ -494,7 +498,9 @@ UniValue docker(const UniValue& params, bool fHelp)
                 }
                 ServiceInfo serviceInfo{};
                 for(auto &it :dockercluster.vecServiceInfo.servicesInfo){
-                    varr.push_back(it.second.jsonUniValue);
+                    UniValue obj(UniValue::VOBJ);
+                    obj.read(it.second.jsonUniValue);
+                    varr.push_back(obj);
                 }
                 return varr;
             }

@@ -316,7 +316,7 @@ bool CDockerServerman::CheckCreateService(DockerCreateService& dockerCreateServi
     if (dockerCreateService.clusterServiceCreate.ServiceName.size() <= 20) {
         serviceCreate.ServiceName = dockerCreateService.clusterServiceCreate.ServiceName;
     }
-    if (!serviceCreate.Image.empty() && serviceCreate.Image.substr(0, 9) == "massgrid/")
+    if (!dockerCreateService.clusterServiceCreate.Image.empty() && dockerCreateService.clusterServiceCreate.Image.substr(0, 9) == "massgrid/")
         serviceCreate.Image = dockerCreateService.clusterServiceCreate.Image;
     serviceCreate.SSHPubkey = dockerCreateService.clusterServiceCreate.SSHPubkey;
     serviceCreate.pubKeyClusterAddress = dockerCreateService.clusterServiceCreate.pubKeyClusterAddress;
