@@ -397,32 +397,31 @@ UniValue docker(const UniValue& params, bool fHelp)
         }
         dockercluster.AskForDNData();
 
-        UniValue varr(UniValue::VARR);
+        UniValue obj(UniValue::VOBJ);
         for(int i=0;i<20;++i){
             MilliSleep(100);
             if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
                 UniValue varr2(UniValue::VARR);
                 for(auto it = dockercluster.machines.items.begin();it!= dockercluster.machines.items.end();++it){
                     UniValue obj(UniValue::VOBJ);
-                    obj.push_back(Pair("CpuType",it->first.cpu.Name));
-                    obj.push_back(Pair("CpuCount",it->first.cpu.Count));
-                    obj.push_back(Pair("MemSize",it->first.mem.Count));
-                    obj.push_back(Pair("GpuType",it->first.gpu.Name));
-                    obj.push_back(Pair("GpuCount",it->first.gpu.Count));
+                    obj.push_back(Pair("CPUType",it->first.cpu.Name));
+                    obj.push_back(Pair("CPUThread",it->first.cpu.Count));
+                    obj.push_back(Pair("MemorySize",it->first.mem.Count));
+                    obj.push_back(Pair("GPUType",it->first.gpu.Name));
+                    obj.push_back(Pair("GPUCount",it->first.gpu.Count));
                     obj.push_back(Pair("Price",(double)it->second.price/COIN));
-                    obj.push_back(Pair("UsageCount",it->second.count));
+                    obj.push_back(Pair("Quantity",it->second.count));
                     varr2.push_back(obj);
                 }
-                varr.push_back(varr2);
-                UniValue obj(UniValue::VOBJ);
-                obj.push_back(Pair("masternodeaddress",dockercluster.machines.masternodeAddress));
-                obj.push_back(Pair("token",dockercluster.machines.Token));
-                obj.push_back(Pair("TotalCount",dockercluster.machines.TotalCount));
-                obj.push_back(Pair("AvailabilityCount",dockercluster.machines.AvailabilityCount));
-                obj.push_back(Pair("UsableCount",dockercluster.machines.UsableCount));
-                obj.push_back(Pair("err",dockercluster.machines.err));
-                varr.push_back(obj);
-                return varr;
+                obj.pushKV("Machines",varr2);
+                obj.push_back(Pair("Masternode_Beneficiary_Address",dockercluster.machines.masternodeAddress));
+                obj.push_back(Pair("Token",dockercluster.machines.Token));
+                obj.push_back(Pair("Total",dockercluster.machines.TotalCount));
+                obj.push_back(Pair("Availability_Quantity",dockercluster.machines.AvailabilityCount));
+                obj.push_back(Pair("Unused_Quantity",dockercluster.machines.UsableCount));
+                obj.push_back(Pair("Error",dockercluster.machines.err));
+                obj.push_back(obj);
+                return obj;
             }
         }
     }

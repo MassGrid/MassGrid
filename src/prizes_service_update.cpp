@@ -4,6 +4,7 @@
 #include <boost/algorithm/string.hpp>
 void ServiceUpdate::DecodeFromJson(const UniValue& data, ServiceUpdate& serviceUpdate)
 {
+    LogPrint("docker","ServiceUpdate::DecodeFromJson\n");
     std::vector<std::string> vKeys = data.getKeys();
     for (size_t i = 0; i < data.size(); i++) {
         UniValue tdata(data[vKeys[i]]);

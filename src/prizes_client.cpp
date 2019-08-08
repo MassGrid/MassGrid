@@ -5,7 +5,9 @@ void PrizesClient::SetDockerApiConnection(std::string in){
         SplitHostPort(in,APIport,APIAddr);
         LogPrintf("PrizesClient::SetDockerApiConnection connection address %s:%u\n",APIAddr,APIport);
 }
-bool whetherError(std::string responseData,UniValue& jsondata){
+bool whetherError(std::string responseData,UniValue& resultData,std::string& err){
+
+    UniValue jsondata(UniValue::VOBJ);
     if (responseData.empty()) {
         LogPrintf("PrizesClient::whetherError request error responseData empty\n");
         return true;
@@ -13,9 +15,11 @@ bool whetherError(std::string responseData,UniValue& jsondata){
     jsondata.read(responseData);
     UniValue value = jsondata["error"];
     if (!value.isNull()) {
-        LogPrintf("PrizesClient::whetherError request error %s\n", value.get_str());
+        err = value.get_str();
+        LogPrintf("PrizesClient::whetherError request error %s\n",err);
         return true;
     }
+    resultData = jsondata["result"];
     return false;
 }
 
@@ -23,7 +27,7 @@ void PrizesClient::SetDockerUnixSock(std::string in){
     unix_sock_address = in;
 }
 bool PrizesClient::PostServiceCreate(ServiceCreate& serviceCreate, std::string& ServiceID, std::string& err){
-    LogPrint("docker", "PrizesClient::PostServiceCreate");
+    LogPrint("docker", "PrizesClient::PostServiceCreate\n");
     std::string url = "/servicecreate";
     std::string requestData = ServiceCreate::ToJson(serviceCreate).write();
 
@@ -40,8 +44,7 @@ bool PrizesClient::PostServiceCreate(ServiceCreate& serviceCreate, std::string& 
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata)){
-        err = "response error " + jsondata["error"].get_str();
+    if (whetherError(responseData, jsondata,err)){
         LogPrint("docker", "PrizesClient::PostServiceCreate request error %s\n", err);
         return false;
     }
@@ -65,8 +68,7 @@ bool PrizesClient::PostServiceUpdate(ServiceUpdate& serviceUpdate,std::string& e
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata)) {
-        err = "response error " + jsondata["error"].get_str();
+    if (whetherError(responseData, jsondata,err)) {
         LogPrint("docker", "PrizesClient::PostServiceUpdate request error %s\n", err);
         return false;
     }
@@ -88,8 +90,7 @@ bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo, st
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata)) {
-        err = "response error " + jsondata["error"].get_str();
+    if (whetherError(responseData, jsondata,err)) {
         LogPrint("docker", "PrizesClient::GetService request error %s\n", err);
         return false;
     }
@@ -109,16 +110,15 @@ bool PrizesClient::GetServiceFromPubkey(std::string strPubkey, std::vector<Servi
         return false;
     }
     std::string responseData = http.getReponseData();
-
-    UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata)) {
-        err = "response error " + jsondata["error"].get_str();
+    
+    UniValue jsondata(UniValue::VARR);
+    if (whetherError(responseData, jsondata,err)) {
         LogPrint("docker", "PrizesClient::GetServiceFromPubkey request error %s\n", err);
         return false;
     }
     for(int i=0;i<jsondata.size();++i){
         ServiceInfo serviceInfo{};
-        ServiceInfo::DecodeFromJson(jsondata, serviceInfo);
+        ServiceInfo::DecodeFromJson(jsondata[i], serviceInfo);
         vecServiceInfo.push_back(serviceInfo);
     }
     return true;
@@ -139,8 +139,7 @@ bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, s
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata)) {
-        err = "response error " + jsondata["error"].get_str();
+    if (whetherError(responseData, jsondata,err)) {
         LogPrint("docker", "PrizesClient::GetServiceDelete request error %s\n", err);
         return false;
     }
@@ -164,8 +163,7 @@ bool PrizesClient::GetNodeList(NodeListStatistics& nodeListStatistics, std::stri
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata)) {
-        err = "response error " + jsondata["error"].get_str();
+    if (whetherError(responseData, jsondata,err)) {
         LogPrint("docker", "PrizesClient::PostServiceCreate request error %s\n", err);
         return false;
     }
@@ -189,8 +187,7 @@ bool PrizesClient::GetMachines(ResponseMachines& machines, std::string& err)
     std::string responseData = http.getReponseData();
 
     UniValue jsondata(UniValue::VOBJ);
-    if (whetherError(responseData, jsondata)) {
-        err = "response error " + jsondata["error"].get_str();
+    if (whetherError(responseData, jsondata,err)) {
         LogPrint("docker", "PrizesClient::PostServiceCreate request error %s\n", err);
         return false;
     }

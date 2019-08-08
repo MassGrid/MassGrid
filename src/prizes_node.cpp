@@ -19,6 +19,7 @@ UniValue HardWare::ToJson(HardWare& hardware)
 }
 void HardWare::DecodeFromJson(const UniValue& data, HardWare& hardware)
 {
+    LogPrint("docker","HardWare::DecodeFromJson\n");
     std::vector<std::string> vKeys = data.getKeys();
     for (size_t i = 0; i < data.size(); i++) {
         UniValue tdata(data[vKeys[i]]);
@@ -41,6 +42,7 @@ void HardWare::DecodeFromJson(const UniValue& data, HardWare& hardware)
 
 void NodeInfo::DecodeFromJson(const UniValue& data, NodeInfo& node)
 {
+    LogPrint("docker","NodeInfo::DecodeFromJson\n");
     std::vector<std::string> vKeys = data.getKeys();
     for (size_t i = 0; i < data.size(); i++) {
         UniValue tdata(data[vKeys[i]]);
@@ -61,6 +63,7 @@ void NodeInfo::DecodeFromJson(const UniValue& data, NodeInfo& node)
 }
 void NodeListStatistics::DecodeFromJson(const UniValue& data, NodeListStatistics& nodelist)
 {
+    LogPrint("docker","NodeListStatistics::DecodeFromJson\n");
     std::vector<std::string> vKeys = data.getKeys();
     for (size_t i = 0; i < data.size(); i++) {
         UniValue tdata(data[vKeys[i]]);

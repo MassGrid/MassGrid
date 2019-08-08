@@ -6,6 +6,7 @@
 
 void ServiceInfo::DecodeFromJson(const UniValue& data, ServiceInfo& serviceInfo)
 {
+    LogPrint("docker","ServiceInfo::DecodeFromJson\n");
     std::vector<std::string> vKeys = data.getKeys();
     for (size_t i = 0; i < data.size(); i++) {
         UniValue tdata(data[vKeys[i]]);

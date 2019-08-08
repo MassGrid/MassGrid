@@ -2,6 +2,7 @@
 #include "prizes_service.h"
 void ServiceOrder::DecodeFromJson(const UniValue& data, ServiceOrder& order)
 {
+    LogPrint("docker","ServiceOrder::DecodeFromJson\n");
     std::vector<std::string> vKeys = data.getKeys();
     for (size_t i = 0; i < data.size(); i++) {
         UniValue tdata(data[vKeys[i]]);
@@ -62,6 +63,7 @@ UniValue ServiceOrder::ToJson(ServiceOrder& serviceOrder){
 }
 void RefundPayment::DecodeFromJson(const UniValue& data, RefundPayment& refund)
 {
+    LogPrint("docker","RefundPayment::DecodeFromJson\n");
     std::vector<std::string> vKeys = data.getKeys();
     for (size_t i = 0; i < data.size(); i++) {
         UniValue tdata(data[vKeys[i]]);
@@ -93,6 +95,7 @@ UniValue RefundPayment::ToJson(RefundPayment& refund){
 }
 void RefundInfo::DecodeFromJson(const UniValue& data, RefundInfo& refundInfo)
 {
+    LogPrint("docker","RefundInfo::DecodeFromJson\n");
     std::vector<std::string> vKeys = data.getKeys();
     for (size_t i = 0; i < data.size(); i++) {
         UniValue tdata(data[vKeys[i]]);
