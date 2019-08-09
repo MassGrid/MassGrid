@@ -215,8 +215,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
     } else if (strCommand == NetMsgType::UPDATESERVICE) {
         LogPrint("dockernode", "CDockerServerman::ProcessMessage UPDATESERVICE Started\n");
-        DockerServiceInfo dockerServiceInfo;
-        DockerUpdateService dockerUpdateService;
+        DockerServiceInfo dockerServiceInfo{};
+        DockerUpdateService dockerUpdateService{};
         ServiceInfo serviceInfo{};
         ServiceUpdate serviceUpdate{};
         if (!fDockerNode) {
@@ -370,6 +370,7 @@ bool CDockerServerman::CheckCreateService(DockerCreateService& dockerCreateServi
 bool CDockerServerman::CheckUpdateService(DockerUpdateService& dockerUpdateService, ServiceUpdate& serviceUpdate,std::string& err)
 {
     CWalletTx& wtx = pwalletMain->mapWallet[dockerUpdateService.clusterServiceUpdate.CrerateOutPoint.hash];
+    CWalletTx& wtx2 = pwalletMain->mapWallet[dockerUpdateService.clusterServiceUpdate.OutPoint.hash];
     if (wtx.Getserviceid().empty()) {
         err = strServiceCode[SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE];
         LogPrintf("CDockerServerman::CheckUpdateService not found\n");
@@ -385,9 +386,25 @@ bool CDockerServerman::CheckUpdateService(DockerUpdateService& dockerUpdateServi
         LogPrintf("CDockerServerman::CheckUpdateService not found\n");
         return false;
     }
-    if (dockerUpdateService.clusterServiceUpdate.pubKeyClusterAddress.ToString().substr(0, 66)!= wtx.Getpubkey()){
-        err = strServiceCode[SERVICEMANCODE::PUBKEY_ERROR];
-        LogPrintf("CDockerServerman::CheckUpdateService pubkey error\n");
+    if (!CheckScriptPubkeyInTxVin(GetScriptForDestination(dockerUpdateService.clusterServiceUpdate.pubKeyClusterAddress.GetID()), wtx2)) {
+        err = strServiceCode[SERVICEMANCODE::NO_THRANSACTION];
+        LogPrintf("CDockerServerman::CheckUpdateService %s\n", err);
+        return false;
+    }
+
+    if (wtx2.vout[dockerUpdateService.clusterServiceUpdate.OutPoint.n].scriptPubKey != GetScriptForDestination(pwalletMain->vchDefaultKey.GetID())) {
+        err = strServiceCode[SERVICEMANCODE::OUTPOINT_NOT_FOUND];
+        LogPrintf("CDockerServerman::CheckUpdateService outpoint not found\n");
+        return false;
+    }
+
+    //check tx in block
+    bool fLocked = instantsend.IsLockedInstantSendTransaction(wtx2.GetHash());
+    int confirms = wtx2.GetDepthInMainChain(false);
+    LogPrint("docker", "current transaction fLocked %d confirms %d\n", fLocked, confirms);
+    if (!fLocked && confirms < 1) {
+        err = strServiceCode[SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS];
+        LogPrintf("CDockerServerman::CheckUpdateService The transaction not confirms: %d\n", confirms);
         return false;
     }
     serviceUpdate.ServiceID = wtx.Getserviceid();
