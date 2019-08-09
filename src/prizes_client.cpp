@@ -193,6 +193,7 @@ bool PrizesClient::GetMachines(ResponseMachines& machines, std::string& err)
     }
     NodeListStatistics::DecodeFromJson(jsondata, nodeListStatistics);
     for (auto& nodeinfo : nodeListStatistics.list) {
+        if (nodeinfo.OnWorking) continue;
         Item item(nodeinfo.hardware.CPUType, nodeinfo.hardware.CPUThread, nodeinfo.hardware.MemoryType, nodeinfo.hardware.MemoryCount, nodeinfo.hardware.GPUType, nodeinfo.hardware.GPUCount);
         if (machines.items.count(item)) {
             machines.items[item].count++;
