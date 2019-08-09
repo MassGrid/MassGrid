@@ -411,7 +411,7 @@ bool CDockerServerman::CheckUpdateService(DockerUpdateService& dockerUpdateServi
     serviceUpdate.CrerateOutPoint = dockerUpdateService.clusterServiceUpdate.CrerateOutPoint;
     serviceUpdate.pubKeyClusterAddress = dockerUpdateService.clusterServiceUpdate.pubKeyClusterAddress;
     serviceUpdate.OutPoint = dockerUpdateService.clusterServiceUpdate.OutPoint;
-    serviceUpdate.Amount = wtx.vout[serviceUpdate.OutPoint.n].nValue;
+    serviceUpdate.Amount = wtx2.vout[serviceUpdate.OutPoint.n].nValue;
     ResponseMachines machines{};
     if (!prizesClient.GetMachines(machines,err)) {
         LogPrintf("CDockerServerman::CheckTransaction no found\n");

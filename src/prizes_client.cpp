@@ -205,8 +205,8 @@ bool PrizesClient::GetMachines(ResponseMachines& machines, std::string& err)
         }
     }
     machines.TotalCount = nodeListStatistics.TotalCount;
-    machines.AvailabilityCount = nodeListStatistics.TotalCount;
-    machines.UsableCount = nodeListStatistics.TotalCount;
+    machines.AvailabilityCount = nodeListStatistics.AvailabilityCount;
+    machines.UsableCount = nodeListStatistics.UsableCount;
     machines.Token = nodeListStatistics.Token;
     return true;
 }
