@@ -59,6 +59,7 @@ public:
         Ask, 
         Received,
         Creating,
+        Updating,
         Deleteing
     };
     enum TRANSDATASTATUS{

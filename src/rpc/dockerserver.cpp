@@ -44,7 +44,7 @@ UniValue docker(const UniValue& params, bool fHelp)
     if (fHelp  ||
         (
 #ifdef ENABLE_WALLET
-            strCommand != "create" && strCommand != "delete"  && strCommand != "sendtomasternode" &&
+            strCommand != "create" && strCommand != "update"  && strCommand != "delete"  && strCommand != "sendtomasternode" &&
 #endif // ENABLE_WALLET
             strCommand != "connect" && strCommand != "disconnect" && strCommand != "getdndata" && strCommand != "gettransaction" && strCommand != "listprice" && 
             strCommand != "getservice" && strCommand != "getservices" && strCommand != "setprice"&& strCommand != "setdockerfee" && strCommand != "setpersistentstore"))
@@ -88,6 +88,12 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "               \"ENV2\": \"value2\"   (string,string, optional)"
                 "               ...\n"
                 "           }\n"
+                "   update         - update a docker service Arguments: \n"
+                "       1. \"dockernode (IP:Port)\" (string, required)\n"
+                "       2. \"COutPoint create service outpoint hash (string, required)\n"
+                "       3. \"COutPoint create service outpoint n (int,required)\n"   
+                "       4. \"COutPoint the update outpoint hash (string, required)\n"
+                "       5. \"COutPoint the update outpoint n (int,required)\n"                
                 "   delete         - delete a docker service Arguments: \n"
                 "       1. \"dockernode (IP:Port)\" (string, required)\n"
                 "       2. \"COutPoint hash (string, required)\n"
@@ -107,6 +113,7 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "setdockerfee      - set docker masternode fee (0.01):\n"
                 "       1. \"price\" (percent(double), required)\n"
                 + HelpExampleCli("docker", "create \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\" 0 \"MassGrid\" \"massgrid/10.0-base-ubuntu16.04\" \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPEBGcs6VnDI89aVZHBCoDVq57qh7WamwXW4IbaIMWPeYIXQGAaYt83tCmJAcVggM176KELueh7+d1VraYDAJff9V5CxVoMhdJf1AmcIHGCyEjHRf12+Lme6zNVa95fI0h2tsryoYt1GAwshM6K1jUyBBWeVUdITAXGmtwco4k12QcDhqkfMlYD1afKjcivwaXVawaopdNqUVY7+0Do5ct4S4DDbx6Ka3ow71KyZMh2HpahdI9XgtzE3kTvIcena9GwtzjN+bf0+a8+88H6mtSyvKVDXghbGjunj55SaHZEwj+Cyv6Q/3EcZvW8q0jVuJu2AAQDm7zjgUfPF1Fwdv/ MassGrid\" intel_i3 1 ddr 1 \"nvidia_p104_100_4g\" 1 false \"{\\\"ENV1\\\":\\\"value1\\\"}\"")
+                + HelpExampleCli("docker", "update \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\" 0 \"ad5b29fdaa3fe32ff7d092e2fe7d083b1509c5a2ddbfa5ac332d7672d46c3620\" 1")
                 + HelpExampleCli("docker", "delete \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\" 0")
                 + HelpExampleCli("docker", "sendtomasternode \"119.3.66.159:19443\" \"mfb4XJGyaBwNK2Lf4a7r643U3JotRYNw2T\" 6.4")
                 + HelpExampleCli("docker", "settlement \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
@@ -215,6 +222,44 @@ UniValue docker(const UniValue& params, bool fHelp)
                 ServiceInfo serviceInfo{};
                 for(auto &it :dockercluster.vecServiceInfo.servicesInfo){
                     if(it.second.CreateSpec.OutPoint == dockerCreateService.clusterServiceCreate.OutPoint){
+                        serviceInfo = it.second;
+                        break;
+                    }
+                }
+                UniValue obj(UniValue::VOBJ);
+                obj.read(serviceInfo.jsonUniValue);
+                return obj;
+            }
+        }
+        return NullUniValue;
+    }
+    if(strCommand == "update"){
+        if (!masternodeSync.IsSynced())
+            return "Need to Synced First";
+        if (params.size() != 6)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid count parameter");
+        std::string strAddr = params[1].get_str();
+        if(!dockercluster.SetConnectDockerAddress(strAddr))
+            throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Invalid IP");
+        if(!dockercluster.ProcessDockernodeConnections())
+            throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Connect to Masternode failed");
+        
+        DockerUpdateService updateService{};
+        updateService.clusterServiceUpdate.pubKeyClusterAddress = dockercluster.DefaultPubkey;
+        updateService.clusterServiceUpdate.CrerateOutPoint = COutPoint(uint256S(params[2].get_str()),params[3].get_int());
+        updateService.clusterServiceUpdate.OutPoint = COutPoint(uint256S(params[4].get_str()),boost::lexical_cast<int>(params[5].get_str())); 
+        EnsureWalletIsUnlocked();
+        if(!dockercluster.UpdateAndSendSeriveSpec(updateService))
+            return "updateService Error Failed";
+          for(int i=0;i<20;++i){
+            MilliSleep(100);
+            if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
+                if (!dockercluster.vecServiceInfo.err.empty()){
+                    return dockercluster.vecServiceInfo.err;
+                }
+                ServiceInfo serviceInfo{};
+                for(auto &it :dockercluster.vecServiceInfo.servicesInfo){
+                    if(it.second.CreateSpec.OutPoint == updateService.clusterServiceUpdate.OutPoint){
                         serviceInfo = it.second;
                         break;
                     }

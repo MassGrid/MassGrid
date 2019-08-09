@@ -170,8 +170,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         for (auto& item : dockerServiceInfo.servicesInfo) {
             dockercluster.vecServiceInfo.servicesInfo[item.first] = item.second;
         }
-        if(!dockerServiceInfo.err.empty())
-            dockercluster.vecServiceInfo.err = dockerServiceInfo.err;
+        dockercluster.vecServiceInfo.err = dockerServiceInfo.err;
         setDNDataStatus(DNDATASTATUS::Received);
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("dockernode", "CDockerServerman::ProcessMessage CREATESERVICE Started\n");
@@ -198,6 +197,12 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         CWalletTx& wtx = pwalletMain->mapWallet[dockerCreateService.clusterServiceCreate.OutPoint.hash];
         wtx.Setserviceid(ServiceID);
         wtx.Setpubkey(dockerCreateService.clusterServiceCreate.pubKeyClusterAddress.ToString().substr(0, 66));
+        wtx.SetCPUType(dockerCreateService.clusterServiceCreate.hardware.CPUType);
+        wtx.SetCPUThread(std::to_string(dockerCreateService.clusterServiceCreate.hardware.CPUThread));
+        wtx.SetMemoryType(dockerCreateService.clusterServiceCreate.hardware.MemoryType);
+        wtx.SetMemoryCount(std::to_string(dockerCreateService.clusterServiceCreate.hardware.MemoryCount));
+        wtx.SetGPUType(dockerCreateService.clusterServiceCreate.hardware.GPUType);
+        wtx.SetGPUCount(std::to_string(dockerCreateService.clusterServiceCreate.hardware.GPUCount));
         CWalletDB walletdb(pwalletMain->strWalletFile);
         wtx.WriteToDisk(&walletdb);
         
@@ -231,6 +236,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
         CWalletTx& wtx = pwalletMain->mapWallet[dockerUpdateService.clusterServiceUpdate.OutPoint.hash];
         wtx.Setserviceid(serviceUpdate.ServiceID);
+        wtx.SetCreateOutPoint(serviceUpdate.CrerateOutPoint.ToStringShort());
         wtx.Setpubkey(dockerUpdateService.clusterServiceUpdate.pubKeyClusterAddress.ToString().substr(0, 66));
         CWalletDB walletdb(pwalletMain->strWalletFile);
         wtx.WriteToDisk(&walletdb);
@@ -366,6 +372,11 @@ bool CDockerServerman::CheckUpdateService(DockerUpdateService& dockerUpdateServi
     CWalletTx& wtx = pwalletMain->mapWallet[dockerUpdateService.clusterServiceUpdate.CrerateOutPoint.hash];
     if (wtx.Getserviceid().empty()) {
         err = strServiceCode[SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE];
+        LogPrintf("CDockerServerman::CheckUpdateService not found\n");
+        return false;
+    }
+    if (!wtx.GetCreateOutPoint().empty()) {
+        err = strServiceCode[SERVICEMANCODE::SERVICE_NOT_FOUND];
         LogPrintf("CDockerServerman::CheckUpdateService not found\n");
         return false;
     }

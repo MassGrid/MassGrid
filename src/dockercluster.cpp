@@ -108,7 +108,7 @@ bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
 
     LOCK(cs);
     if(!connectNode){
-        LogPrintf("Cluster::CreateDoCreateAndSendSeriveSpecckerService cann't connect dockernode \n");
+        LogPrintf("Cluster::CreateAndSendSeriveSpec cann't connect dockernode \n");
         return false;
     }
 
@@ -133,7 +133,37 @@ bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
     g_connman->PushMessage(connectNode, NetMsgType::CREATESERVICE, sspec);
     return true;
 }
+bool Cluster::UpdateAndSendSeriveSpec(DockerUpdateService sspec){
 
+    LogPrint("dockernode","Cluster::UpdateAndSendSeriveSpec Started\n");
+
+    LOCK(cs);
+    if(!connectNode){
+        LogPrintf("Cluster::UpdateAndSendSeriveSpec cann't connect dockernode \n");
+        return false;
+    }
+
+    LOCK2(cs_main, pwalletMain->cs_wallet);
+
+    CKey vchSecret;
+    if(pwalletMain->IsLocked()){
+        LogPrintf("Cluster::UpdateAndSendSeriveSpec Sign need to unlock wallet first !\n");
+        return false;
+    }
+    if (!pwalletMain->GetKey(sspec.clusterServiceUpdate.pubKeyClusterAddress.GetID(), vchSecret)){
+        LogPrintf("Cluster::UpdateAndSendSeriveSpec GetPrivkey Error\n");
+        return false;
+    }
+    if(!sspec.Sign(vchSecret,sspec.clusterServiceUpdate.pubKeyClusterAddress)){
+        LogPrintf("Cluster::UpdateAndSendSeriveSpec Sign Error\n");
+        return false;
+    }
+    
+    dockerServerman.setDNDataStatus(CDockerServerman::Updating);
+
+    g_connman->PushMessage(connectNode, NetMsgType::UPDATESERVICE, sspec);
+    return true;
+}
 bool Cluster::DeleteAndSendServiceSpec(DockerDeleteService delService)
 {
     if (!masternodeSync.IsSynced()){

@@ -40,6 +40,7 @@ public:
     void AskForService(COutPoint);
     void AskForServices();
     bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
+    bool UpdateAndSendSeriveSpec(DockerUpdateService sspec);     //send message
     bool DeleteAndSendServiceSpec(DockerDeleteService delServic);
 
     //get dockertransaction

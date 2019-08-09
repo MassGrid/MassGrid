@@ -470,6 +470,7 @@ public:
     bool GetOutPoint(CScript& script,COutPoint& out) const;
 
     ATTRIBUTE_MEMBER_FUNC(serviceid);
+    ATTRIBUTE_MEMBER_FUNC(CreateOutPoint);
     ATTRIBUTE_MEMBER_FUNC(pubkey);
     ATTRIBUTE_MEMBER_FUNC(verison);
     ATTRIBUTE_MEMBER_FUNC(createtime);
