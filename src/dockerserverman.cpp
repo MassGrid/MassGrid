@@ -412,14 +412,12 @@ bool CDockerServerman::CheckUpdateService(DockerUpdateService& dockerUpdateServi
     serviceUpdate.pubKeyClusterAddress = dockerUpdateService.clusterServiceUpdate.pubKeyClusterAddress;
     serviceUpdate.OutPoint = dockerUpdateService.clusterServiceUpdate.OutPoint;
     serviceUpdate.Amount = wtx2.vout[serviceUpdate.OutPoint.n].nValue;
-    ResponseMachines machines{};
-    if (!prizesClient.GetMachines(machines,err)) {
-        LogPrintf("CDockerServerman::CheckTransaction no found\n");
-        return false;
-    }
+    CAmount price = dockerPriceConfig.getPrice("cpu",wtx.GetCPUType()) * boost::lexical_cast<int64_t>(wtx.GetCPUThread()) +
+                            dockerPriceConfig.getPrice("mem",wtx.GetMemoryType()) * boost::lexical_cast<int64_t>(wtx.GetMemoryCount()) +
+                            dockerPriceConfig.getPrice("gpu", wtx.GetGPUType()) * boost::lexical_cast<int64_t>(wtx.GetGPUCount());
     Item item(wtx.GetCPUType(), boost::lexical_cast<int64_t>(wtx.GetCPUThread()), wtx.GetMemoryType(), boost::lexical_cast<int64_t>(wtx.GetMemoryCount()), wtx.GetGPUType(), boost::lexical_cast<int64_t>(wtx.GetGPUCount()));
 
-    serviceUpdate.ServicePrice = machines.items[item].price;
+    serviceUpdate.ServicePrice = price;
     serviceUpdate.Drawee = CMassGridAddress(serviceUpdate.pubKeyClusterAddress.GetID()).ToString();
     serviceUpdate.MasterNodeFeeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
     CPubKey devpubkey(ParseHex(Params().SporkPubKey()));
