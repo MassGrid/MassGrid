@@ -283,10 +283,10 @@ bool CDockerServerman::CheckCreateService(DockerCreateService& dockerCreateServi
 
 
     //2.check transactions
-    COutPoint outpoint = dockerCreateService.clusterServiceCreate.OutPoint;
+    const COutPoint& outpoint = dockerCreateService.clusterServiceCreate.OutPoint;
     if (!pwalletMain->mapWallet.count(outpoint.hash)) {
         err = strServiceCode[SERVICEMANCODE::NO_THRANSACTION];
-        LogPrintf("CDockerServerman::CheckCreateService Invalid or non-wallet transaction: %s\n", dockerCreateService.clusterServiceCreate.OutPoint.ToStringShort());
+        LogPrintf("CDockerServerman::CheckCreateService %s %s\n",err, outpoint.hash.ToString());
         return false;
     }
     CWalletTx& wtx = pwalletMain->mapWallet[outpoint.hash]; //watch only not check

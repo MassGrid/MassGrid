@@ -34,6 +34,10 @@ UniValue ServiceUpdate::ToJson(ServiceUpdate& serviceUpdate)
         data.push_back(Pair("service_price", serviceUpdate.ServicePrice));
         data.push_back(Pair("drawee", serviceUpdate.Drawee));
         data.push_back(Pair("pubkey", serviceUpdate.pubKeyClusterAddress.ToString().substr(0, 66)));
+        data.push_back(Pair("master_node_fee_address", serviceUpdate.MasterNodeFeeAddress));
+        data.push_back(Pair("dev_fee_address", serviceUpdate.DevFeeAddress));
+        data.push_back(Pair("master_node_fee_rate", serviceUpdate.MasterNodeFeeRate));
+        data.push_back(Pair("dev_fee_rate", serviceUpdate.DevFeeRate));
     }
     return data;
 }

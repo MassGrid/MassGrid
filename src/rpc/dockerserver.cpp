@@ -173,7 +173,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         DockerCreateService dockerCreateService{};
         dockerCreateService.clusterServiceCreate.pubKeyClusterAddress = dockercluster.DefaultPubkey;
         dockerCreateService.clusterServiceCreate.OutPoint = COutPoint(uint256S(params[2].get_str()),params[3].get_int());
-        
+
         std::string strServiceName = params[4].get_str();
         dockerCreateService.clusterServiceCreate.ServiceName = strServiceName;
 
@@ -425,7 +425,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         coinControl.destChange = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).Get();
 
         if (!pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRequired, nChangePosRet,
-                                            strError, &coinControl, true,ALL_COINS, true,true,mnOutPointformat)) {
+                                            strError, &coinControl, true,ALL_COINS, true,false,mnOutPointformat)) {
             if (nAmount + nFeeRequired > pwalletMain->GetBalance())
                 strError = strprintf("Error: This transaction requires a transaction fee of at least %s because of its amount, complexity, or use of recently received funds!", FormatMoney(nFeeRequired));
             throw JSONRPCError(RPC_WALLET_ERROR, strError);
