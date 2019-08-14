@@ -1,7 +1,6 @@
 #include "prizes_statement.h"
 void PrizeStatement::DecodeFromJson(const UniValue& data, PrizeStatement& statement)
 {
-    LogPrint("docker","PrizeStatement::DecodeFromJson\n");
     std::vector<std::string> vKeys = data.getKeys();
     for (size_t i = 0; i < data.size(); i++) {
         UniValue tdata(data[vKeys[i]]);

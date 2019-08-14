@@ -52,7 +52,7 @@ bool PrizesClient::PostServiceCreate(ServiceCreate& serviceCreate, std::string& 
     return true;
 }
 bool PrizesClient::PostServiceUpdate(ServiceUpdate& serviceUpdate,std::string& err){
-    LogPrint("docker", "PrizesClient::PostServiceUpdate");
+    LogPrint("docker", "PrizesClient::PostServiceUpdate\n");
     std::string url = "/serviceupdate/" + serviceUpdate.ServiceID;
     std::string requestData = ServiceUpdate::ToJson(serviceUpdate).write();
     LogPrint("docker", "PrizesClient::PostServiceUpdate requestData %s\n", requestData);
@@ -76,7 +76,7 @@ bool PrizesClient::PostServiceUpdate(ServiceUpdate& serviceUpdate,std::string& e
 }
 
 bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo, std::string& err){
-    LogPrint("docker", "PrizesClient::GetService");
+    LogPrint("docker", "PrizesClient::GetService\n");
     std::string url = "/getservice/" + ServiceID;
     std::string requestData{};
     HttpRequest http(APIAddr, APIport, url, requestData, unix_sock_address);
@@ -98,7 +98,7 @@ bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo, st
     return true;
 }
 bool PrizesClient::GetServiceFromPubkey(std::string strPubkey, std::vector<ServiceInfo>& vecServiceInfo, std::string& err){
-    LogPrint("docker", "PrizesClient::GetServiceFromPubkey");
+    LogPrint("docker", "PrizesClient::GetServiceFromPubkey\n");
     std::string url = "/getservicesfrompubkey/" + strPubkey;
     std::string requestData{};
     HttpRequest http(APIAddr, APIport, url, requestData, unix_sock_address);
@@ -125,7 +125,7 @@ bool PrizesClient::GetServiceFromPubkey(std::string strPubkey, std::vector<Servi
 }
 
 bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, std::string& err){
-    LogPrint("docker", "PrizesClient::GetServiceDelete");
+    LogPrint("docker", "PrizesClient::GetServiceDelete\n");
     std::string url = "/servicerefund/"+ServiceID;
     std::string requestData{};
     HttpRequest http(APIAddr, APIport, url, requestData, unix_sock_address);
@@ -149,7 +149,7 @@ bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, s
 
 bool PrizesClient::GetNodeList(NodeListStatistics& nodeListStatistics, std::string& err)
 {
-    LogPrint("docker", "PrizesClient::GetNodeList");
+    LogPrint("docker", "PrizesClient::GetNodeList\n");
     std::string url = "/getnodes";
     std::string requestData{};
     HttpRequest http(APIAddr, APIport, url, requestData, unix_sock_address);
