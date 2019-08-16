@@ -29,8 +29,9 @@ public:
 struct ServiceInfo {
     std::string ServiceID{};
     int64_t CreatedAt{};
-    int64_t DeleteAt{};
+    int64_t LastCheckTime{};
     int64_t NextCheckTime{};
+    RefundPayment Refund{};
     std::vector<ServiceOrder> Order{};
     ServiceCreate CreateSpec{};
     std::vector<ServiceUpdate> UpdateSpec{};
@@ -44,8 +45,9 @@ struct ServiceInfo {
     {
         READWRITE(ServiceID);
         READWRITE(CreatedAt);
-        READWRITE(DeleteAt);
+        READWRITE(LastCheckTime);
         READWRITE(NextCheckTime);
+        READWRITE(Refund);
         READWRITE(Order);
         READWRITE(CreateSpec);
         READWRITE(UpdateSpec);

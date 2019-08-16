@@ -23,7 +23,6 @@ struct RefundPayment  {
 	std::string RefundID{};
     int64_t CreatedAt{};
     CAmount TotalAmount{};
-    std::string Drawee{};
     std::string RefundTransaction{};
     static void DecodeFromJson(const UniValue& data, RefundPayment& refund);
     static UniValue ToJson(RefundPayment& refund);
@@ -35,7 +34,6 @@ struct RefundPayment  {
         READWRITE(RefundID);
         READWRITE(CreatedAt);
         READWRITE(TotalAmount);
-        READWRITE(Drawee);
         READWRITE(RefundTransaction);
     }
 };
@@ -43,14 +41,19 @@ struct ServiceOrder {
     std::string OriderID{};
     COutPoint OutPoint{};
     int64_t CreatedAt{};
-    int64_t RemoveAt{};
     std::string OrderState{};
     CAmount ServicePrice{};
+    int64_t MasterNodeFeeRate{};
+	int64_t DevFeeRate{};
+	std::string MasterNodeFeeAddress{};
+	std::string DevFeeAddress{};
     std::string Drawee{};
     CAmount Balance{};
+    CAmount PayAmount{};
+    int64_t RemainingTimeDuration{};
+	int64_t TotalTimeDuration{};
     int64_t LastStatementTime{};
     std::vector<PrizeStatement> Statement{};
-    RefundPayment Refund{};
 
     static void DecodeFromJson(const UniValue& data, ServiceOrder& order);
     static UniValue ToJson(ServiceOrder& serviceOrder);
@@ -62,14 +65,19 @@ struct ServiceOrder {
         READWRITE(OriderID);
         READWRITE(OutPoint);
         READWRITE(CreatedAt);
-        READWRITE(RemoveAt);
         READWRITE(OrderState);
         READWRITE(ServicePrice);
         READWRITE(Drawee);
+        READWRITE(MasterNodeFeeRate);
+        READWRITE(DevFeeRate);
+        READWRITE(MasterNodeFeeAddress);
+        READWRITE(DevFeeAddress);
         READWRITE(Balance);
+        READWRITE(PayAmount);
+        READWRITE(RemainingTimeDuration);
+        READWRITE(TotalTimeDuration);
         READWRITE(LastStatementTime);
         READWRITE(Statement);
-        READWRITE(Refund);
     }
 };
 struct RefundInfo {

@@ -14,6 +14,8 @@ void PrizeStatement::DecodeFromJson(const UniValue& data, PrizeStatement& statem
             statement.StatementEndAt = getDockerTime(tdata.get_str());
         else if (vKeys[i] == "total_amount")
             statement.TotalAmount = CAmount(tdata.get_int64());
+        else if (vKeys[i] == "total_use_time")
+            statement.TotalUseTime = tdata.get_int64();
         else if (vKeys[i] == "master_node_fee_rate")
             statement.MasterNodeFeeRate = tdata.get_int64();
         else if (vKeys[i] == "dev_fee_rate")
@@ -34,6 +36,7 @@ UniValue PrizeStatement::ToJson(PrizeStatement& statement){
         data.push_back(Pair("statement_start_at", statement.StatementStartAt));
         data.push_back(Pair("statement_end_at", statement.StatementEndAt));
         data.push_back(Pair("total_amount", statement.TotalAmount));
+        data.push_back(Pair("total_use_time", statement.TotalUseTime));
         data.push_back(Pair("master_node_fee_rate", statement.MasterNodeFeeRate));
         data.push_back(Pair("dev_fee_rate", statement.DevFeeRate));
         data.push_back(Pair("master_node_fee_address", statement.MasterNodeFeeAddress));

@@ -11,20 +11,30 @@ void ServiceOrder::DecodeFromJson(const UniValue& data, ServiceOrder& order)
             order.OutPoint = String2OutPoint(tdata.get_str());
         else if (vKeys[i] == "created_at")
             order.CreatedAt = getDockerTime(tdata.get_str());
-        else if (vKeys[i] == "remove_at")
-            order.RemoveAt = getDockerTime(tdata.get_str());
         else if (vKeys[i] == "order_state")
             order.OrderState = tdata.get_str();
         else if (vKeys[i] == "service_price")
             order.ServicePrice = CAmount(tdata.get_int64());
+        else if (vKeys[i] == "master_node_fee_rate")
+            order.MasterNodeFeeRate = tdata.get_int64();
+        else if (vKeys[i] == "dev_fee_rate")
+            order.DevFeeRate = tdata.get_int64();
+        else if (vKeys[i] == "master_node_fee_address")
+            order.MasterNodeFeeAddress = tdata.get_str();
+        else if (vKeys[i] == "dev_fee_address")
+            order.DevFeeAddress = tdata.get_str();
         else if (vKeys[i] == "drawee")
             order.Drawee = tdata.get_str();
         else if (vKeys[i] == "balance")
             order.Balance = CAmount(tdata.get_int64());
+        else if (vKeys[i] == "pay_amount")
+            order.PayAmount = CAmount(tdata.get_int64());
+        else if (vKeys[i] == "remaining_time_duration")
+            order.RemainingTimeDuration = tdata.get_int64();
+        else if (vKeys[i] == "total_time_duration")
+            order.TotalTimeDuration = tdata.get_int64();
         else if (vKeys[i] == "last_statement_time")
             order.LastStatementTime = getDockerTime(tdata.get_str());
-        else if (vKeys[i] == "refund")
-            RefundPayment::DecodeFromJson(tdata, order.Refund);
         else if (vKeys[i] == "statement") {
             for (int j = 0; j < tdata.size(); ++j) {
                 PrizeStatement statement{};
@@ -40,18 +50,21 @@ UniValue ServiceOrder::ToJson(ServiceOrder& serviceOrder){
         data.push_back(Pair("order_id", serviceOrder.OriderID));
         data.push_back(Pair("out_point", serviceOrder.OutPoint.ToStringShort()));
         data.push_back(Pair("created_at", serviceOrder.CreatedAt));
-        data.push_back(Pair("remove_at", serviceOrder.RemoveAt));
         data.push_back(Pair("order_state", serviceOrder.OrderState));
         data.push_back(Pair("service_price", serviceOrder.ServicePrice));
+        data.push_back(Pair("master_node_fee_rate", serviceOrder.MasterNodeFeeRate));
+        data.push_back(Pair("dev_fee_rate", serviceOrder.DevFeeRate));
+        data.push_back(Pair("master_node_fee_address", serviceOrder.MasterNodeFeeAddress));
+        data.push_back(Pair("dev_fee_address", serviceOrder.DevFeeAddress));
         data.push_back(Pair("drawee", serviceOrder.Drawee));
         data.push_back(Pair("balance", serviceOrder.Balance));
+        data.push_back(Pair("pay_amount", serviceOrder.PayAmount));
+        data.push_back(Pair("remaining_time_duration", serviceOrder.RemainingTimeDuration));
+        data.push_back(Pair("total_time_duration", serviceOrder.TotalTimeDuration));
         data.push_back(Pair("last_statement_time", serviceOrder.LastStatementTime));
     }
     {
         UniValue obj(UniValue::VOBJ);
-
-        obj = RefundPayment::ToJson(serviceOrder.Refund);
-        data.push_back(Pair("refund", obj));
 
         for(int i=0;i<serviceOrder.Statement.size();++i){
             obj = PrizeStatement::ToJson(serviceOrder.Statement[i]);
@@ -72,8 +85,6 @@ void RefundPayment::DecodeFromJson(const UniValue& data, RefundPayment& refund)
             refund.CreatedAt = getDockerTime(tdata.get_str());
         else if (vKeys[i] == "total_amount")
             refund.TotalAmount = CAmount(tdata.get_int64());
-        else if (vKeys[i] == "drawee")
-            refund.Drawee = tdata.get_str();
         else if (vKeys[i] == "refund_transaction")
             refund.RefundTransaction = tdata.get_str();
     }
@@ -85,7 +96,6 @@ UniValue RefundPayment::ToJson(RefundPayment& refund){
         data.push_back(Pair("refund_id", refund.RefundID));
         data.push_back(Pair("created_at", refund.CreatedAt));
         data.push_back(Pair("total_amount", refund.TotalAmount));
-        data.push_back(Pair("drawee", refund.Drawee));
         data.push_back(Pair("refund_transaction", refund.RefundTransaction));
     }
 

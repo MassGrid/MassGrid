@@ -25,6 +25,7 @@ struct PrizeStatement {
     int64_t StatementStartAt{};
     int64_t StatementEndAt{};
 	CAmount TotalAmount{};
+	int64_t TotalUseTime{};
 	int64_t MasterNodeFeeRate{};
 	int64_t DevFeeRate{};
 	std::string MasterNodeFeeAddress{};
@@ -43,6 +44,7 @@ struct PrizeStatement {
         READWRITE(StatementStartAt);
         READWRITE(StatementEndAt);
         READWRITE(TotalAmount);
+        READWRITE(TotalUseTime);
         READWRITE(MasterNodeFeeRate);
         READWRITE(DevFeeRate);
         READWRITE(MasterNodeFeeAddress);

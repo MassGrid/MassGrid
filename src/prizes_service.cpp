@@ -13,8 +13,8 @@ void ServiceInfo::DecodeFromJson(const UniValue& data, ServiceInfo& serviceInfo)
             serviceInfo.ServiceID = tdata.get_str();
         else if (vKeys[i] == "create_at")
             serviceInfo.CreatedAt = getDockerTime(tdata.get_str());
-        else if (vKeys[i] == "delete_at")
-            serviceInfo.DeleteAt = getDockerTime(tdata.get_str());
+        else if (vKeys[i] == "last_check_time")
+            serviceInfo.LastCheckTime = getDockerTime(tdata.get_str());
         else if (vKeys[i] == "next_check_time")
             serviceInfo.NextCheckTime = getDockerTime(tdata.get_str());
         else if (vKeys[i] == "order") {
@@ -37,7 +37,9 @@ void ServiceInfo::DecodeFromJson(const UniValue& data, ServiceInfo& serviceInfo)
             Task task{};
             Task::DecodeFromJson(tdata,task);
             serviceInfo.TaskInfo.push_back(task);
-        }
+        } else if (vKeys[i] == "refund")
+            RefundPayment::DecodeFromJson(tdata, serviceInfo.Refund);
+
     }
     serviceInfo.jsonUniValue = data.write();
 }
