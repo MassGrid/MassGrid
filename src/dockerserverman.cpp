@@ -171,6 +171,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             dockercluster.vecServiceInfo.servicesInfo[item.first] = item.second;
         }
         dockercluster.vecServiceInfo.err = dockerServiceInfo.err;
+        dockercluster.vecServiceInfo.msg = dockerServiceInfo.msg;
         setDNDataStatus(DNDATASTATUS::Received);
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("dockernode", "CDockerServerman::ProcessMessage CREATESERVICE Started\n");
