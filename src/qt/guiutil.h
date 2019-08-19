@@ -20,6 +20,7 @@
 
 class QValidatedLineEdit;
 class SendCoinsRecipient;
+class COutPoint;
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
@@ -73,6 +74,7 @@ namespace GUIUtil
     QList<QModelIndex> getEntryData(QAbstractItemView *view, int column);
 
     void setClipboard(const QString& str);
+    COutPoint getOutPoint(const std::string& txid,const std::string &masternodeAddress);
 
     /** Get save filename, mimics QFileDialog::getSaveFileName, except that it appends a default suffix
         when no suffix is provided by the user.

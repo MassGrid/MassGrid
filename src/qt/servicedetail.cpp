@@ -71,26 +71,42 @@ void ServiceDetail::mouseReleaseEvent(QMouseEvent* e)
     this->move(QPoint(this->x() + dx, this->y() + dy));
 }
 
-void ServiceDetail::setService(Service& service)
+void ServiceDetail::setService(ServiceInfo& service)
 {
     updateServiceDetail(service);
-    map<std::string, Task> mapDockerTasklists = service.mapDockerTaskLists;
+    std::vector<Task> mapDockerTasklists = service.TaskInfo;
     int taskStatus = -1;
     updateTaskDetail(mapDockerTasklists, taskStatus);
 }
 
-void ServiceDetail::updateServiceDetail(Service& service)
+void ServiceDetail::updateServiceDetail(ServiceInfo& service)
 {
-    uint64_t createdAt = service.createdAt;
+    // uint64_t createdAt = service.CreatedAt;
 
-    std::string name = service.spec.name;
-    std::string address = service.spec.labels["com.massgrid.pubkey"];
-    bool fPersistentsore = !QString::fromStdString(service.spec.labels["com.massgrid.nfs"]).isEmpty();
+    // std::string name = service.spec.name;
+    // std::string address = service.spec.labels["com.massgrid.pubkey"];
+    // bool fPersistentsore = !QString::fromStdString(service.spec.labels["com.massgrid.nfs"]).isEmpty();
 
-    std::string image = service.spec.taskTemplate.containerSpec.image;
-    std::string userName = service.spec.taskTemplate.containerSpec.user;
+    // std::string image = service.spec.taskTemplate.containerSpec.image;
+    // std::string userName = service.spec.taskTemplate.containerSpec.user;
 
-    std::vector<std::string> env = service.spec.taskTemplate.containerSpec.env;
+    uint64_t createdAt = service.CreatedAt;
+    std::string name = service.CreateSpec.ServiceName;
+    // std::string address = service.spec.labels["com.massgrid.pubkey"];
+
+    // bool fPersistentsore = !QString::fromStdString(service.spec.labels["com.massgrid.nfs"]).isEmpty();
+    bool fPersistentsore = false;
+
+    std::string image = service.CreateSpec.Image;
+    std::string userName = "root";//= service.CreateSpec;
+
+    std::vector<Task> taskInfo = service.TaskInfo;
+    std::vector<std::string> env;
+
+    if(taskInfo.size()){
+        env = taskInfo[0].spec.containerSpec.env;
+    }
+
     int count = env.size();
     QString n2n_name;
     QString n2n_localip;
@@ -121,11 +137,14 @@ void ServiceDetail::updateServiceDetail(Service& service)
     ui->label_user->setText(QString::fromStdString(userName));
     ui->label_PersistentStore->setText(fPersistentsore?tr("Yes"):tr("No"));
 
-    CWalletTx& wtx = pwalletMain->mapWallet[service.txid];
+    // CWalletTx& wtx = pwalletMain->mapWallet[service.txid];
+    uint256 txid = service.CreateSpec.OutPoint.hash;
+    CWalletTx& wtx = pwalletMain->mapWallet[service.CreateSpec.OutPoint.hash];
+    
     if(wtx.Getprice().size()){
         CAmount itemPrice = (CAmount)(QString::fromStdString(wtx.Getprice()).toDouble());
 
-        CAmount payment = GUIUtil::getTxidAmount(service.txid.ToString())*(-1);
+        CAmount payment = GUIUtil::getTxidAmount(txid.ToString())*(-1);
 
         QString itemPriceStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, itemPrice);
         QString paymentStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, payment);
@@ -150,15 +169,17 @@ void ServiceDetail::setModel(WalletModel* model)
     m_walletModel = model;
 }
 
-void ServiceDetail::updateTaskDetail(std::map<std::string, Task>& mapDockerTasklists, int& taskStatus)
+void ServiceDetail::updateTaskDetail(std::vector<Task>& mapDockerTasklists, int& taskStatus)
 {
-    map<std::string, Task>::iterator iter = mapDockerTasklists.begin();
+    // map<std::string, Task>::iterator iter = mapDockerTasklists.begin();
 
     LogPrintf("mapDockerTasklists size:%d \n", mapDockerTasklists.size());
-
-    for (; iter != mapDockerTasklists.end(); iter++) {
-        std::string id = iter->first;
-        Task task = iter->second;
+    int count = mapDockerTasklists.size();
+    // for (; iter != mapDockerTasklists.end(); iter++) {
+    for(int i=0;i<count;i++){
+        // std::string id = iter->first;
+        // Task task = iter->second;
+        Task task = mapDockerTasklists[i];
         QString name = QString::fromStdString(task.name);
         QString serviceID = QString::fromStdString(task.serviceID);
         int64_t slot = task.slot;
@@ -184,7 +205,7 @@ void ServiceDetail::updateTaskDetail(std::map<std::string, Task>& mapDockerTaskl
 
         QString taskRuntime = QString::fromStdString(task.spec.runtime);
 
-        ui->label_taskName->setText(QString::fromStdString(id));
+        ui->label_taskName->setText(QString::fromStdString(task.ID));
         ui->label_cpuCount->setText(QString::number(nanoCPUs / DOCKER_CPU_UNIT));
         ui->label_memoryBytes->setText(QString::number(memoryBytes / DOCKER_MEMORY_UNIT));
         ui->label_GPUName->setText(QString::fromStdString(gpuName));

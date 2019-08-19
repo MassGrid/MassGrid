@@ -24,7 +24,6 @@ class WalletModel;
 class QTableWidgetItem;
 class QSwitchButton;
 class Task;
-class Service;
 
 class DockerOrderView;
 
@@ -155,7 +154,7 @@ private Q_SLOTS:
     void loadOrderData();
     void dockerOrderViewdoubleClicked(QModelIndex index);
     void dockerOrderViewitemClicked(const QModelIndex index);
-    void deleteService(std::string txid,std::string ip_port);
+    void deleteService(COutPoint& outpoint,std::string ip_port);
     void jumpToCheckService(std::string ip);
     void jumpToCreateService(std::string ip,std::string txid);
     void timeoutToScanStatus();

@@ -70,6 +70,7 @@ public:
     int64_t sigTime = GetAdjustedTime();
     std::map<std::string,ServiceInfo> servicesInfo{};
     std::string err{};
+    int errCode{};
     std::string msg{};
 
     ADD_SERIALIZE_METHODS;
@@ -81,6 +82,7 @@ public:
         READWRITE(servicesInfo);
         READWRITE(err);
         READWRITE(msg);
+        READWRITE(errCode);
     }
 };
 #endif

@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QMouseEvent>
 
-class Service;
+class ServiceInfo;
 class Task;
 
 class WalletModel;
@@ -21,7 +21,7 @@ public:
     explicit ServiceDetail(QWidget *parent = 0);
     ~ServiceDetail();
 
-    void setService(Service& service);
+    void setService(ServiceInfo& service);
     void setModel(WalletModel* model);
 
 private:
@@ -32,8 +32,8 @@ private:
     QPoint m_last;
     bool m_mousePress;
 
-    void updateTaskDetail(std::map<std::string,Task> &mapDockerTasklists,int& taskStatus);
-    void updateServiceDetail(Service& service);
+    void updateTaskDetail(std::vector<Task> &mapDockerTasklists,int& taskStatus);
+    void updateServiceDetail(ServiceInfo& service);
 
 
 protected:

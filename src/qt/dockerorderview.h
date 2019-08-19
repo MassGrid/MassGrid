@@ -62,7 +62,9 @@ public:
     explicit DockerOrderView(const PlatformStyle *platformStyle, QWidget *parent = 0);
     ~DockerOrderView();
     void setModel(WalletModel *model);
-    void getCurrentItemTxidAndmnIp(std::string &txid,std::string &masternodeip,std::string &orderStatus);
+    // void getCurrentItemTxidAndmnIp(std::string &txid,std::string &masternodeip,std::string &orderStatus);
+    void getCurrentItemTxidAndmnIp(std::string &txid);
+    
     // Date ranges for filter
     enum DateEnum
     {

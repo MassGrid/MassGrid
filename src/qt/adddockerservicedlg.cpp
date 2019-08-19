@@ -21,7 +21,6 @@
 #include "sendcoinsdialog.h"
 #include "resourceitem.h"
 #include "instantx.h"
-#include "dockerserverman.h"
 #include "loadingwin.h"
 #include <QThread>
 #include <QStringList>
@@ -29,10 +28,12 @@
 #include <QStyleFactory>
 #include "cupdatethread.h"
 #include "guiutil.h"
+#include "dockerserverman.h"
 
 #define LOADRESOURCETIMEOUT 30
 
 extern SendCoinsDialog* g_sendCoinsPage;
+
 
 QStringList ServiceManCodeStr = {
     QString("Create sucess"),
@@ -58,7 +59,8 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     m_walletModel(NULL),
     m_checkoutTransaction(NULL),
     m_askDNDataWorker(NULL),
-    m_loadingWin(NULL)
+    m_loadingWin(NULL),
+    m_createService(NULL)
 {
     ui->setupUi(this);
 
@@ -70,6 +72,8 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     ui->comboBox_image->setStyle(QStyleFactory::create("Windows"));
     ui->comboBox_gpuType->setStyle(QStyleFactory::create("Windows"));
 #endif
+
+    m_createService = new DockerCreateService();
 
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(slot_close()));
     // connect(ui->openPubKeyButton,SIGNAL(clicked()),this,SLOT(slot_openPubKeyFile()));
@@ -185,7 +189,8 @@ bool AddDockerServiceDlg::deleteService(const std::string& strServiceid)
     DockerDeleteService delService{};
 
     delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-    delService.txid = dockercluster.dndata.mapDockerServiceLists[strServiceid].txid;
+    // delService.txid = dockercluster.dndata.mapDockerServiceLists[strServiceid].txid;
+    delService.CrerateOutPoint = dockercluster.vecServiceInfo.servicesInfo[strServiceid].CreateSpec.OutPoint;
 
     if(!dockercluster.DeleteAndSendServiceSpec(delService)){
         CMessageBox::information(this, tr("Docker option"),tr("Delete docker service failed!"));
@@ -393,9 +398,9 @@ bool AddDockerServiceDlg::createDockerService()
     }
 
     std::string strssh_pubkey = ui->lineEdit_sshpubkey->text().toStdString().c_str();
-    m_createService.ssh_pubkey = strssh_pubkey;
+    m_createService->clusterServiceCreate.SSHPubkey = strssh_pubkey;
 
-    m_createService.fPersistentStore = ui->checkBox_persistentStore->isChecked();
+    // m_createService->fPersistentStore = ui->checkBox_persistentStore->isChecked();
 
     if(!strssh_pubkey.size()){
         CMessageBox::information(this, tr("Docker option"), tr("SSH public key is empty!"));
@@ -433,19 +438,19 @@ bool AddDockerServiceDlg::createDockerService()
          return false;
     }
 
-    m_createService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-    m_createService.txid = uint256S(m_txid);
+    m_createService->clusterServiceCreate.pubKeyClusterAddress = dockercluster.DefaultPubkey;
+    m_createService->clusterServiceCreate.OutPoint = GUIUtil::getOutPoint(m_txid,m_masterndoeAddr);
 
     std::string strServiceName = ui->lineEdit_name->text().toStdString().c_str();
-    m_createService.serviceName = strServiceName;
+    m_createService->clusterServiceCreate.ServiceName = strServiceName;
 
     std::string strServiceImage = QString("massgrid/" + ui->comboBox_image->currentText()).toStdString().c_str();
 
-    m_createService.image = strServiceImage;
+    m_createService->clusterServiceCreate.Image = strServiceImage;
 
     // std::string strn2n_Community = ui->lineEdit_n2n_name->text().toStdString().c_str();
-    m_createService.n2n_community = "massgridn2n"; //strn2n_Community;
-    if(!dockercluster.CreateAndSendSeriveSpec(m_createService)){
+    // m_createService->clusterServiceCreate .n2n_community = "massgridn2n"; //strn2n_Community;
+    if(!dockercluster.CreateAndSendSeriveSpec(*m_createService)){
         LogPrintf("dockercluster.CreateAndSendSeriveSpec error\n");
         return false;
     }
@@ -466,56 +471,105 @@ void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
         CMessageBox::information(this, tr("Load failed"),tr("Create service have't respone,please check you netwowrk is running!"));
         return ;
     }
-    std::map<std::string,Service> serverlist = dockercluster.dndata.mapDockerServiceLists;
-    std::map<std::string,Service>::iterator iter = serverlist.begin();
+    std::map<std::string,ServiceInfo> serverlist = dockercluster.vecServiceInfo.servicesInfo;
+    std::map<std::string,ServiceInfo>::iterator iter = serverlist.begin();
     for(;iter != serverlist.end();iter++){
         QString id = QString::fromStdString(iter->first);
-        Service service = serverlist[iter->first];
-        if(m_txid == service.txid.ToString()){
+        ServiceInfo service = serverlist[iter->first];
+        if(m_txid == service.CreateSpec.OutPoint.hash.ToString()){
             slot_nextStep();
             return ;
         }
     }
 
-    if(dockercluster.dndata.errCode != 0){
-        QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
+    // if(dockercluster.dndata.errCode != 0){
+    // // if(dockercluster.vecServiceInfo.err.size() > 0){
+    //     QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
 
-        switch (dockercluster.dndata.errCode)
-        {
-            case SERVICEMANCODE::SIGTIME_ERROR:
-            case SERVICEMANCODE::VERSION_ERROR:
-            case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
-            case SERVICEMANCODE::NO_THRANSACTION:
-            case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
-            case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
-            case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
-                QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
-                CMessageBox::information(this, tr("Create Failed"),msg);
-                close();
-                return ;
-            }
-            case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
-            case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
-            case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
-            case SERVICEMANCODE::GPU_AMOUNT_ERROR:
-            case SERVICEMANCODE::CPU_AMOUNT_ERROR:
-            case SERVICEMANCODE::MEM_AMOUNT_ERROR:
-            case SERVICEMANCODE::PUBKEY_ERROR:{
-                QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
-                CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
-                    msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+    //     switch (dockercluster.dndata.errCode)
+    //     {
+    //         case SERVICEMANCODE::SIGTIME_ERROR:
+    //         case SERVICEMANCODE::VERSION_ERROR:
+    //         case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
+    //         case SERVICEMANCODE::NO_THRANSACTION:
+    //         case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
+    //         case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
+    //         case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
+    //             QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
+    //             CMessageBox::information(this, tr("Create Failed"),msg);
+    //             close();
+    //             return ;
+    //         }
+    //         case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
+    //         case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
+    //         case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
+    //         case SERVICEMANCODE::GPU_AMOUNT_ERROR:
+    //         case SERVICEMANCODE::CPU_AMOUNT_ERROR:
+    //         case SERVICEMANCODE::MEM_AMOUNT_ERROR:
+    //         case SERVICEMANCODE::PUBKEY_ERROR:{
+    //             QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
+    //             CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
+    //                 msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
 
-                if(btnRetVal == CMessageBox::Cancel){
-                    close();
-                    return ;
-                }
-                else{
-                    gotoStep1Page();
-                }
-            }
-            default:
-                break;
-        }
+    //             if(btnRetVal == CMessageBox::Cancel){
+    //                 close();
+    //                 return ;
+    //             }
+    //             else{
+    //                 gotoStep1Page();
+    //             }
+    //         }
+    //         default:
+    //             break;
+    //     }
+    // }
+
+    if(dockercluster.vecServiceInfo.err.size() > 0){
+
+        // QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
+        QString errStr = QString::fromStdString(dockercluster.vecServiceInfo.err);
+
+        QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
+        CMessageBox::information(this, tr("Create Failed"),msg);
+        close();
+        return ;
+
+        // switch (dockercluster.dndata.errCode)
+        // {
+        //     case SERVICEMANCODE::SIGTIME_ERROR:
+        //     case SERVICEMANCODE::VERSION_ERROR:
+        //     case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
+        //     case SERVICEMANCODE::NO_THRANSACTION:
+        //     case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
+        //     case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
+        //     case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
+        //         QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
+        //         CMessageBox::information(this, tr("Create Failed"),msg);
+        //         close();
+        //         return ;
+        //     }
+        //     case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
+        //     case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
+        //     case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
+        //     case SERVICEMANCODE::GPU_AMOUNT_ERROR:
+        //     case SERVICEMANCODE::CPU_AMOUNT_ERROR:
+        //     case SERVICEMANCODE::MEM_AMOUNT_ERROR:
+        //     case SERVICEMANCODE::PUBKEY_ERROR:{
+        //         QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
+        //         CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
+        //             msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+        //         if(btnRetVal == CMessageBox::Cancel){
+        //             close();
+        //             return ;
+        //         }
+        //         else{
+        //             gotoStep1Page();
+        //         }
+        //     }
+        //     default:
+        //         break;
+        // }
     }
 }
 
@@ -778,8 +832,10 @@ void AddDockerServiceDlg::loadResourceData()
 
     ui->comboBox_image->addItems(images);
 
-    std::map<Item,Value_price> items = dockercluster.dndata.items;
-    m_masterndoeAddr = dockercluster.dndata.masternodeAddress;
+    // std::map<Item,Value_price> items = dockercluster.dndata.items;
+    // m_masterndoeAddr = dockercluster.dndata.masternodeAddress;
+    std::map<Item, Value_price> items = dockercluster.machines.items; // .items;
+    m_masterndoeAddr = dockercluster.machines.masternodeAddress;
     std::map<Item,Value_price>::iterator iter = items.begin();
 
     ui->tableWidget_resource->setRowCount(0);
@@ -789,7 +845,8 @@ void AddDockerServiceDlg::loadResourceData()
 
     initCombobox();
 
-    if(dockercluster.dndata.fPersistentStore){
+    // if(dockercluster.dndata.fPersistentStore){
+    if(false){
         ui->checkBox_persistentStore->setEnabled(true);
         ui->checkBox_persistentStore->setChecked(true);
         ui->checkBox_persistentStore->setToolTip(tr("This node support persistable storage!"));
@@ -892,14 +949,23 @@ void AddDockerServiceDlg::doStep1(ResourceItem* item)
     QString availibleCount = item->getAvailibleCount();
     CAmount amount = item->getAmount();
 
-    m_createService.item.cpu.Count = cpuCount.toInt();
-    m_createService.item.cpu.Name = cpuName.toStdString().c_str();
+    // m_createService->item.cpu.Count = cpuCount.toInt();
+    // m_createService->item.cpu.Name = cpuName.toStdString().c_str();
 
-    m_createService.item.mem.Count = romCount.toInt();
-    m_createService.item.mem.Name = romType.toStdString().c_str();
+    // m_createService->item.mem.Count = romCount.toInt();
+    // m_createService->item.mem.Name = romType.toStdString().c_str();
 
-    m_createService.item.gpu.Name = gpuName.toStdString().c_str();
-    m_createService.item.gpu.Count = gpuCount.toInt();
+    // m_createService->item.gpu.Name = gpuName.toStdString().c_str();
+    // m_createService->item.gpu.Count = gpuCount.toInt();
+
+    m_createService->clusterServiceCreate.hardware.CPUThread = cpuCount.toInt();
+    m_createService->clusterServiceCreate.hardware.CPUType = cpuName.toStdString().c_str();
+
+    m_createService->clusterServiceCreate.hardware.MemoryCount = romCount.toInt();
+    m_createService->clusterServiceCreate.hardware.MemoryType = romType.toStdString().c_str();
+
+    m_createService->clusterServiceCreate.hardware.GPUType = gpuName.toStdString().c_str();
+    m_createService->clusterServiceCreate.hardware.GPUCount = gpuCount.toInt();
 
     ui->payAmount->setValue(amount);
     ui->payTo->setText(QString::fromStdString(m_masterndoeAddr));

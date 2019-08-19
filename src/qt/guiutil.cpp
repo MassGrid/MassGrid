@@ -258,6 +258,47 @@ bool parseMassGridURI(const QUrl &uri, SendCoinsRecipient *out)
     return true;
 }
 
+COutPoint getOutPoint(const std::string& txid,const std::string &masternodeAddress)
+{
+#ifdef ENABLE_WALLET
+    LOCK2(cs_main, pwalletMain->cs_wallet);
+#else
+    LOCK(cs_main);
+#endif
+
+    CTransaction tx;
+    uint256 hashBlock;
+    uint256 hash = uint256S(txid);
+    // CWalletTx& wtx = wallet->mapWallet[rec->hash];  //watch only not check
+    CWalletTx& wtx = pwalletMain->mapWallet[hash];  
+
+    if (!GetTransaction(hash, tx, Params().GetConsensus(), hashBlock, true)){
+        LogPrintf("No information available about transaction\n");
+            return COutPoint();
+    }
+
+    for (unsigned int i = 0; i < tx.vout.size(); i++) {
+        const CTxOut& txout = tx.vout[i];
+
+        txnouttype type;
+        std::vector<CTxDestination> addresses;
+        int nRequired;
+
+        if (!ExtractDestinations(txout.scriptPubKey, type, addresses, nRequired)) {
+            // LogPrintf("Can't find vout address type:%d,nRequired:%d,txout n:%d\n",type,nRequired,i);
+            continue;
+        }
+
+        BOOST_FOREACH(const CTxDestination& addr, addresses){
+            if(CMassGridAddress(addr).ToString() == masternodeAddress){
+                return COutPoint(hash,i);
+            }
+        }
+    }
+    LogPrintf("Can't find vout address the order status is null\n");
+    return COutPoint();
+}
+
 bool parseMassGridURI(QString uri, SendCoinsRecipient *out)
 {
     // Convert massgrid:// to massgrid:

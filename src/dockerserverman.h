@@ -19,9 +19,9 @@ static const int TIMEOUT = 5 * 60;
 class CDockerServerman;
 extern CDockerServerman dockerServerman;
 
-struct DockerCreateService;
-struct DockerUpdateService;
-struct DockerDeleteService;
+class DockerCreateService;
+class DockerUpdateService;
+class DockerDeleteService;
 struct ServiceCreate;
 struct ServiceUpdate;
 

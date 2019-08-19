@@ -100,12 +100,12 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
     QString tlementtxidStr = fm.elidedText(QString::fromStdString(wtx.Gettlementtxid()), Qt::ElideRight, ui->label_tlementtxid->width()*GUIUtil::GetDPIValue());
 
     ui->label_feerate->setText(QString::fromStdString(wtx.Getfeerate()));
-    ui->label_cpuname->setText(QString::fromStdString(wtx.Getcpuname()));
-    ui->label_cpucount->setText(QString::fromStdString(wtx.Getcpucount()));
-    ui->label_memname->setText(QString::fromStdString(wtx.Getmemname()));
-    ui->label_memcount->setText(QString::fromStdString(wtx.Getmemcount()));
-    ui->label_gpuname->setText(QString::fromStdString(wtx.Getgpuname()));
-    ui->label_gpucount->setText(QString::fromStdString(wtx.Getgpucount()));
+    ui->label_cpuname->setText(QString::fromStdString(wtx.GetCPUType()));
+    ui->label_cpucount->setText(QString::fromStdString(wtx.GetCPUThread()));
+    ui->label_memname->setText(QString::fromStdString(wtx.GetMemoryType()));
+    ui->label_memcount->setText(QString::fromStdString(wtx.GetMemoryCount()));
+    ui->label_gpuname->setText(QString::fromStdString(wtx.GetGPUType()));
+    ui->label_gpucount->setText(QString::fromStdString(wtx.GetGPUCount()));
     ui->label_masternodeip->setText(QString::fromStdString(wtx.Getmasternodeip()));
     ui->label_masternodeoutpoint->setText(masternodeoutpointStr);
     ui->label_custeraddress->setText(custeraddressStr);

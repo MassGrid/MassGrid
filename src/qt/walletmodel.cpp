@@ -348,7 +348,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
         }
 
         bool fCreated = wallet->CreateTransaction(vecSend, *newTx, *keyChange, nFeeRequired, nChangePosRet, strFailReason, coinControl, true, 
-        recipients[0].inputType, recipients[0].fUseInstantSend,true,mnOutPointformat);
+        recipients[0].inputType, recipients[0].fUseInstantSend,false,mnOutPointformat);  
 
                 // if (!pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRequired, nChangePosRet,
                 //                             strError, &coinControl, true,ALL_COINS, true,true,mnOutPointformat)) {

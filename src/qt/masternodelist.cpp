@@ -19,6 +19,7 @@
 #include <boost/random.hpp>
 #include "cmessagebox.h"
 #include "dockercluster.h"
+#include "dockerserverman.h"
 #include "util.h"
 #include "adddockerservicedlg.h"
 #include "massgridgui.h"
@@ -36,6 +37,7 @@
 #include "dockerorderview.h"
 #include "transactionview.h"
 #include "optionsmodel.h"
+#include <QDateTime>
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
 #define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
 
@@ -629,25 +631,31 @@ int MasternodeList::loadServerList()
 {
     ui->serviceTableWidget->setRowCount(0);
 
-    std::map<std::string,Service> serverlist = dockercluster.dndata.mapDockerServiceLists;
-    std::map<std::string,Service>::iterator iter = serverlist.begin();
+    std::map<std::string,ServiceInfo> serverlist = dockercluster.vecServiceInfo.servicesInfo;// .dndata.mapDockerServiceLists;
+    std::map<std::string,ServiceInfo>::iterator iter = serverlist.begin();
 
     int count = 0;
     for(;iter != serverlist.end();iter++){
         QString id = QString::fromStdString(iter->first);
-        Service service = serverlist[iter->first];
-        QString name = QString::fromStdString(service.spec.name);
-        map<std::string,Task> mapDockerTasklists = service.mapDockerTaskLists;
+        ServiceInfo service = serverlist[iter->first];
+        // QString name = QString::fromStdString(service.spec.name);
+        // map<std::string,Task> mapDockerTasklists = service.mapDockerTaskLists;
 
-        uint64_t createdAt = service.createdAt;
+        QString name = QString::fromStdString(service.CreateSpec.ServiceName);
+         std::vector<Task> mapDockerTasklists = service.TaskInfo;
+
+        uint64_t createdAt = service.CreatedAt;
         // std::string name = service.spec.name;
         // std::string address = service.spec.labels["com.massgrid.pubkey"];
-        std::string image = service.spec.taskTemplate.containerSpec.image;
+        // std::string image = service.spec.taskTemplate.containerSpec.image;
+        std::string image = service.CreateSpec.Image;
 
         int taskStatus = -1;
+        // int count = mapDockerTasklists.size();
         QString taskStatusStr = tr("Waiting");
         if(mapDockerTasklists.size() > 0){
-            Task task = mapDockerTasklists.begin()->second;
+            // Task task = mapDockerTasklists.begin()->second;
+            Task task = mapDockerTasklists[0];
             taskStatus = task.status.state;
             taskStatusStr = taskStatus == Config::TASKSTATE_RUNNING ? tr("Create completed") : tr("Creating...");
         }
@@ -661,27 +669,21 @@ int MasternodeList::loadServerList()
         QTableWidgetItem *nameItem = new QTableWidgetItem(name);
         QTableWidgetItem *imageItem = new QTableWidgetItem(QString::fromStdString(image));
         QTableWidgetItem *idItem = new QTableWidgetItem(id);
-        QTableWidgetItem *timeoutItem;
 
-        CWalletTx& wtx = pwalletMain->mapWallet[service.txid];
-        if(wtx.Getprice().size()){
-            CAmount itemPrice = (CAmount)(QString::fromStdString(wtx.Getprice()).toDouble());
-            CAmount payment = GUIUtil::getTxidAmount(service.txid.ToString())*(-1);
+        uint256 txidTmp = service.CreateSpec.OutPoint.hash;
+        CWalletTx& wtx = pwalletMain->mapWallet[txidTmp];
 
-            QString itemPriceStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, itemPrice);
-            QString paymentStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, payment);
+        // QString timeout = service.Order.
+        std::vector<ServiceOrder> Order = service.Order;
 
-            if(itemPriceStr.split(" ").size()==2 && paymentStr.split(" ").size()==2){
-                double itemPrice_num = itemPriceStr.split(" ").at(0).toDouble();
-                double payment_num = paymentStr.split(" ").at(0).toDouble();
-                int msec = (payment_num/itemPrice_num)*3600 + fmod(payment_num,itemPrice_num)*60 ;
-                timeoutItem = new QTableWidgetItem(QDateTime::fromTime_t(createdAt).addSecs(msec).toString("yyyy-MM-dd hh:mm:ss"));
-            }
-            else
-            {
-                timeoutItem = new QTableWidgetItem(QDateTime::fromTime_t(createdAt).addSecs(3600).toString("yyyy-MM-dd hh:mm:ss"));
-            }
+        int orderSize = Order.size();
+        int64_t totalRemainingTimeDuration = 0;
+        for(int i=0;i<orderSize;i++){
+            totalRemainingTimeDuration += Order[i].RemainingTimeDuration;
         }
+
+        QString timeout = QDateTime::currentDateTime().addMSecs(totalRemainingTimeDuration/1000000).toString("yyyy-MM-dd hh:mm:ss");
+        QTableWidgetItem *timeoutItem = new QTableWidgetItem(timeout);
 
         ui->serviceTableWidget->insertRow(count);
         ui->serviceTableWidget->setItem(count, 0, idItem);
@@ -692,7 +694,6 @@ int MasternodeList::loadServerList()
 
         for(int i=0;i<4;i++)
             ui->serviceTableWidget->item(count,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
-
         count++;
     }
     dockerServerman.setDNDataStatus(CDockerServerman::Free);
@@ -719,15 +720,22 @@ void MasternodeList::disenableDeleteServiceBtn()
 
 int MasternodeList::loadDockerDetail(const std::string & key)
 {
-    Service service = dockercluster.dndata.mapDockerServiceLists[key.c_str()];
-    map<std::string,Task> mapDockerTasklists = service.mapDockerTaskLists;
+    // Service service = dockercluster.dndata.mapDockerServiceLists[key.c_str()];
+    // map<std::string,Task> mapDockerTasklists = service.mapDockerTaskLists;
+
+    std::vector<Task> taskInfo = dockercluster.vecServiceInfo.servicesInfo[key.c_str()].TaskInfo;
+
 
     int taskStatus = -1;
-    map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
-    for(;iter != mapDockerTasklists.end();iter++){
-        Task task = iter->second;
-        taskStatus = task.status.state;
+    if(taskInfo.size() > 0){
+        taskStatus = taskInfo[0].status.state;
     }
+    // map<std::string,Task>::iterator iter = mapDockerTasklists.begin();
+    // for(;iter != mapDockerTasklists.end();iter++){
+    //     Task task = iter->second;
+    //     taskStatus = task.status.state;
+    // }
+
 
     DockerUpdateMode mode;
     //  = taskStatus == 8 ? DockerUpdateMode::WhenNormal : DockerUpdateMode::AfterCreate;
@@ -743,9 +751,10 @@ int MasternodeList::loadDockerDetail(const std::string & key)
 
 void MasternodeList::openServiceDetail(QModelIndex index)
 {
-    QString key = ui->serviceTableWidget->item(index.row(),0)->text();
+    QString txid = ui->serviceTableWidget->item(index.row(),0)->text();
 
-    Service service = dockercluster.dndata.mapDockerServiceLists[key.toStdString().c_str()];
+    // Service service = dockercluster.dndata.mapDockerServiceLists[key.toStdString().c_str()];
+    ServiceInfo serviceInfo = dockercluster.vecServiceInfo.servicesInfo[txid.toStdString().c_str()];
 
     ServiceDetail dlg;
 
@@ -754,7 +763,7 @@ void MasternodeList::openServiceDetail(QModelIndex index)
 
     dlg.setModel(walletModel);
 
-    dlg.setService(service);
+    dlg.setService(serviceInfo);
     
     dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     dlg.exec();
@@ -774,13 +783,13 @@ void MasternodeList::slot_deleteServiceBtn()
         return ;
 
     std::string serviceid = ui->serviceTableWidget->item(curindex,0)->text().toStdString();
-    std::string txid = dockercluster.dndata.mapDockerServiceLists[serviceid].txid.ToString();
+    COutPoint& outpoint= dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.OutPoint;
 
-    deleteService(txid,m_curAddr_Port);
+    deleteService(outpoint,m_curAddr_Port);
     QTimer::singleShot(2000,this,SLOT(slot_updateServiceBtn()));
 }
 
-void MasternodeList::deleteService(std::string txid,std::string ip_port)
+void MasternodeList::deleteService(COutPoint& outpoint,std::string ip_port)
 {
     CMessageBox::StandardButton retval = CMessageBox::question(this, tr("Delete Service"),
         tr("Are you sure you want to delete this service?"),
@@ -796,8 +805,10 @@ void MasternodeList::deleteService(std::string txid,std::string ip_port)
 
     DockerDeleteService delService{};
 
+    // delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
+    // delService.txid = uint256S(txid); //dockercluster.dndata.mapDockerServiceLists[txid].txid;
     delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-    delService.txid = uint256S(txid); //dockercluster.dndata.mapDockerServiceLists[txid].txid;
+    delService.CrerateOutPoint = outpoint;
 
     if(!dockercluster.DeleteAndSendServiceSpec(delService)){
         CMessageBox::information(this, tr("Docker option"),tr("Delete docker service failed!"));
@@ -818,7 +829,8 @@ void MasternodeList::updateServiceList()
 
 void MasternodeList::askDNData()
 {
-    dockercluster.AskForDNData();
+    // dockercluster.AskForDNData();
+    dockercluster.AskForServices(0,0,false);
     refreshServerList();
 }
 
@@ -850,6 +862,7 @@ void MasternodeList::gotoCreateServicePage(const std::string& ip_port,const std:
 
     if(dlg.exec() == QDialog::Accepted){
         setCurUpdateMode(DockerUpdateMode::AfterCreate);
+        //ask dndata after create
         refreshServerList();  
     }
 }
@@ -871,7 +884,12 @@ void MasternodeList::refreshServerList()
     }
     else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
             dockerServerman.getDNDataStatus() == CDockerServerman::Free){
+
+        LogPrintf("ask service data finished!\n");
+
         int count = loadServerList();
+        LogPrintf("ask service data finished count:%d!\n",count);
+
         if(!count){
             clearDockerDetail();
             setCurUpdateMode(DockerUpdateMode::WhenNormal);
@@ -926,11 +944,11 @@ void MasternodeList::updateEdgeStatus(int count)
 
 bool MasternodeList::getVirtualIP(const QString& n2n_localip,const QString& n2n_netmask,QString& virtualIP)
 {
-    in_addr_t in_netmask = htonl(inet_addr(n2n_netmask.toStdString().c_str()));
-    in_addr_t in_serviceip = htonl(inet_addr(n2n_localip.toStdString().c_str()));
-    in_addr_t in_gateway = in_serviceip & in_netmask;
-    in_addr_t ipend = (in_serviceip | ~in_netmask) & htonl(inet_addr("255.255.255.254"));
-    in_addr_t ipstart = in_gateway | htonl(inet_addr("0.1.0.1"));
+    unsigned long in_netmask = htonl(inet_addr(n2n_netmask.toStdString().c_str()));
+    unsigned long in_serviceip = htonl(inet_addr(n2n_localip.toStdString().c_str()));
+    unsigned long in_gateway = in_serviceip & in_netmask;
+    unsigned long ipend = (in_serviceip | ~in_netmask) & htonl(inet_addr("255.255.255.254"));
+    unsigned long ipstart = in_gateway | htonl(inet_addr("0.1.0.1"));
 
     boost::mt19937 gen(time(0));
     boost::uniform_int<> uni_dist(ipstart, ipend);
@@ -961,9 +979,13 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
     if(isSelected){
 
         std::string serviceid = ui->serviceTableWidget->item(curindex,0)->text().toStdString();
-        Service service = dockercluster.dndata.mapDockerServiceLists[serviceid];
+        // Service service = dockercluster.dndata.mapDockerServiceLists[serviceid];
+        std::vector<Task> taskInfo = dockercluster.vecServiceInfo.servicesInfo[serviceid].TaskInfo;
 
-        std::vector<std::string> env = service.spec.taskTemplate.containerSpec.env;
+        std::vector<std::string> env ;//= service.spec.taskTemplate.containerSpec.env;
+        if(taskInfo.size()){
+            env = taskInfo[0].spec.containerSpec.env;
+        }
         int count = env.size();
         QString n2n_name;
         QString n2n_localip;
@@ -983,6 +1005,12 @@ void MasternodeList::slot_changeN2Nstatus(bool isSelected)
                 n2n_SPIP = envStr.split("=").at(1);
             }
         }
+
+        LogPrintf("------->n2n_name:%s\n",n2n_name.toStdString());
+        LogPrintf("------->n2n_localip:%s\n",n2n_localip.toStdString());
+        LogPrintf("------->n2n_localip:%s\n",n2n_localip.toStdString());
+        LogPrintf("------->n2n_netmask:%s\n",n2n_netmask.toStdString());
+        LogPrintf("------->n2n_SPIP:%s\n",n2n_SPIP.toStdString());
 
         if(!getVirtualIP(n2n_localip,n2n_netmask,virtualIP)){
 
@@ -1043,10 +1071,14 @@ void MasternodeList::jumpToCreateService(std::string ip,std::string txid)
 
 void MasternodeList::slot_btn_refund()
 {
-    std::string txid,mnip,orderstatus;
-    dockerorderView->getCurrentItemTxidAndmnIp(txid,mnip,orderstatus);
+    std::string txid,mnip;
+    dockerorderView->getCurrentItemTxidAndmnIp(txid);
 
-    deleteService(txid,mnip);
+    CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
+    mnip = wtx.Getmasternodeip();
+    COutPoint outpoint = String2OutPoint(wtx.Getmasternodeoutpoint());
+
+    deleteService(outpoint,mnip);
     //update order status
     dockerorderView->updateAllOperationBtn();
 }
@@ -1076,14 +1108,17 @@ void MasternodeList::dockerOrderViewdoubleClicked(QModelIndex index)
 
 void MasternodeList::dockerOrderViewitemClicked(QModelIndex index)
 {
-    std::string txid,mnip,orderstatus;
-    dockerorderView->getCurrentItemTxidAndmnIp(txid,mnip,orderstatus);
+    std::string txid,orderstatus;
+    dockerorderView->getCurrentItemTxidAndmnIp(txid);
+
+    CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
+    orderstatus = wtx.Getorderstatus();
+
     if(orderstatus == "1"){
         ui->pushButton_refund->setEnabled(false);
         return ;
     }
     ui->pushButton_refund->setEnabled(true);
-    // QTimer::singleShot(10000,this,SLOT(disenableButton()));
     startScanTimer(5000);
 }
 
@@ -1103,8 +1138,3 @@ void MasternodeList::timeoutToScanStatus()
 {
     ui->pushButton_refund->setEnabled(false);
 }
-
-// void MasternodeList::askTransData(std::string txid)
-// {
-//     // AskForTransData
-// }

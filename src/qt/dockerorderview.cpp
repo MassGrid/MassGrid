@@ -725,8 +725,9 @@ void DockerOrderView::deleteService()
         }
     }
 }
-
-void DockerOrderView::getCurrentItemTxidAndmnIp(std::string &txid,std::string &masternodeip,std::string &orderstatusStr)
+// masternodeoutpoint
+// void DockerOrderView::getCurrentItemTxidAndmnIp(std::string &txid,std::string &masternodeip,std::string &orderstatusStr)
+void DockerOrderView::getCurrentItemTxidAndmnIp(std::string &txid)
 {
     QModelIndexList selection = dockerorderView->selectionModel()->selectedRows();
     if(selection.isEmpty())
@@ -736,10 +737,6 @@ void DockerOrderView::getCurrentItemTxidAndmnIp(std::string &txid,std::string &m
     for(int i=0;i<count;i++){
         QModelIndex index = selection.at(i);
         txid = dockerorderView->model()->index(index.row(),DockerOrderTableModel::TxID).data().toString().toStdString();
-        CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
-        orderstatusStr = wtx.Getorderstatus();
-        masternodeip = wtx.Getmasternodeip();
-        // std::string serviceidStr = wtx.Getserviceid();
         break;
     }
 }
@@ -978,7 +975,7 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid,bool isAskAll)
     }
     dockerServerman.setTRANSDataStatus(CDockerServerman::AskTD);
     int updateCountMsec = 0;
-    dockercluster.AskForTransData(txidStr,isAskAll);
+    // dockercluster.AskForTransData(txidStr,isAskAll);
     while(true){
         CDockerServerman::TRANSDATASTATUS status = dockerServerman.getTRANSDataStatus();
         if(status == CDockerServerman::ReceivedTD)

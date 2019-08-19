@@ -3,8 +3,8 @@
 
 #include <QDialog>
 #include <QMouseEvent>
-#include "dockerserverman.h"
 #include <QObject>
+#include "amount.h"
 
 namespace Ui {
 class AddDockerServiceDlg;
@@ -33,7 +33,6 @@ public:
 
     bool isTransactionFinished(std::string& strErr);
 
-
 private:
     Ui::AddDockerServiceDlg *ui;
 
@@ -43,10 +42,12 @@ private:
     std::string m_txid;
     std::string m_masterndoeAddr;
     WalletModel *m_walletModel;
-    DockerCreateService m_createService;
+    // DockerCreateService m_createService;
     CheckoutTransaction *m_checkoutTransaction;
     AskDNDataWorker *m_askDNDataWorker;
     LoadingWin *m_loadingWin;
+    // CAmount m_amount;
+    DockerCreateService *m_createService;
     CAmount m_amount;
 
 private:

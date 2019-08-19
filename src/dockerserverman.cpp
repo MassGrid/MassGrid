@@ -82,6 +82,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         DockerServiceInfo dockerServiceInfo{};
         if (!fDockerNode) {
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::NOT_DOCKERNODE];
+            dockerServiceInfo.errCode = SERVICEMANCODE::NOT_DOCKERNODE;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
@@ -90,17 +91,20 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         if (getService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || getService.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION) {
             LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", getService.version, DOCKERREQUEST_API_MINSUPPORT_VERSION, DOCKERREQUEST_API_MAXSUPPORT_VERSION);
             dockerServiceInfo.err = "version nout support current version: " + std::to_string(getService.version) + "require: [" + std::to_string(DOCKERREQUEST_API_MINSUPPORT_VERSION) + "," + std::to_string(DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+            dockerServiceInfo.errCode = SERVICEMANCODE::VERSION_ERROR;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
 
         if(getService.sigTime > GetAdjustedTime() + TIMEOUT && getService.sigTime < GetAdjustedTime() - TIMEOUT){
              dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::SIGTIME_ERROR];
+             dockerServiceInfo.errCode = SERVICEMANCODE::SIGTIME_ERROR;
             LogPrintf("CDockerServerman::CheckAndCreateServiveSpec sigTime Error%s\n");
             return;
         }
         if(getService.OutPoint.IsNull()){
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::OUTPOINT_NOT_FOUND];
+            dockerServiceInfo.errCode = SERVICEMANCODE::OUTPOINT_NOT_FOUND;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
@@ -108,6 +112,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         std::string ServiceID = wtx.Getserviceid();
         if(ServiceID.empty()){
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::SERVICEITEM_NOT_FOUND];
+            dockerServiceInfo.errCode = SERVICEMANCODE::SERVICEITEM_NOT_FOUND;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
@@ -126,6 +131,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         DockerGetService getService{};
         if (!fDockerNode) {
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::NOT_DOCKERNODE];
+            dockerServiceInfo.errCode = SERVICEMANCODE::NOT_DOCKERNODE;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
@@ -133,11 +139,13 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         if (getService.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || getService.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION) {
             LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", getService.version, DOCKERREQUEST_API_MINSUPPORT_VERSION, DOCKERREQUEST_API_MAXSUPPORT_VERSION);
             dockerServiceInfo.err = "version nout support current version: " + std::to_string(getService.version) + "require: [" + std::to_string(DOCKERREQUEST_API_MINSUPPORT_VERSION) + "," + std::to_string(DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+            dockerServiceInfo.errCode = SERVICEMANCODE::VERSION_ERROR;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
         if(getService.sigTime > GetAdjustedTime() + TIMEOUT && getService.sigTime < GetAdjustedTime() - TIMEOUT){
              dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::SIGTIME_ERROR];
+            dockerServiceInfo.errCode = SERVICEMANCODE::SIGTIME_ERROR;
             LogPrintf("CDockerServerman::CheckAndCreateServiveSpec sigTime Error%s\n");
             return;
         }
@@ -171,6 +179,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             dockercluster.vecServiceInfo.servicesInfo[item.first] = item.second;
         }
         dockercluster.vecServiceInfo.err = dockerServiceInfo.err;
+        dockercluster.vecServiceInfo.errCode = dockerServiceInfo.errCode;
+        
         dockercluster.vecServiceInfo.msg = dockerServiceInfo.msg;
         setDNDataStatus(DNDATASTATUS::Received);
     }else if(strCommand == NetMsgType::CREATESERVICE){
@@ -182,6 +192,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         ServiceInfo serviceInfo{};
         if (!fDockerNode) {
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::NOT_DOCKERNODE];
+            dockerServiceInfo.errCode = SERVICEMANCODE::NOT_DOCKERNODE;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
@@ -222,6 +233,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         ServiceUpdate serviceUpdate{};
         if (!fDockerNode) {
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::NOT_DOCKERNODE];
+            dockerServiceInfo.errCode = SERVICEMANCODE::NOT_DOCKERNODE;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
@@ -255,6 +267,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         DockerDeleteService dockerDeleteService;
         if (!fDockerNode) {
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::NOT_DOCKERNODE];
+            dockerServiceInfo.errCode = SERVICEMANCODE::NOT_DOCKERNODE;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
