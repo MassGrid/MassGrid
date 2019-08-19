@@ -38,7 +38,7 @@ public:
     
     void AskForDNData();
     void AskForService(COutPoint);
-    void AskForServices();
+    void AskForServices(int64_t start,int64_t count,bool full);
     bool CreateAndSendSeriveSpec(DockerCreateService sspec);     //send message
     bool UpdateAndSendSeriveSpec(DockerUpdateService sspec);     //send message
     bool DeleteAndSendServiceSpec(DockerDeleteService delServic);

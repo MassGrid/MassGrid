@@ -62,6 +62,9 @@ UniValue docker(const UniValue& params, bool fHelp)
                 "       3. \"COutPoint n (int,required)\n"
                 "   getservices      - - get infomation from dockernode Arguments: \n"
                 "       1. \"dockernode (IP:Port)\" (string, required)  Print number of all of yours docker services\n"
+                "       2. \"start \" (int64, required)  find start position\n"
+                "       3. \"count \" (int64, required)  number of items\n"
+                "       4. \"full \" (int64, required)  find by full mode\n"
                 "   connect        - Connect to docker network\n"
                 "       1. \"localAddress (IP)\" (string, required)\n"
                 "       2. \"snAddress (IP:Port)\" (string, required)\n"
@@ -124,7 +127,7 @@ UniValue docker(const UniValue& params, bool fHelp)
 #endif // ENABLE_WALLET
                 + HelpExampleCli("docker", "getdndata \"119.3.66.159:19443\"")
                 + HelpExampleCli("docker", "getservice \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\" 0")
-                + HelpExampleCli("docker", "getservices \"119.3.66.159:19443\"")
+                + HelpExampleCli("docker", "getservices \"119.3.66.159:19443\" 0 1 true")
                 + HelpExampleCli("docker", "gettransaction \"119.3.66.159:19443\" \"b5f53c3e9884d23620f1c5b6f027a32e92d9c68a123ada86c55282acd326fde9\"")
                 + HelpExampleCli("docker", "connect \"10.1.1.4\" \"119.3.66.159\"")
                 + HelpExampleCli("docker", "disconnect")
@@ -527,7 +530,7 @@ UniValue docker(const UniValue& params, bool fHelp)
         if (!masternodeSync.IsSynced())
             return "Need to Synced First";
         
-        if (params.size() != 2)
+        if (params.size() != 5)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invaid count parameters");
         std::string strIPPort;
         strIPPort = params[1].get_str();
@@ -537,7 +540,10 @@ UniValue docker(const UniValue& params, bool fHelp)
         if(!dockercluster.ProcessDockernodeConnections()){
             throw JSONRPCError(RPC_INVALID_PARAMETER, "ProcessDockernodeConnections error");
         }
-        dockercluster.AskForServices();
+        int64_t start = boost::lexical_cast<int64_t>(params[2].get_str());
+        int64_t count = params[3].get_int64();
+        int64_t full =  boost::lexical_cast<int64_t>(params[4].get_str());
+        dockercluster.AskForServices(start,count,full);
 
         UniValue varr(UniValue::VARR);
         for(int i=0;i<20;++i){

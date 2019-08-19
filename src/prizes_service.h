@@ -12,7 +12,9 @@ class DockerGetService {
 public:
     uint64_t version = DOCKERREQUEST_API_VERSION;
     int64_t sigTime{};
-
+    int64_t start{};
+    int64_t count{};
+    bool full{};
     COutPoint OutPoint{};
     CPubKey pubKeyClusterAddress{};
 
@@ -21,6 +23,9 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
     {
         READWRITE(sigTime);
+        READWRITE(start);
+        READWRITE(count);
+        READWRITE(full);
         READWRITE(version);
         READWRITE(OutPoint);
         READWRITE(pubKeyClusterAddress);

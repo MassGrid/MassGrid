@@ -88,7 +88,7 @@ void Cluster::AskForService(COutPoint outpoint)
     dockerServerman.setDNDataStatus(CDockerServerman::Ask);
     g_connman->PushMessage(connectNode, NetMsgType::GETSERVICE, getService);
 }
-void Cluster::AskForServices()
+void Cluster::AskForServices(int64_t start,int64_t count,bool full)
 {
     LogPrint("dockernode","Cluster::AskForServices Started\n");
     if(!connectNode) return;
@@ -98,6 +98,9 @@ void Cluster::AskForServices()
 
     DockerGetService getService{};
     getService.pubKeyClusterAddress = DefaultPubkey;
+    getService.start = start;
+    getService.count = count;
+    getService.full = full;
     getService.sigTime = GetAdjustedTime();
     dockerServerman.setDNDataStatus(CDockerServerman::Ask);
     g_connman->PushMessage(connectNode, NetMsgType::GETSERVICES, getService);

@@ -143,7 +143,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         }
         
         std::vector<ServiceInfo> vecServiceInfo{};
-        if (!prizesClient.GetServiceFromPubkey(getService.pubKeyClusterAddress.ToString().substr(0, 66), vecServiceInfo,dockerServiceInfo.err)) {
+        if (!prizesClient.GetServiceFromPubkey(getService.pubKeyClusterAddress.ToString().substr(0, 66),getService.start,getService.count,getService.full, vecServiceInfo,dockerServiceInfo.err)) {
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }

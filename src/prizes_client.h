@@ -22,7 +22,7 @@ public:
     bool GetNodeList(NodeListStatistics& nodeListStatistics,std::string& err);
     bool GetService(std::string ServiceID, ServiceInfo& serviceInfo, std::string& err);
     bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, std::string& err);
-    bool GetServiceFromPubkey(std::string strPubkey, std::vector<ServiceInfo>& vecServiceInfo, std::string& err);
+    bool GetServiceFromPubkey(std::string strPubkey,int64_t start,int64_t count,bool full, std::vector<ServiceInfo>& vecServiceInfo, std::string& err);
     bool PostServiceCreate(ServiceCreate& serviceCreate, std::string& ServiceID, std::string& err);
     bool PostServiceUpdate(ServiceUpdate& serviceUpdate, std::string& err);
     bool GetMachines(ResponseMachines& machines, std::string& err);

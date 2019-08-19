@@ -97,13 +97,17 @@ bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo, st
     ServiceInfo::DecodeFromJson(jsondata, serviceInfo);
     return true;
 }
-bool PrizesClient::GetServiceFromPubkey(std::string strPubkey, std::vector<ServiceInfo>& vecServiceInfo, std::string& err){
+bool PrizesClient::GetServiceFromPubkey(std::string strPubkey,int64_t start,int64_t count,bool full, std::vector<ServiceInfo>& vecServiceInfo, std::string& err){
     LogPrint("docker", "PrizesClient::GetServiceFromPubkey\n");
     std::string url = "/getservicesfrompubkey/" + strPubkey;
-    std::string requestData{};
-    HttpRequest http(APIAddr, APIport, url, requestData, unix_sock_address);
+    
+    UniValue jsonRequest(UniValue::VOBJ);
+    jsonRequest.push_back(Pair("full",full));
+    jsonRequest.push_back(Pair("start",start));
+    jsonRequest.push_back(Pair("count",count));
+    HttpRequest http(APIAddr, APIport, url, jsonRequest.write(), unix_sock_address);
     int ret;
-    ret = http.HttpGet();
+    ret = http.HttpPost();
 
     if (ret < 200 || ret >= 300) {
         LogPrint("docker", "PrizesClient::GetServiceFromPubkey Http_Error error_code: %d\n", ret);
