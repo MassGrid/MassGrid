@@ -16,7 +16,7 @@ using namespace std;
 
 static CCriticalSection cs_nTimeOffset;
 static int64_t nTimeOffset = 0;
-
+const int64_t nStartupTime = GetTime();
 /**
  * "Never go to sea with two chronometers; take one or three."
  * Our three time sources are:
@@ -33,6 +33,11 @@ int64_t GetTimeOffset()
 int64_t GetAdjustedTime()
 {
     return GetTime() + GetTimeOffset();
+}
+
+int64_t GetStartupTime()
+{
+    return nStartupTime;
 }
 
 static int64_t abs64(int64_t n)

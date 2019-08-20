@@ -375,6 +375,10 @@
         <source>This node does not support persistable storage!</source>
         <translation>该节点不支持持续化存储!</translation>
     </message>
+    <message>
+        <source>Auto miner</source>
+        <translation>一键挖矿</translation>
+    </message>
 </context>
 <context>
     <name>AddressBookPage</name>
@@ -638,6 +642,93 @@
     </message>
 </context>
 <context>
+    <name>AutoMinerSetupWin</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">窗体</translation>
+    </message>
+    <message>
+        <source>Mine Setup</source>
+        <translation>挖矿配置</translation>
+    </message>
+    <message>
+        <source>MINER_ADDRESS:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>0xff6514c44f4D3AFeEFDFca7913D33Ec3a87747f3</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MINER_WORKER:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>miner1</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MINER_POOL:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>eth.f2pool.com:8080</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MINER_TYPE:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>ETH</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>默认配置</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <source>Setup error</source>
+        <translation>配置错误</translation>
+    </message>
+    <message>
+        <source>Miner address is empty!</source>
+        <translation>Miner address参数不能为空!</translation>
+    </message>
+    <message>
+        <source>Miner worker is empty!</source>
+        <translation>Miner worker参数不能为空!</translation>
+    </message>
+    <message>
+        <source>Miner pool is empty!</source>
+        <translation>Miner pool参数不能为空!</translation>
+    </message>
+    <message>
+        <source>Miner type is empty!</source>
+        <translation>Miner type参数不能为空!</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>自定义</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+</context>
+<context>
     <name>BanTableModel</name>
     <message>
         <source>IP/Netmask</source>
@@ -697,23 +788,23 @@
     <name>CoinControlDialog</name>
     <message>
         <source>Quantity:</source>
-        <translation>总量：</translation>
+        <translation>总量:</translation>
     </message>
     <message>
         <source>Bytes:</source>
-        <translation>字节：</translation>
+        <translation>字节:</translation>
     </message>
     <message>
         <source>Amount:</source>
-        <translation>金额：</translation>
+        <translation>金额:</translation>
     </message>
     <message>
         <source>Priority:</source>
-        <translation type="obsolete">优先级：</translation>
+        <translation type="obsolete">优先级:</translation>
     </message>
     <message>
         <source>Fee:</source>
-        <translation>费用：</translation>
+        <translation>费用:</translation>
     </message>
     <message>
         <source>Coin Selection</source>
@@ -1731,7 +1822,7 @@
     </message>
     <message>
         <source>Range:</source>
-        <translation>范围：</translation>
+        <translation>范围:</translation>
     </message>
     <message>
         <source>to</source>
@@ -5215,7 +5306,7 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>N2N_SERVERIP:</source>
-        <translation>N2N服务器IP:</translation>
+        <translation type="vanished">N2N服务器IP:</translation>
     </message>
     <message>
         <source>Service Timeout:</source>
@@ -5227,19 +5318,19 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     </message>
     <message>
         <source>User name:</source>
-        <translation>登陆名:</translation>
+        <translation type="vanished">登陆名:</translation>
     </message>
     <message>
         <source>SSH-PubKey:</source>
-        <translation>SSH公钥:</translation>
+        <translation type="vanished">SSH公钥:</translation>
     </message>
     <message>
         <source>N2N_NAME:</source>
-        <translation>N2N名:</translation>
+        <translation type="vanished">N2N名:</translation>
     </message>
     <message>
         <source>Remote_IP:</source>
-        <translation>远程IP:</translation>
+        <translation type="vanished">远程IP:</translation>
     </message>
     <message>
         <source>Task Detail</source>
@@ -5288,6 +5379,26 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>No</source>
         <translation>否</translation>
+    </message>
+    <message>
+        <source>User Name：</source>
+        <translation type="obsolete">用户名:</translation>
+    </message>
+    <message>
+        <source>The environment variable</source>
+        <translation>环境变量</translation>
+    </message>
+    <message>
+        <source>Key</source>
+        <translation>变量</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>值</translation>
+    </message>
+    <message>
+        <source>User Name:</source>
+        <translation>用户名:</translation>
     </message>
 </context>
 <context>

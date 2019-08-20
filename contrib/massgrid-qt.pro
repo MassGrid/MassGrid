@@ -26,7 +26,8 @@ FORMS += \
     ../src/qt/forms/dockerorderdescdialog.ui \
     ../src/qt/forms/loadingwin.ui\
     ../src/qt/forms/dockerordertablemodel.ui\
-    ../src/qt/forms/privkeymgr.ui
+    ../src/qt/forms/privkeymgr.ui \
+    ../src/qt/forms/autominersetupwin.ui
 
 
 RESOURCES += \

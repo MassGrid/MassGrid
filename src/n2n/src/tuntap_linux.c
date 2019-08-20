@@ -18,6 +18,8 @@
 #include "n2n.h"
 
 #ifdef __linux__
+#include <linux/if.h>
+#include <linux/if_tun.h>
 
 static void read_mac(char *ifname, n2n_mac_t mac_addr) {
   int _sock, res;

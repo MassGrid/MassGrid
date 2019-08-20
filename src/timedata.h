@@ -71,6 +71,7 @@ public:
 /** Functions to keep track of adjusted P2P time */
 int64_t GetTimeOffset();
 int64_t GetAdjustedTime();
+int64_t GetStartupTime();
 void AddTimeData(const CNetAddr& ip, int64_t nTime);
 
 #endif // MASSGRID_TIMEDATA_H

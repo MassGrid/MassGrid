@@ -1562,6 +1562,14 @@ void CWalletTx::GetAmounts(list<COutputEntry>& listReceived,
         nFee = nDebit - nValueOut;
     }
 
+    isminetype fAllToMe = ISMINE_SPENDABLE;
+    for(const CTxOut& txout: vout) {
+        if(txout.scriptPubKey.Find(OP_RETURN)){
+            continue;
+        }
+        isminetype mine = pwallet->IsMine(txout);
+        if(fAllToMe > mine) fAllToMe = mine;
+    }
     // Sent/received.
     for (unsigned int i = 0; i < vout.size(); ++i)
     {
@@ -1573,7 +1581,7 @@ void CWalletTx::GetAmounts(list<COutputEntry>& listReceived,
         if (nDebit > 0)
         {
             // Don't report 'change' txouts
-            if (fIsMine)
+            if (fIsMine &&!fAllToMe)
                 continue;
         }
         else if (!(fIsMine & filter))

@@ -1071,12 +1071,15 @@ void MasternodeList::jumpToCreateService(std::string ip,std::string txid)
 
 void MasternodeList::slot_btn_refund()
 {
-    std::string txid,mnip;
+    std::string txid,mnip,mnaddress;
     dockerorderView->getCurrentItemTxidAndmnIp(txid);
 
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
     mnip = wtx.Getmasternodeip();
-    COutPoint outpoint = String2OutPoint(wtx.Getmasternodeoutpoint());
+    mnaddress = wtx.Getmasternodeaddress();
+
+    COutPoint outpoint = GUIUtil::getOutPoint(txid,mnaddress);
+    // = String2OutPoint(wtx.Getmasternodeoutpoint());
 
     deleteService(outpoint,mnip);
     //update order status

@@ -97,6 +97,7 @@ void Cluster::AskForServices(int64_t start,int64_t count,bool full)
     LogPrintf("AskForServices pukey %s\n",DefaultPubkey.ToString().substr(0,66));
 
     DockerGetService getService{};
+    dockercluster.vecServiceInfo.servicesInfo.clear();
     getService.pubKeyClusterAddress = DefaultPubkey;
     getService.start = start;
     getService.count = count;

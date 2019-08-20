@@ -29,7 +29,7 @@
 #include "cupdatethread.h"
 #include "guiutil.h"
 #include "dockerserverman.h"
-
+#include "autominersetupwin.h"
 #define LOADRESOURCETIMEOUT 30
 
 extern SendCoinsDialog* g_sendCoinsPage;
@@ -87,6 +87,8 @@ AddDockerServiceDlg::AddDockerServiceDlg(QWidget *parent) :
     connect(ui->nextButton_2,SIGNAL(clicked()),this,SLOT(doTransaction()));
     connect(ui->nextButton_3,SIGNAL(clicked()),this,SLOT(doStep3()));
     connect(ui->nextButton_4,SIGNAL(clicked()),this,SLOT(doStep4()));
+    connect(ui->checkBox_autominer,SIGNAL(clicked(bool)),this,SLOT(slot_autominerChecked(bool)));
+
     connect(ui->comboBox_gpuType,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_gpuComboxCurrentIndexChanged(int)));
 
     ui->stackedWidget->setCurrentIndex(0);
@@ -213,6 +215,7 @@ void AddDockerServiceDlg::slot_nextStep()
             ui->line_3->setEnabled(true);
             ui->label_step3->setEnabled(true);
             ui->label_15->setEnabled(true);
+            QTimer::singleShot(500, this, SLOT(slot_setFocus()));
             break;
         case 2 :
             ui->label_step4->setEnabled(true);
@@ -226,6 +229,11 @@ void AddDockerServiceDlg::slot_nextStep()
     }
     ui->stackedWidget->setCurrentIndex(curPageIndex+1);
 
+}
+
+void AddDockerServiceDlg::slot_setFocus()
+{
+    ui->payAmount->setFocus();
 }
 
 void AddDockerServiceDlg::doStep2()
@@ -471,106 +479,110 @@ void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
         CMessageBox::information(this, tr("Load failed"),tr("Create service have't respone,please check you netwowrk is running!"));
         return ;
     }
+    LogPrintf("AddDockerServiceDlg::updateDNDataAfterCreate 1 m_txid:%s\n",m_txid);
     std::map<std::string,ServiceInfo> serverlist = dockercluster.vecServiceInfo.servicesInfo;
     std::map<std::string,ServiceInfo>::iterator iter = serverlist.begin();
     for(;iter != serverlist.end();iter++){
         QString id = QString::fromStdString(iter->first);
         ServiceInfo service = serverlist[iter->first];
+        LogPrintf("AddDockerServiceDlg::updateDNDataAfterCreate 2:%s\n",service.CreateSpec.OutPoint.hash.ToString());
+
         if(m_txid == service.CreateSpec.OutPoint.hash.ToString()){
             slot_nextStep();
             return ;
         }
     }
 
-    // if(dockercluster.dndata.errCode != 0){
-    // // if(dockercluster.vecServiceInfo.err.size() > 0){
-    //     QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
-
-    //     switch (dockercluster.dndata.errCode)
-    //     {
-    //         case SERVICEMANCODE::SIGTIME_ERROR:
-    //         case SERVICEMANCODE::VERSION_ERROR:
-    //         case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
-    //         case SERVICEMANCODE::NO_THRANSACTION:
-    //         case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
-    //         case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
-    //         case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
-    //             QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
-    //             CMessageBox::information(this, tr("Create Failed"),msg);
-    //             close();
-    //             return ;
-    //         }
-    //         case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
-    //         case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
-    //         case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
-    //         case SERVICEMANCODE::GPU_AMOUNT_ERROR:
-    //         case SERVICEMANCODE::CPU_AMOUNT_ERROR:
-    //         case SERVICEMANCODE::MEM_AMOUNT_ERROR:
-    //         case SERVICEMANCODE::PUBKEY_ERROR:{
-    //             QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
-    //             CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
-    //                 msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
-
-    //             if(btnRetVal == CMessageBox::Cancel){
-    //                 close();
-    //                 return ;
-    //             }
-    //             else{
-    //                 gotoStep1Page();
-    //             }
-    //         }
-    //         default:
-    //             break;
-    //     }
-    // }
-
-    if(dockercluster.vecServiceInfo.err.size() > 0){
-
+    if(dockercluster.vecServiceInfo.errCode != 0){
+    // if(dockercluster.vecServiceInfo.err.size() > 0){
         // QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
-        QString errStr = QString::fromStdString(dockercluster.vecServiceInfo.err);
+        QString errStr = dockercluster.vecServiceInfo.err;
 
-        QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
-        CMessageBox::information(this, tr("Create Failed"),msg);
-        close();
-        return ;
+        switch (dockercluster.vecServiceInfo.errCode)
+        {
+            case SERVICEMANCODE::SIGTIME_ERROR:
+            case SERVICEMANCODE::VERSION_ERROR:
+            case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
+            case SERVICEMANCODE::NO_THRANSACTION:
+            case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
+            case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
+            case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
+                QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
+                CMessageBox::information(this, tr("Create Failed"),msg);
+                close();
+                return ;
+            }
+            case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
+            case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
+            case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
+            case SERVICEMANCODE::GPU_AMOUNT_ERROR:
+            case SERVICEMANCODE::CPU_AMOUNT_ERROR:
+            case SERVICEMANCODE::MEM_AMOUNT_ERROR:
+            case SERVICEMANCODE::PUBKEY_ERROR:{
+                QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
+                CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
+                    msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
 
-        // switch (dockercluster.dndata.errCode)
-        // {
-        //     case SERVICEMANCODE::SIGTIME_ERROR:
-        //     case SERVICEMANCODE::VERSION_ERROR:
-        //     case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
-        //     case SERVICEMANCODE::NO_THRANSACTION:
-        //     case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
-        //     case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
-        //     case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
-        //         QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
-        //         CMessageBox::information(this, tr("Create Failed"),msg);
-        //         close();
-        //         return ;
-        //     }
-        //     case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
-        //     case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
-        //     case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
-        //     case SERVICEMANCODE::GPU_AMOUNT_ERROR:
-        //     case SERVICEMANCODE::CPU_AMOUNT_ERROR:
-        //     case SERVICEMANCODE::MEM_AMOUNT_ERROR:
-        //     case SERVICEMANCODE::PUBKEY_ERROR:{
-        //         QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
-        //         CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
-        //             msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
-
-        //         if(btnRetVal == CMessageBox::Cancel){
-        //             close();
-        //             return ;
-        //         }
-        //         else{
-        //             gotoStep1Page();
-        //         }
-        //     }
-        //     default:
-        //         break;
-        // }
+                if(btnRetVal == CMessageBox::Cancel){
+                    close();
+                    return ;
+                }
+                else{
+                    gotoStep1Page();
+                }
+            }
+            default:
+                break;
+        }
     }
+
+    // if(dockercluster.vecServiceInfo.err.size() > 0){
+
+    //     // QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
+    //     QString errStr = QString::fromStdString(dockercluster.vecServiceInfo.err);
+
+    //     QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
+    //     CMessageBox::information(this, tr("Create Failed"),msg);
+    //     close();
+    //     return ;
+
+    //     // switch (dockercluster.dndata.errCode)
+    //     // {
+    //     //     case SERVICEMANCODE::SIGTIME_ERROR:
+    //     //     case SERVICEMANCODE::VERSION_ERROR:
+    //     //     case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
+    //     //     case SERVICEMANCODE::NO_THRANSACTION:
+    //     //     case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
+    //     //     case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
+    //     //     case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
+    //     //         QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
+    //     //         CMessageBox::information(this, tr("Create Failed"),msg);
+    //     //         close();
+    //     //         return ;
+    //     //     }
+    //     //     case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
+    //     //     case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
+    //     //     case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
+    //     //     case SERVICEMANCODE::GPU_AMOUNT_ERROR:
+    //     //     case SERVICEMANCODE::CPU_AMOUNT_ERROR:
+    //     //     case SERVICEMANCODE::MEM_AMOUNT_ERROR:
+    //     //     case SERVICEMANCODE::PUBKEY_ERROR:{
+    //     //         QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
+    //     //         CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
+    //     //             msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+    //     //         if(btnRetVal == CMessageBox::Cancel){
+    //     //             close();
+    //     //             return ;
+    //     //         }
+    //     //         else{
+    //     //             gotoStep1Page();
+    //     //         }
+    //     //     }
+    //     //     default:
+    //     //         break;
+    //     // }
+    // }
 }
 
 QString AddDockerServiceDlg::getErrorMsg(int errCode)
@@ -919,6 +931,20 @@ void AddDockerServiceDlg::slot_buyClicked()
         return ;
     }
 
+    QPoint pos = MassGridGUI::winPos();
+    QSize size = MassGridGUI::winSize();
+
+    if(ui->checkBox_autominer->isChecked()){
+        AutoMinerSetupWin win;
+        win.move(pos.x()+(size.width()-win.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-win.height()*GUIUtil::GetDPIValue())/2);
+        
+        if(win.exec() != QDialog::Accepted){
+            return ;
+        }
+        // m_createService.env = win.getEnvSetup();
+        m_createService->clusterServiceCreate.ENV = win.getEnvSetup();
+    }
+
     ResourceItem* item = dynamic_cast<ResourceItem *>(QObject::sender());
     doStep1(item);
 
@@ -972,6 +998,8 @@ void AddDockerServiceDlg::doStep1(ResourceItem* item)
     ui->payAmount->setFocus();
     m_amount = amount;
     slot_nextStep();
+
+    ui->payAmount->setFocus();
 }
 
 void AddDockerServiceDlg::slot_hireTimeChanged(int value)
@@ -1011,6 +1039,13 @@ void AddDockerServiceDlg::slot_gpuComboxCurrentIndexChanged(int index)
         if(!curText.contains(gpuType)){
             ui->tableWidget_resource->hideRow(i);
         }
+    }
+}
+
+void AddDockerServiceDlg::slot_autominerChecked(bool isChecked)
+{
+    if(isChecked){
+        ui->comboBox_image->setCurrentIndex(ui->comboBox_image->findText("10.0-autominer-ubuntu16.04"));
     }
 }
 
@@ -1110,3 +1145,4 @@ bool AskDNDataWorker::isAskDNDataFinished()
         return true;
     }
 }
+

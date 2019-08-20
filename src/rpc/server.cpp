@@ -13,7 +13,7 @@
 #include "ui_interface.h"
 #include "util.h"
 #include "utilstrencodings.h"
-
+#include "timedata.h"
 #include <univalue.h>
 
 #include <boost/bind.hpp>
@@ -249,6 +249,22 @@ UniValue stop(const UniValue& params, bool fHelp)
     StartShutdown();
     return "MassGrid server stopping";
 }
+static UniValue uptime(const UniValue& params, bool fHelp)
+{
+    if (fHelp || params.size() > 0)
+        throw runtime_error(
+            "uptime"
+                "\nReturns the total uptime of the server.\n"
+                "\nResult:\n"
+                        "ttt        (numeric) The number of seconds that the server has been running\n"
+                
+                "\nExamples:\n"
+                + HelpExampleCli("uptime", "")
+                + HelpExampleRpc("uptime", "")
+        );
+
+    return GetTime() - GetStartupTime();
+}
 
 /**
  * Call Table
@@ -260,6 +276,7 @@ static const CRPCCommand vRPCCommands[] =
     { "control",            "getinfo",                &getinfo,                true  }, /* uses wallet if enabled */
     { "control",            "debug",                  &debug,                  true  },
     { "control",            "help",                   &help,                   true  },
+    { "control",            "uptime",                 &uptime,                 true  },
     { "control",            "stop",                   &stop,                   true  },
 
     /* P2P networking */
@@ -278,6 +295,7 @@ static const CRPCCommand vRPCCommands[] =
 
     /* Block chain and UTXO */
     { "blockchain",         "getblockchaininfo",      &getblockchaininfo,      true  },
+    { "blockchain",         "getchaintxstats",        &getchaintxstats,        true  },
     { "blockchain",         "getbestblockhash",       &getbestblockhash,       true  },
     { "blockchain",         "getblockcount",          &getblockcount,          true  },
     { "blockchain",         "getblock",               &getblock,               true  },

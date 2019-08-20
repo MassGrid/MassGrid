@@ -24,10 +24,26 @@ ServiceDetail::ServiceDetail(QWidget* parent) : QDialog(parent),
 
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableWidget->verticalHeader()->setVisible(false);
+    ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidget->setColumnWidth(0, 120);
 
     ui->label_titlename->setText(tr("Service Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
     GUIUtil::MakeShadowEffect(this,ui->centerWin);
+
+    ui->label_11->hide();
+    ui->label_12->hide();
+    ui->label_13->hide();
+    ui->label_15->hide();
+
+    ui->label_GPUName->hide();
+    ui->label_cpuCount->hide();
+    ui->label_memoryBytes->hide();
+    ui->label_GPUCount->hide();
+    
 }
 
 ServiceDetail::~ServiceDetail()
@@ -114,6 +130,10 @@ void ServiceDetail::updateServiceDetail(ServiceInfo& service)
     QString ssh_pubkey;
     for (int i = 0; i < count; i++) {
         QString envStr = QString::fromStdString(env[i]);
+        ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);        
+        ui->tableWidget->setItem(i,0,new QTableWidgetItem(envStr.split("=").at(0)));
+        ui->tableWidget->setItem(i,1,new QTableWidgetItem(envStr.split("=").at(1)));
+/*
         if (envStr.contains("N2N_NAME")) {
             n2n_name = envStr.split("=").at(1);
         } else if (envStr.contains("N2N_SERVERIP")) {
@@ -125,13 +145,14 @@ void ServiceDetail::updateServiceDetail(ServiceInfo& service)
             if (size >= 2)
                 ssh_pubkey = envStr.split(" ").at(1).mid(0, 10);
         }
+*/
     }
-
+/*
     ui->label_n2n_serverip->setText(n2n_SPIP);
     ui->label_n2n_name->setText(n2n_name);
     ui->label_n2n_localip->setText(n2n_localip);
     ui->label_ssh_pubkey->setText(ssh_pubkey);
-
+*/
     ui->label_name->setText(QString::fromStdString(name));
     ui->label_image->setText(QString::fromStdString(image));
     ui->label_user->setText(QString::fromStdString(userName));
@@ -193,6 +214,7 @@ void ServiceDetail::updateTaskDetail(std::vector<Task>& mapDockerTasklists, int&
 
         int64_t nanoCPUs = task.spec.resources.limits.nanoCPUs;
         int64_t memoryBytes = task.spec.resources.limits.memoryBytes;
+        // task.spec.containerSpec
 
         std::string gpuName;
         int64_t gpuCount = 0;
