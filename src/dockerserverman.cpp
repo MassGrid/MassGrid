@@ -791,11 +791,31 @@ int CDockerServerman::SetTlementServiceWithoutDelete(uint256 serviceTxid){
 
         customerAddress = CMassGridAddress(wtx.Getcusteraddress());
         providerAddress = CMassGridAddress(wtx.Getprovideraddress());
-        double feeRate = boost::lexical_cast<double>(wtx.Getfeerate());
-        int64_t createTime = boost::lexical_cast<int64_t>(wtx.Getcreatetime());
-        int64_t deleteTime = boost::lexical_cast<int64_t>(wtx.Getdeletetime());
-        CAmount price = boost::lexical_cast<CAmount>(wtx.Getprice());
-        int taskStatus = boost::lexical_cast<int>(wtx.Gettaskstate());
+        
+        std::string strFeeRate = wtx.Getfeerate();
+        double feeRate=0;
+        if(!strFeeRate.empty())
+            feeRate = boost::lexical_cast<double>(strFeeRate);
+        
+        std::string strCreateTime = wtx.Getcreatetime();
+        int64_t createTime = 0;
+        if(!strCreateTime.empty())
+            createTime = boost::lexical_cast<int64_t>(strCreateTime);
+
+        std::string strDeleteTime = wtx.Getdeletetime();
+        int64_t deleteTime = 0;
+        if(!strDeleteTime.empty())
+            deleteTime = boost::lexical_cast<int64_t>(strDeleteTime);
+        
+        std::string strCAmount = wtx.Getprice();
+        CAmount price = 0;
+        if(!strCAmount.empty())
+            price = boost::lexical_cast<CAmount>(strCAmount);
+        
+        std::string strTaskStatus = wtx.Gettaskstate();
+        int taskStatus = 0 ;
+        if(!strTaskStatus.empty())
+            taskStatus = boost::lexical_cast<int>(strTaskStatus);
         fnoCreated = taskStatus < Config::TASKSTATE_RUNNING;
         
 
