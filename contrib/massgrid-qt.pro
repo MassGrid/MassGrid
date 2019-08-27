@@ -27,9 +27,16 @@ FORMS += \
     ../src/qt/forms/loadingwin.ui\
     ../src/qt/forms/dockerordertablemodel.ui\
     ../src/qt/forms/privkeymgr.ui \
-    ../src/qt/forms/autominersetupwin.ui
+    ../src/qt/forms/autominersetupwin.ui \
+    ../src/qt/forms/simplesendcoindlg.ui
 
 
 RESOURCES += \
 ../src/qt/massgrid.qrc
+
+HEADERS += \
+    simplesendcoindlg.h
+
+SOURCES += \
+    simplesendcoindlg.cpp
 

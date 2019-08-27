@@ -1283,6 +1283,29 @@ QDialog#AddDockerServiceDlg QFrame#frame_9{
     min-width: @450px@;
 }
 
+QDialog#SimpleSendcoinDlg QFrame#frame_8,
+QDialog#SimpleSendcoinDlg QFrame#frame_9{
+    min-height:@38px@;
+    border-color: rgb(186, 186, 186);
+    border:1px solid rgb(186, 186, 186);
+    border-radius:@3px@;
+}
+
+QDialog#SimpleSendcoinDlg QFrame#pBtn_sendCoin{
+    width: @100px@;
+    height: @35px@;
+}
+
+QWidget#MasternodeList QPushButton#pBtn_relet{
+    min-width:@80px@;
+    min-height:@28px@;
+}
+
+QDialog#SimpleSendcoinDlg{
+    min-width: @580px@;
+    min-height: @360px@;
+}
+
 QWidget#AddressBookPage{
     min-width:@640px@;
     min-height:@350px@;

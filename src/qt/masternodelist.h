@@ -123,6 +123,7 @@ private:
     void gotoOrderDetailPage(int index);
     void initDockerOrderView(const PlatformStyle *platformStyle);
     void startScanTimer(int msec);
+    void reletService(const COutPoint& createOutPoint, const COutPoint& outPoint);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -159,6 +160,7 @@ private Q_SLOTS:
     void jumpToCreateService(std::string ip,std::string txid);
     void timeoutToScanStatus();
     void disenableDeleteServiceBtn();
+    void onPBtn_reletClicked();
     // void askTransData(std::string txid);
 };
 

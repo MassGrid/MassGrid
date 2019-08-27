@@ -245,7 +245,7 @@
                       </sizepolicy>
                      </property>
                      <property name="placeholderText">
-                      <string>0xff6514c44f4D3AFeEFDFca7913D33Ec3a87747f3</string>
+                      <string>MBew1aDgegex4GnYwzX2jhfAwJP37AJXsf</string>
                      </property>
                     </widget>
                    </item>
@@ -366,7 +366,7 @@
                       </sizepolicy>
                      </property>
                      <property name="placeholderText">
-                      <string>eth.f2pool.com:8080</string>
+                      <string>mgd.vvpool.com:5630 </string>
                      </property>
                     </widget>
                    </item>
@@ -434,7 +434,7 @@
                       </sizepolicy>
                      </property>
                      <property name="placeholderText">
-                      <string>ETH</string>
+                      <string>MGD</string>
                      </property>
                     </widget>
                    </item>

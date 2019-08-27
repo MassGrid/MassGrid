@@ -493,10 +493,12 @@ void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
         }
     }
 
+
+
     if(dockercluster.vecServiceInfo.errCode != 0){
     // if(dockercluster.vecServiceInfo.err.size() > 0){
         // QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
-        QString errStr = dockercluster.vecServiceInfo.err;
+        QString errStr = QString::fromStdString(dockercluster.vecServiceInfo.err);
 
         switch (dockercluster.vecServiceInfo.errCode)
         {
@@ -531,7 +533,12 @@ void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
                     gotoStep1Page();
                 }
             }
-            default:
+            default:{
+                QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
+                CMessageBox::information(this, tr("Create Failed"),msg);
+                close();
+                return ;
+            }
                 break;
         }
     }
@@ -630,10 +637,8 @@ void AddDockerServiceDlg::checkCreateTaskStatus(std::string txid)
 
 }
 
-
 bool AddDockerServiceDlg::sendCoin()
 {
-
     bool lockedFlag = pwalletMain->IsLocked();
 
     if(lockedFlag){
@@ -643,7 +648,6 @@ bool AddDockerServiceDlg::sendCoin()
             return false;
         // Unlock wallet when requested by wallet model
         if (m_walletModel->getEncryptionStatus() == WalletModel::Locked)
-        // if(m_walletModel->isLocked())
         {
             AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, 0);
             dlg.setModel(m_walletModel);

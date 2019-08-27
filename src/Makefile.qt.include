@@ -35,6 +35,7 @@ QT_FORMS_UI = \
   qt/forms/mainwintitle.ui \
   qt/forms/adddockerservicedlg.ui\
   qt/forms/autominersetupwin.ui\
+  qt/forms/simplesendcoindlg.ui\
   qt/forms/loadingwin.ui
 
 
@@ -102,6 +103,7 @@ QT_MOC_CPP = \
   qt/moc_mainwintitle.cpp \
   qt/moc_adddockerservicedlg.cpp \
   qt/moc_autominersetupwin.cpp \
+  qt/moc_simplesendcoindlg.cpp \
   qt/moc_loadingwin.cpp
 
 
@@ -182,6 +184,7 @@ MASSGRID_QT_H = \
   qt/adddockerservicedlg.h \
   qt/autominersetupwin.h \
   qt/loadingwin.h \
+  qt/simplesendcoindlg.h \
   qt/transactionfilterproxy.h \
   qt/transactionrecord.h \
   qt/transactiontablemodel.h \
@@ -322,6 +325,7 @@ MASSGRID_QT_CPP += \
   qt/adddockerservicedlg.cpp \
   qt/autominersetupwin.cpp \
   qt/loadingwin.cpp \
+  qt/simplesendcoindlg.cpp \
   qt/transactionfilterproxy.cpp \
   qt/transactionrecord.cpp \
   qt/transactiontablemodel.cpp \

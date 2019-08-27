@@ -97,20 +97,9 @@ void ServiceDetail::setService(ServiceInfo& service)
 
 void ServiceDetail::updateServiceDetail(ServiceInfo& service)
 {
-    // uint64_t createdAt = service.CreatedAt;
-
-    // std::string name = service.spec.name;
-    // std::string address = service.spec.labels["com.massgrid.pubkey"];
-    // bool fPersistentsore = !QString::fromStdString(service.spec.labels["com.massgrid.nfs"]).isEmpty();
-
-    // std::string image = service.spec.taskTemplate.containerSpec.image;
-    // std::string userName = service.spec.taskTemplate.containerSpec.user;
-
     uint64_t createdAt = service.CreatedAt;
     std::string name = service.CreateSpec.ServiceName;
-    // std::string address = service.spec.labels["com.massgrid.pubkey"];
 
-    // bool fPersistentsore = !QString::fromStdString(service.spec.labels["com.massgrid.nfs"]).isEmpty();
     bool fPersistentsore = false;
 
     std::string image = service.CreateSpec.Image;
@@ -133,56 +122,25 @@ void ServiceDetail::updateServiceDetail(ServiceInfo& service)
         ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);        
         ui->tableWidget->setItem(i,0,new QTableWidgetItem(envStr.split("=").at(0)));
         ui->tableWidget->setItem(i,1,new QTableWidgetItem(envStr.split("=").at(1)));
-/*
-        if (envStr.contains("N2N_NAME")) {
-            n2n_name = envStr.split("=").at(1);
-        } else if (envStr.contains("N2N_SERVERIP")) {
-            n2n_localip = envStr.split("=").at(1);
-        } else if (envStr.contains("N2N_SNIP")) {
-            n2n_SPIP = envStr.split("=").at(1);
-        } else if (envStr.contains("SSH_PUBKEY")) {
-            int size = envStr.split(" ").size();
-            if (size >= 2)
-                ssh_pubkey = envStr.split(" ").at(1).mid(0, 10);
-        }
-*/
     }
-/*
-    ui->label_n2n_serverip->setText(n2n_SPIP);
-    ui->label_n2n_name->setText(n2n_name);
-    ui->label_n2n_localip->setText(n2n_localip);
-    ui->label_ssh_pubkey->setText(ssh_pubkey);
-*/
+
     ui->label_name->setText(QString::fromStdString(name));
     ui->label_image->setText(QString::fromStdString(image));
     ui->label_user->setText(QString::fromStdString(userName));
     ui->label_PersistentStore->setText(fPersistentsore?tr("Yes"):tr("No"));
 
-    // CWalletTx& wtx = pwalletMain->mapWallet[service.txid];
     uint256 txid = service.CreateSpec.OutPoint.hash;
     CWalletTx& wtx = pwalletMain->mapWallet[service.CreateSpec.OutPoint.hash];
     
-    if(wtx.Getprice().size()){
-        CAmount itemPrice = (CAmount)(QString::fromStdString(wtx.Getprice()).toDouble());
+    std::vector<ServiceOrder> Order = service.Order;
 
-        CAmount payment = GUIUtil::getTxidAmount(txid.ToString())*(-1);
-
-        QString itemPriceStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, itemPrice);
-        QString paymentStr = MassGridUnits::formatWithUnit(MassGridUnits::MGD, payment);
-
-        if(itemPriceStr.split(" ").size()==2 && paymentStr.split(" ").size()==2){
-            double itemPrice_num = itemPriceStr.split(" ").at(0).toDouble();
-            double payment_num = paymentStr.split(" ").at(0).toDouble();
-
-            int msec = (payment_num/itemPrice_num)*3600 + fmod(payment_num,itemPrice_num)*60 ;
-
-            ui->label_serviceTimeout->setText(QDateTime::fromTime_t(createdAt).addSecs(msec).toString("yyyy-MM-dd hh:mm:ss"));
-        }
-        else
-        {
-            ui->label_serviceTimeout->setText(QDateTime::fromTime_t(createdAt).addSecs(3600).toString("yyyy-MM-dd hh:mm:ss"));
-        }
+    int orderSize = Order.size();
+    int64_t totalRemainingTimeDuration = 0;
+    for(int i=0;i<orderSize;i++){
+        totalRemainingTimeDuration += Order[i].RemainingTimeDuration;
     }
+    QString timeout = QDateTime::fromTime_t(service.LastCheckTime).addMSecs(totalRemainingTimeDuration/1000000).toString("yyyy-MM-dd hh:mm:ss");
+    ui->label_serviceTimeout->setText(timeout);
 }
 
 void ServiceDetail::setModel(WalletModel* model)
@@ -192,21 +150,13 @@ void ServiceDetail::setModel(WalletModel* model)
 
 void ServiceDetail::updateTaskDetail(std::vector<Task>& mapDockerTasklists, int& taskStatus)
 {
-    // map<std::string, Task>::iterator iter = mapDockerTasklists.begin();
-
-    LogPrintf("mapDockerTasklists size:%d \n", mapDockerTasklists.size());
     int count = mapDockerTasklists.size();
-    // for (; iter != mapDockerTasklists.end(); iter++) {
     for(int i=0;i<count;i++){
-        // std::string id = iter->first;
-        // Task task = iter->second;
         Task task = mapDockerTasklists[i];
         QString name = QString::fromStdString(task.name);
         QString serviceID = QString::fromStdString(task.serviceID);
         int64_t slot = task.slot;
 
-        //std::string
-        // int taskstatus = -1;
         taskStatus = task.status.state;
         QString taskStatusStr = GUIUtil::GetServiceTaskStatus(taskStatus);  // QString::fromStdString(strTaskStateTmp2[taskStatus]);
 
@@ -214,7 +164,6 @@ void ServiceDetail::updateTaskDetail(std::vector<Task>& mapDockerTasklists, int&
 
         int64_t nanoCPUs = task.spec.resources.limits.nanoCPUs;
         int64_t memoryBytes = task.spec.resources.limits.memoryBytes;
-        // task.spec.containerSpec
 
         std::string gpuName;
         int64_t gpuCount = 0;

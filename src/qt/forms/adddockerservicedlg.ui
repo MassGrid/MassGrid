@@ -1067,7 +1067,7 @@ border-image: url(:/res/pic/arrow_disabled.png);
                  <item>
                   <widget class="QFrame" name="frame_8">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1142,7 +1142,7 @@ background-color: rgba(255, 255, 255,0);</string>
                  <item>
                   <widget class="QFrame" name="frame_9">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>

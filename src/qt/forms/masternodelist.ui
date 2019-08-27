@@ -379,6 +379,13 @@
               </spacer>
              </item>
              <item>
+              <widget class="QPushButton" name="pBtn_relet">
+               <property name="text">
+                <string>Relet</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QFrame" name="frame_2">
                <property name="minimumSize">
                 <size>
@@ -403,6 +410,11 @@ border:hidden;
            </item>
            <item>
             <widget class="QTableWidget" name="serviceTableWidget">
+             <column>
+              <property name="text">
+               <string>Outpoint</string>
+              </property>
+             </column>
              <column>
               <property name="text">
                <string>User Id</string>
