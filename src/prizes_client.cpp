@@ -197,15 +197,19 @@ bool PrizesClient::GetMachines(ResponseMachines& machines, std::string& err)
     }
     NodeListStatistics::DecodeFromJson(jsondata, nodeListStatistics);
     for (auto& nodeinfo : nodeListStatistics.list) {
-        if (nodeinfo.OnWorking) continue;
+        // if (nodeinfo.OnWorking) continue;
         Item item(nodeinfo.hardware.CPUType, nodeinfo.hardware.CPUThread, nodeinfo.hardware.MemoryType, nodeinfo.hardware.MemoryCount, nodeinfo.hardware.GPUType, nodeinfo.hardware.GPUCount);
         if (machines.items.count(item)) {
-            machines.items[item].count++;
+            if (!nodeinfo.OnWorking)
+                machines.items[item].count++;
         } else {
             CAmount price = dockerPriceConfig.getPrice(item.cpu.Type, item.cpu.Name) * item.cpu.Count +
                             dockerPriceConfig.getPrice(item.mem.Type, item.mem.Name) * item.mem.Count +
                             dockerPriceConfig.getPrice(item.gpu.Type, item.gpu.Name) * item.gpu.Count;
-            machines.items[item] = Value_price(price, 1);
+            if (!nodeinfo.OnWorking)
+                machines.items[item] = Value_price(price, 1);
+            else
+                machines.items[item] = Value_price(price, 0);
         }
     }
     machines.TotalCount = nodeListStatistics.TotalCount;
