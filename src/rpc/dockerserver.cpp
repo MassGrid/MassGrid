@@ -226,6 +226,7 @@ UniValue docker(const UniValue& params, bool fHelp)
                 for(auto &it :dockercluster.vecServiceInfo.servicesInfo){
                     if(it.second.CreateSpec.OutPoint == dockerCreateService.clusterServiceCreate.OutPoint){
                         serviceInfo = it.second;
+                        dockercluster.saveServiceData(serviceInfo);
                         break;
                     }
                 }
@@ -264,6 +265,7 @@ UniValue docker(const UniValue& params, bool fHelp)
                 for(auto &it :dockercluster.vecServiceInfo.servicesInfo){
                     if(it.second.CreateSpec.OutPoint == updateService.clusterServiceUpdate.CrerateOutPoint){
                         serviceInfo = it.second;
+                        dockercluster.saveReletServiceData(it.second.ServiceID,updateService);
                         break;
                     }
                 }

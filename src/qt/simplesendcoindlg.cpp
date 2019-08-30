@@ -10,19 +10,22 @@
 #include "askpassphrasedialog.h"
 #include "massgridgui.h"
 #include "amount.h"
+#include "dockercluster.h"
 
 extern CWallet* pwalletMain;
 extern SendCoinsDialog* g_sendCoinsPage;
 
 SimpleSendcoinDlg::SimpleSendcoinDlg(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SimpleSendcoinDlg)
+    ui(new Ui::SimpleSendcoinDlg),
+    m_askDNDataWorker(NULL)
 {
     ui->setupUi(this);
 
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(ui->pBtn_sendCoin, SIGNAL(clicked()), this, SLOT(onPBtn_sendCoinClicked()));
+    connect(ui->horizontalSlider,SIGNAL(valueChanged(int)),this,SLOT(onHireTimeChanged(int)));
 
     ui->label_titlename->setText(tr("Service Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
@@ -70,14 +73,87 @@ void SimpleSendcoinDlg::mouseReleaseEvent(QMouseEvent* e)
     this->move(QPoint(this->x() + dx, this->y() + dy));
 }
 
-void SimpleSendcoinDlg::prepareOrderTransaction(WalletModel* model,const std::string& paytoAddress,const std::string& addr_port)
+void SimpleSendcoinDlg::prepareOrderTransaction(WalletModel* model,const std::string& serviceID,const std::string& paytoAddress,const std::string& addr_port,CAmount machinePrice)
 {
     m_walletModel = model;
     m_paytoAddress = paytoAddress;
     m_addr_port = addr_port;
+    m_amount = machinePrice;
+    m_serviceID = serviceID;
 
-    LogPrintf("---->prepareOrderTransaction m_paytoAddress:%s\n",m_paytoAddress);
     ui->payTo->setText(QString::fromStdString(m_paytoAddress));
+    ui->payAmount->setValue(machinePrice);
+    ui->payAmount->setFocus();
+
+    askForDNData();
+}
+
+void SimpleSendcoinDlg::startAskDNDataWork(const char* slotMethod,bool needAsk)
+{
+    if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+        return ;
+    }
+
+    if(m_askDNDataWorker == NULL){
+        m_askDNDataWorker = new AskDNDataWorker(0);
+        QThread *workThread = new QThread(0);
+        m_askDNDataWorker->moveToThread(workThread);
+        connect(workThread,SIGNAL(started()),m_askDNDataWorker,SLOT(startTask()));
+        connect(m_askDNDataWorker,SIGNAL(updateTaskTime(int)),this,SLOT(updateCreateServerWaitTimer(int)));
+        connect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),workThread,SLOT(quit()));
+    }
+
+    connect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),this,slotMethod);
+
+    if(needAsk)
+        dockercluster.AskForDNData();
+    
+    m_askDNDataWorker->thread()->start();
+}
+
+CAmount SimpleSendcoinDlg::getMachinePrice()
+{
+    //     dockercluster.AskForServices(0,0,false);
+    // refreshServerList();
+    ServiceInfo serviceInfo = dockercluster.vecServiceInfo.servicesInfo[m_serviceID];
+    std::map<Item, Value_price> items = dockercluster.machines.items; 
+
+    Item machineItem(serviceInfo.CreateSpec.hardware.CPUType,
+                    serviceInfo.CreateSpec.hardware.CPUThread,
+                    serviceInfo.CreateSpec.hardware.MemoryType,
+                    serviceInfo.CreateSpec.hardware.MemoryCount,
+                    serviceInfo.CreateSpec.hardware.GPUType,
+                    serviceInfo.CreateSpec.hardware.GPUCount);
+    Value_price itemPrice = items[machineItem];
+
+    ui->payAmount->setValue(itemPrice.price);
+}
+
+void SimpleSendcoinDlg::askForDNData()
+{
+    // showLoading(tr("Load docer resource..."));
+
+    const char* method = SLOT(updateServiceListFinished(bool));
+    startAskDNDataWork(method,true);
+}
+
+void SimpleSendcoinDlg::updateServiceListFinished(bool isTaskFinished)
+{
+    disconnect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),this,SLOT(updateServiceListFinished(bool)));
+    // hideLoadingWin(); 
+
+    if(isTaskFinished){
+        // loadResourceData();
+        getMachinePrice();
+        LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Received\n");
+    }
+    else
+    {
+        //time out tip
+        CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker configuration!"));
+        return;
+    }
 }
 
 std::string SimpleSendcoinDlg::getTxid()
@@ -132,7 +208,6 @@ bool SimpleSendcoinDlg::sendCoin()
         recipient.fUseInstantSend = false;
     }
     
-    // getValue(recipient);
     QList<SendCoinsRecipient> recipients;
     recipients.append(recipient);
     std::string txid = g_sendCoinsPage->send(recipients,"","",true,m_addr_port);
@@ -183,4 +258,10 @@ bool SimpleSendcoinDlg::validate(SendCoinsRecipient& recipient)
     }
 
     return retval;
+}
+
+void SimpleSendcoinDlg::onHireTimeChanged(int value)
+{
+    ui->label_hireTime->setText(QString("(%1H)").arg(QString::number(value)));
+    ui->payAmount->setValue(m_amount*value);
 }

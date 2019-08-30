@@ -64,7 +64,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
         
     }else if(strCommand == NetMsgType::DNDATA){     //cluster
-
+        LogPrintf("CDockerServerman::ProcessMessage DNDATA Started\n");
         LogPrint("dockernode","CDockerServerman::ProcessMessage DNDATA Started\n");
         ResponseMachines mdndata;
         vRecv >> mdndata;
@@ -166,7 +166,8 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         vRecv >> dockerServiceInfo;
         if (dockerServiceInfo.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || dockerServiceInfo.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION) {
             LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", dockerServiceInfo.version, DOCKERREQUEST_API_MINSUPPORT_VERSION, DOCKERREQUEST_API_MAXSUPPORT_VERSION);
-            setDNDataStatus(DNDATASTATUS::Received);
+            // setDNDataStatus(DNDATASTATUS::Received);
+            setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::ReceivedSD);
             return;
         }
         for(int i=0;i<dockerServiceInfo.servicesInfo.size();++i){
@@ -175,14 +176,22 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         if (dockerServiceInfo.servicesInfo.size() > 1){
             dockercluster.vecServiceInfo.servicesInfo.clear();
         }
+        std::string state = "";
         for (auto& item : dockerServiceInfo.servicesInfo) {
             dockercluster.vecServiceInfo.servicesInfo[item.first] = item.second;
+
+            CWalletTx& wtx = pwalletMain->mapWallet[item.second.CreateSpec.OutPoint.hash];
+            wtx.Setstate(item.second.State);
+            CWalletDB walletdb(pwalletMain->strWalletFile);
+            wtx.WriteToDisk(&walletdb);
+            break;
         }
         dockercluster.vecServiceInfo.err = dockerServiceInfo.err;
         dockercluster.vecServiceInfo.errCode = dockerServiceInfo.errCode;
         
         dockercluster.vecServiceInfo.msg = dockerServiceInfo.msg;
-        setDNDataStatus(DNDATASTATUS::Received);
+        setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::ReceivedSD);
+
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("dockernode", "CDockerServerman::ProcessMessage CREATESERVICE Started\n");
         DockerServiceInfo dockerServiceInfo{};

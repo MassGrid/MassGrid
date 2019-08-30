@@ -2,7 +2,6 @@
 #define LOADINGWIN_H
 
 #include <QWidget>
-// #include <QMovie>
 
 namespace Ui {
 class LoadingWin;
@@ -18,12 +17,14 @@ public:
 
     void showLoading(const QString &msg);
     void hideWin();
-    
+
+    static void showLoading2(const QString& msg);
+    static void hideLoadingWin();
+
 private:
     Ui::LoadingWin *ui;
 
-    // QMovie *m_movie;
-
+    
 };
 
 #endif // LOADINGWIN_H

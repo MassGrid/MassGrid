@@ -67,6 +67,11 @@ public:
         ReceivedTD,
         FreeTD
     };
+    enum SERVICESTATUS{
+        AskSD = 0,
+        ReceivedSD,
+        FreeSD
+    };
     enum TLEMENTSTATE{
         FAILEDCONTINUE = -1,
         FAILEDREMOVE,
@@ -80,6 +85,7 @@ public:
     static bool CheckDeleteService(DockerDeleteService& dockerDeleteService,std::string& msg, std::string& err);
     DNDATASTATUS dndataStatus;
     TRANSDATASTATUS transdataStatus;
+    SERVICESTATUS serviceStatus;
 
     void setDNDataStatus(DNDATASTATUS type){
         dndataStatus = type;
@@ -93,7 +99,12 @@ public:
     TRANSDATASTATUS getTRANSDataStatus(){
         return transdataStatus;
     }
-
+    void setSERVICEDataStatus(SERVICESTATUS type){
+        serviceStatus = type;
+    }
+    SERVICESTATUS getSERVICEStatus(){
+        return serviceStatus;
+    }
 };
 
 #endif  //DOCKERSERVERMAN_H

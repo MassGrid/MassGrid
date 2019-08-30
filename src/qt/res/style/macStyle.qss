@@ -1291,7 +1291,7 @@ QDialog#SimpleSendcoinDlg QFrame#frame_9{
     border-radius:@3px@;
 }
 
-QDialog#SimpleSendcoinDlg QFrame#pBtn_sendCoin{
+QDialog#SimpleSendcoinDlg QPushButton#pBtn_sendCoin{
     width: @100px@;
     height: @35px@;
 }

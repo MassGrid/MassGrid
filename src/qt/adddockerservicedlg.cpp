@@ -30,7 +30,6 @@
 #include "guiutil.h"
 #include "dockerserverman.h"
 #include "autominersetupwin.h"
-#define LOADRESOURCETIMEOUT 30
 
 extern SendCoinsDialog* g_sendCoinsPage;
 
@@ -488,15 +487,15 @@ void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
         LogPrintf("AddDockerServiceDlg::updateDNDataAfterCreate 2:%s\n",service.CreateSpec.OutPoint.hash.ToString());
 
         if(m_txid == service.CreateSpec.OutPoint.hash.ToString()){
+            //save service data
+            dockercluster.saveServiceData(service);
             slot_nextStep();
             return ;
         }
     }
 
-
-
-    if(dockercluster.vecServiceInfo.errCode != 0){
-    // if(dockercluster.vecServiceInfo.err.size() > 0){
+    // if(dockercluster.vecServiceInfo.errCode != 0){
+    if(dockercluster.vecServiceInfo.err.size() > 0){
         // QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
         QString errStr = QString::fromStdString(dockercluster.vecServiceInfo.err);
 
@@ -542,54 +541,6 @@ void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
                 break;
         }
     }
-
-    // if(dockercluster.vecServiceInfo.err.size() > 0){
-
-    //     // QString errStr = ServiceManCodeStr[dockercluster.dndata.errCode];
-    //     QString errStr = QString::fromStdString(dockercluster.vecServiceInfo.err);
-
-    //     QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
-    //     CMessageBox::information(this, tr("Create Failed"),msg);
-    //     close();
-    //     return ;
-
-    //     // switch (dockercluster.dndata.errCode)
-    //     // {
-    //     //     case SERVICEMANCODE::SIGTIME_ERROR:
-    //     //     case SERVICEMANCODE::VERSION_ERROR:
-    //     //     case SERVICEMANCODE::CHECKSIGNATURE_ERROR:
-    //     //     case SERVICEMANCODE::NO_THRANSACTION:
-    //     //     case SERVICEMANCODE::TRANSACTION_NOT_CONFIRMS:
-    //     //     case SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE:
-    //     //     case SERVICEMANCODE::TRANSACTION_DOUBLE_TLEMENT:{
-    //     //         QString msg = tr("Transaction error:") + errStr +tr(",the window will be close!");
-    //     //         CMessageBox::information(this, tr("Create Failed"),msg);
-    //     //         close();
-    //     //         return ;
-    //     //     }
-    //     //     case SERVICEMANCODE::SERVICEITEM_NOT_FOUND:
-    //     //     case SERVICEMANCODE::SERVICEITEM_NO_RESOURCE:
-    //     //     case SERVICEMANCODE::PAYMENT_NOT_ENOUGH:
-    //     //     case SERVICEMANCODE::GPU_AMOUNT_ERROR:
-    //     //     case SERVICEMANCODE::CPU_AMOUNT_ERROR:
-    //     //     case SERVICEMANCODE::MEM_AMOUNT_ERROR:
-    //     //     case SERVICEMANCODE::PUBKEY_ERROR:{
-    //     //         QString msg = tr("Transaction has been finished,") + errStr + tr(",is need to re-select resource or go into the order list page to apply for a refund?");
-    //     //         CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Create Failed"),
-    //     //             msg,CMessageBox::Ok_Cancel, CMessageBox::Cancel);
-
-    //     //         if(btnRetVal == CMessageBox::Cancel){
-    //     //             close();
-    //     //             return ;
-    //     //         }
-    //     //         else{
-    //     //             gotoStep1Page();
-    //     //         }
-    //     //     }
-    //     //     default:
-    //     //         break;
-    //     // }
-    // }
 }
 
 QString AddDockerServiceDlg::getErrorMsg(int errCode)
@@ -879,6 +830,8 @@ void AddDockerServiceDlg::loadResourceData()
         ResourceItem * item = new ResourceItem(ui->tableWidget_resource);
         QString amount = MassGridUnits::formatHtmlWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(), iter->second.price) + "/H";
 
+        if(iter->second.count <= 0)
+            continue;
         item->loadResourceData(QString::fromStdString(iter->first.gpu.Name),QString::number(iter->first.gpu.Count),
                                QString::fromStdString(iter->first.mem.Name),QString::number(iter->first.mem.Count),
                                QString::fromStdString(iter->first.cpu.Name),QString::number(iter->first.cpu.Count),
@@ -978,15 +931,6 @@ void AddDockerServiceDlg::doStep1(ResourceItem* item)
     QString cpuCount = item->getCPUCount();
     QString availibleCount = item->getAvailibleCount();
     CAmount amount = item->getAmount();
-
-    // m_createService->item.cpu.Count = cpuCount.toInt();
-    // m_createService->item.cpu.Name = cpuName.toStdString().c_str();
-
-    // m_createService->item.mem.Count = romCount.toInt();
-    // m_createService->item.mem.Name = romType.toStdString().c_str();
-
-    // m_createService->item.gpu.Name = gpuName.toStdString().c_str();
-    // m_createService->item.gpu.Count = gpuCount.toInt();
 
     m_createService->clusterServiceCreate.hardware.CPUThread = cpuCount.toInt();
     m_createService->clusterServiceCreate.hardware.CPUType = cpuName.toStdString().c_str();
@@ -1107,46 +1051,46 @@ bool CheckoutTransaction::isTransactionFinished(std::string txid,std::string& st
     return true;
 }
 
-AskDNDataWorker::AskDNDataWorker(QObject* parent) :
-    QObject(parent)
-{
+// AskDNDataWorker::AskDNDataWorker(QObject* parent) :
+//     QObject(parent)
+// {
 
-}
+// }
 
-AskDNDataWorker::~AskDNDataWorker()
-{
+// AskDNDataWorker::~AskDNDataWorker()
+// {
 
-}
+// }
 
-void AskDNDataWorker::startTask()
-{
-    LogPrintf("AskDNDataWorker::startTask Ask.\n");
+// void AskDNDataWorker::startTask()
+// {
+//     LogPrintf("AskDNDataWorker::startTask Ask.\n");
 
-    int index = 0;
-    bool isTaskFinished = false;
-    while(isNeedToWork()){
-        if(isAskDNDataFinished()){
-            isTaskFinished = true;
-            break;
-        }
-        QThread::sleep(1);
-        Q_EMIT updateTaskTime(++index);
-        if(index >= LOADRESOURCETIMEOUT)
-            break;
-    }
-    Q_EMIT askDNDataFinished(isTaskFinished);
-}
+//     int index = 0;
+//     bool isTaskFinished = false;
+//     while(isNeedToWork()){
+//         if(isAskDNDataFinished()){
+//             isTaskFinished = true;
+//             break;
+//         }
+//         QThread::sleep(1);
+//         Q_EMIT updateTaskTime(++index);
+//         if(index >= LOADRESOURCETIMEOUT)
+//             break;
+//     }
+//     Q_EMIT askDNDataFinished(isTaskFinished);
+// }
 
-bool AskDNDataWorker::isAskDNDataFinished()
-{
-    if(dockerServerman.getDNDataStatus() == CDockerServerman::Ask){
-        LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Asking\n");
-        return false;
-    }
-    else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
-            dockerServerman.getDNDataStatus() == CDockerServerman::Free){
-        LogPrintf("AskDNDataWorker -> isAskDNDataFinished\n");
-        return true;
-    }
-}
+// bool AskDNDataWorker::isAskDNDataFinished()
+// {
+//     if(dockerServerman.getDNDataStatus() == CDockerServerman::Ask){
+//         LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Asking\n");
+//         return false;
+//     }
+//     else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
+//             dockerServerman.getDNDataStatus() == CDockerServerman::Free){
+//         LogPrintf("AskDNDataWorker -> isAskDNDataFinished\n");
+//         return true;
+//     }
+// }
 

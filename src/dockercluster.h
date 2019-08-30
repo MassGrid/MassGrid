@@ -46,5 +46,8 @@ public:
     //get dockertransaction
     bool SetConnectDockerAddr(std::string address_port);
 
+    void saveServiceData(ServiceInfo serviceInfo);
+    void saveReletServiceData(const std::string& serviceID,DockerUpdateService sspec);
+
 };
 #endif  //DOCKERCLUSTER_H

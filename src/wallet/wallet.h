@@ -492,6 +492,8 @@ public:
     ATTRIBUTE_MEMBER_FUNC(masternodeip);
     ATTRIBUTE_MEMBER_FUNC(masternodeoutpoint);
     ATTRIBUTE_MEMBER_FUNC(orderstatus);
+    ATTRIBUTE_MEMBER_FUNC(state);
+    
 
 
     int64_t GetTxTime() const;

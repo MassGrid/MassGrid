@@ -188,14 +188,14 @@ border:hidden;
                     </property>
                    </widget>
                   </item>
-                  <item row="2" column="0">
+                  <item row="3" column="0">
                    <widget class="QLabel" name="label_18">
                     <property name="text">
                      <string>Service Timeout:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="2" column="1">
+                  <item row="3" column="1">
                    <widget class="QLabel" name="label_serviceTimeout">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -211,14 +211,14 @@ border:hidden;
                     </property>
                    </widget>
                   </item>
-                  <item row="3" column="0">
+                  <item row="5" column="0">
                    <widget class="QLabel" name="label_4">
                     <property name="text">
                      <string>Container Name:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="3" column="1">
+                  <item row="5" column="1">
                    <widget class="QLabel" name="label_name">
                     <property name="text">
                      <string>TextLabel</string>
@@ -228,35 +228,35 @@ border:hidden;
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="0">
+                  <item row="6" column="0">
                    <widget class="QLabel" name="label_5">
                     <property name="text">
                      <string>User Name:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="1">
+                  <item row="6" column="1">
                    <widget class="QLabel" name="label_user">
                     <property name="text">
                      <string>TextLabel</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="5" column="0">
+                  <item row="7" column="0">
                    <widget class="QLabel" name="label">
                     <property name="text">
                      <string>Use Persistent Store:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="5" column="1">
+                  <item row="7" column="1">
                    <widget class="QLabel" name="label_PersistentStore">
                     <property name="text">
                      <string>TextLabel</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="6" column="0">
+                  <item row="8" column="0">
                    <widget class="QLabel" name="label_112">
                     <property name="minimumSize">
                      <size>
@@ -281,14 +281,14 @@ border:hidden;
                     </property>
                    </widget>
                   </item>
-                  <item row="7" column="0">
+                  <item row="9" column="0">
                    <widget class="QLabel" name="label_10">
                     <property name="text">
                      <string>Task Name:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="7" column="1">
+                  <item row="9" column="1">
                    <widget class="QLabel" name="label_taskName">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -304,14 +304,14 @@ border:hidden;
                     </property>
                    </widget>
                   </item>
-                  <item row="8" column="0">
+                  <item row="10" column="0">
                    <widget class="QLabel" name="label_13">
                     <property name="text">
                      <string>GPU Name:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="8" column="1">
+                  <item row="10" column="1">
                    <widget class="QLabel" name="label_GPUName">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -327,14 +327,14 @@ border:hidden;
                     </property>
                    </widget>
                   </item>
-                  <item row="9" column="0">
+                  <item row="11" column="0">
                    <widget class="QLabel" name="label_11">
                     <property name="text">
                      <string>CPU Count:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="9" column="1">
+                  <item row="11" column="1">
                    <widget class="QLabel" name="label_cpuCount">
                     <property name="text">
                      <string>TextLabel</string>
@@ -344,14 +344,14 @@ border:hidden;
                     </property>
                    </widget>
                   </item>
-                  <item row="10" column="0">
+                  <item row="12" column="0">
                    <widget class="QLabel" name="label_12">
                     <property name="text">
                      <string>Memory Bytes:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="10" column="1">
+                  <item row="12" column="1">
                    <widget class="QLabel" name="label_memoryBytes">
                     <property name="text">
                      <string>TextLabel</string>
@@ -361,14 +361,14 @@ border:hidden;
                     </property>
                    </widget>
                   </item>
-                  <item row="11" column="0">
+                  <item row="13" column="0">
                    <widget class="QLabel" name="label_15">
                     <property name="text">
                      <string>GPU Count:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="11" column="1">
+                  <item row="13" column="1">
                    <widget class="QLabel" name="label_GPUCount">
                     <property name="text">
                      <string>TextLabel</string>
@@ -378,20 +378,34 @@ border:hidden;
                     </property>
                    </widget>
                   </item>
-                  <item row="12" column="0">
+                  <item row="14" column="0">
                    <widget class="QLabel" name="label_16">
                     <property name="text">
                      <string>Task Status:</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="12" column="1">
+                  <item row="14" column="1">
                    <widget class="QLabel" name="label_taskStatus">
                     <property name="text">
                      <string>TextLabel</string>
                     </property>
                     <property name="textInteractionFlags">
                      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_7">
+                    <property name="text">
+                     <string>Service CreateAt:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLabel" name="label_createAt">
+                    <property name="text">
+                     <string>TextLabel</string>
                     </property>
                    </widget>
                   </item>

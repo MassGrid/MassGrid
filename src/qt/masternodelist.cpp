@@ -38,7 +38,10 @@
 #include "transactionview.h"
 #include "optionsmodel.h"
 #include "simplesendcoindlg.h"
+#include "loadingwin.h"
 #include <QDateTime>
+#include "dockerordertablemodel.h"
+
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
 #define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
 
@@ -63,7 +66,8 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     walletModel(0),
     m_nTimeMyListUpdated(0),
     m_nTimeListUpdated(0),
-    m_scanTimer(NULL)
+    m_scanTimer(NULL),
+    m_updateService(new DockerUpdateService())
 {
     ui->setupUi(this);
 
@@ -693,6 +697,7 @@ int MasternodeList::loadServerList()
         for(int i=1;i<5;i++)
             ui->serviceTableWidget->item(count,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
         count++;
+
     }
     dockerServerman.setDNDataStatus(CDockerServerman::Free);
 
@@ -808,6 +813,7 @@ void MasternodeList::deleteService(COutPoint& outpoint,std::string ip_port)
         CMessageBox::information(this, tr("Docker option"),tr("Delete docker service failed!"));
     }
     LogPrintf("MasternodeList deleteService sucess\n");
+
 }
 
 void MasternodeList::updateServiceList()
@@ -870,7 +876,7 @@ void MasternodeList::refreshServerList()
     
     static bool isWaitFoAsk = false;
 
-    if(dockerServerman.getDNDataStatus() == CDockerServerman::Ask){
+    if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::AskSD){
         if(DockerUpdateMode::WhenNormal){
             QTimer::singleShot(2000,this,SLOT(refreshServerList()));
             isWaitFoAsk = true;
@@ -878,8 +884,8 @@ void MasternodeList::refreshServerList()
         LogPrintf("MasternodeList get DNData Status:CDockerServerman::Ask\n");
         return ;
     }
-    else if(dockerServerman.getDNDataStatus() == CDockerServerman::Received ||
-            dockerServerman.getDNDataStatus() == CDockerServerman::Free){
+    else if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD ||
+            dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
 
         isWaitFoAsk = false;
 
@@ -1074,6 +1080,14 @@ void MasternodeList::slot_btn_refund()
     deleteService(outpoint,mnip);
     //update order status
     dockerorderView->updateAllOperationBtn();
+
+    if(wtx.Getstate() == "" ){
+        // wtx.Setmasternodeoutpoint("");
+        wtx.Setstate("completed");
+        CWalletDB walletdb(pwalletMain->strWalletFile);
+        wtx.WriteToDisk(&walletdb);
+        // dockerorderView->refreshModel();
+    }
 }
 
 void MasternodeList::onPBtn_reletClicked()
@@ -1087,62 +1101,68 @@ void MasternodeList::onPBtn_reletClicked()
     
     if(curindex <0 )
         return ;
-    LogPrintf("---->onPBtn_reletClicked 1\n");
     std::string serviceid = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
-    LogPrintf("---->onPBtn_reletClicked 2\n");
 
-    COutPoint& createOutpoint = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.OutPoint; //old outpoint
+    COutPoint& createOutpoint = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.OutPoint; 
+
+
+    CAmount machinePrice = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.ServicePrice;
     // COutPoint createOutpoint = String2OutPoint(ui->serviceTableWidget->item(curindex,0)->text().toStdString());
-    LogPrintf("---->onPBtn_reletClicked 3\n");
 
-    std::string mnaddress = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.MasterNodeFeeAddress; //old outpoint
-
-    LogPrintf("---->onPBtn_reletClicked mnaddress:%s\n",mnaddress);
-    LogPrintf("---->onPBtn_reletClicked createOutpoint:%s\n",createOutpoint.ToString());
-    
+    std::string mnaddress = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.MasterNodeFeeAddress; 
+    std::string serviceID =  dockercluster.vecServiceInfo.servicesInfo[serviceid].ServiceID;
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
 
     SimpleSendcoinDlg dlg;
 
-    dlg.prepareOrderTransaction(walletModel,mnaddress,m_curAddr_Port);
-    LogPrintf("---->onPBtn_reletClicked 4\n");
-
+    dlg.prepareOrderTransaction(walletModel,serviceID,mnaddress,m_curAddr_Port,machinePrice);
     dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
     
     if(dlg.exec() != QDialog::Accepted){
         return ;
     }
 
-    LogPrintf("---->onPBtn_reletClicked 5\n");
-
     std::string txid = dlg.getTxid();
-
     COutPoint outpoint = GUIUtil::getOutPoint(txid,mnaddress);
-    LogPrintf("---->onPBtn_reletClicked outpoint:%s\n",outpoint.ToString());
-    reletService(createOutpoint,outpoint);
-    LogPrintf("---->onPBtn_reletClicked 6\n");
 
+    fullReletServiceData(createOutpoint,outpoint);
+
+    LoadingWin::showLoading2(tr("Waiting for relet service!"));
+
+    QTimer::singleShot(3000,this,SLOT(slot_doReletService()));
 }
 
-void MasternodeList::reletService(const COutPoint& createOutPoint, const COutPoint& outPoint)
+void MasternodeList::fullReletServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint)
 {
+    m_updateService->clusterServiceUpdate.pubKeyClusterAddress = dockercluster.DefaultPubkey;
+    m_updateService->clusterServiceUpdate.CrerateOutPoint = createOutPoint;
+    m_updateService->clusterServiceUpdate.OutPoint = outPoint; 
+}
 
-    DockerUpdateService updateService{};
-    updateService.clusterServiceUpdate.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-    updateService.clusterServiceUpdate.CrerateOutPoint = createOutPoint;
-    updateService.clusterServiceUpdate.OutPoint = outPoint; 
-
+void MasternodeList::slot_doReletService()
+{
     if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
         CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+        LoadingWin::hideLoadingWin();
         return;
     }
 
-    if(!dockercluster.UpdateAndSendSeriveSpec(updateService)){
+    if(!dockercluster.UpdateAndSendSeriveSpec(*m_updateService)){
         CMessageBox::information(this, tr("Docker option"),tr("Relet service failed!"));
+        LoadingWin::hideLoadingWin();
+        return ;
     }
-    LogPrintf("---->onPBtn_reletClicked 5-5\n");
-    
+
+    LoadingWin::hideLoadingWin();
+
+    int curindex = ui->serviceTableWidget->currentRow();
+    if(curindex <0 )
+        return ;
+    std::string serviceID = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
+
+    dockercluster.saveReletServiceData(serviceID,*m_updateService);
+    slot_updateServiceBtn();
 }
 
 void MasternodeList::loadOrderData()
@@ -1170,13 +1190,14 @@ void MasternodeList::dockerOrderViewdoubleClicked(QModelIndex index)
 
 void MasternodeList::dockerOrderViewitemClicked(QModelIndex index)
 {
-    std::string txid,orderstatus;
+    std::string txid,orderState;
     dockerorderView->getCurrentItemTxidAndmnIp(txid);
 
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
-    orderstatus = wtx.Getorderstatus();
+    // orderstatus = wtx.Getorderstatus();
+    orderState = wtx.Getstate();
 
-    if(orderstatus == "1"){
+    if(orderState == "completed"){
         ui->pushButton_refund->setEnabled(false);
         return ;
     }

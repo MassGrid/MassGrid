@@ -90,6 +90,7 @@ public:
             LOCK2(cs_main, wallet->cs_wallet);
             for(std::map<uint256, CWalletTx>::iterator it = wallet->mapWallet.begin(); it != wallet->mapWallet.end(); ++it)
             {
+                // && (it->second.GetCreateOutPoint().size() <= 0)
                 if(DockerOrderRecord::showTransaction(it->second) && it->second.Getmasternodeoutpoint().size()){
                     if(!it->second.Getmasternodeip().size()){
                         getMasternodeInfo(it->second);
@@ -199,6 +200,10 @@ public:
                 if(!mi->second.Getmasternodeoutpoint().size()){
                     return ;
                 }
+
+                // if(mi->second.GetCreateOutPoint().size() > 0){
+                //     return ;
+                // }
                 
                 QList<DockerOrderRecord> toInsert =
                         DockerOrderRecord::decomposeTransaction(wallet, mi->second);
@@ -625,44 +630,53 @@ QString DockerOrderTableModel::formatOrderStatus(const DockerOrderRecord *rec,co
     LOCK(cs_main);
 #endif
 
-    CTransaction tx;
-    uint256 hashBlock;
-    CWalletTx& wtx = wallet->mapWallet[rec->hash];  //watch only not check
-    if (!GetTransaction(rec->hash, tx, Params().GetConsensus(), hashBlock, true)){
-        LogPrintf("No information available about transaction\n");
-            return QString("NULL"); 
+    CWalletTx& wtx = wallet->mapWallet[rec->hash];
+    if(wtx.Getstate() == "completed" ){
+        return QString("Settled");
+    }
+    else{
+        return QString("Paid");
     }
 
-    for (unsigned int i = 0; i < tx.vout.size(); i++) {
-        const CTxOut& txout = tx.vout[i];
+    // CTransaction tx;
+    // uint256 hashBlock;
+    // CWalletTx& wtx = wallet->mapWallet[rec->hash];  //watch only not check
+    // if (!GetTransaction(rec->hash, tx, Params().GetConsensus(), hashBlock, true)){
+    //     LogPrintf("No information available about transaction\n");
+    //         return QString("NULL"); 
+    // }
 
-        txnouttype type;
-        std::vector<CTxDestination> addresses;
-        int nRequired;
+    // for (unsigned int i = 0; i < tx.vout.size(); i++) {
+    //     const CTxOut& txout = tx.vout[i];
 
-        if (!ExtractDestinations(txout.scriptPubKey, type, addresses, nRequired)) {
-            // LogPrintf("Can't find vout address type:%d,nRequired:%d,txout n:%d\n",type,nRequired,i);
-            continue;
-        }
+    //     txnouttype type;
+    //     std::vector<CTxDestination> addresses;
+    //     int nRequired;
 
-        BOOST_FOREACH(const CTxDestination& addr, addresses){
-            if(CMassGridAddress(addr).ToString() == wtx.Getmasternodeaddress()){
+    //     if (!ExtractDestinations(txout.scriptPubKey, type, addresses, nRequired)) {
+    //         // LogPrintf("Can't find vout address type:%d,nRequired:%d,txout n:%d\n",type,nRequired,i);
+    //         continue;
+    //     }
 
-                bool isSpent = checkIsSpent(rec,i); 
-                std::string orderStatusStr = isSpent?"1":"0";  
+    //     BOOST_FOREACH(const CTxDestination& addr, addresses){
+    //         if(CMassGridAddress(addr).ToString() == wtx.Getmasternodeaddress()){
 
-                if(wtx.Getorderstatus() != orderStatusStr){
-                    wtx.Setorderstatus(orderStatusStr);
-                    CWalletDB walletdb(wallet->strWalletFile);
-                    wtx.WriteToDisk(&walletdb);
-                    Q_EMIT updateOrderStatus(rec->getTxID().toStdString());
-                }
-                return isSpent ? tr("Settled") : tr("Paid");
-            }
-        }
-    }
-    LogPrintf("Can't find vout address the order status is null\n");
-    return QString("NULL"); 
+    //             bool isSpent = checkIsSpent(rec,i); 
+    //             std::string orderStatusStr = isSpent?"1":"0";  
+
+    //             if(wtx.Getorderstatus() != orderStatusStr){
+    //                 wtx.Setorderstatus(orderStatusStr);
+    //                 CWalletDB walletdb(wallet->strWalletFile);
+    //                 wtx.WriteToDisk(&walletdb);
+    //                 Q_EMIT updateOrderStatus(rec->getTxID().toStdString());
+    //             }
+    //             return isSpent ? tr("Settled") : tr("Paid");
+    //         }
+    //     }
+    // }
+    // LogPrintf("Can't find vout address the order status is null\n");
+    // return QString("NULL"); 
+
 }
 
 QVariant DockerOrderTableModel::data(const QModelIndex &index, int role) const
@@ -699,9 +713,6 @@ QVariant DockerOrderTableModel::data(const QModelIndex &index, int role) const
         case ToAddress:
             return formatTxToAddress(rec, false);
         case Amount:
-            // LogPrintf("DockerOrderTableModel::DockerOrderTableModel::data start\n");
-            // QString amount = formatOrderStatus(rec);
-            // LogPrintf("DockerOrderTableModel::DockerOrderTableModel::data end\n");
             return formatTxAmount(rec, true, MassGridUnits::separatorAlways);
         case OrderStatus:
             return formatOrderStatus(rec,index) ;
@@ -979,4 +990,9 @@ bool DockerOrderTableModel::checkIsSpent(const DockerOrderRecord *rec,int vout_n
     }
 
     return false;
+}
+
+void DockerOrderTableModel::refreshModel()
+{ 
+    priv->refreshWallet();
 }

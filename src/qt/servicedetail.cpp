@@ -141,6 +141,9 @@ void ServiceDetail::updateServiceDetail(ServiceInfo& service)
     }
     QString timeout = QDateTime::fromTime_t(service.LastCheckTime).addMSecs(totalRemainingTimeDuration/1000000).toString("yyyy-MM-dd hh:mm:ss");
     ui->label_serviceTimeout->setText(timeout);
+
+    QString createAt = QDateTime::fromTime_t(service.CreatedAt).toString("yyyy-MM-dd hh:mm:ss");
+    ui->label_createAt->setText(createAt);
 }
 
 void ServiceDetail::setModel(WalletModel* model)

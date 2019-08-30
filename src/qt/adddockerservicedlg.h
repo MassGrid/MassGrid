@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QObject>
 #include "amount.h"
+#include "networkers.h"
 
 namespace Ui {
 class AddDockerServiceDlg;
@@ -72,6 +73,7 @@ private:
     void resetGUITimer();
     void expansionResourceItems();
     void startAskDNDataWork(const char* slotMethod, bool needAsk = true);
+    // void saveServiceData(ServiceInfo serviceInfo);
     
 protected:
     void mousePressEvent(QMouseEvent *e);
@@ -133,28 +135,28 @@ private Q_SLOTS:
 
 };
 
-class AskDNDataWorker : public QObject
-{
-    Q_OBJECT
-public:
-    explicit AskDNDataWorker(QObject* parent = nullptr);
-    ~AskDNDataWorker();
+// class AskDNDataWorker : public QObject
+// {
+//     Q_OBJECT
+// public:
+//     explicit AskDNDataWorker(QObject* parent = nullptr);
+//     ~AskDNDataWorker();
 
-    bool isNeedToWork() { return m_isNeedToWork; };
-    void setNeedToWork(bool flag) { m_isNeedToWork = flag;};
+//     bool isNeedToWork() { return m_isNeedToWork; };
+//     void setNeedToWork(bool flag) { m_isNeedToWork = flag;};
 
-    bool isAskDNDataFinished();
+//     bool isAskDNDataFinished();
 
-private:
-    bool m_isNeedToWork;
+// private:
+//     bool m_isNeedToWork;
 
-Q_SIGNALS:
-    void askDNDataFinished(bool isTimeOut);
-    void askDNDataTimeout();
-    void updateTaskTime(int);
-    void threadStopped();
-private Q_SLOTS:
-    void startTask();
-};
+// Q_SIGNALS:
+//     void askDNDataFinished(bool isTimeOut);
+//     void askDNDataTimeout();
+//     void updateTaskTime(int);
+//     void threadStopped();
+// private Q_SLOTS:
+//     void startTask();
+// };
 
 #endif // ADDDOCKERSERVICEDLG_H

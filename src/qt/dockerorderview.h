@@ -87,6 +87,8 @@ public:
     };
 
     void setSearchWidget(QComboBox*,QComboBox*,QLineEdit*);
+    void refreshModel();
+
 private:
     WalletModel *model;
     DockerOrderFilterProxy *dockerorderProxyModel;

@@ -122,5 +122,6 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
         ui->label_taskstate->show();
     }
 
-    ui->label_orderstatus->setText(QString::fromStdString(wtx.Getorderstatus())= "1" ? tr("Settled") : tr("Paid"));
+    // ui->label_orderstatus->setText(QString::fromStdString(wtx.Getorderstatus())= "1" ? tr("Settled") : tr("Paid"));
+    ui->label_orderstatus->setText(QString::fromStdString(wtx.Getstate())= "completed" ? tr("Settled") : tr("Paid"));
 }

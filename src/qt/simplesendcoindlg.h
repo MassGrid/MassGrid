@@ -3,9 +3,12 @@
 
 #include <QDialog>
 #include <QMouseEvent>
+#include "amount.h"
+#include "networkers.h"
 
 class WalletModel;
 class SendCoinsRecipient;
+
 
 namespace Ui {
 class SimpleSendcoinDlg;
@@ -20,24 +23,30 @@ public:
     ~SimpleSendcoinDlg();
     // void setWalletModel(WalletModel* model);
     // void setPaytoAddress(const std::string& address);
-    void prepareOrderTransaction(WalletModel* model,const std::string& paytoAddress,const std::string& addr_port);
+    void prepareOrderTransaction(WalletModel* model,const std::string& serviceID,const std::string& paytoAddress,const std::string& addr_port,CAmount machinePrice);
     std::string getTxid();
 
 private:
     Ui::SimpleSendcoinDlg *ui;
     WalletModel* m_walletModel;
+    AskDNDataWorker *m_askDNDataWorker;
 
     QPoint m_last;
     bool m_mousePress;
 
     std::string m_txid;
-    // CAmount m_amount;
+    CAmount m_amount;
     std::string m_paytoAddress;
     std::string m_addr_port;
+    std::string m_serviceID;
 
 private:
     bool sendCoin();
     bool validate(SendCoinsRecipient& recipient);
+    CAmount getMachinePrice();
+    void askForDNData();
+    void startAskDNDataWork(const char* slotMethod,bool needAsk);
+    // void refre
 
 protected:
     void mousePressEvent(QMouseEvent *e);
@@ -46,6 +55,8 @@ protected:
 
 public Q_SLOTS:
     void onPBtn_sendCoinClicked();
+    void onHireTimeChanged(int value);
+    void updateServiceListFinished(bool isTaskFinished);
 };
 
 #endif // SIMPLESENDCOINDLG_H

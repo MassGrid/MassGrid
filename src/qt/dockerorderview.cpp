@@ -289,7 +289,6 @@ void DockerOrderView::setModel(WalletModel *model)
         for(int i=0;i<rowCount;i++){
             std::string txidStr = dockerorderView->model()->index(i,DockerOrderTableModel::TxID).data().toString().toStdString();
             CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
-            std::string orderstatusStr = wtx.Getorderstatus();
             std::string serviceidStr = wtx.Getserviceid();
 
             QString btnText;
@@ -331,11 +330,7 @@ void DockerOrderView::updateAllOperationBtn()
     int count = dockerorderView->model()->rowCount();
     for(int i=0;i<count;i++){
         std::string txidStr = dockerorderView->model()->index(i,DockerOrderTableModel::TxID).data().toString().toStdString();
-        // bool isNeedUpdateTD = updateOrderStatus(txidStr);
 
-        // if(isNeedUpdateTD){
-        //     addTransTask(txidStr);
-        // }
         updateOrder(txidStr);
     }
 }
@@ -346,6 +341,8 @@ void DockerOrderView::addTransTask(const std::string& txidStr)
     bool isAskAll = false;
     if(!wtx.Gettlementtxid().size())
         isAskAll = true;
+    // if(!wtx.Getstate() != "")
+    //     isAskAll = true;
 
     updateTransData(QString::fromStdString(txidStr),isAskAll);
 }
@@ -368,6 +365,8 @@ bool DockerOrderView::updateOrderStatus(const std::string &txidStr)const
     bool isNeedUpdateTD = getOrderBtnText(wtx,btnText);
     btn->setText(btnText);
 
+    LogPrintf("DockerOrderView::updateOrderStatus txidStr:%s,isNeedUpdateTD:%d\n",txidStr,isNeedUpdateTD);
+
     return isNeedUpdateTD;
 }
 
@@ -379,41 +378,71 @@ void DockerOrderView::slot_btnClicked()
 
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr.toStdString())];  //watch only not check
 
-    std::string orderstatusStr = wtx.Getorderstatus();
+    // std::string orderstatusStr = wtx.Getorderstatus();
+    std::string orderState = wtx.Getstate();
     std::string serviceidStr = wtx.Getserviceid();
     std::string masternodeip = wtx.Getmasternodeip();
-    if(orderstatusStr == "1"){
+    
+
+    if(orderState == "completed"){
         showOrderDetail(wtx);
     }
-    else if(orderstatusStr == "0" && serviceidStr.size()){
+    else if(orderState == "running" && serviceidStr.size()){
         Q_EMIT openServicePage(masternodeip);
     }
-    else if(orderstatusStr == "0" && !serviceidStr.size()){
+    else if(orderState == "" && !serviceidStr.size()){
         Q_EMIT gotoCreateServicePage(masternodeip,txidStr.split("-").at(0).toStdString());
     }
     else
     {
         //tr("Get Detail");
     }
+
+    // if(orderstatusStr == "1"){
+    //     showOrderDetail(wtx);
+    // }
+    // else if(orderstatusStr == "0" && serviceidStr.size()){
+    //     Q_EMIT openServicePage(masternodeip);
+    // }
+    // else if(orderstatusStr == "0" && !serviceidStr.size()){
+    //     Q_EMIT gotoCreateServicePage(masternodeip,txidStr.split("-").at(0).toStdString());
+    // }
+    // else
+    // {
+    //     //tr("Get Detail");
+    // }
 }
 
 bool DockerOrderView::getOrderBtnText(CWalletTx& wtx,QString& btnText)const
 {
-    std::string orderstatusStr = wtx.Getorderstatus();
+    // std::string orderstatusStr = wtx.Getorderstatus();
+    std::string orderState = wtx.Getstate();
     std::string serviceidStr = wtx.Getserviceid();
     // QString btnText; //= tr("Get Detail");
-    if(orderstatusStr == "1")
+    // if(orderstatusStr == "1")
+    //     btnText = tr("Order Detail");
+    // else if(orderstatusStr == "0" && serviceidStr.size())
+    //     btnText = tr("Service Detail");
+    // else if(orderstatusStr == "0" && !serviceidStr.size())
+    //     btnText = tr("Create Service");
+    // else
+    //     btnText = tr("Get Detail");
+
+    if(orderState == "completed")
         btnText = tr("Order Detail");
-    else if(orderstatusStr == "0" && serviceidStr.size())
+    else if(orderState == "running" && serviceidStr.size())
         btnText = tr("Service Detail");
-    else if(orderstatusStr == "0" && !serviceidStr.size())
+    else if(orderState == "" && !serviceidStr.size())
         btnText = tr("Create Service");
     else
         btnText = tr("Get Detail");
-    
+
     // return btnText;
     // return need update
-    if(!wtx.Gettlementtxid().size() && wtx.Getorderstatus() == "1")
+    // if(!wtx.Gettlementtxid().size() && wtx.Getorderstatus() == "1")
+    //     return true;
+    // if(!wtx.Gettlementtxid().size() && orderState == "completed")
+    if(orderState != "completed")
         return true;
     
     return false;
@@ -716,10 +745,12 @@ void DockerOrderView::deleteService()
 
         QString txidStr = dockerorderView->model()->index(index.row(),DockerOrderTableModel::TxID).data().toString();
         CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr.toStdString())];  //watch only not check
-        std::string orderstatusStr = wtx.Getorderstatus();
+        // std::string orderstatusStr = wtx.Getorderstatus();
+        std::string orderState = wtx.Getstate();
         std::string masternodeip = wtx.Getmasternodeip();
         // std::string serviceidStr = wtx.Getserviceid();
-        if(orderstatusStr != "1"){
+        // if(orderstatusStr != "1"){
+        if(orderState != "completed"){
             Q_EMIT deleteService(txidStr.split("-").at(0).toStdString(),masternodeip);
             break;
         }
@@ -876,6 +907,13 @@ void DockerOrderView::updateWatchOnlyColumn(bool fHaveWatchOnly)
     dockerorderView->setColumnHidden(DockerOrderTableModel::Watchonly, !fHaveWatchOnly);
 }
 
+void DockerOrderView::refreshModel()
+{
+    DockerOrderTableModel* model =  static_cast<DockerOrderTableModel*>((static_cast< DockerOrderFilterProxy* >(dockerorderView->model()))->sourceModel());
+    model->refreshModel();
+}
+
+
 void DockerOrderView::updateTransData(QString txid,bool isAskAll)
 {
     if(m_syncTransactionThread == NULL){
@@ -960,6 +998,9 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid,bool isAskAll)
     std::string txidStr = txid.toStdString();
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not chec
     std::string ip_port = wtx.Getmasternodeip();
+    std::string mnAddress = wtx.Getmasternodeaddress();
+
+    COutPoint outpoint = GUIUtil::getOutPoint(txidStr,mnAddress);
 
     QRegExp rx("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
     if(QString::fromStdString(ip_port).contains(":") && !rx.exactMatch(QString::fromStdString(ip_port).split(":").at(0)))
@@ -973,13 +1014,16 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid,bool isAskAll)
 
         return false;
     }
-    dockerServerman.setTRANSDataStatus(CDockerServerman::AskTD);
+    // dockerServerman.setTRANSDataStatus(CDockerServerman::AskTD);
+    dockerServerman.setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::AskSD);
     int updateCountMsec = 0;
     // dockercluster.AskForTransData(txidStr,isAskAll);
+    dockercluster.AskForService(outpoint);
     while(true){
-        CDockerServerman::TRANSDATASTATUS status = dockerServerman.getTRANSDataStatus();
-        if(status == CDockerServerman::ReceivedTD)
+        CDockerServerman::SERVICESTATUS status = dockerServerman.getSERVICEStatus();
+        if(status == CDockerServerman::SERVICESTATUS::ReceivedSD){
             return true;
+        }
         QThread::sleep(1);
         if(((++updateCountMsec) >= SYNCTRANSTINEOUT) || !isNeedWork())
             break;

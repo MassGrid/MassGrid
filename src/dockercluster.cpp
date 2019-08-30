@@ -85,7 +85,7 @@ void Cluster::AskForService(COutPoint outpoint)
     getService.OutPoint = outpoint;
     getService.pubKeyClusterAddress = DefaultPubkey;
     getService.sigTime = GetAdjustedTime();
-    dockerServerman.setDNDataStatus(CDockerServerman::Ask);
+    dockerServerman.setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::AskSD);
     g_connman->PushMessage(connectNode, NetMsgType::GETSERVICE, getService);
 }
 void Cluster::AskForServices(int64_t start,int64_t count,bool full)
@@ -103,7 +103,7 @@ void Cluster::AskForServices(int64_t start,int64_t count,bool full)
     getService.count = count;
     getService.full = full;
     getService.sigTime = GetAdjustedTime();
-    dockerServerman.setDNDataStatus(CDockerServerman::Ask);
+    dockerServerman.setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::AskSD);
     g_connman->PushMessage(connectNode, NetMsgType::GETSERVICES, getService);
 }
 bool Cluster::CreateAndSendSeriveSpec(DockerCreateService sspec){
@@ -190,4 +190,36 @@ bool Cluster::DeleteAndSendServiceSpec(DockerDeleteService delService)
 void Cluster::setDefaultPubkey(CPubKey pubkey)
 {
     DefaultPubkey = pubkey;
+}
+
+void Cluster::saveServiceData(ServiceInfo serviceInfo)
+{
+    CWalletTx& wtx = pwalletMain->mapWallet[serviceInfo.CreateSpec.OutPoint.hash];
+    wtx.Setserviceid(serviceInfo.ServiceID);
+    wtx.Setpubkey(serviceInfo.CreateSpec.pubKeyClusterAddress.ToString().substr(0, 66));
+    wtx.SetCPUType(serviceInfo.CreateSpec.hardware.CPUType);
+    wtx.SetCPUThread(std::to_string(serviceInfo.CreateSpec.hardware.CPUThread));
+    wtx.SetMemoryType(serviceInfo.CreateSpec.hardware.MemoryType);
+    wtx.SetMemoryCount(std::to_string(serviceInfo.CreateSpec.hardware.MemoryCount));
+    wtx.SetGPUType(serviceInfo.CreateSpec.hardware.GPUType);
+    wtx.SetGPUCount(std::to_string(serviceInfo.CreateSpec.hardware.GPUCount));
+    wtx.Setprice(std::to_string(serviceInfo.CreateSpec.Amount));
+    wtx.Setstate(serviceInfo.State);
+    wtx.Setcreatetime(std::to_string(serviceInfo.CreatedAt));
+    
+    CWalletDB walletdb(pwalletMain->strWalletFile);
+    wtx.WriteToDisk(&walletdb);
+}
+
+void Cluster::saveReletServiceData(const std::string& serviceID,DockerUpdateService sspec)
+{
+    CWalletTx& wtx = pwalletMain->mapWallet[sspec.clusterServiceUpdate.OutPoint.hash];
+    wtx.Setserviceid(serviceID);
+    wtx.SetCreateOutPoint(sspec.clusterServiceUpdate.CrerateOutPoint.ToStringShort());
+    wtx.Setpubkey(sspec.clusterServiceUpdate.pubKeyClusterAddress.ToString().substr(0, 66));
+    // wtx.Setprice(std::to_string(sspec.clusterServiceUpdate. .CreateSpec.Amount));
+    // wtx.Setcreatetime(std::to_string(serviceInfo.CreatedAt));
+
+    CWalletDB walletdb(pwalletMain->strWalletFile);
+    wtx.WriteToDisk(&walletdb);
 }

@@ -115,7 +115,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0" columnstretch="1,4,1">
+          <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0" columnstretch="1,6,1">
            <property name="leftMargin">
             <number>10</number>
            </property>
@@ -555,6 +555,12 @@ QSlider::sub-page:horizontal{
              </item>
              <item>
               <widget class="QPushButton" name="pBtn_sendCoin">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Send</string>
                </property>

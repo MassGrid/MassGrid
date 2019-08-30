@@ -24,6 +24,7 @@ class WalletModel;
 class QTableWidgetItem;
 class QSwitchButton;
 class Task;
+class DockerUpdateService;
 
 class DockerOrderView;
 
@@ -105,6 +106,9 @@ private:
     int64_t m_nTimeDockerListUpdated;
     int64_t m_nTimeListUpdated;
     int64_t m_nTimeMyListUpdated;
+
+    DockerUpdateService *m_updateService{};
+
     
 private:
     int loadServerList();
@@ -123,7 +127,7 @@ private:
     void gotoOrderDetailPage(int index);
     void initDockerOrderView(const PlatformStyle *platformStyle);
     void startScanTimer(int msec);
-    void reletService(const COutPoint& createOutPoint, const COutPoint& outPoint);
+    void fullReletServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -161,6 +165,7 @@ private Q_SLOTS:
     void timeoutToScanStatus();
     void disenableDeleteServiceBtn();
     void onPBtn_reletClicked();
+    void slot_doReletService();
     // void askTransData(std::string txid);
 };
 
