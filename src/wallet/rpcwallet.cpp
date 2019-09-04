@@ -20,7 +20,7 @@
 #include "wallet.h"
 #include "walletdb.h"
 #include "keepass.h"
-
+#include "coincontrol.h"
 #include <stdint.h>
 
 #include <boost/assign/list_of.hpp>
@@ -1022,7 +1022,7 @@ UniValue sendmany(const UniValue& params, bool fHelp)
     if (!EnsureWalletIsAvailable(fHelp))
         return NullUniValue;
 
-    if (fHelp || params.size() < 2 || params.size() > 7)
+    if (fHelp || params.size() < 2 || params.size() > 8)
         throw runtime_error(
             "sendmany \"fromaccount\" {\"address\":amount,...} ( minconf addlockconf \"comment\" [\"address\",...] subtractfeefromamount use_is )\n"
             "\nSend multiple times. Amounts are double-precision floating point numbers."
@@ -1046,6 +1046,7 @@ UniValue sendmany(const UniValue& params, bool fHelp)
             "      ,...\n"
             "    ]\n"
             "7. \"use_is\"                (bool, optional) Send this transaction as InstantSend (default: false)\n"
+            "7. \"disable_charge\"                (bool, optional) Send this transaction as InstantSend (default: false)\n"
             "\nResult:\n"
             "\"transactionid\"            (string) The transaction id for the send. Only 1 transaction is created regardless of \n"
             "                                    the number of addresses.\n"
@@ -1124,11 +1125,20 @@ UniValue sendmany(const UniValue& params, bool fHelp)
     int nChangePosRet = -1;
     string strFailReason;
     bool fUseInstantSend = false;
+    bool fCreated;
     if (params.size() > 6)
         fUseInstantSend = params[6].get_bool();
+    
 
-    bool fCreated = pwalletMain->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, nChangePosRet, strFailReason,
+    if (params.size() > 7 && params[7].get_bool()){
+        CCoinControl coinControl;
+        coinControl.destChange = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).Get();
+        fCreated = pwalletMain->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, nChangePosRet, strFailReason,
+                                                   &coinControl, true, ALL_COINS, fUseInstantSend);
+    }else{
+        fCreated = pwalletMain->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, nChangePosRet, strFailReason,
                                                    NULL, true, ALL_COINS, fUseInstantSend);
+    }
     if (!fCreated)
         throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, strFailReason);
     if (!pwalletMain->CommitTransaction(wtx, keyChange, g_connman.get(), fUseInstantSend ? NetMsgType::TXLOCKREQUEST : NetMsgType::TX))

@@ -382,7 +382,12 @@ bool CDockerServerman::CheckCreateService(DockerCreateService& dockerCreateServi
     serviceCreate.ServicePrice = machines.items[item].price;
     serviceCreate.MasterNodeN2NAddr = dockerServerman.LocalIP + ":" + boost::lexical_cast<std::string>(GetSNPort());
     serviceCreate.Drawee = CMassGridAddress(serviceCreate.pubKeyClusterAddress.GetID()).ToString();
-    serviceCreate.MasterNodeFeeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
+    CMassGridAddress feeAddress;
+    if(!mnodeman.GetAddress(activeMasternode.outpoint,feeAddress))
+        serviceCreate.MasterNodeFeeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
+    else{
+        serviceCreate.MasterNodeFeeAddress = feeAddress.ToString();
+    }
 
     CPubKey devpubkey(ParseHex(Params().SporkPubKey()));
     serviceCreate.DevFeeAddress = CMassGridAddress(devpubkey.GetID()).ToString();
@@ -442,7 +447,12 @@ bool CDockerServerman::CheckUpdateService(DockerUpdateService& dockerUpdateServi
 
     serviceUpdate.ServicePrice = price;
     serviceUpdate.Drawee = CMassGridAddress(serviceUpdate.pubKeyClusterAddress.GetID()).ToString();
-    serviceUpdate.MasterNodeFeeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
+    CMassGridAddress feeAddress;
+    if(!mnodeman.GetAddress(activeMasternode.outpoint,feeAddress))
+        serviceUpdate.MasterNodeFeeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
+    else{
+        serviceUpdate.MasterNodeFeeAddress = feeAddress.ToString();
+    }
     CPubKey devpubkey(ParseHex(Params().SporkPubKey()));
     serviceUpdate.DevFeeAddress = CMassGridAddress(devpubkey.GetID()).ToString();
     serviceUpdate.MasterNodeFeeRate = dockerServerman.feeRate;
