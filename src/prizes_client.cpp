@@ -36,7 +36,7 @@ bool PrizesClient::PostServiceCreate(ServiceCreate& serviceCreate, std::string& 
     int ret;
     ret = http.HttpPost();
 
-    if (ret < 200 || ret >= 300) {
+    if (ret < 100) {
         LogPrint("docker", "PrizesClient::PostServiceCreate Http_Error error_code: %d\n", ret);
         err = "ret error" +to_string(ret);
         return false;
@@ -60,7 +60,7 @@ bool PrizesClient::PostServiceUpdate(ServiceUpdate& serviceUpdate,std::string& e
     int ret;
     ret = http.HttpPost();
 
-    if (ret < 200 || ret >= 300) {
+    if (ret < 100) {
         LogPrint("docker", "PrizesClient::PostServiceUpdate Http_Error error_code: %d\n", ret);
         err = "ret error" + to_string(ret);
         return false;
@@ -83,8 +83,9 @@ bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo, st
     int ret;
     ret = http.HttpGet();
 
-    if (ret < 200 || ret >= 300) {
+    if (ret < 100) {
         LogPrint("docker", "PrizesClient::GetService Http_Error error_code: %d\n", ret);
+        err = "ret error" + to_string(ret);
         return false;
     }
     std::string responseData = http.getReponseData();
@@ -109,8 +110,9 @@ bool PrizesClient::GetServiceFromPubkey(std::string strPubkey,int64_t start,int6
     int ret;
     ret = http.HttpPost();
 
-    if (ret < 200 || ret >= 300) {
+    if (ret < 100) {
         LogPrint("docker", "PrizesClient::GetServiceFromPubkey Http_Error error_code: %d\n", ret);
+        err = "ret error" + to_string(ret);
         return false;
     }
     std::string responseData = http.getReponseData();
@@ -136,8 +138,9 @@ bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, s
     int ret;
     ret = http.HttpGet();
 
-    if (ret < 200 || ret >= 300) {
+    if (ret < 100) {
         LogPrint("docker", "PrizesClient::GetServiceDelete Http_Error error_code: %d\n", ret);
+        err = "ret error" + to_string(ret);
         return false;
     }
     std::string responseData = http.getReponseData();
@@ -160,8 +163,9 @@ bool PrizesClient::GetNodeList(NodeListStatistics& nodeListStatistics, std::stri
     int ret;
     ret = http.HttpGet();
 
-    if (ret < 200 || ret >= 300) {
+    if (ret < 100) {
         LogPrint("docker", "PrizesClient::GetNodeList Http_Error error_code: %d\n", ret);
+        err = "ret error" + to_string(ret);
         return false;
     }
     std::string responseData = http.getReponseData();
@@ -184,8 +188,9 @@ bool PrizesClient::GetMachines(ResponseMachines& machines, std::string& err)
     int ret;
     ret = http.HttpGet();
 
-    if (ret < 200 || ret >= 300) {
+    if (ret < 100) {
         LogPrint("docker", "PrizesClient::GetMachines Http_Error error_code: %d\n", ret);
+        err = "ret error" + to_string(ret);
         return false;
     }
     std::string responseData = http.getReponseData();
