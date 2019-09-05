@@ -64,7 +64,6 @@ public:
 
     static void getEdgeRet(bool flag);
     void showEdgeRet(bool flag);
-    void updateDockerOrder();
 
 private:
     QMenu *contextMenu;
@@ -76,6 +75,7 @@ public Q_SLOTS:
     void updateMyNodeList(bool fForce = false);
     void updateNodeList();
     void refreshServerList();
+    void updateDockerOrder();
 
 Q_SIGNALS:
 
@@ -127,7 +127,7 @@ private:
     void gotoOrderDetailPage(int index);
     void initDockerOrderView(const PlatformStyle *platformStyle);
     void startScanTimer(int msec);
-    void fullReletServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint);
+    void fullRerentServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -165,7 +165,7 @@ private Q_SLOTS:
     void timeoutToScanStatus();
     void disenableDeleteServiceBtn();
     void onPBtn_reletClicked();
-    void slot_doReletService();
+    void slot_doRerentService();
     // void askTransData(std::string txid);
 };
 

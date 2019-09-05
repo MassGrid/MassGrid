@@ -9,6 +9,9 @@
 #include "guiutil.h"
 #include "optionsmodel.h"
 #include <math.h>
+#include "dockerordertablemodel.h"
+#include "uint256.h"
+#include "util.h"
 
 extern CWallet* pwalletMain;
 
@@ -17,8 +20,10 @@ extern CWallet* pwalletMain;
 //     "running", "complete", "shutdown", "failed",
 //     "rejected", "remove", "orphaned"};
 
-ServiceDetail::ServiceDetail(QWidget* parent) : QDialog(parent),
-                                                ui(new Ui::ServiceDetail)
+ServiceDetail::ServiceDetail(QWidget* parent) 
+    : QDialog(parent),
+    ui(new Ui::ServiceDetail),
+    m_walletModel(NULL)
 {
     ui->setupUi(this);
 
@@ -29,6 +34,11 @@ ServiceDetail::ServiceDetail(QWidget* parent) : QDialog(parent),
     ui->tableWidget->verticalHeader()->setVisible(false);
     ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->tableWidget->setColumnWidth(0, 120);
+
+    ui->reletTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->reletTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->reletTableWidget->verticalHeader()->setVisible(false); 
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)),this,SLOT(slot_curTabPageChanged(int)));
 
     ui->label_titlename->setText(tr("Service Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
@@ -43,7 +53,7 @@ ServiceDetail::ServiceDetail(QWidget* parent) : QDialog(parent),
     ui->label_cpuCount->hide();
     ui->label_memoryBytes->hide();
     ui->label_GPUCount->hide();
-    
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 ServiceDetail::~ServiceDetail()
@@ -129,7 +139,7 @@ void ServiceDetail::updateServiceDetail(ServiceInfo& service)
     ui->label_user->setText(QString::fromStdString(userName));
     ui->label_PersistentStore->setText(fPersistentsore?tr("Yes"):tr("No"));
 
-    uint256 txid = service.CreateSpec.OutPoint.hash;
+    m_createOutPoint = service.CreateSpec.OutPoint.ToStringShort();
     CWalletTx& wtx = pwalletMain->mapWallet[service.CreateSpec.OutPoint.hash];
     
     std::vector<ServiceOrder> Order = service.Order;
@@ -144,6 +154,8 @@ void ServiceDetail::updateServiceDetail(ServiceInfo& service)
 
     QString createAt = QDateTime::fromTime_t(service.CreatedAt).toString("yyyy-MM-dd hh:mm:ss");
     ui->label_createAt->setText(createAt);
+
+    loadRerentView();
 }
 
 void ServiceDetail::setModel(WalletModel* model)
@@ -210,5 +222,88 @@ void ServiceDetail::updateTaskDetail(std::vector<Task>& mapDockerTasklists, int&
             ui->label_17->hide();
             ui->textEdit_taskErr->hide();
         }
+    }
+}
+
+void ServiceDetail::loadRerentView()
+{
+    ui->reletTableWidget->setRowCount(0);
+
+    if(m_walletModel == NULL)
+        return ;
+    std::list<std::string> txidList = m_walletModel->getDockerOrderTableModel()->getRerentTxidList();
+
+    std::list<std::string>::iterator iter = txidList.begin();
+
+    int count =0;
+    for(;iter != txidList.end();iter++){
+        std::string txidStr = *iter;
+        CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];
+        
+        if(wtx.GetCreateOutPoint() == m_createOutPoint){
+            QTableWidgetItem *txidItem = new QTableWidgetItem(QString::fromStdString(txidStr));
+
+            CAmount nPrice = (CAmount)QString::fromStdString(wtx.Getprice()).toDouble();
+            QString strPrice = MassGridUnits::formatWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(), nPrice) + "/H";
+
+            QString date;
+            CAmount amount;
+            m_walletModel->getDockerOrderTableModel()->getTransactionDetail(wtx,date,amount);
+            amount = amount*-1;
+
+            QTableWidgetItem *priceItem = new QTableWidgetItem(strPrice);
+            QTableWidgetItem *amountItem = new QTableWidgetItem(MassGridUnits::formatWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(), amount)); //wtx.GetAmounts()
+            QTableWidgetItem *createtimeItem = new QTableWidgetItem(date);
+
+            CAmount reletHourTime = amount/nPrice;
+            double tmp1 = amount%nPrice;
+            double tmp2 = tmp1/nPrice;
+            int reletMinTime = tmp2*60;
+
+            QLabel *label = new QLabel(ui->reletTableWidget);
+            label->setText(QString("+%1:%2").arg(QString::number(reletHourTime).sprintf("%02d",reletHourTime) ).arg(QString::number(reletMinTime).sprintf("%02d",reletMinTime)));
+            label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            label->setStyleSheet("color:green;");
+
+            ui->reletTableWidget->insertRow(count);
+            ui->reletTableWidget->setItem(count, 0, txidItem);
+            ui->reletTableWidget->setItem(count, 1, priceItem);
+            ui->reletTableWidget->setItem(count, 2, amountItem);
+            ui->reletTableWidget->setItem(count, 3, createtimeItem);
+            ui->reletTableWidget->setCellWidget(count,4,label);
+
+            for(int i=0;i<4;i++)
+                ui->reletTableWidget->item(count,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
+                count++;
+        }
+
+    }
+}
+
+void ServiceDetail::resizeEvent(QResizeEvent *event)
+{
+    resetTableWidgetTitle();
+    QWidget::resizeEvent(event);
+}
+
+void ServiceDetail::resetTableWidgetTitle()
+{
+    int columnCount = 5; //= ui->reletTableWidget->columnCount();
+    int itemwidth = ui->reletTableWidget->width()/columnCount;
+    ui->reletTableWidget->setColumnWidth(0, itemwidth*1.2);
+    ui->reletTableWidget->setColumnWidth(1, itemwidth*1.2);
+    ui->reletTableWidget->setColumnWidth(2, itemwidth);
+    ui->reletTableWidget->setColumnWidth(3, itemwidth*0.8);
+    ui->reletTableWidget->setColumnWidth(4, itemwidth*0.8);
+
+    // for(int i=0;i<columnCount;i++){
+    //     ui->reletTableWidget->setColumnWidth(i, itemwidth);
+    // }
+}
+
+void ServiceDetail::slot_curTabPageChanged(int index)
+{
+    if(index == 1){
+        resetTableWidgetTitle();
     }
 }

@@ -124,7 +124,7 @@ private Q_SLOTS:
     void contextualMenu(const QPoint &);
     void dateRangeChanged();
     // void showDetails();
-    void showOrderDetail(CWalletTx& wtx);
+    void showOrderDetail(std::string txid,CWalletTx& wtx);
     void copyAddress();
     void editLabel();
     void copyLabel();
@@ -185,6 +185,7 @@ private:
     bool m_isNeedWork = true;
     // QList<QString> m_taskList;
     QList<QPair<QString,bool>> m_taskList;
+    QList<QString> m_finishedTasks;
 
     QWaitCondition m_wait;
     QMutex m_mutex;

@@ -14,6 +14,7 @@ class PlatformStyle;
 class DockerOrderRecord;
 class DockerOrderTablePriv;
 class WalletModel;
+class CWalletTx;
 
 class CWallet;
 
@@ -83,6 +84,8 @@ public:
     QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const;
     bool processingQueuedTransactions() { return fProcessingQueuedTransactions; }
     void refreshModel();
+    std::list<std::string> getRerentTxidList();
+    void getTransactionDetail(CWalletTx wtx,QString& date,CAmount& amount);
 
 private:
     CWallet* wallet;

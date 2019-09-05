@@ -211,7 +211,7 @@ void Cluster::saveServiceData(ServiceInfo serviceInfo)
     wtx.WriteToDisk(&walletdb);
 }
 
-void Cluster::saveReletServiceData(const std::string& serviceID,DockerUpdateService sspec)
+void Cluster::saveRerentServiceData(const std::string& serviceID,DockerUpdateService sspec)
 {
     CWalletTx& wtx = pwalletMain->mapWallet[sspec.clusterServiceUpdate.OutPoint.hash];
     wtx.Setserviceid(serviceID);

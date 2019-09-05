@@ -64,7 +64,6 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
         
     }else if(strCommand == NetMsgType::DNDATA){     //cluster
-        LogPrintf("CDockerServerman::ProcessMessage DNDATA Started\n");
         LogPrint("dockernode","CDockerServerman::ProcessMessage DNDATA Started\n");
         ResponseMachines mdndata;
         vRecv >> mdndata;
@@ -182,6 +181,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
             CWalletTx& wtx = pwalletMain->mapWallet[item.second.CreateSpec.OutPoint.hash];
             wtx.Setstate(item.second.State);
+            wtx.Setdeletetime(std::to_string(item.second.LastCheckTime));
             CWalletDB walletdb(pwalletMain->strWalletFile);
             wtx.WriteToDisk(&walletdb);
             break;

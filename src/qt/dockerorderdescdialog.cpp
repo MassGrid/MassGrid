@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <QDateTime>
 #include "guiutil.h"
+#include "util.h"
 
 extern CWallet* pwalletMain;
 
@@ -28,11 +29,18 @@ DockerOrderDescDialog::DockerOrderDescDialog(WalletModel *model,QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
 
+    ui->reletTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->reletTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->reletTableWidget->verticalHeader()->setVisible(false); 
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)),this,SLOT(slot_curTabPageChanged(int)));
+
     ui->label_titlename->setText(tr("Docker order Detail"));
     this->setAttribute(Qt::WA_TranslucentBackground);
     ui->label_37->hide();
     ui->label_taskstate->hide();
     GUIUtil::MakeShadowEffect(this,ui->centerWin);
+
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 DockerOrderDescDialog::~DockerOrderDescDialog()
@@ -77,7 +85,7 @@ void DockerOrderDescDialog::mouseReleaseEvent(QMouseEvent *e)
     this->move(QPoint(this->x()+dx, this->y()+dy));
 }
 
-void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
+void DockerOrderDescDialog::setwalletTx(const std::string& txid,CWalletTx& wtx)
 {
     ui->label_serviceid->setText(QString::fromStdString(wtx.Getserviceid()));
     ui->label_verison->setText(QString::fromStdString(wtx.Getverison()));
@@ -86,7 +94,8 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
 
     CAmount amount_int = (CAmount)QString::fromStdString(wtx.Getprice()).toDouble();
     QString amount = MassGridUnits::formatHtmlWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(), amount_int) + "/H";
-
+    // m_createOutPoint = wtx.Getmasternodeoutpoint();
+    m_createOutPoint = GUIUtil::getOutPoint(txid,wtx.Getmasternodeaddress()).ToStringShort();
     ui->label_price->setText(amount);
 
     // init address label
@@ -122,6 +131,84 @@ void DockerOrderDescDialog::setwalletTx(CWalletTx& wtx)
         ui->label_taskstate->show();
     }
 
-    // ui->label_orderstatus->setText(QString::fromStdString(wtx.Getorderstatus())= "1" ? tr("Settled") : tr("Paid"));
     ui->label_orderstatus->setText(QString::fromStdString(wtx.Getstate())= "completed" ? tr("Settled") : tr("Paid"));
+    loadRerentView();
+}
+
+void DockerOrderDescDialog::loadRerentView()
+{
+    ui->reletTableWidget->setRowCount(0);
+
+    if(m_walletModel == NULL)
+        return ;
+    std::list<std::string> txidList = m_walletModel->getDockerOrderTableModel()->getRerentTxidList();
+
+    std::list<std::string>::iterator iter = txidList.begin();
+
+    int count =0;
+    for(;iter != txidList.end();iter++){
+        std::string txidStr = *iter;
+        CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];
+        
+        if(wtx.GetCreateOutPoint() == m_createOutPoint){
+            QTableWidgetItem *txidItem = new QTableWidgetItem(QString::fromStdString(txidStr));
+
+            CAmount nPrice = (CAmount)QString::fromStdString(wtx.Getprice()).toDouble();
+            QString strPrice = MassGridUnits::formatWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(), nPrice) + "/H";
+
+            QString date;
+            CAmount amount;
+            m_walletModel->getDockerOrderTableModel()->getTransactionDetail(wtx,date,amount);
+            amount = amount*-1;
+
+            QTableWidgetItem *priceItem = new QTableWidgetItem(strPrice);
+            QTableWidgetItem *amountItem = new QTableWidgetItem(MassGridUnits::formatWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(), amount)); //wtx.GetAmounts()
+            QTableWidgetItem *createtimeItem = new QTableWidgetItem(date);
+
+            CAmount reletHourTime = amount/nPrice;
+            double tmp1 = amount%nPrice;
+            double tmp2 = tmp1/nPrice;
+            int reletMinTime = tmp2*60;
+
+            QLabel *label = new QLabel(ui->reletTableWidget);
+            label->setText(QString("+%1:%2").arg(QString::number(reletHourTime).sprintf("%02d",reletHourTime) ).arg(QString::number(reletMinTime).sprintf("%02d",reletMinTime)));
+            label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            label->setStyleSheet("color:green;");
+
+            ui->reletTableWidget->insertRow(count);
+            ui->reletTableWidget->setItem(count, 0, txidItem);
+            ui->reletTableWidget->setItem(count, 1, priceItem);
+            ui->reletTableWidget->setItem(count, 2, amountItem);
+            ui->reletTableWidget->setItem(count, 3, createtimeItem);
+            ui->reletTableWidget->setCellWidget(count,4,label);
+
+            for(int i=0;i<4;i++)
+                ui->reletTableWidget->item(count,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
+                count++;
+        }
+    }
+}
+
+void DockerOrderDescDialog::resizeEvent(QResizeEvent *event)
+{
+    resetTableWidgetTitle();
+    QWidget::resizeEvent(event);
+}
+
+void DockerOrderDescDialog::resetTableWidgetTitle()
+{
+    int columnCount = 5; //= ui->reletTableWidget->columnCount();
+    int itemwidth = ui->reletTableWidget->width()/columnCount;
+    ui->reletTableWidget->setColumnWidth(0, itemwidth*1.2);
+    ui->reletTableWidget->setColumnWidth(1, itemwidth*1.2);
+    ui->reletTableWidget->setColumnWidth(2, itemwidth);
+    ui->reletTableWidget->setColumnWidth(3, itemwidth*0.8);
+    ui->reletTableWidget->setColumnWidth(4, itemwidth*0.8);
+}
+
+void DockerOrderDescDialog::slot_curTabPageChanged(int index)
+{
+    if(index == 1){
+        resetTableWidgetTitle();
+    }
 }

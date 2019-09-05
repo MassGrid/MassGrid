@@ -123,6 +123,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     connect(ui->pushButton_refund,SIGNAL(clicked()),this,SLOT(slot_btn_refund()));
     // connect(ui->lineEdit_searchOrder,SIGNAL(),this,SLOT());
     connect(ui->pBtn_relet,SIGNAL(clicked()),this,SLOT(onPBtn_reletClicked()));
+    connect(ui->pushButton_reloadOrderView,SIGNAL(clicked()),this,SLOT(updateDockerOrder()));
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
@@ -587,7 +588,7 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
             return;
         }
         disconnect(timer, SIGNAL(timeout()), this, SLOT(updateDockerList()));
-        updateDockerOrder();
+        QTimer::singleShot(500,this,SLOT(updateDockerOrder()));
     }
     startTimer(true);
 }
@@ -712,6 +713,7 @@ void MasternodeList::loadServerDetail(QModelIndex index)
     if(taskStatus == Config::TASKSTATE_RUNNING){
         ui->deleteServiceBtn->setEnabled(true);
         switchButton->setEnabled(true);
+        ui->pBtn_relet->setEnabled(true);
     }
 }
 
@@ -719,6 +721,8 @@ void MasternodeList::disenableDeleteServiceBtn()
 {
     ui->deleteServiceBtn->setEnabled(false);
     switchButton->setEnabled(false);
+    ui->pBtn_relet->setEnabled(false);
+    ui->serviceTableWidget->setCurrentItem(NULL);
 }
 
 int MasternodeList::loadDockerDetail(const std::string & key)
@@ -839,6 +843,7 @@ void MasternodeList::clearDockerDetail()
     ui->deleteServiceBtn->setEnabled(false);
     updateEdgeStatus(0);
     ui->serviceTableWidget->setRowCount(0);
+    ui->pBtn_relet->setEnabled(false);
 }
 
 void MasternodeList::slot_createServiceBtn()
@@ -1126,21 +1131,21 @@ void MasternodeList::onPBtn_reletClicked()
     std::string txid = dlg.getTxid();
     COutPoint outpoint = GUIUtil::getOutPoint(txid,mnaddress);
 
-    fullReletServiceData(createOutpoint,outpoint);
+    fullRerentServiceData(createOutpoint,outpoint);
 
-    LoadingWin::showLoading2(tr("Waiting for relet service!"));
+    LoadingWin::showLoading2(tr("Waiting for rerent service!"));
 
-    QTimer::singleShot(3000,this,SLOT(slot_doReletService()));
+    QTimer::singleShot(3000,this,SLOT(slot_doRerentService()));
 }
 
-void MasternodeList::fullReletServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint)
+void MasternodeList::fullRerentServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint)
 {
     m_updateService->clusterServiceUpdate.pubKeyClusterAddress = dockercluster.DefaultPubkey;
     m_updateService->clusterServiceUpdate.CrerateOutPoint = createOutPoint;
     m_updateService->clusterServiceUpdate.OutPoint = outPoint; 
 }
 
-void MasternodeList::slot_doReletService()
+void MasternodeList::slot_doRerentService()
 {
     if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
         CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
@@ -1149,7 +1154,7 @@ void MasternodeList::slot_doReletService()
     }
 
     if(!dockercluster.UpdateAndSendSeriveSpec(*m_updateService)){
-        CMessageBox::information(this, tr("Docker option"),tr("Relet service failed!"));
+        CMessageBox::information(this, tr("Docker option"),tr("Rerent service failed!"));
         LoadingWin::hideLoadingWin();
         return ;
     }
@@ -1161,7 +1166,7 @@ void MasternodeList::slot_doReletService()
         return ;
     std::string serviceID = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
 
-    dockercluster.saveReletServiceData(serviceID,*m_updateService);
+    dockercluster.saveRerentServiceData(serviceID,*m_updateService);
     slot_updateServiceBtn();
 }
 

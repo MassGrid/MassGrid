@@ -21,7 +21,30 @@ private:
 
 Q_SIGNALS:
     void askDNDataFinished(bool isTimeOut);
-    void askDNDataTimeout();
+    void updateTaskTime(int);
+    void threadStopped();
+private Q_SLOTS:
+    void startTask();
+};
+
+class AskServicesWorker : public QObject
+{
+    Q_OBJECT
+public:
+    explicit AskServicesWorker(QObject* parent = nullptr);
+    ~AskServicesWorker();
+
+    bool isNeedToWork() { return m_isNeedToWork; };
+    void setNeedToWork(bool flag) { m_isNeedToWork = flag;};
+
+    bool isAskServicesFinished();
+
+private:
+    bool m_isNeedToWork;
+
+Q_SIGNALS:
+    void askServicesFinished(bool isTimeOut);
+    void askServicesTimeout();
     void updateTaskTime(int);
     void threadStopped();
 private Q_SLOTS:

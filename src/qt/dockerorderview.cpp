@@ -333,6 +333,7 @@ void DockerOrderView::updateAllOperationBtn()
 
         updateOrder(txidStr);
     }
+    dockerorderView->update();
 }
 
 void DockerOrderView::addTransTask(const std::string& txidStr)
@@ -365,8 +366,6 @@ bool DockerOrderView::updateOrderStatus(const std::string &txidStr)const
     bool isNeedUpdateTD = getOrderBtnText(wtx,btnText);
     btn->setText(btnText);
 
-    LogPrintf("DockerOrderView::updateOrderStatus txidStr:%s,isNeedUpdateTD:%d\n",txidStr,isNeedUpdateTD);
-
     return isNeedUpdateTD;
 }
 
@@ -385,7 +384,7 @@ void DockerOrderView::slot_btnClicked()
     
 
     if(orderState == "completed"){
-        showOrderDetail(wtx);
+        showOrderDetail(txidStr.split("-").at(0).toStdString(),wtx);
     }
     else if(orderState == "running" && serviceidStr.size()){
         Q_EMIT openServicePage(masternodeip);
@@ -722,14 +721,14 @@ void DockerOrderView::editLabel()
     }
 }
 
-void DockerOrderView::showOrderDetail(CWalletTx& wtx)
+void DockerOrderView::showOrderDetail(std::string txid,CWalletTx& wtx)
 {
     DockerOrderDescDialog dlg(model);
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
 
     dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
-    dlg.setwalletTx(wtx);
+    dlg.setwalletTx(txid,wtx);
     dlg.exec();
 }
 
@@ -927,7 +926,7 @@ void DockerOrderView::updateTransData(QString txid,bool isAskAll)
 
 void DockerOrderView::updateTransactionHistoryData(const QString& txid,bool sucess)
 {
-
+    updateAllOperationBtn();
 }
 
 void DockerOrderView::stopAndDeleteSyncThread()
@@ -961,10 +960,16 @@ void SyncTransactionHistoryThread::addTask(const QString& txid,bool isAskAll)
 {
     QPair<QString,bool> pair;
     pair.first = txid;
-    pair.second = isAskAll;
+    pair.second = false; //isAskAll;
 
-    if(!m_taskList.count(pair) && !txid.isEmpty())
+    // LogPrintf("SyncTransactionHistoryThread::addTask txid:%s\n",txid.toStdString());
+
+    if(m_finishedTasks.count(txid)){
+        return ;
+    }
+    if(!m_taskList.count(pair) && !txid.isEmpty()){
         m_taskList.append(pair);
+    }
     m_wait.wakeOne();
 }
 
@@ -1039,6 +1044,7 @@ void SyncTransactionHistoryThread::run()
         QMutexLocker locker(&m_mutex);
         if(popTask(txid,isAskAll)){
             bool sucess = doTask(txid,isAskAll);
+            m_finishedTasks.append(txid);
             Q_EMIT syncTaskEnd(txid,sucess);
         }
         else{

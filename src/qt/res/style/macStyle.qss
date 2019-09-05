@@ -1332,8 +1332,8 @@ QWidget#RPCConsole{
 }
 
 QDialog#DockerOrderDescDialog{
-    min-width:@660px@;
-    min-height:@400px@;
+    min-width:@720px@;
+    min-height:@440px@;
 }
 
 QDialog#EditAddressDialog{

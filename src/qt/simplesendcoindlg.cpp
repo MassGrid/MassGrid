@@ -11,6 +11,8 @@
 #include "massgridgui.h"
 #include "amount.h"
 #include "dockercluster.h"
+#include "adddockerservicedlg.h"
+#include "loadingwin.h"
 
 extern CWallet* pwalletMain;
 extern SendCoinsDialog* g_sendCoinsPage;
@@ -82,7 +84,7 @@ void SimpleSendcoinDlg::prepareOrderTransaction(WalletModel* model,const std::st
     m_serviceID = serviceID;
 
     ui->payTo->setText(QString::fromStdString(m_paytoAddress));
-    ui->payAmount->setValue(machinePrice);
+    // ui->payAmount->setValue(machinePrice);
     ui->payAmount->setFocus();
 
     askForDNData();
@@ -90,9 +92,13 @@ void SimpleSendcoinDlg::prepareOrderTransaction(WalletModel* model,const std::st
 
 void SimpleSendcoinDlg::startAskDNDataWork(const char* slotMethod,bool needAsk)
 {
+    LogPrintf("start to ask dndata work:%s\n",m_addr_port);
+
     if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
         CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
-        return ;
+        LogPrintf("Connect docker network failed!m_addr_port is:%s\n",m_addr_port);
+        LoadingWin::hideLoadingWin();
+        close();        
     }
 
     if(m_askDNDataWorker == NULL){
@@ -112,10 +118,13 @@ void SimpleSendcoinDlg::startAskDNDataWork(const char* slotMethod,bool needAsk)
     m_askDNDataWorker->thread()->start();
 }
 
+void SimpleSendcoinDlg::updateCreateServerWaitTimer(int)
+{
+
+}
+
 CAmount SimpleSendcoinDlg::getMachinePrice()
 {
-    //     dockercluster.AskForServices(0,0,false);
-    // refreshServerList();
     ServiceInfo serviceInfo = dockercluster.vecServiceInfo.servicesInfo[m_serviceID];
     std::map<Item, Value_price> items = dockercluster.machines.items; 
 
@@ -127,12 +136,15 @@ CAmount SimpleSendcoinDlg::getMachinePrice()
                     serviceInfo.CreateSpec.hardware.GPUCount);
     Value_price itemPrice = items[machineItem];
 
-    ui->payAmount->setValue(itemPrice.price);
+    if(itemPrice.price > 0)
+        return itemPrice.price;
+    else
+        return m_amount;
 }
 
 void SimpleSendcoinDlg::askForDNData()
 {
-    // showLoading(tr("Load docer resource..."));
+    LoadingWin::showLoading2(tr("Load docer resource..."));
 
     const char* method = SLOT(updateServiceListFinished(bool));
     startAskDNDataWork(method,true);
@@ -141,17 +153,19 @@ void SimpleSendcoinDlg::askForDNData()
 void SimpleSendcoinDlg::updateServiceListFinished(bool isTaskFinished)
 {
     disconnect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),this,SLOT(updateServiceListFinished(bool)));
-    // hideLoadingWin(); 
+    LoadingWin::hideLoadingWin();
 
     if(isTaskFinished){
-        // loadResourceData();
-        getMachinePrice();
+        CAmount price = getMachinePrice();
+        ui->payAmount->setValue(price);
+
         LogPrintf("AddDockerServiceDlg get DNData Status:CDockerServerman::Received\n");
     }
     else
     {
         //time out tip
         CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker configuration!"));
+        close();
         return;
     }
 }
@@ -164,8 +178,17 @@ std::string SimpleSendcoinDlg::getTxid()
 void SimpleSendcoinDlg::onPBtn_sendCoinClicked()
 {
     if(sendCoin()){
+        saveMachinePrice();
         QDialog::accept();
     }
+}
+
+void SimpleSendcoinDlg::saveMachinePrice()
+{
+    CWalletTx& wtx = pwalletMain->mapWallet[uint256S(getTxid())];
+    wtx.Setprice(std::to_string(getMachinePrice()));
+    CWalletDB walletdb(pwalletMain->strWalletFile);
+    wtx.WriteToDisk(&walletdb);
 }
 
 bool SimpleSendcoinDlg::sendCoin()
@@ -199,7 +222,6 @@ bool SimpleSendcoinDlg::sendCoin()
 
     // Normal payment
     recipient.address = ui->payTo->text();
-    // recipient.label = ui->addAsLabel->text();
     recipient.amount = ui->payAmount->value();
     if(ui->checkUseInstantSend->isChecked())
         recipient.fUseInstantSend = true;
@@ -216,7 +238,6 @@ bool SimpleSendcoinDlg::sendCoin()
         return false;
     
     m_txid = txid;
-    // m_amount = recipient.amount;
 
     return true;
 }

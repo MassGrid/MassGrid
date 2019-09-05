@@ -6,8 +6,11 @@
 
 #include "dockerordertablemodel.h"
 #include "dockerorderrecord.h"
-
+#include "util.h"
+#include "init.h"
 #include <cstdlib>
+#include "guiutil.h"
+#include "wallet/wallet.h"
 
 #include <QDateTime>
 
@@ -59,6 +62,13 @@ bool DockerOrderFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &
         return false;
     if(!txid.contains(txidPrefix, Qt::CaseInsensitive)){
         return false;
+    }
+    {
+        std::string txidStr = txid.split("-").at(0).toStdString();
+        CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
+        if(wtx.GetCreateOutPoint().size() > 0){
+            return false;
+        }
     }
 
     return true;

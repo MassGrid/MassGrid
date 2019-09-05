@@ -8,7 +8,7 @@
 
 class WalletModel;
 class SendCoinsRecipient;
-
+class AskDNDataWorker;
 
 namespace Ui {
 class SimpleSendcoinDlg;
@@ -21,8 +21,6 @@ class SimpleSendcoinDlg : public QDialog
 public:
     explicit SimpleSendcoinDlg(QWidget *parent = 0);
     ~SimpleSendcoinDlg();
-    // void setWalletModel(WalletModel* model);
-    // void setPaytoAddress(const std::string& address);
     void prepareOrderTransaction(WalletModel* model,const std::string& serviceID,const std::string& paytoAddress,const std::string& addr_port,CAmount machinePrice);
     std::string getTxid();
 
@@ -43,10 +41,10 @@ private:
 private:
     bool sendCoin();
     bool validate(SendCoinsRecipient& recipient);
-    CAmount getMachinePrice();
     void askForDNData();
     void startAskDNDataWork(const char* slotMethod,bool needAsk);
-    // void refre
+    void saveMachinePrice();
+    CAmount getMachinePrice();
 
 protected:
     void mousePressEvent(QMouseEvent *e);
@@ -57,6 +55,7 @@ public Q_SLOTS:
     void onPBtn_sendCoinClicked();
     void onHireTimeChanged(int value);
     void updateServiceListFinished(bool isTaskFinished);
+    void updateCreateServerWaitTimer(int);
 };
 
 #endif // SIMPLESENDCOINDLG_H

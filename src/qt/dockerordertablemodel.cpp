@@ -79,6 +79,7 @@ public:
      * this is sorted by sha256.
      */
     QList<DockerOrderRecord> cachedWallet;
+    std::list<std::string> reletTxids;
 
     /* Query entire wallet anew from core.
      */
@@ -86,14 +87,17 @@ public:
     {
         qDebug() << "DockerOrderTablePriv::refreshWallet";
         cachedWallet.clear();
+        reletTxids.clear();
         {
             LOCK2(cs_main, wallet->cs_wallet);
             for(std::map<uint256, CWalletTx>::iterator it = wallet->mapWallet.begin(); it != wallet->mapWallet.end(); ++it)
             {
-                // && (it->second.GetCreateOutPoint().size() <= 0)
                 if(DockerOrderRecord::showTransaction(it->second) && it->second.Getmasternodeoutpoint().size()){
                     if(!it->second.Getmasternodeip().size()){
                         getMasternodeInfo(it->second);
+                    }
+                    if(it->second.GetCreateOutPoint().size()){
+                        reletTxids.push_back(it->first.ToString());
                     }
                     cachedWallet.append(DockerOrderRecord::decomposeTransaction(wallet, it->second));
                 }
@@ -676,7 +680,6 @@ QString DockerOrderTableModel::formatOrderStatus(const DockerOrderRecord *rec,co
     // }
     // LogPrintf("Can't find vout address the order status is null\n");
     // return QString("NULL"); 
-
 }
 
 QVariant DockerOrderTableModel::data(const QModelIndex &index, int role) const
@@ -996,3 +999,24 @@ void DockerOrderTableModel::refreshModel()
 { 
     priv->refreshWallet();
 }
+
+std::list<std::string> DockerOrderTableModel::getRerentTxidList()
+{
+    refreshModel();
+    return priv->reletTxids;
+}
+    static QList<DockerOrderRecord> decomposeTransaction(const CWallet *wallet, const CWalletTx &wtx);
+
+void DockerOrderTableModel::getTransactionDetail(CWalletTx wtx,QString& date,CAmount& amount)
+{
+    QList<DockerOrderRecord> records = DockerOrderRecord::decomposeTransaction(wallet, wtx);
+    if(records.size()){
+        date = formatTxDate(&records[0]);
+        amount = records[0].debit;
+        // amount = formatTxAmount(&records[0],false);
+
+        LogPrintf("======>getTransactionDetail records[0].credit:%ld\n",records[0].credit);
+        LogPrintf("======>getTransactionDetail records[0].debit:%ld\n",records[0].debit);
+    }
+}
+
