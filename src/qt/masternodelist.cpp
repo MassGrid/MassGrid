@@ -879,12 +879,9 @@ void MasternodeList::refreshServerList()
     if(currentIndex != 2)
         return ;
     
-    static bool isWaitFoAsk = false;
-
     if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::AskSD){
         if(DockerUpdateMode::WhenNormal){
             QTimer::singleShot(2000,this,SLOT(refreshServerList()));
-            isWaitFoAsk = true;
         }
         LogPrintf("MasternodeList get DNData Status:CDockerServerman::Ask\n");
         return ;
@@ -892,31 +889,32 @@ void MasternodeList::refreshServerList()
     else if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD ||
             dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
 
-        isWaitFoAsk = false;
-
         LogPrintf("ask service data finished!\n");
+        doLoadServiceTask();
+        LogPrintf("MasternodeList get DNData Status:CDockerServerman::Received\n");
+    }
+}
 
-        int count = loadServerList();
-        if(!count){
-            clearDockerDetail();
-            setCurUpdateMode(DockerUpdateMode::WhenNormal);
-        }
-        else{
-            int rowCount = ui->serviceTableWidget->rowCount();
-            for(int i=0;i<rowCount;i++){
-                QString key = ui->serviceTableWidget->item(i,1)->text();
-                int taskStatus = loadDockerDetail(key.toStdString());
-                if(taskStatus != Config::TASKSTATE_RUNNING){
-                    setCurUpdateMode(DockerUpdateMode::AfterCreate);
-                    QTimer::singleShot(2000,this,SLOT(askDNData()));
-                    break;
-                }
+void MasternodeList::doLoadServiceTask()
+{
+    int count = loadServerList();
+    if(!count){
+        clearDockerDetail();
+        setCurUpdateMode(DockerUpdateMode::WhenNormal);
+    }
+    else{
+        int rowCount = ui->serviceTableWidget->rowCount();
+        for(int i=0;i<rowCount;i++){
+            QString key = ui->serviceTableWidget->item(i,1)->text();
+            int taskStatus = loadDockerDetail(key.toStdString());
+            if(taskStatus != Config::TASKSTATE_RUNNING){
+                setCurUpdateMode(DockerUpdateMode::AfterCreate);
+                QTimer::singleShot(2000,this,SLOT(askDNData()));
+                break;
             }
         }
-        updateEdgeStatus(count);
-        LogPrintf("MasternodeList get DNData Status:CDockerServerman::Received\n");
-        return ;
     }
+    updateEdgeStatus(count);
 }
 
 void MasternodeList::setCurUpdateMode(DockerUpdateMode mode)

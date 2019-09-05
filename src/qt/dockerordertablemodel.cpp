@@ -636,10 +636,10 @@ QString DockerOrderTableModel::formatOrderStatus(const DockerOrderRecord *rec,co
 
     CWalletTx& wtx = wallet->mapWallet[rec->hash];
     if(wtx.Getstate() == "completed" ){
-        return QString("Settled");
+        return tr("Settled");
     }
     else{
-        return QString("Paid");
+        return tr("Paid");
     }
 
     // CTransaction tx;

@@ -128,6 +128,7 @@ private:
     void initDockerOrderView(const PlatformStyle *platformStyle);
     void startScanTimer(int msec);
     void fullRerentServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint);
+    void doLoadServiceTask();
 
 protected:
     void resizeEvent(QResizeEvent *event);

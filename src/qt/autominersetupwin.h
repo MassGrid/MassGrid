@@ -3,6 +3,9 @@
 
 #include <QDialog>
 #include <QMouseEvent>
+#include <QMenu>
+
+class QTableWidgetItem;
 
 namespace Ui {
 class AutoMinerSetupWin;
@@ -24,18 +27,24 @@ private:
     QPoint m_last;
     bool m_mousePress;
     std::map<std::string,std::string> m_env;
+    QMenu *contextMenu;
 
-    // void inittableWidget();
+    void inittableWidget();
 protected:
     void mousePressEvent(QMouseEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
     void slot_fillAutoMinerSetup();
     void slot_confirmSetup();
     void slot_clearSetup();
-    // void slot_addPathRow();
+    void onAddPathRow();
+    void onStackWidgetPageChanged();
+    void onRemovePathRow();
+    void ontableWidgetClicked(const QModelIndex &index);
+    void contextualMenu(const QPoint &point);
 };
 
 #endif // AUTOMINERSETUPWIN_H

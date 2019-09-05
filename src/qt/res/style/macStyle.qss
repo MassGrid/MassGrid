@@ -1226,17 +1226,20 @@ QDialog#AutoMinerSetupWin QLineEdit{
 }
 
 QDialog#AutoMinerSetupWin QPushButton#pBtn_clear,
-QDialog#AutoMinerSetupWin QPushButton#pBtn_defaultSetup,
 QDialog#AutoMinerSetupWin QPushButton#pBtn_ok,
 QDialog#AutoMinerSetupWin QPushButton#pBtn_add,
+QDialog#AutoMinerSetupWin QPushButton#pBtn_delete,
 QDialog#AutoMinerSetupWin QPushButton#pBtn_del{
     min-width: @80px@;
     min-height: @30px@;
 }
 
-QDialog#AutoMinerSetupWin QPushButton#pBtn_defaultMode,
-QDialog#AutoMinerSetupWin QPushButton#pBtn_customMode{
-
+QDialog#AutoMinerSetupWin QPushButton#pBtn_defaultSetup,
+QDialog#AutoMinerSetupWin QPushButton#pBtn_delete,
+QDialog#AutoMinerSetupWin QPushButton#pBtn_add{
+    min-width: @80px@;
+    min-height: @25px@;
+    max-height: @25px@;
 }
 
 QDialog#AutoMinerSetupWin QLabel#label_minertype,
@@ -1245,6 +1248,52 @@ QDialog#AutoMinerSetupWin QLabel#label_minerworker,
 QDialog#AutoMinerSetupWin QLabel#label_address
 {
 	min-width:@120px@;
+}
+
+QDialog#AutoMinerSetupWin QToolButton{
+    color: rgb(0,0,0);
+    border-bottom:1px solid rgb(238,169,4);
+    border-left:0px;
+    border-right:0px;
+    border-top:0px;
+    min-width: 90px;
+    min-height: 28px;
+}
+
+QDialog#AutoMinerSetupWin QToolButton:checked, 
+QDialog#AutoMinerSetupWin QToolButton:hover
+{
+    color: rgb(238,169,4);
+    border-left:1px solid rgb(238,169,4);
+    border-right:1px solid rgb(238,169,4);
+    border-top:1px solid rgb(238,169,4);
+    border-bottom:0px;
+}
+
+QDialog#AutoMinerSetupWin QToolButton:!checked
+{
+    color: rgb(0,0,0);
+    border-bottom:1px solid rgb(238,169,4);
+    border-left:0px;
+    border-right:0px;
+    border-top:0px;
+}
+
+QDialog#AutoMinerSetupWin QTableView{
+    color: black;
+    gridline-color: rgb(238,238,238);
+    background-color: white;
+    outline: 0px;
+    alternate-background-color: rgb(248, 249, 249);
+    selection-color: white;
+    selection-background-color: rgb(239,169,4);
+    border:hidden;
+}
+
+QDialog#AutoMinerSetupWin QTableView::item::selected
+{
+    background-color: white;
+	color: rgb(0, 0, 0);
 }
 
 QDialog#AddDockerServiceDlg QFrame#frame_step QLabel::!enabled

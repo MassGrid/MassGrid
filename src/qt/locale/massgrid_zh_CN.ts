@@ -645,7 +645,7 @@
     <name>AutoMinerSetupWin</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">窗体</translation>
+        <translation>窗体</translation>
     </message>
     <message>
         <source>Mine Setup</source>
@@ -653,10 +653,6 @@
     </message>
     <message>
         <source>MINER_ADDRESS:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>0xff6514c44f4D3AFeEFDFca7913D33Ec3a87747f3</source>
         <translation></translation>
     </message>
     <message>
@@ -672,15 +668,7 @@
         <translation></translation>
     </message>
     <message>
-        <source>eth.f2pool.com:8080</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>MINER_TYPE:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>ETH</source>
         <translation></translation>
     </message>
     <message>
@@ -726,6 +714,26 @@
     <message>
         <source>Add</source>
         <translation>添加</translation>
+    </message>
+    <message>
+        <source>MBew1aDgegex4GnYwzX2jhfAwJP37AJXsf</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MGD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>mgd.vvpool.com:5630</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Key</source>
+        <translation>变量</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>值</translation>
     </message>
 </context>
 <context>
@@ -1500,6 +1508,34 @@
         <source>Docker order Detail</source>
         <translation>虚拟机订单详情</translation>
     </message>
+    <message>
+        <source>Order Detail</source>
+        <translation>订单详情</translation>
+    </message>
+    <message>
+        <source>Rerent service list</source>
+        <translation>续租服务列表</translation>
+    </message>
+    <message>
+        <source>Txid</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Price</source>
+        <translation>单价</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>金额</translation>
+    </message>
+    <message>
+        <source>Create Time</source>
+        <translation>转账时间</translation>
+    </message>
+    <message>
+        <source>Rerent Time(H/M)</source>
+        <translation>续租时长(时/分)</translation>
+    </message>
 </context>
 <context>
     <name>DockerOrderTableModel</name>
@@ -1754,7 +1790,7 @@
     </message>
     <message>
         <source>Get Detail</source>
-        <translation></translation>
+        <translation>获取详情</translation>
     </message>
     <message>
         <source>Order Detail</source>
@@ -3062,6 +3098,30 @@ Address: %4
     <message>
         <source>N2N Status</source>
         <translation>N2N状态</translation>
+    </message>
+    <message>
+        <source>Rerent</source>
+        <translation>续租</translation>
+    </message>
+    <message>
+        <source>Outpoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wallet option</source>
+        <translation>钱包操作</translation>
+    </message>
+    <message>
+        <source>This option need to unlock your wallet</source>
+        <translation>该操作需要解锁您的钱包</translation>
+    </message>
+    <message>
+        <source>Waiting for rerent service!</source>
+        <translation>等待服务续租！</translation>
+    </message>
+    <message>
+        <source>Rerent service failed!</source>
+        <translation>续租服务失败！</translation>
     </message>
 </context>
 <context>
@@ -5400,6 +5460,38 @@ https://www.transifex.com/projects/p/massgrid/</translation>
         <source>User Name:</source>
         <translation>用户名:</translation>
     </message>
+    <message>
+        <source>Detail</source>
+        <translation>详情</translation>
+    </message>
+    <message>
+        <source>Service CreateAt:</source>
+        <translation>起始时间:</translation>
+    </message>
+    <message>
+        <source>Rerent List</source>
+        <translation>续租列表</translation>
+    </message>
+    <message>
+        <source>Txid</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Price</source>
+        <translation>单价</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>金额</translation>
+    </message>
+    <message>
+        <source>Create Time</source>
+        <translation>转账时间</translation>
+    </message>
+    <message>
+        <source>Rerent Time(H/M)</source>
+        <translation>续租时长(时/分)</translation>
+    </message>
 </context>
 <context>
     <name>ShutdownWindow</name>
@@ -5565,6 +5657,85 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>Copy</source>
         <translation>复制</translation>
+    </message>
+</context>
+<context>
+    <name>SimpleSendcoinDlg</name>
+    <message>
+        <source>Dialog</source>
+        <translation>窗体</translation>
+    </message>
+    <message>
+        <source>title name</source>
+        <translation>标题名</translation>
+    </message>
+    <message>
+        <source>Pay to:</source>
+        <translation>地址:</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>金额:</translation>
+    </message>
+    <message>
+        <source>Lenght of hire</source>
+        <translation>租用时长</translation>
+    </message>
+    <message>
+        <source>(1H)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>InstantSend</source>
+        <translation>即时支付</translation>
+    </message>
+    <message>
+        <source>Payment status refresh:</source>
+        <translation>支付状态刷新:</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>发送</translation>
+    </message>
+    <message>
+        <source>Service Detail</source>
+        <translation>服务详情</translation>
+    </message>
+    <message>
+        <source>Docker option</source>
+        <translation>虚拟机操作</translation>
+    </message>
+    <message>
+        <source>Connect docker network failed!</source>
+        <translation>连接虚拟机网络失败！</translation>
+    </message>
+    <message>
+        <source>Load docer resource...</source>
+        <translation>加载虚拟机资源...</translation>
+    </message>
+    <message>
+        <source>Load failed</source>
+        <translation>加载失败</translation>
+    </message>
+    <message>
+        <source>Can&apos;t load Docker configuration!</source>
+        <translation>加载虚拟机配置失败！</translation>
+    </message>
+    <message>
+        <source>Wallet option</source>
+        <translation>钱包操作</translation>
+    </message>
+    <message>
+        <source>This option need to unlock your wallet</source>
+        <translation>该操作需要解锁您的钱包</translation>
     </message>
 </context>
 <context>
