@@ -41,6 +41,7 @@
 #include "loadingwin.h"
 #include <QDateTime>
 #include "dockerordertablemodel.h"
+#include "networkers.h"
 
 #define DOCKER_AFTERCREATE_UPDATE_SECONDS 5
 #define DOCKER_WHENNORMAL_UPDATE_SECONDS 600
@@ -67,7 +68,8 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     m_nTimeMyListUpdated(0),
     m_nTimeListUpdated(0),
     m_scanTimer(NULL),
-    m_updateService(new DockerUpdateService())
+    m_updateService(new DockerUpdateService()),
+    m_askServiceDataWorker(NULL)
 {
     ui->setupUi(this);
 
@@ -232,7 +234,9 @@ void MasternodeList::gotoDockerSerivcePage(const std::string& ip_port)
     m_curAddr_Port = ip_port;
     ui->tabWidget->setCurrentIndex(2);
     setCurUpdateMode(DockerUpdateMode::WhenNormal);
-    updateServiceList();
+    //update service list
+    clearDockerDetail();
+    askServiceData();
 }
 
 void MasternodeList::StartAlias(std::string strAlias)
@@ -595,6 +599,7 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
 
 void MasternodeList::updateDockerOrder()
 {
+    dockerorderView->clearSyncTask();
     dockerorderView->updateAllOperationBtn();
 }
 
@@ -627,12 +632,10 @@ void MasternodeList::updateDockerList(bool fForce)
     if(nSecondsTillUpdate >= 0 && !fForce) return;
     m_nTimeDockerListUpdated = GetTime();
 
-    // setCurUpdateMode(DockerUpdateMode::WhenNormal);
-
-    if(getCurUpdateMode() == DockerUpdateMode::AfterCreate)
-            askDNData();
-    else if(DockerUpdateMode::WhenNormal)
-        updateServiceList();
+    if(getCurUpdateMode() == DockerUpdateMode::WhenNormal){
+        clearDockerDetail();
+    }
+    askServiceData();
 }
 
 int MasternodeList::loadServerList()
@@ -642,10 +645,16 @@ int MasternodeList::loadServerList()
     std::map<std::string,ServiceInfo> serverlist = dockercluster.vecServiceInfo.servicesInfo;// .dndata.mapDockerServiceLists;
     std::map<std::string,ServiceInfo>::iterator iter = serverlist.begin();
 
+    LogPrintf("=====>loadServerList serverlist size:%d",serverlist.size());
+
     int count = 0;
     for(;iter != serverlist.end();iter++){
-        QString id = QString::fromStdString(iter->first);
         ServiceInfo service = serverlist[iter->first];
+        // if(service.State == "completed"){
+        //     continue ;
+        // }
+
+        QString id = QString::fromStdString(iter->first);
         QString outpointStr = QString::fromStdString(service.CreateSpec.OutPoint.ToString());
         QString name = QString::fromStdString(service.CreateSpec.ServiceName);
          std::vector<Task> mapDockerTasklists = service.TaskInfo;
@@ -808,8 +817,6 @@ void MasternodeList::deleteService(COutPoint& outpoint,std::string ip_port)
 
     DockerDeleteService delService{};
 
-    // delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
-    // delService.txid = uint256S(txid); //dockercluster.dndata.mapDockerServiceLists[txid].txid;
     delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
     delService.CrerateOutPoint = outpoint;
 
@@ -817,25 +824,19 @@ void MasternodeList::deleteService(COutPoint& outpoint,std::string ip_port)
         CMessageBox::information(this, tr("Docker option"),tr("Delete docker service failed!"));
     }
     LogPrintf("MasternodeList deleteService sucess\n");
-
 }
 
-void MasternodeList::updateServiceList()
+void MasternodeList::askServiceData()
 {
-    if(dockercluster.SetConnectDockerAddress(m_curAddr_Port) && dockercluster.ProcessDockernodeConnections()){
-        clearDockerDetail();
-        askDNData();
-    }
-    else{
-        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
-    }
-}
+    // if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
+    //     CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+    //     return ;
+    // }
+    // dockercluster.AskForServices(0,0,false);
+    // refreshServerList();
 
-void MasternodeList::askDNData()
-{
-    // dockercluster.AskForDNData();
-    dockercluster.AskForServices(0,0,false);
-    refreshServerList();
+    const char* method = SLOT(updateServiceListFinished(bool));
+    startAskServiceDataWork(method,true);
 }
 
 void MasternodeList::clearDockerDetail()
@@ -909,7 +910,8 @@ void MasternodeList::doLoadServiceTask()
             int taskStatus = loadDockerDetail(key.toStdString());
             if(taskStatus != Config::TASKSTATE_RUNNING){
                 setCurUpdateMode(DockerUpdateMode::AfterCreate);
-                QTimer::singleShot(2000,this,SLOT(askDNData()));
+                // QTimer::singleShot(2000,this,SLOT(askServiceData()));
+                askServiceData();
                 break;
             }
         }
@@ -1223,4 +1225,51 @@ void MasternodeList::startScanTimer(int msec)
 void MasternodeList::timeoutToScanStatus()
 {
     ui->pushButton_refund->setEnabled(false);
+}
+
+void MasternodeList::startAskServiceDataWork(const char* slotMethod,bool needAsk)
+{
+    LogPrintf("start to ask dndata work:%s\n",m_curAddr_Port);
+
+    if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+        LogPrintf("Connect docker network failed!m_curAddr_Port is:%s\n",m_curAddr_Port);
+        // LoadingWin::hideLoadingWin();
+        // close(); 
+        return ;       
+    }
+
+    if(m_askServiceDataWorker == NULL){
+        m_askServiceDataWorker = new AskServicesWorker(0);
+        QThread *workThread = new QThread(0);
+        m_askServiceDataWorker->moveToThread(workThread);
+        connect(workThread,SIGNAL(started()),m_askServiceDataWorker,SLOT(startTask()));
+        connect(m_askServiceDataWorker,SIGNAL(askServicesFinished(bool)),workThread,SLOT(quit()));
+        connect(m_askServiceDataWorker,SIGNAL(updateTaskTime(int)),this,SLOT(updateCreateServerWaitTimer(int)));
+    }
+
+    connect(m_askServiceDataWorker,SIGNAL(askServicesFinished(bool)),this,slotMethod);
+
+    if(needAsk)
+        dockercluster.AskForServices(0,0,false);
+    
+    m_askServiceDataWorker->thread()->start();
+}
+
+void MasternodeList::updateServiceListFinished(bool isTaskFinished)
+{
+    disconnect(m_askServiceDataWorker,SIGNAL(askServicesFinished(bool)),this,SLOT(updateServiceListFinished(bool)));
+    int currentIndex = ui->tabWidget->currentIndex();
+    if(currentIndex != 2)
+        return ;
+    if(isTaskFinished){
+        if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD ||
+                dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
+            doLoadServiceTask();
+        }
+    }
+    else
+    {
+        CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker configuration!"));
+    }
 }

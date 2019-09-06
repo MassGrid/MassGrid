@@ -325,6 +325,13 @@ void DockerOrderView::deleteTransaction(int index)const
     btn->setEnabled(false);
 }
 
+void DockerOrderView::clearSyncTask()
+{
+    if(m_syncTransactionThread != NULL){
+        m_syncTransactionThread->reScanTask();
+    }
+}
+
 void DockerOrderView::updateAllOperationBtn()
 {
     int count = dockerorderView->model()->rowCount();
@@ -1054,4 +1061,9 @@ void SyncTransactionHistoryThread::run()
     dockerServerman.setTRANSDataStatus(CDockerServerman::FreeTD);
 
     Q_EMIT syncThreadFinished();
+}
+
+void SyncTransactionHistoryThread::reScanTask()
+{
+    m_finishedTasks.clear();
 }

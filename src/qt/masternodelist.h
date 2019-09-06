@@ -25,7 +25,7 @@ class QTableWidgetItem;
 class QSwitchButton;
 class Task;
 class DockerUpdateService;
-
+class AskServicesWorker;
 class DockerOrderView;
 
 QT_BEGIN_NAMESPACE
@@ -108,7 +108,7 @@ private:
     int64_t m_nTimeMyListUpdated;
 
     DockerUpdateService *m_updateService{};
-
+    AskServicesWorker *m_askServiceDataWorker;
     
 private:
     int loadServerList();
@@ -129,6 +129,7 @@ private:
     void startScanTimer(int msec);
     void fullRerentServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint);
     void doLoadServiceTask();
+    void startAskServiceDataWork(const char* slotMethod,bool needAsk);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -146,9 +147,10 @@ private Q_SLOTS:
     void loadServerDetail(QModelIndex);
     void slot_updateServiceBtn();
     void slot_deleteServiceBtn();
-    void updateServiceList();
+    // void updateServiceList();
     void openServiceDetail(QModelIndex);
-    void askDNData();
+    // void askDNData();
+    void askServiceData();
 
     int loadDockerDetail(const std::string& key);
     void slot_createServiceBtn();
@@ -168,6 +170,7 @@ private Q_SLOTS:
     void onPBtn_reletClicked();
     void slot_doRerentService();
     // void askTransData(std::string txid);
+    void updateServiceListFinished(bool isTaskFinished);
 };
 
 #endif // MASTERNODELIST_H

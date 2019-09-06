@@ -165,7 +165,6 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         vRecv >> dockerServiceInfo;
         if (dockerServiceInfo.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || dockerServiceInfo.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION) {
             LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", dockerServiceInfo.version, DOCKERREQUEST_API_MINSUPPORT_VERSION, DOCKERREQUEST_API_MAXSUPPORT_VERSION);
-            // setDNDataStatus(DNDATASTATUS::Received);
             setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::ReceivedSD);
             return;
         }
@@ -184,7 +183,6 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             wtx.Setdeletetime(std::to_string(item.second.LastCheckTime));
             CWalletDB walletdb(pwalletMain->strWalletFile);
             wtx.WriteToDisk(&walletdb);
-            break;
         }
         dockercluster.vecServiceInfo.err = dockerServiceInfo.err;
         dockercluster.vecServiceInfo.errCode = dockerServiceInfo.errCode;

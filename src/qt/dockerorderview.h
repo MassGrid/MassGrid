@@ -88,6 +88,7 @@ public:
 
     void setSearchWidget(QComboBox*,QComboBox*,QLineEdit*);
     void refreshModel();
+    void clearSyncTask();
 
 private:
     WalletModel *model;
@@ -180,6 +181,7 @@ public:
 
     void addTask(const QString& txid,bool isAskAll);
     void setNeedWork(bool type);
+    void reScanTask();
 
 private:
     bool m_isNeedWork = true;

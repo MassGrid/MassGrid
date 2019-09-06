@@ -511,7 +511,10 @@ UniValue docker(const UniValue& params, bool fHelp)
         dockercluster.AskForService(outpoint);
         for(int i=0;i<20;++i){
             MilliSleep(100);
-            if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
+            // if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
+            if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD ||
+                dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
+
                 if (!dockercluster.vecServiceInfo.err.empty()){
                     return dockercluster.vecServiceInfo.err;
                 }
@@ -550,7 +553,9 @@ UniValue docker(const UniValue& params, bool fHelp)
         UniValue varr(UniValue::VARR);
         for(int i=0;i<20;++i){
             MilliSleep(100);
-            if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
+            if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD ||
+                dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
+            
                 if (!dockercluster.vecServiceInfo.err.empty()){
                     return dockercluster.vecServiceInfo.err;
                 }

@@ -107,6 +107,7 @@ private Q_SLOTS:
     void slot_minAmounttextChanged(QString);
     void slot_autominerChecked(bool);
     void slot_setFocus();
+    void doCreateServiceTask();
 };
 
 class CheckoutTransaction : public QObject

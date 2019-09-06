@@ -303,6 +303,11 @@ void AddDockerServiceDlg::slot_refreshTransactionStatus()
 
 void AddDockerServiceDlg::transactionFinished()
 {
+    QTimer::singleShot(1000,this,SLOT(doCreateServiceTask()));
+}
+
+void AddDockerServiceDlg::doCreateServiceTask()
+{
     hideLoadingWin();
     slot_nextStep();
     doStep3();
