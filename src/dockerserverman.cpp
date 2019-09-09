@@ -508,6 +508,6 @@ bool CDockerServerman::CheckDeleteService(DockerDeleteService& dockerDeleteServi
     wtx.Settlementtxid(statementTXID.ToString());
     CWalletDB walletdb(pwalletMain->strWalletFile);
     wtx.WriteToDisk(&walletdb);
-    msg = "Satement Successful txid: %s" + wtx.Gettlementtxid();
+    msg = "Satement Successful txid: " + wtx.Gettlementtxid();
     return true;
 }
