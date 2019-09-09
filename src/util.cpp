@@ -289,6 +289,7 @@ bool LogAcceptCategory(const char* category)
                 ptrCategory->insert(string("sn"));
                 ptrCategory->insert(string("edge"));
                 ptrCategory->insert(string("dockerapi"));
+                ptrCategory->insert(string("dockernode"));
             }
         }
         const set<string>& setCategories = *ptrCategory.get();
