@@ -98,7 +98,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         if(getService.sigTime > GetAdjustedTime() + TIMEOUT && getService.sigTime < GetAdjustedTime() - TIMEOUT){
              dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::SIGTIME_ERROR];
              dockerServiceInfo.errCode = SERVICEMANCODE::SIGTIME_ERROR;
-            LogPrintf("CDockerServerman::CheckAndCreateServiveSpec sigTime Error%s\n");
+            LogPrintf("CDockerServerman::CheckAndCreateServiveSpec sigTime Error\n");
             return;
         }
         if(getService.OutPoint.IsNull()){
@@ -145,7 +145,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         if(getService.sigTime > GetAdjustedTime() + TIMEOUT && getService.sigTime < GetAdjustedTime() - TIMEOUT){
              dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::SIGTIME_ERROR];
             dockerServiceInfo.errCode = SERVICEMANCODE::SIGTIME_ERROR;
-            LogPrintf("CDockerServerman::CheckAndCreateServiveSpec sigTime Error%s\n");
+            LogPrintf("CDockerServerman::CheckAndCreateServiveSpec sigTime Error\n");
             return;
         }
         
@@ -294,7 +294,7 @@ bool CDockerServerman::CheckCreateService(DockerCreateService& dockerCreateServi
     }
     if(dockerCreateService.sigTime > GetAdjustedTime() + TIMEOUT && dockerCreateService.sigTime < GetAdjustedTime() - TIMEOUT){
         err = strServiceCode[SERVICEMANCODE::SIGTIME_ERROR];
-        LogPrintf("CDockerServerman::CheckCreateService sigTime Error%s\n");
+        LogPrintf("CDockerServerman::CheckCreateService sigTime Error\n");
         return false;
     }
     if (!dockerCreateService.CheckSignature(dockerCreateService.clusterServiceCreate.pubKeyClusterAddress)) {
@@ -466,7 +466,7 @@ bool CDockerServerman::CheckDeleteService(DockerDeleteService& dockerDeleteServi
     }
     if(dockerDeleteService.sigTime > GetAdjustedTime() + TIMEOUT && dockerDeleteService.sigTime < GetAdjustedTime() - TIMEOUT){
         err = strServiceCode[SERVICEMANCODE::SIGTIME_ERROR];
-        LogPrintf("CDockerServerman::CheckDeleteService sigTime Error%s\n");
+        LogPrintf("CDockerServerman::CheckDeleteService sigTime Error\n");
         return false;
     }
     if (!dockerDeleteService.CheckSignature(dockerDeleteService.pubKeyClusterAddress)) {
