@@ -27,8 +27,7 @@ public:
     bool PostServiceCreate(ServiceCreate& serviceCreate, std::string& ServiceID, std::string& err);
     bool PostServiceUpdate(ServiceUpdate& serviceUpdate, std::string& err);
     bool GetMachines(ResponseMachines& machines, std::string& err);
-    sttic void ParseNode2Price(NodeListStatistics& nodeListStatistics, map<Item, Value_price>& price);
-
+    static void ParseNode2Price(NodeListStatistics& nodeListStatistics, map<Item, Value_price>& price);
 };
 extern PrizesClient prizesClient;
 
