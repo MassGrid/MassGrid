@@ -180,12 +180,13 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         std::string state = "";
         for (auto& item : dockerServiceInfo.servicesInfo) {
             dockercluster.vecServiceInfo.servicesInfo[item.first] = item.second;
-
-            CWalletTx& wtx = pwalletMain->mapWallet[item.second.CreateSpec.OutPoint.hash];
-            wtx.Setstate(item.second.State);
-            wtx.Setdeletetime(std::to_string(item.second.LastCheckTime));
-            CWalletDB walletdb(pwalletMain->strWalletFile);
-            wtx.WriteToDisk(&walletdb);
+            if (pwalletMain->mapWallet.count(item.second.CreateSpec.OutPoint.hash)) {
+                CWalletTx& wtx = pwalletMain->mapWallet[item.second.CreateSpec.OutPoint.hash];
+                wtx.Setstate(item.second.State);
+                wtx.Setdeletetime(std::to_string(item.second.LastCheckTime));
+                CWalletDB walletdb(pwalletMain->strWalletFile);
+                wtx.WriteToDisk(&walletdb);
+            }
         }
         dockercluster.vecServiceInfo.err = dockerServiceInfo.err;
         dockercluster.vecServiceInfo.errCode = dockerServiceInfo.errCode;
@@ -401,6 +402,16 @@ bool CDockerServerman::CheckCreateService(DockerCreateService& dockerCreateServi
 }
 bool CDockerServerman::CheckUpdateService(DockerUpdateService& dockerUpdateService, ServiceUpdate& serviceUpdate,std::string& err)
 {
+    if (!pwalletMain->mapWallet.count(dockerUpdateService.clusterServiceUpdate.CrerateOutPoint.hash)) {
+        err = strServiceCode[SERVICEMANCODE::NO_THRANSACTION];
+        LogPrintf("CDockerServerman::CheckUpdateService1 %s %s\n",err, dockerUpdateService.clusterServiceUpdate.CrerateOutPoint.hash.ToString());
+        return false;
+    }
+    if (!pwalletMain->mapWallet.count(dockerUpdateService.clusterServiceUpdate.OutPoint.hash)) {
+        err = strServiceCode[SERVICEMANCODE::NO_THRANSACTION];
+        LogPrintf("CDockerServerman::CheckUpdateService2 %s %s\n",err, dockerUpdateService.clusterServiceUpdate.OutPoint.hash.ToString());
+        return false;
+    }
     CWalletTx& wtx = pwalletMain->mapWallet[dockerUpdateService.clusterServiceUpdate.CrerateOutPoint.hash];
     CWalletTx& wtx2 = pwalletMain->mapWallet[dockerUpdateService.clusterServiceUpdate.OutPoint.hash];
     if (wtx.Getserviceid().empty()) {
