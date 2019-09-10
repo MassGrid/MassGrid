@@ -108,14 +108,21 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
-        CWalletTx& wtx = pwalletMain->mapWallet[getService.OutPoint.hash];
-        std::string ServiceID = wtx.Getserviceid();
-        if(ServiceID.empty()){
+        if (!pwalletMain->mapWallet.count(getService.OutPoint.hash)) {
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::SERVICEITEM_NOT_FOUND];
             dockerServiceInfo.errCode = SERVICEMANCODE::SERVICEITEM_NOT_FOUND;
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
             return;
         }
+        CWalletTx& wtx = pwalletMain->mapWallet[getService.OutPoint.hash];
+        std::string ServiceID = wtx.Getserviceid();
+        if(ServiceID.empty()){
+            dockerServiceInfo.err = std::string(strServiceCode[SERVICEMANCODE::SERVICEITEM_NOT_FOUND]) + "1";
+            dockerServiceInfo.errCode = SERVICEMANCODE::SERVICEITEM_NOT_FOUND;
+            connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
+            return;
+        }
+        
         ServiceInfo serviceInfo{};
         if(!prizesClient.GetService(ServiceID,serviceInfo,dockerServiceInfo.err)){
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
