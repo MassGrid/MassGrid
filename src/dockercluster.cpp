@@ -174,6 +174,8 @@ bool Cluster::DeleteAndSendServiceSpec(DockerDeleteService delService)
         LogPrintf("Need to Synced First\n");
         return false;
     }
+
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CKey vchSecret;
     if (!pwalletMain->GetKey(delService.pubKeyClusterAddress.GetID(), vchSecret)){
         LogPrintf("delService Sign Error1\n");
@@ -194,6 +196,8 @@ void Cluster::setDefaultPubkey(CPubKey pubkey)
 
 void Cluster::saveServiceData(ServiceInfo serviceInfo)
 {
+
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[serviceInfo.CreateSpec.OutPoint.hash];
     wtx.Setserviceid(serviceInfo.ServiceID);
     wtx.Setpubkey(serviceInfo.CreateSpec.pubKeyClusterAddress.ToString().substr(0, 66));
@@ -213,6 +217,8 @@ void Cluster::saveServiceData(ServiceInfo serviceInfo)
 
 void Cluster::saveRerentServiceData(const std::string& serviceID,DockerUpdateService sspec)
 {
+
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[sspec.clusterServiceUpdate.OutPoint.hash];
     wtx.Setserviceid(serviceID);
     wtx.SetCreateOutPoint(sspec.clusterServiceUpdate.CrerateOutPoint.ToStringShort());

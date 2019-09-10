@@ -35,12 +35,6 @@ UniValue docker(const UniValue& params, bool fHelp)
     if (params.size() >= 1) {
         strCommand = params[0].get_str();
     }
-
-#ifdef ENABLE_WALLET
-    if (strCommand == "start-many")
-        throw JSONRPCError(RPC_INVALID_PARAMETER, "DEPRECATED, please use start-all instead");
-#endif // ENABLE_WALLET
-
     if (fHelp  ||
         (
 #ifdef ENABLE_WALLET

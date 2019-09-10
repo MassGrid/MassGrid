@@ -61,6 +61,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             return;
         }
         mdndata.masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
+        LogPrint("dockernode", "CDockerServerman::ProcessMessage GETDNDATA PushMessage\n");
         connman.PushMessage(pfrom, NetMsgType::DNDATA, mdndata);
         
     }else if(strCommand == NetMsgType::DNDATA){     //cluster
@@ -121,6 +122,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             return;
         }
         dockerServiceInfo.servicesInfo[serviceInfo.ServiceID] = serviceInfo;
+        LogPrint("dockernode", "CDockerServerman::ProcessMessage GETSERVICE PushMessage\n");
         connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
 
     }else if (strCommand == NetMsgType::GETSERVICES) { //docker gettransaction
@@ -157,6 +159,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         for (auto& service : vecServiceInfo) {
             dockerServiceInfo.servicesInfo[service.ServiceID] = service;
         }
+        LogPrint("dockernode", "CDockerServerman::ProcessMessage GETSERVICES PushMessage\n");
         connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
 
     } else if (strCommand == NetMsgType::SERVICEDATA) { //client
@@ -230,6 +233,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             return;
         }
         dockerServiceInfo.servicesInfo[serviceInfo.ServiceID] = serviceInfo;
+        LogPrint("dockernode", "CDockerServerman::ProcessMessage CREATESERVICE PushMessage\n");
         connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
 
     } else if (strCommand == NetMsgType::UPDATESERVICE) {
@@ -266,6 +270,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             return;
         }
         dockerServiceInfo.servicesInfo[serviceInfo.ServiceID] = serviceInfo;
+        LogPrint("dockernode", "CDockerServerman::ProcessMessage UPDATESERVICE PushMessage\n");
         connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
 
     }else if(strCommand == NetMsgType::DELETESERVICE){
@@ -280,6 +285,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         }
         vRecv >> dockerDeleteService;
         CheckDeleteService(dockerDeleteService,dockerServiceInfo.msg,dockerServiceInfo.err);
+        LogPrint("dockernode", "CDockerServerman::ProcessMessage DELETESERVICE PushMessage\n");
         connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, dockerServiceInfo);
         return;
     }

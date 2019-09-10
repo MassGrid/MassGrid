@@ -16,6 +16,7 @@ class PrizesClient{
     std::string unix_sock_address{};
     std::string APIAddr{};
     int APIport{};
+    mutable CCriticalSection cs;
 public:
     void SetDockerApiConnection(std::string in);
     void SetDockerUnixSock(std::string in);
@@ -26,7 +27,8 @@ public:
     bool PostServiceCreate(ServiceCreate& serviceCreate, std::string& ServiceID, std::string& err);
     bool PostServiceUpdate(ServiceUpdate& serviceUpdate, std::string& err);
     bool GetMachines(ResponseMachines& machines, std::string& err);
-    static void ParseNode2Price(NodeListStatistics& nodeListStatistics, map<Item, Value_price>& price);
+    sttic void ParseNode2Price(NodeListStatistics& nodeListStatistics, map<Item, Value_price>& price);
+
 };
 extern PrizesClient prizesClient;
 

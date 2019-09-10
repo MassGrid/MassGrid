@@ -378,7 +378,7 @@ static void SendMoney(const CTxDestination &address, CAmount nValue, bool fSubtr
     // Check amount
     if (nValue <= 0)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid amount");
-
+    
     if (nValue > curBalance)
         throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, "Insufficient funds");
 
@@ -1128,11 +1128,11 @@ UniValue sendmany(const UniValue& params, bool fHelp)
     bool fCreated;
     if (params.size() > 6)
         fUseInstantSend = params[6].get_bool();
-    
-
     if (params.size() > 7 && params[7].get_bool()){
         CCoinControl coinControl;
         coinControl.destChange = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).Get();
+
+    LogPrintf("CreateTransaction\n");
         fCreated = pwalletMain->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, nChangePosRet, strFailReason,
                                                    &coinControl, true, ALL_COINS, fUseInstantSend);
     }else{
@@ -1141,6 +1141,7 @@ UniValue sendmany(const UniValue& params, bool fHelp)
     }
     if (!fCreated)
         throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, strFailReason);
+    LogPrintf("commitTransaction\n");
     if (!pwalletMain->CommitTransaction(wtx, keyChange, g_connman.get(), fUseInstantSend ? NetMsgType::TXLOCKREQUEST : NetMsgType::TX))
         throw JSONRPCError(RPC_WALLET_ERROR, "Transaction commit failed");
 

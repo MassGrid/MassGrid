@@ -6,7 +6,6 @@ void PrizesClient::SetDockerApiConnection(std::string in){
         LogPrintf("PrizesClient::SetDockerApiConnection connection address %s:%u\n",APIAddr,APIport);
 }
 bool whetherError(std::string responseData,UniValue& resultData,std::string& err){
-
     UniValue jsondata(UniValue::VOBJ);
     if (responseData.empty()) {
         LogPrintf("PrizesClient::whetherError request error responseData empty\n");
@@ -27,6 +26,7 @@ void PrizesClient::SetDockerUnixSock(std::string in){
     unix_sock_address = in;
 }
 bool PrizesClient::PostServiceCreate(ServiceCreate& serviceCreate, std::string& ServiceID, std::string& err){
+    LOCK(cs);
     LogPrint("docker", "PrizesClient::PostServiceCreate\n");
     std::string url = "/servicecreate";
     std::string requestData = ServiceCreate::ToJson(serviceCreate).write();
@@ -52,6 +52,7 @@ bool PrizesClient::PostServiceCreate(ServiceCreate& serviceCreate, std::string& 
     return true;
 }
 bool PrizesClient::PostServiceUpdate(ServiceUpdate& serviceUpdate,std::string& err){
+    LOCK(cs);
     LogPrint("docker", "PrizesClient::PostServiceUpdate\n");
     std::string url = "/serviceupdate/" + serviceUpdate.ServiceID;
     std::string requestData = ServiceUpdate::ToJson(serviceUpdate).write();
@@ -76,6 +77,7 @@ bool PrizesClient::PostServiceUpdate(ServiceUpdate& serviceUpdate,std::string& e
 }
 
 bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo, std::string& err){
+    LOCK(cs);
     LogPrint("docker", "PrizesClient::GetService\n");
     std::string url = "/getservice/" + ServiceID;
     std::string requestData{};
@@ -99,6 +101,7 @@ bool PrizesClient::GetService(std::string ServiceID,ServiceInfo& serviceInfo, st
     return true;
 }
 bool PrizesClient::GetServiceFromPubkey(std::string strPubkey,int64_t start,int64_t count,bool full, std::vector<ServiceInfo>& vecServiceInfo, std::string& err){
+    LOCK(cs);
     LogPrint("docker", "PrizesClient::GetServiceFromPubkey\n");
     std::string url = "/getservicesfrompubkey/" + strPubkey;
     
@@ -131,6 +134,7 @@ bool PrizesClient::GetServiceFromPubkey(std::string strPubkey,int64_t start,int6
 }
 
 bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, std::string& err){
+    LOCK(cs);
     LogPrint("docker", "PrizesClient::GetServiceDelete\n");
     std::string url = "/servicerefund/"+ServiceID;
     std::string requestData{};
@@ -156,6 +160,7 @@ bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, s
 
 bool PrizesClient::GetNodeList(NodeListStatistics& nodeListStatistics, std::string& err)
 {
+    LOCK(cs);
     LogPrint("docker", "PrizesClient::GetNodeList\n");
     std::string url = "/getnodes";
     std::string requestData{};
@@ -180,6 +185,7 @@ bool PrizesClient::GetNodeList(NodeListStatistics& nodeListStatistics, std::stri
 }
 bool PrizesClient::GetMachines(ResponseMachines& machines, std::string& err)
 {
+    LOCK(cs);
     LogPrint("docker", "PrizesClient::GetMachines\n");
     NodeListStatistics nodeListStatistics{};
     std::string url = "/getnodes";
