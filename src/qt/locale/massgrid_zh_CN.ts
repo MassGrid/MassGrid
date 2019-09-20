@@ -1790,7 +1790,7 @@
     </message>
     <message>
         <source>Get Detail</source>
-        <translation>获取详情</translation>
+        <translation type="vanished">获取详情</translation>
     </message>
     <message>
         <source>Order Detail</source>
@@ -1863,6 +1863,10 @@
     <message>
         <source>to</source>
         <translation>到</translation>
+    </message>
+    <message>
+        <source>Rerent</source>
+        <translation>续租</translation>
     </message>
 </context>
 <context>
@@ -3105,7 +3109,7 @@ Address: %4
     </message>
     <message>
         <source>Outpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Outpoint</translation>
     </message>
     <message>
         <source>Wallet option</source>
@@ -3122,6 +3126,54 @@ Address: %4
     <message>
         <source>Rerent service failed!</source>
         <translation>续租服务失败！</translation>
+    </message>
+    <message>
+        <source>Service error</source>
+        <translation>服务错误</translation>
+    </message>
+    <message>
+        <source>Get a service error:</source>
+        <translation>服务错误：</translation>
+    </message>
+    <message>
+        <source>This option need to unlock your wallet!</source>
+        <translation>该操作需要先解锁你的钱包！</translation>
+    </message>
+    <message>
+        <source>Wallet error</source>
+        <translation>钱包错误</translation>
+    </message>
+    <message>
+        <source>Can&apos;t find masternode address,please check you service detail!</source>
+        <translation>无法获取主节点地址，请检查你的服务详情！</translation>
+    </message>
+    <message>
+        <source>Load failed</source>
+        <translation>加载失败</translation>
+    </message>
+    <message>
+        <source>Can&apos;t load Docker service detail!</source>
+        <translation>无法获取虚拟机服务详情！</translation>
+    </message>
+    <message>
+        <source>Service Error</source>
+        <translation>服务错误</translation>
+    </message>
+    <message>
+        <source>Rerent service error:</source>
+        <translation>续租服务错误：</translation>
+    </message>
+    <message>
+        <source>Rerent service time out!</source>
+        <translation>续租服务超时！</translation>
+    </message>
+    <message>
+        <source>Wait for service creation timeout,Please contact the customer to check!</source>
+        <translation>等待服务创建超时，请联系客服检查虚拟机服务状态！</translation>
+    </message>
+    <message>
+        <source>Wait for service:</source>
+        <translation>等待时长:</translation>
     </message>
 </context>
 <context>
@@ -3517,6 +3569,18 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>Decimal digits:</source>
         <translation>小数位数:</translation>
+    </message>
+    <message>
+        <source>Docker Service timeout:</source>
+        <translation type="vanished">虚拟机服务超时时间:</translation>
+    </message>
+    <message>
+        <source>(1~999999min)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Docker Service timeout(min):</source>
+        <translation>虚拟机服务超时时间(分钟):</translation>
     </message>
 </context>
 <context>
@@ -5492,6 +5556,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
         <source>Rerent Time(H/M)</source>
         <translation>续租时长(时/分)</translation>
     </message>
+    <message>
+        <source>Order OutPoint:</source>
+        <translation>订单OutPoint：</translation>
+    </message>
 </context>
 <context>
     <name>ShutdownWindow</name>
@@ -5736,6 +5804,10 @@ https://www.transifex.com/projects/p/massgrid/</translation>
     <message>
         <source>This option need to unlock your wallet</source>
         <translation>该操作需要解锁您的钱包</translation>
+    </message>
+    <message>
+        <source>Chcke transaction......</source>
+        <translation>检测交易中....</translation>
     </message>
 </context>
 <context>

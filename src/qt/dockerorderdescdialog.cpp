@@ -29,9 +29,9 @@ DockerOrderDescDialog::DockerOrderDescDialog(WalletModel *model,QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint);
     connect(ui->cancelButton,SIGNAL(clicked()),this,SLOT(close()));
 
-    ui->reletTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->reletTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->reletTableWidget->verticalHeader()->setVisible(false); 
+    ui->rerentTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->rerentTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->rerentTableWidget->verticalHeader()->setVisible(false); 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)),this,SLOT(slot_curTabPageChanged(int)));
 
     ui->label_titlename->setText(tr("Docker order Detail"));
@@ -137,7 +137,7 @@ void DockerOrderDescDialog::setwalletTx(const std::string& txid,CWalletTx& wtx)
 
 void DockerOrderDescDialog::loadRerentView()
 {
-    ui->reletTableWidget->setRowCount(0);
+    ui->rerentTableWidget->setRowCount(0);
 
     if(m_walletModel == NULL)
         return ;
@@ -165,25 +165,25 @@ void DockerOrderDescDialog::loadRerentView()
             QTableWidgetItem *amountItem = new QTableWidgetItem(MassGridUnits::formatWithUnit(m_walletModel->getOptionsModel()->getDisplayUnit(), amount)); //wtx.GetAmounts()
             QTableWidgetItem *createtimeItem = new QTableWidgetItem(date);
 
-            CAmount reletHourTime = amount/nPrice;
+            CAmount rerentHourTime = amount/nPrice;
             double tmp1 = amount%nPrice;
             double tmp2 = tmp1/nPrice;
-            int reletMinTime = tmp2*60;
+            int rerentMinTime = tmp2*60;
 
-            QLabel *label = new QLabel(ui->reletTableWidget);
-            label->setText(QString("+%1:%2").arg(QString::number(reletHourTime).sprintf("%02d",reletHourTime) ).arg(QString::number(reletMinTime).sprintf("%02d",reletMinTime)));
+            QLabel *label = new QLabel(ui->rerentTableWidget);
+            label->setText(QString("+%1:%2").arg(QString::number(rerentHourTime).sprintf("%02d",rerentHourTime) ).arg(QString::number(rerentMinTime).sprintf("%02d",rerentMinTime)));
             label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             label->setStyleSheet("color:green;");
 
-            ui->reletTableWidget->insertRow(count);
-            ui->reletTableWidget->setItem(count, 0, txidItem);
-            ui->reletTableWidget->setItem(count, 1, priceItem);
-            ui->reletTableWidget->setItem(count, 2, amountItem);
-            ui->reletTableWidget->setItem(count, 3, createtimeItem);
-            ui->reletTableWidget->setCellWidget(count,4,label);
+            ui->rerentTableWidget->insertRow(count);
+            ui->rerentTableWidget->setItem(count, 0, txidItem);
+            ui->rerentTableWidget->setItem(count, 1, priceItem);
+            ui->rerentTableWidget->setItem(count, 2, amountItem);
+            ui->rerentTableWidget->setItem(count, 3, createtimeItem);
+            ui->rerentTableWidget->setCellWidget(count,4,label);
 
             for(int i=0;i<4;i++)
-                ui->reletTableWidget->item(count,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
+                ui->rerentTableWidget->item(count,i)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);            
                 count++;
         }
     }
@@ -197,13 +197,13 @@ void DockerOrderDescDialog::resizeEvent(QResizeEvent *event)
 
 void DockerOrderDescDialog::resetTableWidgetTitle()
 {
-    int columnCount = 5; //= ui->reletTableWidget->columnCount();
-    int itemwidth = ui->reletTableWidget->width()/columnCount;
-    ui->reletTableWidget->setColumnWidth(0, itemwidth*1.2);
-    ui->reletTableWidget->setColumnWidth(1, itemwidth*1.2);
-    ui->reletTableWidget->setColumnWidth(2, itemwidth);
-    ui->reletTableWidget->setColumnWidth(3, itemwidth*0.8);
-    ui->reletTableWidget->setColumnWidth(4, itemwidth*0.8);
+    int columnCount = 5; //= ui->rerentTableWidget->columnCount();
+    int itemwidth = ui->rerentTableWidget->width()/columnCount;
+    ui->rerentTableWidget->setColumnWidth(0, itemwidth*1.2);
+    ui->rerentTableWidget->setColumnWidth(1, itemwidth*1.2);
+    ui->rerentTableWidget->setColumnWidth(2, itemwidth);
+    ui->rerentTableWidget->setColumnWidth(3, itemwidth*0.8);
+    ui->rerentTableWidget->setColumnWidth(4, itemwidth*0.8);
 }
 
 void DockerOrderDescDialog::slot_curTabPageChanged(int index)

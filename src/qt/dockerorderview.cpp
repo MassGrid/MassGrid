@@ -297,7 +297,8 @@ void DockerOrderView::setModel(WalletModel *model)
             QPushButton *btn = new QPushButton(btnText,NULL);
 
             m_mapViewBtns[txidStr] = btn;
-            btn->setStyleSheet("QPushButton\n{\n	background-color:rgb(239, 169, 4); color:rgb(255,255,255);\n	border-radius:2px;\n margin:2px; margin-left:6px;margin-right:6px;\n}");
+            btn->setStyleSheet("QPushButton\n{\n	background-color:rgb(239, 169, 4); color:rgb(255,255,255);\n	border-radius:2px;\n margin:2px; margin-left:6px;margin-right:6px;\n} QPushButton::!enabled\n{\n	color: rgb(125,125,125);\n	border:1px solid rgb(125,125,125);\n}");
+            
             dockerorderView->setIndexWidget(dockerorderView->model()->index(i,DockerOrderTableModel::Operation),btn);
             connect(btn,SIGNAL(clicked(bool)),this,SLOT(slot_btnClicked()));
         }
@@ -313,7 +314,8 @@ void DockerOrderView::addOperationBtn(int index)const
     QPushButton *btn = new QPushButton(btnText,dockerorderView);
     m_mapViewBtns[txidStr] = btn;
 
-    btn->setStyleSheet("QPushButton\n{\n	background-color:rgb(239, 169, 4); color:rgb(255,255,255);\n	border-radius:2px;\n margin:2px; margin-left:6px;margin-right:6px;\n}");
+    btn->setStyleSheet("QPushButton\n{\n	background-color:rgb(239, 169, 4); color:rgb(255,255,255);\n	border-radius:2px;\n margin:2px; margin-left:6px;margin-right:6px;\n} QPushButton::!enabled\n{\n	color: rgb(125,125,125);\n	border:1px solid rgb(125,125,125);\n}");
+
     dockerorderView->setIndexWidget(dockerorderView->model()->index(index,DockerOrderTableModel::Operation),btn);
     connect(btn,SIGNAL(clicked(bool)),this,SLOT(slot_btnClicked()));
 }
@@ -424,15 +426,6 @@ bool DockerOrderView::getOrderBtnText(CWalletTx& wtx,QString& btnText)const
     // std::string orderstatusStr = wtx.Getorderstatus();
     std::string orderState = wtx.Getstate();
     std::string serviceidStr = wtx.Getserviceid();
-    // QString btnText; //= tr("Get Detail");
-    // if(orderstatusStr == "1")
-    //     btnText = tr("Order Detail");
-    // else if(orderstatusStr == "0" && serviceidStr.size())
-    //     btnText = tr("Service Detail");
-    // else if(orderstatusStr == "0" && !serviceidStr.size())
-    //     btnText = tr("Create Service");
-    // else
-    //     btnText = tr("Get Detail");
 
     if(orderState == "completed")
         btnText = tr("Order Detail");
@@ -440,15 +433,13 @@ bool DockerOrderView::getOrderBtnText(CWalletTx& wtx,QString& btnText)const
         btnText = tr("Service Detail");
     else if(orderState == "" && !serviceidStr.size())
         btnText = tr("Create Service");
+    // else if(orderState == "Unknown")
+    //     btnText = tr("Unknown");
     else
-        btnText = tr("Get Detail");
+        btnText = tr("Rerent"); //Get Detail
 
-    // return btnText;
-    // return need update
-    // if(!wtx.Gettlementtxid().size() && wtx.Getorderstatus() == "1")
-    //     return true;
-    // if(!wtx.Gettlementtxid().size() && orderState == "completed")
-    if(orderState != "completed")
+    // if(orderState != "completed")
+    if(orderState == "running")
         return true;
     
     return false;
@@ -552,7 +543,6 @@ void DockerOrderView::txidPrefix(const QString &prefix)
         else{
             dockerorderView->showRow(i);
         }
-
     }    
 }
 
@@ -933,6 +923,12 @@ void DockerOrderView::updateTransData(QString txid,bool isAskAll)
 
 void DockerOrderView::updateTransactionHistoryData(const QString& txid,bool sucess)
 {
+    LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s,sucess:%d \n",txid.toStdString(),sucess);
+    if(!sucess){
+        LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
+        CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid.toStdString())];  //watch only not chec
+        wtx.Setstate("Unknown");
+    }
     updateAllOperationBtn();
 }
 
@@ -968,8 +964,6 @@ void SyncTransactionHistoryThread::addTask(const QString& txid,bool isAskAll)
     QPair<QString,bool> pair;
     pair.first = txid;
     pair.second = false; //isAskAll;
-
-    // LogPrintf("SyncTransactionHistoryThread::addTask txid:%s\n",txid.toStdString());
 
     if(m_finishedTasks.count(txid)){
         return ;
@@ -1037,8 +1031,9 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid,bool isAskAll)
             return true;
         }
         QThread::sleep(1);
-        if(((++updateCountMsec) >= SYNCTRANSTINEOUT) || !isNeedWork())
-            break;
+        if(((++updateCountMsec) >= SYNCTRANSTINEOUT) || !isNeedWork()){
+            return false;
+        }
     }
     return false;
 }

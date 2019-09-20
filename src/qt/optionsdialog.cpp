@@ -162,6 +162,7 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     ui->connectSocksTor->hide();
     ui->frame_13->hide();
     ui->frame_14->hide();
+    // ui->frameDockerService->hide();
     GUIUtil::MakeShadowEffect(this,ui->centerWin);
 }
 
@@ -192,12 +193,16 @@ void OptionsDialog::setModel(OptionsModel *model)
         updateDefaultProxyNets();
 
         ui->MainAddress->setText(model->getMainAddress());
+        ui->dockerServiceTimeOut->setValue(model->getDockerServiceTimeout());
     }
 
     /* warn when one of the following settings changes by user action (placed here so init via mapper doesn't trigger them) */
 
     /* Main */
     connect(ui->databaseCache, SIGNAL(valueChanged(int)), this, SLOT(showRestartWarning()));
+    connect(ui->dockerServiceTimeOut, SIGNAL(valueChanged(int)), this, SLOT(showRestartWarning()));
+    connect(ui->dockerServiceTimeOut, SIGNAL(valueChanged(int)), this, SLOT(updateDockerServiceTimeOut(int)));
+    
     connect(ui->threadsScriptVerif, SIGNAL(valueChanged(int)), this, SLOT(showRestartWarning()));
     /* Wallet */
     connect(ui->showMasternodesTab, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
@@ -211,7 +216,12 @@ void OptionsDialog::setModel(OptionsModel *model)
     // connect(ui->theme, SIGNAL(valueChanged()), this, SLOT(showRestartWarning()));
     connect(ui->lang, SIGNAL(valueChanged()), this, SLOT(showRestartWarning()));
     connect(ui->thirdPartyTxUrls, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));
-    connect(ui->MainAddress, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));
+    connect(ui->MainAddress, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));    
+}
+
+void OptionsDialog::updateDockerServiceTimeOut(int value)
+{
+    model->setDockerServiceTimeout(value);
 }
 
 void OptionsDialog::setMapper()
@@ -245,6 +255,7 @@ void OptionsDialog::setMapper()
     mapper->addMapping(ui->minimizeOnClose, OptionsModel::MinimizeOnClose);
 #endif
 
+    mapper->addMapping(ui->dockerServiceTimeOut, OptionsModel::DockerServiceTimeOut);
     /* Display */
     mapper->addMapping(ui->digits, OptionsModel::Digits);
     // mapper->addMapping(ui->theme, OptionsModel::Theme);

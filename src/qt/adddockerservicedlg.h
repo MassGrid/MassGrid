@@ -110,30 +110,30 @@ private Q_SLOTS:
     void doCreateServiceTask();
 };
 
-class CheckoutTransaction : public QObject
-{
-    Q_OBJECT
-public:
-    explicit CheckoutTransaction(std::string txid,QObject* parent = nullptr);
-    ~CheckoutTransaction();
-    static bool isTransactionFinished(std::string txid,std::string& strErr);
+// class CheckoutTransaction : public QObject
+// {
+//     Q_OBJECT
+// public:
+//     explicit CheckoutTransaction(std::string txid,QObject* parent = nullptr);
+//     ~CheckoutTransaction();
+//     static bool isTransactionFinished(std::string txid,std::string& strErr);
 
-    bool isNeedToWork() { return m_isNeedToWork; };
-    void setNeedToWork(bool flag) { m_isNeedToWork = flag;};
+//     bool isNeedToWork() { return m_isNeedToWork; };
+//     void setNeedToWork(bool flag) { m_isNeedToWork = flag;};
 
-private:
-    std::string m_txid;
-    bool m_isNeedToWork;
+// private:
+//     std::string m_txid;
+//     bool m_isNeedToWork;
 
-Q_SIGNALS:
-    void checkTransactionFinished();
-    void checkTransactionTimeOut();
-    void updateTaskTime(int);
-    void threadStopped();
+// Q_SIGNALS:
+//     void checkTransactionFinished();
+//     void checkTransactionTimeOut();
+//     void updateTaskTime(int);
+//     void threadStopped();
 
-private Q_SLOTS:
-    void startTask();
+// private Q_SLOTS:
+//     void startTask();
 
-};
+// };
 
 #endif // ADDDOCKERSERVICEDLG_H

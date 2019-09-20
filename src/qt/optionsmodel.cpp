@@ -87,6 +87,10 @@ void OptionsModel::Init(bool resetSettings)
         settings.setValue("strMainAddress", "");
     strMainAddress = settings.value("strMainAddress", "").toString();
 
+    if (!settings.contains("fDockerServiceTimeOut"))
+        settings.setValue("fDockerServiceTimeOut", 60);
+    fDockerServiceTimeOut = settings.value("fDockerServiceTimeOut").toInt();
+
 #ifdef ENABLE_WALLET
     // if (!settings.contains("fCoinControlFeatures"))
         settings.setValue("fCoinControlFeatures", true);
@@ -259,6 +263,8 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
             return strThirdPartyTxUrls;
 		case MainAddress:
             return strMainAddress;
+        case DockerServiceTimeOut:
+            return fDockerServiceTimeOut;
 
 #ifdef ENABLE_WALLET
         case Digits:
@@ -418,6 +424,13 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
                 setRestartRequired(true);
             }
             break;
+        case DockerServiceTimeOut:
+            if (fDockerServiceTimeOut != value.toInt()){
+                fDockerServiceTimeOut = value.toInt();
+                settings.setValue("fDockerServiceTimeOut",fDockerServiceTimeOut);
+                setRestartRequired(true);
+            }
+            break;
             
 #ifdef ENABLE_WALLET
         case Digits:
@@ -521,4 +534,11 @@ void OptionsModel::setDefaultReceiveAddress(const QString& address)
     QSettings settings;
     settings.setValue("strMainAddress", strMainAddress);
     SetDefaultReceiveAddress(address.toStdString().c_str());
+}
+
+void OptionsModel::setDockerServiceTimeout(int value)
+{
+    fDockerServiceTimeOut = value;
+    QSettings settings;
+    settings.setValue("fDockerServiceTimeOut", fDockerServiceTimeOut);
 }

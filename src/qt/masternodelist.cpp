@@ -124,7 +124,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     connect(ui->tabWidget, SIGNAL(currentChanged(int)),this,SLOT(slot_curTabPageChanged(int)));
     connect(ui->pushButton_refund,SIGNAL(clicked()),this,SLOT(slot_btn_refund()));
     // connect(ui->lineEdit_searchOrder,SIGNAL(),this,SLOT());
-    connect(ui->pBtn_relet,SIGNAL(clicked()),this,SLOT(onPBtn_reletClicked()));
+    connect(ui->pBtn_rerent,SIGNAL(clicked()),this,SLOT(onPBtn_rerentClicked()));
     connect(ui->pushButton_reloadOrderView,SIGNAL(clicked()),this,SLOT(updateDockerOrder()));
 
     timer = new QTimer(this);
@@ -617,16 +617,35 @@ void MasternodeList::startTimer(bool start)
 void MasternodeList::updateDockerList(bool fForce)
 {
     int64_t nSecondsTillUpdate = 0;
-    
+    static int index = 0;
     if(m_updateMode == DockerUpdateMode::AfterCreate){
-        nSecondsTillUpdate = m_nTimeDockerListUpdated + DOCKER_AFTERCREATE_UPDATE_SECONDS - GetTime();
-        ui->serviceSec->setText(QString::number(nSecondsTillUpdate));
+        // nSecondsTillUpdate = m_nTimeDockerListUpdated + DOCKER_AFTERCREATE_UPDATE_SECONDS - GetTime();
+        // ui->serviceSec->setText(QString::number(nSecondsTillUpdate));
+        // ui->serviceSec->setText(QString::number(++index));
+        index++;
+        QTime time(index/3600,index/60,index%60);
+        if(index <= 3600)
+            ui->serviceSec->setText(time.toString("mm:ss"));
+        else
+            ui->serviceSec->setText(time.toString("hh:mm:ss"));
+        
+        if(index%(walletModel->getOptionsModel()->getDockerServiceTimeout()*60)==0 && index>0){
+            startTimer(false);
+            CMessageBox::information(this, tr("Service Error"), tr("Wait for service creation timeout,Please contact the customer to check!")); 
+            startTimer(true);
+        }
+        ui->label_serviceText->setText(tr("Wait for service:"));
+
+        return;
     }
     else{
         nSecondsTillUpdate = m_nTimeDockerListUpdated + DOCKER_WHENNORMAL_UPDATE_SECONDS - GetTime();
         QTime time(nSecondsTillUpdate/3600,nSecondsTillUpdate/60,nSecondsTillUpdate%60);
 
         ui->serviceSec->setText(time.toString("mm:ss"));
+        ui->label_serviceText->setText(tr("Service will be updated automatically in (sec):"));
+        if(index)
+            index = 0;
     }
 
     if(nSecondsTillUpdate >= 0 && !fForce) return;
@@ -636,6 +655,7 @@ void MasternodeList::updateDockerList(bool fForce)
         clearDockerDetail();
     }
     askServiceData();
+    index = 0;
 }
 
 int MasternodeList::loadServerList()
@@ -645,19 +665,25 @@ int MasternodeList::loadServerList()
     std::map<std::string,ServiceInfo> serverlist = dockercluster.vecServiceInfo.servicesInfo;// .dndata.mapDockerServiceLists;
     std::map<std::string,ServiceInfo>::iterator iter = serverlist.begin();
 
-    LogPrintf("=====>loadServerList serverlist size:%d",serverlist.size());
+    LogPrintf("=====>loadServerList serverlist size:%d\n",serverlist.size());
+
+    if(dockercluster.vecServiceInfo.err.size()){
+        CMessageBox::information(this, tr("Service error"), tr("Get a service error:")+QString::fromStdString(dockercluster.vecServiceInfo.err));
+        // return 0;
+    }
 
     int count = 0;
     for(;iter != serverlist.end();iter++){
         ServiceInfo service = serverlist[iter->first];
-        // if(service.State == "completed"){
-        //     continue ;
-        // }
+        
+        if(service.State == "completed"){
+            continue ;
+        }
 
         QString id = QString::fromStdString(iter->first);
-        QString outpointStr = QString::fromStdString(service.CreateSpec.OutPoint.ToString());
+        QString outpointStr = QString::fromStdString(service.CreateSpec.OutPoint.ToStringShort());
         QString name = QString::fromStdString(service.CreateSpec.ServiceName);
-         std::vector<Task> mapDockerTasklists = service.TaskInfo;
+        std::vector<Task> mapDockerTasklists = service.TaskInfo;
 
         uint64_t createdAt = service.CreatedAt;
 
@@ -722,7 +748,7 @@ void MasternodeList::loadServerDetail(QModelIndex index)
     if(taskStatus == Config::TASKSTATE_RUNNING){
         ui->deleteServiceBtn->setEnabled(true);
         switchButton->setEnabled(true);
-        ui->pBtn_relet->setEnabled(true);
+        ui->pBtn_rerent->setEnabled(true);
     }
 }
 
@@ -730,7 +756,7 @@ void MasternodeList::disenableDeleteServiceBtn()
 {
     ui->deleteServiceBtn->setEnabled(false);
     switchButton->setEnabled(false);
-    ui->pBtn_relet->setEnabled(false);
+    ui->pBtn_rerent->setEnabled(false);
     ui->serviceTableWidget->setCurrentItem(NULL);
 }
 
@@ -778,6 +804,16 @@ void MasternodeList::openServiceDetail(QModelIndex index)
 
 void MasternodeList::slot_updateServiceBtn()
 {
+    if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+        LogPrintf("MasternodeList deleteService failed\n");
+        return ;
+    }
+    updateService();
+}
+
+void MasternodeList::updateService()
+{
     setCurUpdateMode(DockerUpdateMode::WhenNormal);
     updateDockerList(true);
 }
@@ -820,31 +856,33 @@ void MasternodeList::deleteService(COutPoint& outpoint,std::string ip_port)
     delService.pubKeyClusterAddress = dockercluster.DefaultPubkey;
     delService.CrerateOutPoint = outpoint;
 
+    LogPrintf("MasternodeList deleteService CrerateOutPoint:%s\n",delService.CrerateOutPoint.ToStringShort());
+
     if(!dockercluster.DeleteAndSendServiceSpec(delService)){
         CMessageBox::information(this, tr("Docker option"),tr("Delete docker service failed!"));
     }
-    LogPrintf("MasternodeList deleteService sucess\n");
+    LogPrintf("MasternodeList deleteService sucess dockercluster.vecServiceInfo.msg:%s\n",dockercluster.vecServiceInfo.msg);
+
 }
 
 void MasternodeList::askServiceData()
 {
-    // if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
-    //     CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
-    //     return ;
-    // }
-    // dockercluster.AskForServices(0,0,false);
-    // refreshServerList();
-
     const char* method = SLOT(updateServiceListFinished(bool));
     startAskServiceDataWork(method,true);
+}
+
+void MasternodeList::askRerentServiceData()
+{
+    const char* method = SLOT(updateRerentServiceFinished(bool));
+    startAskServiceDataWork(method,false);
 }
 
 void MasternodeList::clearDockerDetail()
 {
     ui->deleteServiceBtn->setEnabled(false);
-    updateEdgeStatus(0);
+    // updateEdgeStatus(0);
     ui->serviceTableWidget->setRowCount(0);
-    ui->pBtn_relet->setEnabled(false);
+    ui->pBtn_rerent->setEnabled(false);
 }
 
 void MasternodeList::slot_createServiceBtn()
@@ -1087,7 +1125,6 @@ void MasternodeList::slot_btn_refund()
     dockerorderView->updateAllOperationBtn();
 
     if(wtx.Getstate() == "" ){
-        // wtx.Setmasternodeoutpoint("");
         wtx.Setstate("completed");
         CWalletDB walletdb(pwalletMain->strWalletFile);
         wtx.WriteToDisk(&walletdb);
@@ -1095,10 +1132,10 @@ void MasternodeList::slot_btn_refund()
     }
 }
 
-void MasternodeList::onPBtn_reletClicked()
+void MasternodeList::onPBtn_rerentClicked()
 {
     if(pwalletMain->IsLocked()){
-        CMessageBox::information(this, tr("Wallet option"), tr("This option need to unlock your wallet"));
+        CMessageBox::information(this, tr("Wallet option"), tr("This option need to unlock your wallet!"));
         return;
     }
 
@@ -1108,13 +1145,24 @@ void MasternodeList::onPBtn_reletClicked()
         return ;
     std::string serviceid = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
 
-    COutPoint& createOutpoint = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.OutPoint; 
-
-
     CAmount machinePrice = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.ServicePrice;
-    // COutPoint createOutpoint = String2OutPoint(ui->serviceTableWidget->item(curindex,0)->text().toStdString());
+    COutPoint createOutpoint = String2OutPoint(ui->serviceTableWidget->item(curindex,0)->text().toStdString());
 
-    std::string mnaddress = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.MasterNodeFeeAddress; 
+    CWalletTx& wtx = pwalletMain->mapWallet[createOutpoint.hash];
+    std::string mnaddress;
+
+
+    const CTxOut& txout = wtx.vout[createOutpoint.n];
+
+    CTxDestination address;
+    if (ExtractDestination(txout.scriptPubKey, address)){
+        mnaddress = CMassGridAddress(address).ToString();
+    }
+    else{
+        CMessageBox::information(this, tr("Wallet error"), tr("Can't find masternode address,please check you service detail!"));
+        return ;
+    }
+
     std::string serviceID =  dockercluster.vecServiceInfo.servicesInfo[serviceid].ServiceID;
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
@@ -1123,10 +1171,12 @@ void MasternodeList::onPBtn_reletClicked()
 
     dlg.prepareOrderTransaction(walletModel,serviceID,mnaddress,m_curAddr_Port,machinePrice);
     dlg.move(pos.x()+(size.width()-dlg.width()*GUIUtil::GetDPIValue())/2,pos.y()+(size.height()-dlg.height()*GUIUtil::GetDPIValue())/2);
-    
+
     if(dlg.exec() != QDialog::Accepted){
         return ;
     }
+
+    m_curserviceID = serviceID;
 
     std::string txid = dlg.getTxid();
     COutPoint outpoint = GUIUtil::getOutPoint(txid,mnaddress);
@@ -1158,16 +1208,12 @@ void MasternodeList::slot_doRerentService()
         LoadingWin::hideLoadingWin();
         return ;
     }
+    // int curindex = ui->serviceTableWidget->currentRow();
+    // if(curindex <0 )
+    //     return ;
+    // std::string serviceID = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
 
-    LoadingWin::hideLoadingWin();
-
-    int curindex = ui->serviceTableWidget->currentRow();
-    if(curindex <0 )
-        return ;
-    std::string serviceID = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
-
-    dockercluster.saveRerentServiceData(serviceID,*m_updateService);
-    slot_updateServiceBtn();
+    askRerentServiceData();
 }
 
 void MasternodeList::loadOrderData()
@@ -1270,6 +1316,34 @@ void MasternodeList::updateServiceListFinished(bool isTaskFinished)
     }
     else
     {
-        CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker configuration!"));
+        CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker service detail!"));
+    }
+}
+
+void MasternodeList::updateRerentServiceFinished(bool isTaskFinished)
+{
+    disconnect(m_askServiceDataWorker,SIGNAL(askServicesFinished(bool)),this,SLOT(updateRerentServiceFinished(bool)));
+    int currentIndex = ui->tabWidget->currentIndex();
+    if(currentIndex != 2)
+        return ;
+
+    LoadingWin::hideLoadingWin();
+
+    if(isTaskFinished){
+        if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD ||
+                dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
+            if(dockercluster.vecServiceInfo.err.size()){
+                CMessageBox::information(this, tr("Service Error"),tr("Rerent service error:") + QString::fromStdString(dockercluster.vecServiceInfo.err));
+                return ;
+            }
+            dockercluster.saveRerentServiceData(m_curserviceID,*m_updateService);
+            // slot_updateServiceBtn();
+            updateService();
+            m_curserviceID.clear();
+        }
+    }
+    else
+    {
+        CMessageBox::information(this, tr("Service Error"),tr("Rerent service time out!"));
     }
 }

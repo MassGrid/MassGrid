@@ -178,13 +178,12 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::ReceivedSD);
             return;
         }
-        for(int i=0;i<dockerServiceInfo.servicesInfo.size();++i){
-            LogPrintf("CDockerServerman::ProcessMessage %d\n",i);
-        }
+        // for(int i=0;i<dockerServiceInfo.servicesInfo.size();++i){
+        //     LogPrintf("CDockerServerman::ProcessMessage %d\n",i);
+        // }
         if (dockerServiceInfo.servicesInfo.size() > 1){
             dockercluster.vecServiceInfo.servicesInfo.clear();
         }
-        std::string state = "";
         for (auto& item : dockerServiceInfo.servicesInfo) {
             dockercluster.vecServiceInfo.servicesInfo[item.first] = item.second;
             if (pwalletMain->mapWallet.count(item.second.CreateSpec.OutPoint.hash)) {

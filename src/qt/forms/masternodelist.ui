@@ -379,7 +379,7 @@
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pBtn_relet">
+              <widget class="QPushButton" name="pBtn_rerent">
                <property name="text">
                 <string>Rerent</string>
                </property>

@@ -70,7 +70,8 @@ public:
     enum SERVICESTATUS{
         AskSD = 0,
         ReceivedSD,
-        FreeSD
+        FreeSD,
+        UpdatingSD
     };
     enum TLEMENTSTATE{
         FAILEDCONTINUE = -1,

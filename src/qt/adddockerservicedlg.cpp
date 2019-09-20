@@ -275,18 +275,23 @@ void AddDockerServiceDlg::stopAndDelTransactionThread()
     }
 }
 
+void AddDockerServiceDlg::slot_updateTaskTime(int index)
+{
+    ui->label_refreshPayStatus->setText(QString::number(index));
+    ui->label_CreatePageTimer->setText(QString::number(index));
+}
+
+void AddDockerServiceDlg::transactionFinished()
+{
+    QTimer::singleShot(1000,this,SLOT(doCreateServiceTask()));
+}
+
 void AddDockerServiceDlg::doTransaction()
 {
     if(!sendCoin())
         return ;
 
     doStep2();
-}
-
-void AddDockerServiceDlg::slot_updateTaskTime(int index)
-{
-    ui->label_refreshPayStatus->setText(QString::number(index));
-    ui->label_CreatePageTimer->setText(QString::number(index));
 }
 
 void AddDockerServiceDlg::updateCreateServerWaitTimer(int index)
@@ -299,11 +304,6 @@ void AddDockerServiceDlg::slot_refreshTransactionStatus()
     static int index = 0;
     ui->label_refreshPayStatus->setText(QString::number(++index));
     QTimer::singleShot(1000,this,SLOT(slot_refreshTransactionStatus()));
-}
-
-void AddDockerServiceDlg::transactionFinished()
-{
-    QTimer::singleShot(1000,this,SLOT(doCreateServiceTask()));
 }
 
 void AddDockerServiceDlg::doCreateServiceTask()
@@ -1003,57 +1003,57 @@ void AddDockerServiceDlg::slot_autominerChecked(bool isChecked)
     }
 }
 
-CheckoutTransaction::CheckoutTransaction(std::string txid,QObject* parent) :
-    QObject(parent),
-    m_isNeedToWork(true)
-{
-    m_txid = txid;
-}
+// CheckoutTransaction::CheckoutTransaction(std::string txid,QObject* parent) :
+//     QObject(parent),
+//     m_isNeedToWork(true)
+// {
+//     m_txid = txid;
+// }
 
-CheckoutTransaction::~CheckoutTransaction()
-{
+// CheckoutTransaction::~CheckoutTransaction()
+// {
 
-}
+// }
 
-void CheckoutTransaction::startTask()
-{
-    std::string strErr;
-    int index = 0;
-    bool isFinished = false;
-    while(isNeedToWork()){
-        if(CheckoutTransaction::isTransactionFinished(m_txid,strErr)){
-            isFinished = true;
-            break;
-        }
-        QThread::sleep(2);
-        Q_EMIT updateTaskTime(++index);
-    }
-    if(isFinished)
-        Q_EMIT checkTransactionFinished();
-    else
-    {
-        Q_EMIT threadStopped(); 
-    }
-}
+// void CheckoutTransaction::startTask()
+// {
+//     std::string strErr;
+//     int index = 0;
+//     bool isFinished = false;
+//     while(isNeedToWork()){
+//         if(CheckoutTransaction::isTransactionFinished(m_txid,strErr)){
+//             isFinished = true;
+//             break;
+//         }
+//         QThread::sleep(2);
+//         Q_EMIT updateTaskTime(++index);
+//     }
+//     if(isFinished)
+//         Q_EMIT checkTransactionFinished();
+//     else
+//     {
+//         Q_EMIT threadStopped(); 
+//     }
+// }
 
-bool CheckoutTransaction::isTransactionFinished(std::string txid,std::string& strErr)
-{
-    CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
+// bool CheckoutTransaction::isTransactionFinished(std::string txid,std::string& strErr)
+// {
+//     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
 
-    //check tx in block
-    bool fLocked = instantsend.IsLockedInstantSendTransaction(wtx.GetHash());
-    int confirms = wtx.GetDepthInMainChain(false);
-    if(!fLocked && confirms < 1){
-        strErr = "The transaction not confirms: "+std::to_string(confirms);
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
-        return false;
-    }
-    if(wtx.HasCreatedService()){
-        strErr = "The transaction has been used";
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec current %s\n",strErr);
-        return false;
-    }
-    LogPrintf("AddDockerServiceDlg::is Transaction Finished\n");
-    return true;
-}
+//     //check tx in block
+//     bool fLocked = instantsend.IsLockedInstantSendTransaction(wtx.GetHash());
+//     int confirms = wtx.GetDepthInMainChain(false);
+//     if(!fLocked && confirms < 1){
+//         strErr = "The transaction not confirms: "+std::to_string(confirms);
+//         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+//         return false;
+//     }
+//     if(wtx.HasCreatedService()){
+//         strErr = "The transaction has been used";
+//         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec current %s\n",strErr);
+//         return false;
+//     }
+//     LogPrintf("AddDockerServiceDlg::is Transaction Finished\n");
+//     return true;
+// }
 

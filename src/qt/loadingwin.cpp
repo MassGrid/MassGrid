@@ -20,9 +20,6 @@ LoadingWin::LoadingWin(QWidget *parent) :
     setAttribute(Qt::WA_ShowWithoutActivating,true);
 
     setWindowFlags(Qt::Widget | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint);
-
-    // setWindowFlags(Qt::Widget | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint);
-    // setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowDoesNotAcceptFocus); 
 }
 
 LoadingWin::~LoadingWin()

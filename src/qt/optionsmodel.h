@@ -53,6 +53,7 @@ public:
         Listen,                 // bool
         OptionIDRowCount,
 		MainAddress,            // QString
+        DockerServiceTimeOut,
     };
 
     void Init(bool resetSettings = false);
@@ -68,6 +69,8 @@ public:
     bool getHideTrayIcon() { return fHideTrayIcon; }
     bool getMinimizeToTray() { return fMinimizeToTray; }
     bool getMinimizeOnClose() { return fMinimizeOnClose; }
+    int getDockerServiceTimeout() { return fDockerServiceTimeOut; }
+    void setDockerServiceTimeout(int);
     int getDisplayUnit() { return nDisplayUnit; }
     QString getThirdPartyTxUrls() { return strThirdPartyTxUrls; }
     QString getMainAddress() { return strMainAddress; }
@@ -94,6 +97,7 @@ private:
     QString strMainAddress;
     bool fCoinControlFeatures;
     bool fShowAdvancedPSUI;
+    int fDockerServiceTimeOut;
     /* settings that were overriden by command-line */
     QString strOverriddenByCommandLine;
 

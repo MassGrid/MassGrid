@@ -95,6 +95,7 @@ private:
     QString strCurrentFilter;
 
     std::string m_curAddr_Port;
+    std::string m_curserviceID;
 
     DockerUpdateMode m_updateMode;
     int timeOutSec;
@@ -130,6 +131,7 @@ private:
     void fullRerentServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint);
     void doLoadServiceTask();
     void startAskServiceDataWork(const char* slotMethod,bool needAsk);
+    void updateService();
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -151,6 +153,7 @@ private Q_SLOTS:
     void openServiceDetail(QModelIndex);
     // void askDNData();
     void askServiceData();
+    void askRerentServiceData();
 
     int loadDockerDetail(const std::string& key);
     void slot_createServiceBtn();
@@ -167,10 +170,11 @@ private Q_SLOTS:
     void jumpToCreateService(std::string ip,std::string txid);
     void timeoutToScanStatus();
     void disenableDeleteServiceBtn();
-    void onPBtn_reletClicked();
+    void onPBtn_rerentClicked();
     void slot_doRerentService();
     // void askTransData(std::string txid);
     void updateServiceListFinished(bool isTaskFinished);
+    void updateRerentServiceFinished(bool isTaskFinished);
 };
 
 #endif // MASTERNODELIST_H

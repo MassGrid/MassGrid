@@ -741,6 +741,7 @@ QDialog#OptionsDialog QFrame#frame_11,
 QDialog#OptionsDialog QFrame#frame_12,
 QDialog#OptionsDialog QFrame#frame_13,
 QDialog#OptionsDialog QFrame#frame_14,
+QDialog#OptionsDialog QFrame#frameDockerService,
 QDialog#OptionsDialog QFrame#mainaddressframe,
 QDialog#OptionsDialog QLineEdit#thirdPartyTxUrls,
 QDialog#OptionsDialog QLineEdit#dataDirPath{
@@ -1345,7 +1346,7 @@ QDialog#SimpleSendcoinDlg QPushButton#pBtn_sendCoin{
     height: @35px@;
 }
 
-QWidget#MasternodeList QPushButton#pBtn_relet{
+QWidget#MasternodeList QPushButton#pBtn_rerent{
     min-width:@80px@;
     min-height:@28px@;
 }

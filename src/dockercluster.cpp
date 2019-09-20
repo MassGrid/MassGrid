@@ -53,7 +53,6 @@ bool Cluster::ProcessDockernodeDisconnections(const std::string& strNode)
 }
 bool Cluster::SetConnectDockerAddr(std::string address_port)
 {
-
     LogPrint("dockernode","Cluster::SetConnectDockerAddress Started\n");
     if (!Lookup(address_port.c_str(), connectDockerAddr, 0, false)){
         LogPrintf("Cluster::SetConnectDockerAddress Incorrect DockerNode address %s", address_port);
@@ -163,7 +162,7 @@ bool Cluster::UpdateAndSendSeriveSpec(DockerUpdateService sspec){
         return false;
     }
     
-    dockerServerman.setDNDataStatus(CDockerServerman::Updating);
+    dockerServerman.setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::UpdatingSD);
 
     g_connman->PushMessage(connectNode, NetMsgType::UPDATESERVICE, sspec);
     return true;

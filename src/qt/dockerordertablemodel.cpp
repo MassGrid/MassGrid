@@ -79,7 +79,7 @@ public:
      * this is sorted by sha256.
      */
     QList<DockerOrderRecord> cachedWallet;
-    std::list<std::string> reletTxids;
+    std::list<std::string> rerentTxids;
 
     /* Query entire wallet anew from core.
      */
@@ -87,7 +87,7 @@ public:
     {
         qDebug() << "DockerOrderTablePriv::refreshWallet";
         cachedWallet.clear();
-        reletTxids.clear();
+        rerentTxids.clear();
         {
             LOCK2(cs_main, wallet->cs_wallet);
             for(std::map<uint256, CWalletTx>::iterator it = wallet->mapWallet.begin(); it != wallet->mapWallet.end(); ++it)
@@ -96,8 +96,8 @@ public:
                     if(!it->second.Getmasternodeip().size()){
                         getMasternodeInfo(it->second);
                     }
-                    if(it->second.GetCreateOutPoint().size()){
-                        reletTxids.push_back(it->first.ToString());
+                    if(it->second.GetCreateOutPoint().size() && it->second.Getserviceid().size()){
+                        rerentTxids.push_back(it->first.ToString());
                     }
                     cachedWallet.append(DockerOrderRecord::decomposeTransaction(wallet, it->second));
                 }
@@ -1003,7 +1003,7 @@ void DockerOrderTableModel::refreshModel()
 std::list<std::string> DockerOrderTableModel::getRerentTxidList()
 {
     refreshModel();
-    return priv->reletTxids;
+    return priv->rerentTxids;
 }
     static QList<DockerOrderRecord> decomposeTransaction(const CWallet *wallet, const CWalletTx &wtx);
 
@@ -1013,10 +1013,6 @@ void DockerOrderTableModel::getTransactionDetail(CWalletTx wtx,QString& date,CAm
     if(records.size()){
         date = formatTxDate(&records[0]);
         amount = records[0].debit;
-        // amount = formatTxAmount(&records[0],false);
-
-        LogPrintf("======>getTransactionDetail records[0].credit:%ld\n",records[0].credit);
-        LogPrintf("======>getTransactionDetail records[0].debit:%ld\n",records[0].debit);
     }
 }
 

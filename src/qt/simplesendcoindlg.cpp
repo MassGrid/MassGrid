@@ -13,6 +13,7 @@
 #include "dockercluster.h"
 #include "adddockerservicedlg.h"
 #include "loadingwin.h"
+#include <QTimer>
 
 extern CWallet* pwalletMain;
 extern SendCoinsDialog* g_sendCoinsPage;
@@ -37,6 +38,8 @@ SimpleSendcoinDlg::SimpleSendcoinDlg(QWidget *parent) :
 SimpleSendcoinDlg::~SimpleSendcoinDlg()
 {
     delete ui;
+    stopAndDelTransactionThread();
+    LoadingWin::hideLoadingWin();
 }
 
 void SimpleSendcoinDlg::mousePressEvent(QMouseEvent* e)
@@ -178,8 +181,9 @@ std::string SimpleSendcoinDlg::getTxid()
 void SimpleSendcoinDlg::onPBtn_sendCoinClicked()
 {
     if(sendCoin()){
-        saveMachinePrice();
-        QDialog::accept();
+        LoadingWin::showLoading2(tr("Chcke transaction......"));
+        //todo checkout transaction
+        startCheckTransactionWork();
     }
 }
 
@@ -285,4 +289,54 @@ void SimpleSendcoinDlg::onHireTimeChanged(int value)
 {
     ui->label_hireTime->setText(QString("(%1H)").arg(QString::number(value)));
     ui->payAmount->setValue(m_amount*value);
+}
+
+void SimpleSendcoinDlg::startCheckTransactionWork()
+{
+    if(m_checkoutTransaction == NULL){
+        m_checkoutTransaction = new CheckoutTransaction(m_txid,0);
+        QThread *workThread = new QThread();
+        m_checkoutTransaction->moveToThread(workThread);
+        connect(workThread,SIGNAL(started()),m_checkoutTransaction,SLOT(startTask()));
+        connect(m_checkoutTransaction,SIGNAL(checkTransactionFinished()),this,SLOT(transactionFinished()));
+        connect(m_checkoutTransaction,SIGNAL(updateTaskTime(int)),this,SLOT(slot_updateTaskTime(int)));
+        connect(m_checkoutTransaction,SIGNAL(checkTransactionFinished()),workThread,SLOT(quit()));
+    }
+
+    m_checkoutTransaction->thread()->start();
+}
+
+void SimpleSendcoinDlg::stopAndDelTransactionThread()
+{
+    if(m_checkoutTransaction != NULL){
+        disconnect(m_checkoutTransaction,SIGNAL(checkTransactionFinished()),this,SLOT(transactionFinished()));
+        disconnect(m_checkoutTransaction,SIGNAL(updateTaskTime(int)),this,SLOT(slot_updateTaskTime(int)));
+
+        QEventLoop loop;
+        connect(m_checkoutTransaction,SIGNAL(threadStopped()),&loop,SLOT(quit()));
+
+        m_checkoutTransaction->setNeedToWork(false);
+        loop.exec();
+        delete m_checkoutTransaction;        
+    }
+}
+
+void SimpleSendcoinDlg::slot_updateTaskTime(int index)
+{
+    // ui->label_refreshPayStatus->setText(QString::number(index));
+    ui->label_refreshPayStatus->setText(QString::number(index));
+    // LoadingWin::showLoading2(tr("Chckout transaction for ")+QString::number(index)+"s");
+}
+
+void SimpleSendcoinDlg::transactionFinished()
+{
+    LoadingWin::hideLoadingWin();
+    doTaskAfterFinishedSendcoins();
+    // QTimer::singleShot(1000,this,SLOT(doTaskAfterFinishedSendcoins()));
+}
+
+void SimpleSendcoinDlg::doTaskAfterFinishedSendcoins()
+{
+    saveMachinePrice();
+    QDialog::accept();
 }

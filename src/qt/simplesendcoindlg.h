@@ -9,6 +9,7 @@
 class WalletModel;
 class SendCoinsRecipient;
 class AskDNDataWorker;
+class CheckoutTransaction;
 
 namespace Ui {
 class SimpleSendcoinDlg;
@@ -38,6 +39,8 @@ private:
     std::string m_addr_port;
     std::string m_serviceID;
 
+    CheckoutTransaction *m_checkoutTransaction;
+
 private:
     bool sendCoin();
     bool validate(SendCoinsRecipient& recipient);
@@ -45,6 +48,9 @@ private:
     void startAskDNDataWork(const char* slotMethod,bool needAsk);
     void saveMachinePrice();
     CAmount getMachinePrice();
+
+    void startCheckTransactionWork();
+    void stopAndDelTransactionThread();
 
 protected:
     void mousePressEvent(QMouseEvent *e);
@@ -56,6 +62,9 @@ public Q_SLOTS:
     void onHireTimeChanged(int value);
     void updateServiceListFinished(bool isTaskFinished);
     void updateCreateServerWaitTimer(int);
+    void transactionFinished();
+    void doTaskAfterFinishedSendcoins();
+    void slot_updateTaskTime(int index);
 };
 
 #endif // SIMPLESENDCOINDLG_H
