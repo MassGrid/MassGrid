@@ -336,6 +336,70 @@ UniValue getblockhash(const UniValue& params, bool fHelp)
     CBlockIndex* pblockindex = chainActive[nHeight];
     return pblockindex->GetBlockHash().GetHex();
 }
+UniValue gettxidsbyblocknumber(const UniValue& params, bool fHelp)
+{
+    if (fHelp || params.size() <= 0 || params.size() > 2)
+        throw runtime_error(
+            "gettxidsbyblocknumber index option\n"
+            "\nReturns hash of block in best-block-chain at index provided.\n"
+            "\nArguments:\n"
+            "1. index         (numeric, required) The block index\n"
+            "2. option       (boolean, optional, default=true) true for a json object, false for txid's list of hex encoded data\n"
+            "\nResult:\n"
+            "\"hash\"         (string) The block hash\n"
+            "\nExamples:\n"
+            + HelpExampleCli("gettxidsbyblocknumber", "1000")
+            + HelpExampleRpc("gettxidsbyblocknumber", "1000")
+        );
+
+    LOCK(cs_main);
+
+    int nHeight = params[0].get_int();
+    if (nHeight < 0 || nHeight > chainActive.Height())
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "Block height out of range");
+
+    CBlockIndex* pblockindex = chainActive[nHeight];
+    std::string strHash = pblockindex->GetBlockHash().GetHex();
+
+
+    uint256 hash(uint256S(strHash));
+
+    bool txDetails = true;
+    if (params.size() > 1)
+        txDetails = params[1].get_bool();
+
+    if (mapBlockIndex.count(hash) == 0)
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block not found");
+
+    CBlock block;
+    pblockindex = mapBlockIndex[hash];
+
+    if (fHavePruned && !(pblockindex->nStatus & BLOCK_HAVE_DATA) && pblockindex->nTx > 0)
+        throw JSONRPCError(RPC_INTERNAL_ERROR, "Block not available (pruned data)");
+
+    if(!ReadBlockFromDisk(block, pblockindex, Params().GetConsensus()))
+        throw JSONRPCError(RPC_INTERNAL_ERROR, "Can't read block from disk");
+
+
+    UniValue result(UniValue::VOBJ);
+
+    UniValue txs(UniValue::VARR);
+    BOOST_FOREACH(const CTransaction&tx, block.vtx)
+    {
+        if(txDetails)
+        {
+            UniValue objTx(UniValue::VOBJ);
+            TxToJSON(tx, uint256(), objTx);
+            txs.push_back(objTx);
+        }
+        else
+            txs.push_back(tx.GetHash().GetHex());
+    }
+    result.push_back(Pair("tx", txs));
+
+    return result;
+
+}
 
 UniValue getblockheader(const UniValue& params, bool fHelp)
 {
