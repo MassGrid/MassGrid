@@ -380,9 +380,10 @@ UniValue gettxidsbyblocknumber(const UniValue& params, bool fHelp)
     if(!ReadBlockFromDisk(block, pblockindex, Params().GetConsensus()))
         throw JSONRPCError(RPC_INTERNAL_ERROR, "Can't read block from disk");
 
-
     UniValue result(UniValue::VOBJ);
-
+    result.push_back(Pair("blocknumber",nHeight));
+    result.push_back(Pair("blockhash",strHash));
+    result.push_back(Pair("time", block.GetBlockTime()));
     UniValue txs(UniValue::VARR);
     BOOST_FOREACH(const CTransaction&tx, block.vtx)
     {
