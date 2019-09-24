@@ -1522,7 +1522,7 @@ UniValue listtransactions(const UniValue& params, bool fHelp)
     if (!EnsureWalletIsAvailable(fHelp))
         return NullUniValue;
 
-    if (fHelp || params.size() > 4)
+    if (fHelp || params.size() > 5)
         throw runtime_error(
             "listtransactions    ( \"account\" count from includeWatchonly)\n"
             "\nReturns up to 'count' most recent transactions skipping the first 'from' transactions for account 'account'.\n"
@@ -1531,6 +1531,7 @@ UniValue listtransactions(const UniValue& params, bool fHelp)
             "2. count            (numeric, optional, default=10) The number of transactions to return\n"
             "3. from             (numeric, optional, default=0) The number of transactions to skip\n"
             "4. includeWatchonly (bool, optional, default=false) Include transactions to watchonly addresses (see 'importaddress')\n"
+            "5. nDepth             (numeric, optional, default=0) The number of transactions confirm\n"
             "\nResult:\n"
             "[\n"
             "  {\n"
@@ -1596,7 +1597,9 @@ UniValue listtransactions(const UniValue& params, bool fHelp)
     if(params.size() > 3)
         if(params[3].get_bool())
             filter = filter | ISMINE_WATCH_ONLY;
-
+    int nMinDepth = 0;
+    if (params.size() > 4)
+        nMinDepth = params[4].get_int();
     if (nCount < 0)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Negative count");
     if (nFrom < 0)
@@ -1610,8 +1613,11 @@ UniValue listtransactions(const UniValue& params, bool fHelp)
     for (CWallet::TxItems::const_reverse_iterator it = txOrdered.rbegin(); it != txOrdered.rend(); ++it)
     {
         CWalletTx *const pwtx = (*it).second.first;
-        if (pwtx != 0)
+        if (pwtx != 0) {
+            if((*pwtx).GetDepthInMainChain(false)< nMinDepth)
+                continue;
             ListTransactions(*pwtx, strAccount, 0, true, ret, filter);
+        }
         CAccountingEntry *const pacentry = (*it).second.second;
         if (pacentry != 0)
             AcentryToJSON(*pacentry, strAccount, ret);
