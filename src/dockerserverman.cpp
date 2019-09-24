@@ -37,7 +37,9 @@ const char* strServiceCode[] = {
     "request server not dockernode",
     "request error",
     "pubkey not found",
-    "service not found"
+    "service not found",
+    "create transaction error",
+    "commit transaction error"
 };
 
 void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman){
@@ -178,12 +180,13 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
             setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::ReceivedSD);
             return;
         }
-        // for(int i=0;i<dockerServiceInfo.servicesInfo.size();++i){
-        //     LogPrintf("CDockerServerman::ProcessMessage %d\n",i);
-        // }
+        for(int i=0;i<dockerServiceInfo.servicesInfo.size();++i){
+            LogPrintf("CDockerServerman::ProcessMessage %d\n",i);
+        }
         if (dockerServiceInfo.servicesInfo.size() > 1){
             dockercluster.vecServiceInfo.servicesInfo.clear();
         }
+        std::string state = "";
         for (auto& item : dockerServiceInfo.servicesInfo) {
             dockercluster.vecServiceInfo.servicesInfo[item.first] = item.second;
             if (pwalletMain->mapWallet.count(item.second.CreateSpec.OutPoint.hash)) {
@@ -508,25 +511,66 @@ bool CDockerServerman::CheckDeleteService(DockerDeleteService& dockerDeleteServi
         LogPrintf("CDockerServerman::CheckDeleteService double tlement\n");
         return false;
     }
-    if (wtx.Getserviceid().empty()){
-        err = strServiceCode[SERVICEMANCODE::SERVICE_NOT_FOUND];
-        LogPrintf("CDockerServerman::CheckDeleteService serviceID not found\n");
-        return false;
-    }
-    if (wtx.Getpubkey().empty()){
-        err = strServiceCode[SERVICEMANCODE::PUBKEY_NOT_FOUND];
-        LogPrintf("CDockerServerman::CheckDeleteService pubkey not found\n");
-        return false;
-    }
-    if(dockerDeleteService.pubKeyClusterAddress.ToString().substr(0, 66) != wtx.Getpubkey()){
-        err = strServiceCode[SERVICEMANCODE::PUBKEY_ERROR];
-        LogPrintf("CDockerServerman::CheckDeleteService pubkey not equal\n");
-        return false;
-    }
+
     uint256 statementTXID;
-    if(!prizesClient.GetServiceDelete(wtx.Getserviceid(),statementTXID,err)){  
-        LogPrintf("CDockerServerman::CheckDeleteService GetServiceDelete error %s\n",err);
-        return false;
+
+    if (wtx.Getserviceid().empty()){    //not used
+
+        LogPrintf("CDockerServerman::CheckDeleteService  statement unspent %s \n",wtx.GetHash().ToString());
+        vector<CRecipient> vecSend;
+        vecSend.clear();
+        CMassGridAddress masternodeAddress;
+        if(!mnodeman.GetAddress(activeMasternode.outpoint,masternodeAddress))
+            masternodeAddress = CMassGridAddress(pwalletMain->vchDefaultKey.GetID()).ToString();
+        CScript Drawee = GetScriptForDestination(CMassGridAddress(dockerDeleteService.pubKeyClusterAddress.GetID()).Get());
+        CAmount customerSend = wtx.vout[dockerDeleteService.CrerateOutPoint.n].nValue;
+        if(customerSend > CAmount(0)){ 
+            CRecipient customerrecipient = {Drawee, customerSend, true};
+            vecSend.push_back(customerrecipient);
+        }
+        CWalletTx wtxNew;
+        CCoinControl coinControl;
+        coinControl.fUseInstantSend = false;
+        coinControl.destChange = masternodeAddress.Get();
+        CReserveKey reservekey(pwalletMain);
+        CAmount nFeeRequired;
+        std::string strError;
+        CAmount nFeeRet = 0;
+        int nChangePosRet = -1;
+        bool fCreated = pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRet, nChangePosRet, strError, &coinControl, true, ALL_COINS, false);
+        if (!fCreated){
+            err = strServiceCode[SERVICEMANCODE::CREATE_TRANSACTION_ERROR];
+            LogPrintf("CDockerServerman::CheckDeleteService CreateTransaction error %s\n",err);
+            return false;
+        }
+
+        //commit to wtx;
+        if (!pwalletMain->CommitTransaction(wtxNew, reservekey, g_connman.get(),NetMsgType::TXLOCKREQUEST)){
+            err = strServiceCode[SERVICEMANCODE::COMMIT_TRANSACTION_ERROR];
+            LogPrintf("CDockerServerman::CheckDeleteService CommitTransaction error \n");
+            return false;
+        }
+        statementTXID = wtxNew.GetHash();
+    }else {
+        if (!wtx.GetCreateOutPoint().empty()) {
+            err = strServiceCode[SERVICEMANCODE::SERVICE_NOT_FOUND];
+            LogPrintf("CDockerServerman::CheckUpdateService not found\n");
+            return false;
+        }
+        if (wtx.Getpubkey().empty()){
+            err = strServiceCode[SERVICEMANCODE::PUBKEY_NOT_FOUND];
+            LogPrintf("CDockerServerman::CheckDeleteService pubkey not found\n");
+            return false;
+        }
+        if(dockerDeleteService.pubKeyClusterAddress.ToString().substr(0, 66) != wtx.Getpubkey()){
+            err = strServiceCode[SERVICEMANCODE::PUBKEY_ERROR];
+            LogPrintf("CDockerServerman::CheckDeleteService pubkey not equal\n");
+            return false;
+        }
+        if(!prizesClient.GetServiceDelete(wtx.Getserviceid(),statementTXID,err)){  
+            LogPrintf("CDockerServerman::CheckDeleteService GetServiceDelete error %s\n",err);
+            return false;
+        }
     }
     wtx.Settlementtxid(statementTXID.ToString());
     CWalletDB walletdb(pwalletMain->strWalletFile);
