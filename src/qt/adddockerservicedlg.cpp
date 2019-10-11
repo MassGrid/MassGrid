@@ -30,7 +30,10 @@
 #include "guiutil.h"
 #include "dockerserverman.h"
 #include "autominersetupwin.h"
+#include <QRegExp>
 // #define LOADRESOURCETIMEOUT 30
+
+#define AUTOMINERIMAGE "10.0-autominer-ubuntu16.04"
 
 extern SendCoinsDialog* g_sendCoinsPage;
 
@@ -181,10 +184,30 @@ void AddDockerServiceDlg::slot_close()
     close();
 }
 
+
+bool AddDockerServiceDlg::reconnectDockerNetwork()
+{
+    QRegExp rx("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+    if(QString::fromStdString(m_addr_port).contains(":") && !rx.exactMatch(QString::fromStdString(m_addr_port).split(":").at(0)))
+    {
+        LogPrintf("m_addr_port:%s is failed\n",m_addr_port);
+        return false;
+    }
+
+    dockercluster.ProcessDockernodeDisconnections(m_addr_port);
+
+    if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
+        // CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!") + "<br>" + QString("masternode ip_port:") + QString::fromStdString(m_curAddr_Port));
+        // LogPrintf("MasternodeList deleteService failed\n");
+        return false;
+    }
+}
+
 bool AddDockerServiceDlg::deleteService(const std::string& strServiceid)
 {
-    if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
-        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+    if(!reconnectDockerNetwork()){
+        // CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!") + "<br>" + QString("masternode ip_port:") + QString::fromStdString(m_addr_port));
         return false;
     }
 
@@ -442,14 +465,20 @@ bool AddDockerServiceDlg::createDockerService()
         }
     }
 
-    if(!dockercluster.SetConnectDockerAddress(m_addr_port)){
-        LogPrintf("get invalid IP!\n");
+    // if(!dockercluster.SetConnectDockerAddress(m_addr_port)){
+    //     LogPrintf("get invalid IP!\n");
+    //     return false;
+    // }
+    // if(!dockercluster.ProcessDockernodeConnections()){
+    //     LogPrintf("Connect to Masternode failed!\n");
+    //      return false;
+    // }
+
+    if(!reconnectDockerNetwork()){
+        LogPrintf("Connect to Masternode failed!\n");
         return false;
     }
-    if(!dockercluster.ProcessDockernodeConnections()){
-        LogPrintf("Connect to Masternode failed!\n");
-         return false;
-    }
+
 
     m_createService->clusterServiceCreate.pubKeyClusterAddress = dockercluster.DefaultPubkey;
     m_createService->clusterServiceCreate.OutPoint = GUIUtil::getOutPoint(m_txid,m_masterndoeAddr);
@@ -477,6 +506,7 @@ bool AddDockerServiceDlg::createDockerService()
 
 void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
 {
+    LogPrintf("======>AddDockerServiceDlg::updateDNDataAfterCreate isFinished:%d\n",isFinished);
     disconnect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),this,SLOT(updateDNDataAfterCreate(bool)));
     hideLoadingWin();
     if(!isFinished){
@@ -721,8 +751,9 @@ void AddDockerServiceDlg::askForDNData()
 
 void AddDockerServiceDlg::startAskDNDataWork(const char* slotMethod,bool needAsk)
 {
-    if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
-        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+    if(!reconnectDockerNetwork()){
+        // CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!") + "<br>" + QString("masternode ip_port:") + QString::fromStdString(m_addr_port));
         return ;
     }
 
@@ -755,8 +786,8 @@ void AddDockerServiceDlg::updateServiceListFinished(bool isTaskFinished)
     else
     {
         //time out tip
-        CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker configuration!"));
-        return;
+        CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker configuration,this window will be close!"));
+        close();
     }
 }
 
@@ -998,62 +1029,11 @@ void AddDockerServiceDlg::slot_gpuComboxCurrentIndexChanged(int index)
 
 void AddDockerServiceDlg::slot_autominerChecked(bool isChecked)
 {
+    if(ui->comboBox_image->findText(AUTOMINERIMAGE) <= 0){
+        CMessageBox::information(this, tr("Docker option"), tr("Can't find 10.0-autominer-ubuntu16.04,Please check the Internet or contact customer service!"));
+        return;
+    }
     if(isChecked){
-        ui->comboBox_image->setCurrentIndex(ui->comboBox_image->findText("10.0-autominer-ubuntu16.04"));
+        ui->comboBox_image->setCurrentIndex(ui->comboBox_image->findText(AUTOMINERIMAGE));
     }
 }
-
-// CheckoutTransaction::CheckoutTransaction(std::string txid,QObject* parent) :
-//     QObject(parent),
-//     m_isNeedToWork(true)
-// {
-//     m_txid = txid;
-// }
-
-// CheckoutTransaction::~CheckoutTransaction()
-// {
-
-// }
-
-// void CheckoutTransaction::startTask()
-// {
-//     std::string strErr;
-//     int index = 0;
-//     bool isFinished = false;
-//     while(isNeedToWork()){
-//         if(CheckoutTransaction::isTransactionFinished(m_txid,strErr)){
-//             isFinished = true;
-//             break;
-//         }
-//         QThread::sleep(2);
-//         Q_EMIT updateTaskTime(++index);
-//     }
-//     if(isFinished)
-//         Q_EMIT checkTransactionFinished();
-//     else
-//     {
-//         Q_EMIT threadStopped(); 
-//     }
-// }
-
-// bool CheckoutTransaction::isTransactionFinished(std::string txid,std::string& strErr)
-// {
-//     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
-
-//     //check tx in block
-//     bool fLocked = instantsend.IsLockedInstantSendTransaction(wtx.GetHash());
-//     int confirms = wtx.GetDepthInMainChain(false);
-//     if(!fLocked && confirms < 1){
-//         strErr = "The transaction not confirms: "+std::to_string(confirms);
-//         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
-//         return false;
-//     }
-//     if(wtx.HasCreatedService()){
-//         strErr = "The transaction has been used";
-//         LogPrintf("CDockerServerman::CheckAndCreateServiveSpec current %s\n",strErr);
-//         return false;
-//     }
-//     LogPrintf("AddDockerServiceDlg::is Transaction Finished\n");
-//     return true;
-// }
-

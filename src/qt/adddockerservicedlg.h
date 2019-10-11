@@ -74,6 +74,7 @@ private:
     void expansionResourceItems();
     void startAskDNDataWork(const char* slotMethod, bool needAsk = true);
     // void saveServiceData(ServiceInfo serviceInfo);
+    bool reconnectDockerNetwork();
     
 protected:
     void mousePressEvent(QMouseEvent *e);

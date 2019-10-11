@@ -57,7 +57,7 @@ class CheckoutTransaction : public QObject
 public:
     explicit CheckoutTransaction(std::string txid,QObject* parent = nullptr);
     ~CheckoutTransaction();
-    static bool isTransactionFinished(std::string txid,std::string& strErr);
+    bool isTransactionFinished(std::string txid,std::string& strErr);
 
     bool isNeedToWork() { return m_isNeedToWork; };
     void setNeedToWork(bool flag) { m_isNeedToWork = flag;};

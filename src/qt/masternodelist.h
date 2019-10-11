@@ -132,6 +132,9 @@ private:
     void doLoadServiceTask();
     void startAskServiceDataWork(const char* slotMethod,bool needAsk);
     void updateService();
+    bool reconnectDockerNetwork();
+    bool checkRerentInfo(); 
+    void stopTimeAndShowMsgBox(QString title,QString msg);
 
 protected:
     void resizeEvent(QResizeEvent *event);

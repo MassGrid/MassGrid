@@ -40,6 +40,7 @@
 #include "simplesendcoindlg.h"
 #include "loadingwin.h"
 #include <QDateTime>
+#include <QRegExp>
 #include "dockerordertablemodel.h"
 #include "networkers.h"
 
@@ -210,7 +211,13 @@ void MasternodeList::showDockerDetail(QModelIndex index)
     }
 
     int row = index.row();
-    const std::string& address_port = ui->tableWidgetMasternodes->item(row,0)->text().toStdString().c_str();
+    const std::string& address_port = ui->tableWidgetMasternodes->item(row,0)->text().toStdString().c_str();  
+    QString statusStr = ui->tableWidgetMasternodes->item(row,2)->text();
+
+    if(statusStr != "ENABLED"){
+        CMessageBox::information(this, tr(""),tr("Masternode status is't ENABLED,Please check the Internet or contact customer service!"));
+        return ;
+    }
     
     gotoDockerSerivcePage(address_port);
 }
@@ -619,9 +626,6 @@ void MasternodeList::updateDockerList(bool fForce)
     int64_t nSecondsTillUpdate = 0;
     static int index = 0;
     if(m_updateMode == DockerUpdateMode::AfterCreate){
-        // nSecondsTillUpdate = m_nTimeDockerListUpdated + DOCKER_AFTERCREATE_UPDATE_SECONDS - GetTime();
-        // ui->serviceSec->setText(QString::number(nSecondsTillUpdate));
-        // ui->serviceSec->setText(QString::number(++index));
         index++;
         QTime time(index/3600,index/60,index%60);
         if(index <= 3600)
@@ -630,9 +634,7 @@ void MasternodeList::updateDockerList(bool fForce)
             ui->serviceSec->setText(time.toString("hh:mm:ss"));
         
         if(index%(walletModel->getOptionsModel()->getDockerServiceTimeout()*60)==0 && index>0){
-            startTimer(false);
-            CMessageBox::information(this, tr("Service Error"), tr("Wait for service creation timeout,Please contact the customer to check!")); 
-            startTimer(true);
+            stopTimeAndShowMsgBox(tr("Service Error"), tr("Wait for service creation timeout,Please check the Internet or contact customer service!")); 
         }
         ui->label_serviceText->setText(tr("Wait for service:"));
 
@@ -665,13 +667,15 @@ int MasternodeList::loadServerList()
     std::map<std::string,ServiceInfo> serverlist = dockercluster.vecServiceInfo.servicesInfo;// .dndata.mapDockerServiceLists;
     std::map<std::string,ServiceInfo>::iterator iter = serverlist.begin();
 
-    LogPrintf("=====>loadServerList serverlist size:%d\n",serverlist.size());
+    LogPrintf("loadServerList serverlist size:%d\n",serverlist.size());
 
     if(dockercluster.vecServiceInfo.err.size()){
-        CMessageBox::information(this, tr("Service error"), tr("Get a service error:")+QString::fromStdString(dockercluster.vecServiceInfo.err));
+        stopTimeAndShowMsgBox(tr("Service error"), tr("Get a service error:")+QString::fromStdString(dockercluster.vecServiceInfo.err));
+        dockercluster.vecServiceInfo.err.clear();
         // return 0;
     }
 
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     int count = 0;
     for(;iter != serverlist.end();iter++){
         ServiceInfo service = serverlist[iter->first];
@@ -802,12 +806,29 @@ void MasternodeList::openServiceDetail(QModelIndex index)
     dlg.exec();
 }
 
+bool MasternodeList::reconnectDockerNetwork()
+{
+    QRegExp rx("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+    if(QString::fromStdString(m_curAddr_Port).contains(":") && !rx.exactMatch(QString::fromStdString(m_curAddr_Port).split(":").at(0)))
+    {
+        LogPrintf("m_curAddr_Port:%s is failed\n",m_curAddr_Port);
+        return false;
+    }
+
+    dockercluster.ProcessDockernodeDisconnections(m_curAddr_Port);
+
+    if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!") + "<br>" + QString("masternode ip_port:") + QString::fromStdString(m_curAddr_Port));
+        LogPrintf("MasternodeList deleteService failed\n");
+        // return false;
+    }
+    return true;
+}
+
 void MasternodeList::slot_updateServiceBtn()
 {
-    if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
-        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
-        LogPrintf("MasternodeList deleteService failed\n");
-        return ;
+    if(!reconnectDockerNetwork()){
+        return;
     }
     updateService();
 }
@@ -846,7 +867,8 @@ void MasternodeList::deleteService(COutPoint& outpoint,std::string ip_port)
         return;
     }
 
-    if(!dockercluster.SetConnectDockerAddress(ip_port) || !dockercluster.ProcessDockernodeConnections()){
+    // if(!dockercluster.SetConnectDockerAddress(ip_port) || !dockercluster.ProcessDockernodeConnections()){
+    if(!reconnectDockerNetwork()){
         CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
         LogPrintf("MasternodeList deleteService failed\n");
     }
@@ -893,6 +915,10 @@ void MasternodeList::slot_createServiceBtn()
 
 void MasternodeList::gotoCreateServicePage(const std::string& ip_port,const std::string& txid)
 {
+    if(!ip_port.size()){
+        CMessageBox::information(this, tr("Docker Error"),tr("The ip_port is failed,please check your trasactions!") + "<br>" + "ip_port:"+ QString::fromStdString(ip_port));
+        return;
+    }
     gotoDockerSerivcePage(ip_port);
 
     AddDockerServiceDlg dlg;
@@ -917,10 +943,27 @@ void MasternodeList::refreshServerList()
 
     if(currentIndex != 2)
         return ;
+
+    static int loopCount = 0;
+    static int endOfLoopCount = DOCKER_AFTERCREATE_UPDATE_SECONDS;
     
     if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::AskSD){
-        if(DockerUpdateMode::WhenNormal){
+        if(DockerUpdateMode::WhenNormal && (loopCount++ < endOfLoopCount)){
             QTimer::singleShot(2000,this,SLOT(refreshServerList()));
+        }
+        else{
+            CMessageBox::StandardButton btnRetVal = CMessageBox::question(this, tr("Service Error"),
+                tr("Get Service detail time out!") + "<br><br>" + tr("do you want to keep waiting?"),
+                CMessageBox::Ok_Cancel, CMessageBox::Cancel);
+
+            if(btnRetVal == CMessageBox::Cancel){
+                return;
+            }
+            else{
+                loopCount = 0;
+                endOfLoopCount += DOCKER_AFTERCREATE_UPDATE_SECONDS;
+                QTimer::singleShot(2000,this,SLOT(refreshServerList()));
+            }
         }
         LogPrintf("MasternodeList get DNData Status:CDockerServerman::Ask\n");
         return ;
@@ -1113,6 +1156,7 @@ void MasternodeList::slot_btn_refund()
     std::string txid,mnip,mnaddress;
     dockerorderView->getCurrentItemTxidAndmnIp(txid);
 
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
     mnip = wtx.Getmasternodeip();
     mnaddress = wtx.Getmasternodeaddress();
@@ -1148,6 +1192,7 @@ void MasternodeList::onPBtn_rerentClicked()
     CAmount machinePrice = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.ServicePrice;
     COutPoint createOutpoint = String2OutPoint(ui->serviceTableWidget->item(curindex,0)->text().toStdString());
 
+    // LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[createOutpoint.hash];
     std::string mnaddress;
 
@@ -1184,8 +1229,8 @@ void MasternodeList::onPBtn_rerentClicked()
     fullRerentServiceData(createOutpoint,outpoint);
 
     LoadingWin::showLoading2(tr("Waiting for rerent service!"));
-
-    QTimer::singleShot(3000,this,SLOT(slot_doRerentService()));
+    slot_doRerentService();
+    // QTimer::singleShot(3000,this,SLOT(slot_doRerentService()));
 }
 
 void MasternodeList::fullRerentServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint)
@@ -1197,9 +1242,7 @@ void MasternodeList::fullRerentServiceData(const COutPoint& createOutPoint, cons
 
 void MasternodeList::slot_doRerentService()
 {
-    if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
-        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
-        LoadingWin::hideLoadingWin();
+    if(!reconnectDockerNetwork()){
         return;
     }
 
@@ -1244,6 +1287,7 @@ void MasternodeList::dockerOrderViewitemClicked(QModelIndex index)
     std::string txid,orderState;
     dockerorderView->getCurrentItemTxidAndmnIp(txid);
 
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid)];  //watch only not check
     // orderstatus = wtx.Getorderstatus();
     orderState = wtx.Getstate();
@@ -1277,12 +1321,8 @@ void MasternodeList::startAskServiceDataWork(const char* slotMethod,bool needAsk
 {
     LogPrintf("start to ask dndata work:%s\n",m_curAddr_Port);
 
-    if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
-        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
-        LogPrintf("Connect docker network failed!m_curAddr_Port is:%s\n",m_curAddr_Port);
-        // LoadingWin::hideLoadingWin();
-        // close(); 
-        return ;       
+    if(!reconnectDockerNetwork()){
+        return;
     }
 
     if(m_askServiceDataWorker == NULL){
@@ -1291,7 +1331,7 @@ void MasternodeList::startAskServiceDataWork(const char* slotMethod,bool needAsk
         m_askServiceDataWorker->moveToThread(workThread);
         connect(workThread,SIGNAL(started()),m_askServiceDataWorker,SLOT(startTask()));
         connect(m_askServiceDataWorker,SIGNAL(askServicesFinished(bool)),workThread,SLOT(quit()));
-        connect(m_askServiceDataWorker,SIGNAL(updateTaskTime(int)),this,SLOT(updateCreateServerWaitTimer(int)));
+        // connect(m_askServiceDataWorker,SIGNAL(updateTaskTime(int)),this,SLOT(updateCreateServerWaitTimer(int)));
     }
 
     connect(m_askServiceDataWorker,SIGNAL(askServicesFinished(bool)),this,slotMethod);
@@ -1316,7 +1356,7 @@ void MasternodeList::updateServiceListFinished(bool isTaskFinished)
     }
     else
     {
-        CMessageBox::information(this, tr("Load failed"),tr("Can't load Docker service detail!"));
+        stopTimeAndShowMsgBox(tr("Load failed"),tr("Can't load Docker service detail!"));
     }
 }
 
@@ -1333,10 +1373,18 @@ void MasternodeList::updateRerentServiceFinished(bool isTaskFinished)
         if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD ||
                 dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
             if(dockercluster.vecServiceInfo.err.size()){
-                CMessageBox::information(this, tr("Service Error"),tr("Rerent service error:") + QString::fromStdString(dockercluster.vecServiceInfo.err));
+                // CMessageBox::information(this, tr("Service Error"),tr("Rerent service error:") + QString::fromStdString(dockercluster.vecServiceInfo.err));
+                stopTimeAndShowMsgBox(tr("Service Error"), tr("Rerent service error:") + QString::fromStdString(dockercluster.vecServiceInfo.err));
                 return ;
             }
-            dockercluster.saveRerentServiceData(m_curserviceID,*m_updateService);
+            if(checkRerentInfo()){
+                dockercluster.saveRerentServiceData(m_curserviceID,*m_updateService);
+            }
+            else{
+                // CMessageBox::information(this, tr("Service Error"),tr("Rerent service failed!"));
+                stopTimeAndShowMsgBox(tr("Service Error"), tr("Rerent service failed!"));
+                return ;
+            }
             // slot_updateServiceBtn();
             updateService();
             m_curserviceID.clear();
@@ -1344,6 +1392,33 @@ void MasternodeList::updateRerentServiceFinished(bool isTaskFinished)
     }
     else
     {
-        CMessageBox::information(this, tr("Service Error"),tr("Rerent service time out!"));
+        // startTimer(false);
+        // CMessageBox::information(this, tr("Service Error"),tr("Rerent service time out!"));
+        // startTimer(true);
+        stopTimeAndShowMsgBox(tr("Service Error"),tr("Rerent service time out!"));
     }
+}
+
+bool MasternodeList::checkRerentInfo()
+{
+    // LOCK2(cs_main, pwalletMain->cs_wallet);
+
+    std::vector<ServiceUpdate> serviceUpdateList = dockercluster.vecServiceInfo.servicesInfo[m_curserviceID].UpdateSpec;// .dndata.mapDockerServiceLists;
+    LogPrintf("=======>checkRerentInfo m_updateService->clusterServiceUpdate.OutPoint:%s\n",m_updateService->clusterServiceUpdate.OutPoint.ToStringShort());
+    int count = serviceUpdateList.size();
+    for(int i=0;i<count;i++){
+        LogPrintf("=======>checkRerentInfo serviceUpdateList.at(i).OutPoint.ToStringShort():%s\n",serviceUpdateList.at(i).OutPoint.ToStringShort());
+       if(serviceUpdateList.at(i).ServiceID == m_curserviceID && 
+            serviceUpdateList.at(i).OutPoint.ToStringShort() == m_updateService->clusterServiceUpdate.OutPoint.ToStringShort()){
+           return true;
+       }
+    }
+    return false;
+}
+
+void MasternodeList::stopTimeAndShowMsgBox(QString title,QString msg)
+{
+    startTimer(false);
+    CMessageBox::information(this, title,msg);
+    startTimer(true);
 }

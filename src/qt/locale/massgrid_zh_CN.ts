@@ -341,7 +341,7 @@
     </message>
     <message>
         <source>Can&apos;t load Docker configuration!</source>
-        <translation>加载虚拟机配置失败！</translation>
+        <translation type="vanished">加载虚拟机配置失败！</translation>
     </message>
     <message>
         <source>Min Amount:</source>
@@ -378,6 +378,18 @@
     <message>
         <source>Auto miner</source>
         <translation>一键挖矿</translation>
+    </message>
+    <message>
+        <source>Can&apos;t load Docker configuration,this window will be close!</source>
+        <translation>加载虚拟机资源失败，当前窗体将关闭！</translation>
+    </message>
+    <message>
+        <source>Can&apos;t find 10.0-autominer-ubuntu16.04,Please contact the customer to check!</source>
+        <translation type="obsolete">无法找到“10.0-autominer-ubuntu16.04”镜像，请联系管理员进行检查！</translation>
+    </message>
+    <message>
+        <source>Can&apos;t find 10.0-autominer-ubuntu16.04,Please check the Internet or contact customer service!</source>
+        <translation>无法找到“10.0-autominer-ubuntu16.04”镜像，请检查您的网络或者联系客服！</translation>
     </message>
 </context>
 <context>
@@ -3169,11 +3181,39 @@ Address: %4
     </message>
     <message>
         <source>Wait for service creation timeout,Please contact the customer to check!</source>
-        <translation>等待服务创建超时，请联系客服检查虚拟机服务状态！</translation>
+        <translation type="vanished">等待服务创建超时，请联系客服检查虚拟机服务状态！</translation>
     </message>
     <message>
         <source>Wait for service:</source>
         <translation>等待时长:</translation>
+    </message>
+    <message>
+        <source>Docker Error</source>
+        <translation>虚拟机错误</translation>
+    </message>
+    <message>
+        <source>The ip_port is failed,please check your trasactions!</source>
+        <translation>ip_port格式错误，请检查你的交易内容是否正确！</translation>
+    </message>
+    <message>
+        <source>Get Service detail time out!</source>
+        <translation>获取服务详情超时！</translation>
+    </message>
+    <message>
+        <source>do you want to keep waiting?</source>
+        <translation>是否保持等待？</translation>
+    </message>
+    <message>
+        <source>Masternode status is&apos;t Enable,Please check the Internet or contact customer service!</source>
+        <translation type="obsolete">主节点不为“Enable”状态，请检查您的网络或者联系工作人员！</translation>
+    </message>
+    <message>
+        <source>Wait for service creation timeout,Please check the Internet or contact customer service!</source>
+        <translation>等待服务创建超时，请确认您的网络状态或者联系客服！</translation>
+    </message>
+    <message>
+        <source>Masternode status is&apos;t ENABLED,Please check the Internet or contact customer service!</source>
+        <translation>等待服务创建超时，请确认您的网络状态或者联系客服！</translation>
     </message>
 </context>
 <context>

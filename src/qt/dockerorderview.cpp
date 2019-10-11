@@ -21,6 +21,7 @@
 #include "init.h"
 #include "definecalendar.h"
 #include "dockercluster.h"
+#include "validation.h"
 #include <QComboBox>
 #include <QDateTimeEdit>
 #include <QDesktopServices>
@@ -284,7 +285,7 @@ void DockerOrderView::setModel(WalletModel *model)
         // Update transaction list with persisted settings
         // chooseType(settings.value("transactionType").toInt());
         // chooseDate(settings.value("transactionDate").toInt());
-
+        LOCK2(cs_main, pwalletMain->cs_wallet);
         int rowCount = dockerorderView->model()->rowCount();
         for(int i=0;i<rowCount;i++){
             std::string txidStr = dockerorderView->model()->index(i,DockerOrderTableModel::TxID).data().toString().toStdString();
@@ -308,6 +309,7 @@ void DockerOrderView::setModel(WalletModel *model)
 void DockerOrderView::addOperationBtn(int index)const
 {
     std::string txidStr = dockerorderView->model()->index(index,DockerOrderTableModel::TxID).data().toString().toStdString();
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
     QString btnText;
     bool isNeedUpdateTD = getOrderBtnText(wtx,btnText);
@@ -347,6 +349,7 @@ void DockerOrderView::updateAllOperationBtn()
 
 void DockerOrderView::addTransTask(const std::string& txidStr)
 {
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
     bool isAskAll = false;
     if(!wtx.Gettlementtxid().size())
@@ -369,7 +372,7 @@ void DockerOrderView::updateOrder(const std::string &txidStr)
 bool DockerOrderView::updateOrderStatus(const std::string &txidStr)const
 {
     QPushButton *btn = m_mapViewBtns[txidStr];
-
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
     QString btnText;
     bool isNeedUpdateTD = getOrderBtnText(wtx,btnText);
@@ -383,7 +386,7 @@ void DockerOrderView::slot_btnClicked()
     QPushButton *btn = dynamic_cast<QPushButton *>(QObject::sender());
     QModelIndex index = dockerorderView->indexAt(btn->pos());
     QString txidStr = dockerorderView->model()->index(index.row(),DockerOrderTableModel::TxID).data().toString();
-
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr.toStdString())];  //watch only not check
 
     // std::string orderstatusStr = wtx.Getorderstatus();
@@ -735,7 +738,7 @@ void DockerOrderView::deleteService()
     if(selection.isEmpty())
         return ;
     int count = selection.size();
-
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     for(int i=0;i<count;i++){
         QModelIndex index = selection.at(i);
 
@@ -926,6 +929,7 @@ void DockerOrderView::updateTransactionHistoryData(const QString& txid,bool suce
     LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s,sucess:%d \n",txid.toStdString(),sucess);
     if(!sucess){
         LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
+        LOCK2(cs_main, pwalletMain->cs_wallet);
         CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid.toStdString())];  //watch only not chec
         wtx.Setstate("Unknown");
     }
@@ -1002,6 +1006,7 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid,bool isAskAll)
 {
 
     std::string txidStr = txid.toStdString();
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not chec
     std::string ip_port = wtx.Getmasternodeip();
     std::string mnAddress = wtx.Getmasternodeaddress();

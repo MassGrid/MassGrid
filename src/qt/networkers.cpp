@@ -3,10 +3,11 @@
 #include "instantx.h"
 #include "wallet/wallet.h"
 #include "init.h"
-
+#include "sync.h"
+#include "validation.h"
 
 #define LOADRESOURCETIMEOUT 30
-#define ASKSERVICESDATATIMEOUT 5
+#define ASKSERVICESDATATIMEOUT 20
 
 AskDNDataWorker::AskDNDataWorker(QObject* parent) :
     QObject(parent)
@@ -51,9 +52,9 @@ bool AskDNDataWorker::isAskDNDataFinished()
     }
 }
 
-
 AskServicesWorker::AskServicesWorker(QObject* parent) :
-    QObject(parent)
+    QObject(parent),
+    m_isNeedToWork(true)
 {
 
 }
@@ -86,17 +87,15 @@ bool AskServicesWorker::isAskServicesFinished()
 {
     if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::AskSD || 
        dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::UpdatingSD){
-        LogPrintf("AskServicesWorker get DNData Status:CDockerServerman::Asking\n");
+        LogPrintf("AskServicesWorker get service CDockerServerman::SERVICESTATUS::Asking\n");
         return false;
     }
     else if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD ||
             dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
-        LogPrintf("AskServicesWorker -> isAskDNDataFinished\n");
+        LogPrintf("AskServicesWorker -> isAskServicesFinished\n");
         return true;
     }
 }
-
-
 
 CheckoutTransaction::CheckoutTransaction(std::string txid,QObject* parent) :
     QObject(parent),
@@ -116,15 +115,16 @@ void CheckoutTransaction::startTask()
     int index = 0;
     bool isFinished = false;
     while(isNeedToWork()){
-        if(CheckoutTransaction::isTransactionFinished(m_txid,strErr)){
+        if(isTransactionFinished(m_txid,strErr)){
             isFinished = true;
             break;
         }
         QThread::sleep(2);
         Q_EMIT updateTaskTime(++index);
     }
-    if(isFinished)
+    if(isFinished){
         Q_EMIT checkTransactionFinished();
+    }
     else
     {
         Q_EMIT threadStopped(); 
@@ -140,7 +140,7 @@ bool CheckoutTransaction::isTransactionFinished(std::string txid,std::string& st
     int confirms = wtx.GetDepthInMainChain(false);
     if(!fLocked && confirms < 1){
         strErr = "The transaction not confirms: "+std::to_string(confirms);
-        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr);
+        LogPrintf("CDockerServerman::CheckAndCreateServiveSpec %s\n",strErr); 
         return false;
     }
     if(wtx.HasCreatedService()){

@@ -12,6 +12,7 @@
 #include "dockerordertablemodel.h"
 #include "uint256.h"
 #include "util.h"
+#include "validation.h"
 
 extern CWallet* pwalletMain;
 
@@ -140,6 +141,7 @@ void ServiceDetail::updateServiceDetail(ServiceInfo& service)
     ui->label_PersistentStore->setText(fPersistentsore?tr("Yes"):tr("No"));
 
     m_createOutPoint = service.CreateSpec.OutPoint.ToStringShort();
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[service.CreateSpec.OutPoint.hash];
     
     std::vector<ServiceOrder> Order = service.Order;
@@ -236,6 +238,7 @@ void ServiceDetail::loadRerentView()
     std::list<std::string>::iterator iter = txidList.begin();
 
     int count =0;
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     for(;iter != txidList.end();iter++){
         std::string txidStr = *iter;
         CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];

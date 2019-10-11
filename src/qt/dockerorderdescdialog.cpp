@@ -15,6 +15,7 @@
 #include <QDateTime>
 #include "guiutil.h"
 #include "util.h"
+#include "validation.h"
 
 extern CWallet* pwalletMain;
 
@@ -144,7 +145,7 @@ void DockerOrderDescDialog::loadRerentView()
     std::list<std::string> txidList = m_walletModel->getDockerOrderTableModel()->getRerentTxidList();
 
     std::list<std::string>::iterator iter = txidList.begin();
-
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     int count =0;
     for(;iter != txidList.end();iter++){
         std::string txidStr = *iter;

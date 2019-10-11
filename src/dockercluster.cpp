@@ -46,7 +46,7 @@ bool Cluster::ProcessDockernodeDisconnections(const std::string& strNode)
     LogPrint("dockernode","Cluster::ProcessDockernodeDisconnections Started\n");
 
     if(!g_connman->DisconnectNode(strNode)){
-        LogPrintf("Cluster::ProcessDockernodeDisconnections Couldn't disconnect dockernode");
+        LogPrintf("Cluster::ProcessDockernodeDisconnections Couldn't disconnect dockernode:%s\n",strNode);
         return false;
     }
     return true;

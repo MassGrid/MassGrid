@@ -14,6 +14,8 @@
 #include "adddockerservicedlg.h"
 #include "loadingwin.h"
 #include <QTimer>
+#include "validation.h"
+#include <QRegExp>
 
 extern CWallet* pwalletMain;
 extern SendCoinsDialog* g_sendCoinsPage;
@@ -21,7 +23,8 @@ extern SendCoinsDialog* g_sendCoinsPage;
 SimpleSendcoinDlg::SimpleSendcoinDlg(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SimpleSendcoinDlg),
-    m_askDNDataWorker(NULL)
+    m_askDNDataWorker(NULL),
+    m_checkoutTransaction(NULL)
 {
     ui->setupUi(this);
 
@@ -38,8 +41,8 @@ SimpleSendcoinDlg::SimpleSendcoinDlg(QWidget *parent) :
 SimpleSendcoinDlg::~SimpleSendcoinDlg()
 {
     delete ui;
-    stopAndDelTransactionThread();
     LoadingWin::hideLoadingWin();
+    stopAndDelTransactionThread();
 }
 
 void SimpleSendcoinDlg::mousePressEvent(QMouseEvent* e)
@@ -87,17 +90,35 @@ void SimpleSendcoinDlg::prepareOrderTransaction(WalletModel* model,const std::st
     m_serviceID = serviceID;
 
     ui->payTo->setText(QString::fromStdString(m_paytoAddress));
-    // ui->payAmount->setValue(machinePrice);
     ui->payAmount->setFocus();
 
     askForDNData();
+}
+
+bool SimpleSendcoinDlg::reconnectDockerNetwork()
+{
+    QRegExp rx("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+    if(QString::fromStdString(m_addr_port).contains(":") && !rx.exactMatch(QString::fromStdString(m_addr_port).split(":").at(0)))
+    {
+        LogPrintf("m_addr_port:%s is failed\n",m_addr_port);
+        return false;
+    }
+
+    dockercluster.ProcessDockernodeDisconnections(m_addr_port);
+
+    if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
+        // CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!") + "<br>" + QString("masternode ip_port:") + QString::fromStdString(m_addr_port));
+        // LogPrintf("MasternodeList deleteService failed\n");
+        return false;
+    }
 }
 
 void SimpleSendcoinDlg::startAskDNDataWork(const char* slotMethod,bool needAsk)
 {
     LogPrintf("start to ask dndata work:%s\n",m_addr_port);
 
-    if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
+    // if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
+    if(!reconnectDockerNetwork()){
         CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
         LogPrintf("Connect docker network failed!m_addr_port is:%s\n",m_addr_port);
         LoadingWin::hideLoadingWin();
@@ -189,6 +210,7 @@ void SimpleSendcoinDlg::onPBtn_sendCoinClicked()
 
 void SimpleSendcoinDlg::saveMachinePrice()
 {
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(getTxid())];
     wtx.Setprice(std::to_string(getMachinePrice()));
     CWalletDB walletdb(pwalletMain->strWalletFile);
@@ -317,22 +339,20 @@ void SimpleSendcoinDlg::stopAndDelTransactionThread()
 
         m_checkoutTransaction->setNeedToWork(false);
         loop.exec();
-        delete m_checkoutTransaction;        
+        delete m_checkoutTransaction; 
+        m_checkoutTransaction == NULL;    
     }
 }
 
 void SimpleSendcoinDlg::slot_updateTaskTime(int index)
 {
-    // ui->label_refreshPayStatus->setText(QString::number(index));
     ui->label_refreshPayStatus->setText(QString::number(index));
-    // LoadingWin::showLoading2(tr("Chckout transaction for ")+QString::number(index)+"s");
 }
 
 void SimpleSendcoinDlg::transactionFinished()
 {
     LoadingWin::hideLoadingWin();
     doTaskAfterFinishedSendcoins();
-    // QTimer::singleShot(1000,this,SLOT(doTaskAfterFinishedSendcoins()));
 }
 
 void SimpleSendcoinDlg::doTaskAfterFinishedSendcoins()

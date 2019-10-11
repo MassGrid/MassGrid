@@ -51,6 +51,7 @@ private:
 
     void startCheckTransactionWork();
     void stopAndDelTransactionThread();
+    bool reconnectDockerNetwork();
 
 protected:
     void mousePressEvent(QMouseEvent *e);
