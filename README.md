@@ -1,7 +1,7 @@
 
-# **MassGrid-Core (MGD) v1.3.3.1**
+# **MassGrid-Core (MGD) v1.4.1.1**
 
-[![Build Status](https://travis-ci.org/MassGrid/MassGrid.svg?branch=masternode)](https://travis-ci.org/MassGrid/MassGrid)
+[![Build Status](https://travis-ci.org/MassGrid/MassGrid.svg?branch=v1.4.1.1)](https://travis-ci.org/MassGrid/MassGrid)
 
 MassGrid Integration/Staging Tree
 ================================
