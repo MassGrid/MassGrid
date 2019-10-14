@@ -11,8 +11,6 @@
 #include "masternode-sync.h"
 #include "masternodeconfig.h"
 #include "masternodeman.h"
-#include "dockerserverman.h"
-#include "dockercluster.h"
 #include "messagesigner.h"
 #include "rpc/server.h"
 #include "util.h"

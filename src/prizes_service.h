@@ -67,7 +67,7 @@ struct ServiceInfo {
 class DockerServiceInfo{
 public:
     uint64_t version = DOCKERREQUEST_API_VERSION;
-    int64_t sigTime = GetAdjustedTime();
+    int64_t sigTime{};
     std::map<std::string,ServiceInfo> servicesInfo{};
     std::string err{};
     int errCode{};

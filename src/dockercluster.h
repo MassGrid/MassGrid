@@ -12,7 +12,6 @@
 #include "dockertask.h"
 #include "prizes_node.h"
 #include "prizes_service.h"
-#include "dockerserverman.h"
 #define DOCKER_CPU_UNIT 1000000000
 #define DOCKER_MEMORY_UNIT 1000000000
 class Cluster;

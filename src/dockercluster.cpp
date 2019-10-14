@@ -14,8 +14,6 @@
 
 Cluster dockercluster;
 
-extern CDockerServerman dockerServerman;
-
 bool Cluster::SetConnectDockerAddress(std::string address_port){
     setDefaultPubkey(GetDefaultPubkey()); 
     dockerServerman.setDNDataStatus(CDockerServerman::Free);  

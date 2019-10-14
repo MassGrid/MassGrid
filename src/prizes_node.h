@@ -18,7 +18,6 @@
 #include <cstring>
 #include <univalue.h>
 #include "prizes_prices.h"
-#include "init.h"
 #include "timedata.h"
 #define DOCKERREQUEST_API_VERSION 10071
 struct HardWare {
@@ -65,10 +64,9 @@ struct NodeListStatistics {
     std::vector<NodeInfo> list{};
     static void DecodeFromJson(const UniValue& data, NodeListStatistics& nodelist);
 };
-
 struct ResponseMachines {
     uint64_t version = DOCKERREQUEST_API_VERSION;
-    int64_t sigTime = GetAdjustedTime();
+    int64_t sigTime{};
     std::string err{};
     std::string Token{};
     int TotalCount{};
@@ -93,4 +91,4 @@ struct ResponseMachines {
 };
 
 void ParseLabels(const UniValue& data, std::map<std::string, std::string>& labels);
-#endif
+#endif //PRIZES_NODE_H

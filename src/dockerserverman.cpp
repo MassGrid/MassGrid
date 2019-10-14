@@ -50,6 +50,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
         LogPrint("dockernode", "CDockerServerman::ProcessMessage GETDNDATA Started\n");
         ResponseMachines mdndata;
+        mdndata.sigTime = GetAdjustedTime();
         if (!fDockerNode) {
             mdndata.err = strServiceCode[SERVICEMANCODE::NOT_DOCKERNODE];
             connman.PushMessage(pfrom, NetMsgType::SERVICEDATA, mdndata);
@@ -72,7 +73,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         vRecv >> mdndata;
         if(mdndata.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || mdndata.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION){
             LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", mdndata.version,DOCKERREQUEST_API_MINSUPPORT_VERSION,DOCKERREQUEST_API_MAXSUPPORT_VERSION);
-            dockercluster.machines.err = mdndata.err;
+           dockercluster.machines.err = mdndata.err;
             setDNDataStatus(DNDATASTATUS::Received);
             return;
         }
@@ -82,6 +83,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
         LogPrint("dockernode", "CDockerServerman::ProcessMessage GETSERVICE Started\n");
         DockerServiceInfo dockerServiceInfo{};
+        dockerServiceInfo.sigTime = GetAdjustedTime();
         if (!fDockerNode) {
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::NOT_DOCKERNODE];
             dockerServiceInfo.errCode = SERVICEMANCODE::NOT_DOCKERNODE;
@@ -138,6 +140,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
 
         LogPrint("dockernode", "CDockerServerman::ProcessMessage GETSERVICES Started\n");
         DockerServiceInfo dockerServiceInfo{};
+        dockerServiceInfo.sigTime = GetAdjustedTime();
         DockerGetService getService{};
         if (!fDockerNode) {
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::NOT_DOCKERNODE];
@@ -206,6 +209,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
     }else if(strCommand == NetMsgType::CREATESERVICE){
         LogPrint("dockernode", "CDockerServerman::ProcessMessage CREATESERVICE Started\n");
         DockerServiceInfo dockerServiceInfo{};
+        dockerServiceInfo.sigTime = GetAdjustedTime();
         DockerCreateService dockerCreateService{};
         ServiceCreate serviceCreate{};
         std::string ServiceID{};
@@ -249,6 +253,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
     } else if (strCommand == NetMsgType::UPDATESERVICE) {
         LogPrint("dockernode", "CDockerServerman::ProcessMessage UPDATESERVICE Started\n");
         DockerServiceInfo dockerServiceInfo{};
+        dockerServiceInfo.sigTime = GetAdjustedTime();
         DockerUpdateService dockerUpdateService{};
         ServiceInfo serviceInfo{};
         ServiceUpdate serviceUpdate{};
@@ -286,6 +291,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
     }else if(strCommand == NetMsgType::DELETESERVICE){
         LogPrint("dockernode", "CDockerServerman::ProcessMessage DELETESERVICE Started\n");
         DockerServiceInfo dockerServiceInfo;
+        dockerServiceInfo.sigTime = GetAdjustedTime();
         DockerDeleteService dockerDeleteService;
         if (!fDockerNode) {
             dockerServiceInfo.err = strServiceCode[SERVICEMANCODE::NOT_DOCKERNODE];

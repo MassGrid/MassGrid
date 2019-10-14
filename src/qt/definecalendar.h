@@ -1,5 +1,5 @@
 #ifndef DEFINECALENDAR_H
-#define DEFINECALENDAR_
+#define DEFINECALENDAR_H
 
 #include <QWidget>
 #include <QKeyEvent>

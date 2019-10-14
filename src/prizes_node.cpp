@@ -1,4 +1,4 @@
-#include<prizes_node.h>
+#include"prizes_node.h"
 std::string HardWare::ToString()
 {
     return CPUType + std::to_string(CPUThread) + MemoryType + std::to_string(MemoryCount) + GPUType + std::to_string(GPUCount) + PersistentStore;
