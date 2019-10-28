@@ -817,10 +817,11 @@ bool MasternodeList::reconnectDockerNetwork()
 
     dockercluster.ProcessDockernodeDisconnections(m_curAddr_Port);
 
+    QThread::msleep(100);
     if(!dockercluster.SetConnectDockerAddress(m_curAddr_Port) || !dockercluster.ProcessDockernodeConnections()){
         CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!") + "<br>" + QString("masternode ip_port:") + QString::fromStdString(m_curAddr_Port));
         LogPrintf("MasternodeList deleteService failed\n");
-        // return false;
+        return false;
     }
     return true;
 }
@@ -896,7 +897,7 @@ void MasternodeList::askServiceData()
 void MasternodeList::askRerentServiceData()
 {
     const char* method = SLOT(updateRerentServiceFinished(bool));
-    startAskServiceDataWork(method,false);
+    startAskServiceDataWork(method,true);
 }
 
 void MasternodeList::clearDockerDetail()
@@ -1363,10 +1364,10 @@ void MasternodeList::updateServiceListFinished(bool isTaskFinished)
 void MasternodeList::updateRerentServiceFinished(bool isTaskFinished)
 {
     disconnect(m_askServiceDataWorker,SIGNAL(askServicesFinished(bool)),this,SLOT(updateRerentServiceFinished(bool)));
-    int currentIndex = ui->tabWidget->currentIndex();
-    if(currentIndex != 2)
-        return ;
-
+    // int currentIndex = ui->tabWidget->currentIndex();
+    // if(currentIndex != 2)
+    //     return ;
+    
     LoadingWin::hideLoadingWin();
 
     if(isTaskFinished){
@@ -1404,10 +1405,10 @@ bool MasternodeList::checkRerentInfo()
     // LOCK2(cs_main, pwalletMain->cs_wallet);
 
     std::vector<ServiceUpdate> serviceUpdateList = dockercluster.vecServiceInfo.servicesInfo[m_curserviceID].UpdateSpec;// .dndata.mapDockerServiceLists;
-    LogPrintf("=======>checkRerentInfo m_updateService->clusterServiceUpdate.OutPoint:%s\n",m_updateService->clusterServiceUpdate.OutPoint.ToStringShort());
+    LogPrintf("checkRerentInfo m_updateService->clusterServiceUpdate.OutPoint:%s\n",m_updateService->clusterServiceUpdate.OutPoint.ToStringShort());
     int count = serviceUpdateList.size();
     for(int i=0;i<count;i++){
-        LogPrintf("=======>checkRerentInfo serviceUpdateList.at(i).OutPoint.ToStringShort():%s\n",serviceUpdateList.at(i).OutPoint.ToStringShort());
+        LogPrintf("checkRerentInfo serviceUpdateList.at(i).OutPoint.ToStringShort():%s\n",serviceUpdateList.at(i).OutPoint.ToStringShort());
        if(serviceUpdateList.at(i).ServiceID == m_curserviceID && 
             serviceUpdateList.at(i).OutPoint.ToStringShort() == m_updateService->clusterServiceUpdate.OutPoint.ToStringShort()){
            return true;

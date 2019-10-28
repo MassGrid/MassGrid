@@ -105,10 +105,10 @@ bool SimpleSendcoinDlg::reconnectDockerNetwork()
     }
 
     dockercluster.ProcessDockernodeDisconnections(m_addr_port);
-
+    QThread::msleep(100);
     if(!dockercluster.SetConnectDockerAddress(m_addr_port) || !dockercluster.ProcessDockernodeConnections()){
-        // CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!") + "<br>" + QString("masternode ip_port:") + QString::fromStdString(m_addr_port));
-        // LogPrintf("MasternodeList deleteService failed\n");
+        CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!") + "<br>" + QString("masternode ip_port:") + QString::fromStdString(m_addr_port));
+        LogPrintf("MasternodeList deleteService failed\n");
         return false;
     }
 }

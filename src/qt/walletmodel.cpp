@@ -402,7 +402,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
 bool WalletModel::isSamePubkey(CWalletTx *newTx,WalletModel::StatusCode& code)
 {
-    LogPrintf("Is't the same pubkey in this transaction start!\n");
+    LogPrintf("check same pubkey in this transaction!\n");
 
     CTransaction* transaction = (CTransaction*)newTx;
 
