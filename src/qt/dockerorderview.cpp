@@ -22,6 +22,7 @@
 #include "definecalendar.h"
 #include "dockercluster.h"
 #include "validation.h"
+#include "dockerserverman.h"
 #include <QComboBox>
 #include <QDateTimeEdit>
 #include <QDesktopServices>
