@@ -103,6 +103,7 @@ private:
     QSwitchButton *switchButton;
 
     QTimer* m_scanTimer;
+    QTimer* m_askServiceDataTimer;
 
     int64_t m_nTimeDockerListUpdated;
     int64_t m_nTimeListUpdated;
@@ -128,6 +129,8 @@ private:
     void gotoOrderDetailPage(int index);
     void initDockerOrderView(const PlatformStyle *platformStyle);
     void startScanTimer(int msec);
+    void startAskServiceDataTimer(int msec);
+    void stopAskServiceDataTimer();
     void fullRerentServiceData(const COutPoint& createOutPoint, const COutPoint& outPoint);
     void doLoadServiceTask();
     void startAskServiceDataWork(const char* slotMethod,bool needAsk);

@@ -69,6 +69,7 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     m_nTimeMyListUpdated(0),
     m_nTimeListUpdated(0),
     m_scanTimer(NULL),
+    m_askServiceDataTimer(NULL),
     m_updateService(new DockerUpdateService()),
     m_askServiceDataWorker(NULL)
 {
@@ -992,8 +993,9 @@ void MasternodeList::doLoadServiceTask()
             int taskStatus = loadDockerDetail(key.toStdString());
             if(taskStatus != Config::TASKSTATE_RUNNING){
                 setCurUpdateMode(DockerUpdateMode::AfterCreate);
-                // QTimer::singleShot(2000,this,SLOT(askServiceData()));
-                askServiceData();
+                LogPrintf("Have a task is not be running status,will ask serviceData again!\n");
+                // askServiceData();
+                startAskServiceDataTimer(3000);
                 break;
             }
         }
@@ -1209,6 +1211,14 @@ void MasternodeList::onPBtn_rerentClicked()
         return ;
     }
 
+    // if(m_stopAskServiceData == true){
+    //     m_askServiceDataWorker->setNeedToWork(false);
+    //     m_stopAskServiceData = false;
+    //     QThread::msleep(500);
+    // }
+
+    stopAskServiceDataTimer();
+
     std::string serviceID =  dockercluster.vecServiceInfo.servicesInfo[serviceid].ServiceID;
     QPoint pos = MassGridGUI::winPos();
     QSize size = MassGridGUI::winSize();
@@ -1252,11 +1262,8 @@ void MasternodeList::slot_doRerentService()
         LoadingWin::hideLoadingWin();
         return ;
     }
-    // int curindex = ui->serviceTableWidget->currentRow();
-    // if(curindex <0 )
-    //     return ;
-    // std::string serviceID = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
 
+    // m_askServiceDataWorker->setNeedToWork(true);
     askRerentServiceData();
 }
 
@@ -1313,6 +1320,28 @@ void MasternodeList::startScanTimer(int msec)
     m_scanTimer->start(msec);
 }
 
+void MasternodeList::startAskServiceDataTimer(int msec)
+{
+    if(m_askServiceDataTimer == NULL){
+        m_askServiceDataTimer = new QTimer(this);
+        connect(m_askServiceDataTimer,SIGNAL(timeout()),this,SLOT(askServiceData()));
+    }
+    if(m_askServiceDataTimer->isActive()){
+        m_askServiceDataTimer->stop();
+    }
+    m_askServiceDataTimer->start(msec);
+}
+
+void MasternodeList::stopAskServiceDataTimer()
+{
+    if(m_askServiceDataTimer->isActive()){
+        m_askServiceDataTimer->stop();
+    }
+}
+
+// void masternodeli
+// m_askServiceDataTimer
+
 void MasternodeList::timeoutToScanStatus()
 {
     ui->pushButton_refund->setEnabled(false);
@@ -1363,6 +1392,7 @@ void MasternodeList::updateServiceListFinished(bool isTaskFinished)
 
 void MasternodeList::updateRerentServiceFinished(bool isTaskFinished)
 {
+    LogPrintf("MasternodeList::updateRerentServiceFinished isTaskFinished:%d\n",isTaskFinished);
     disconnect(m_askServiceDataWorker,SIGNAL(askServicesFinished(bool)),this,SLOT(updateRerentServiceFinished(bool)));
     // int currentIndex = ui->tabWidget->currentIndex();
     // if(currentIndex != 2)
@@ -1374,7 +1404,6 @@ void MasternodeList::updateRerentServiceFinished(bool isTaskFinished)
         if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD ||
                 dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
             if(dockercluster.vecServiceInfo.err.size()){
-                // CMessageBox::information(this, tr("Service Error"),tr("Rerent service error:") + QString::fromStdString(dockercluster.vecServiceInfo.err));
                 stopTimeAndShowMsgBox(tr("Service Error"), tr("Rerent service error:") + QString::fromStdString(dockercluster.vecServiceInfo.err));
                 return ;
             }
@@ -1382,7 +1411,6 @@ void MasternodeList::updateRerentServiceFinished(bool isTaskFinished)
                 dockercluster.saveRerentServiceData(m_curserviceID,*m_updateService);
             }
             else{
-                // CMessageBox::information(this, tr("Service Error"),tr("Rerent service failed!"));
                 stopTimeAndShowMsgBox(tr("Service Error"), tr("Rerent service failed!"));
                 return ;
             }
@@ -1393,9 +1421,6 @@ void MasternodeList::updateRerentServiceFinished(bool isTaskFinished)
     }
     else
     {
-        // startTimer(false);
-        // CMessageBox::information(this, tr("Service Error"),tr("Rerent service time out!"));
-        // startTimer(true);
         stopTimeAndShowMsgBox(tr("Service Error"),tr("Rerent service time out!"));
     }
 }
