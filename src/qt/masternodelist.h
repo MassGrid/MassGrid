@@ -138,6 +138,7 @@ private:
     bool reconnectDockerNetwork();
     bool checkRerentInfo(); 
     void stopTimeAndShowMsgBox(QString title,QString msg);
+    void deleteTimer();
 
 protected:
     void resizeEvent(QResizeEvent *event);

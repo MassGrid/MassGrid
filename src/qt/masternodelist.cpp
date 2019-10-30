@@ -155,6 +155,27 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
 MasternodeList::~MasternodeList()
 {
     delete ui;
+    deleteTimer();
+}
+
+void MasternodeList::deleteTimer()
+{
+    if(timer != NULL){
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
+        timer->stop();
+        delete timer;
+    }
+    if(m_askServiceDataTimer != NULL){
+        disconnect(m_askServiceDataTimer,SIGNAL(timeout()),this,SLOT(askServiceData()));
+        m_askServiceDataTimer->stop();
+        delete m_askServiceDataTimer;
+    }
+    if(m_scanTimer != NULL){
+        disconnect(m_scanTimer,SIGNAL(timeout()),this,SLOT(timeoutToScanStatus()));
+        m_scanTimer->stop();
+        delete m_scanTimer;
+    }
 }
 
 void MasternodeList::resizeEvent(QResizeEvent *event)
@@ -1338,9 +1359,6 @@ void MasternodeList::stopAskServiceDataTimer()
         m_askServiceDataTimer->stop();
     }
 }
-
-// void masternodeli
-// m_askServiceDataTimer
 
 void MasternodeList::timeoutToScanStatus()
 {
