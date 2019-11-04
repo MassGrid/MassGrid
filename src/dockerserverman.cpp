@@ -339,7 +339,11 @@ bool CDockerServerman::CheckCreateService(DockerCreateService& dockerCreateServi
         LogPrintf("CDockerServerman::CheckCreateService current transaction has been used\n");
         return false;
     }
-
+    if (wtx.HasTlemented()) {
+        err = strServiceCode[SERVICEMANCODE::TRANSACTION_DOUBLE_CREATE];
+        LogPrintf("CDockerServerman::CheckCreateService current transaction has been used\n");
+        return false;
+    }
     if (!CheckScriptPubkeyInTxVin(GetScriptForDestination(dockerCreateService.clusterServiceCreate.pubKeyClusterAddress.GetID()), wtx)) {
         err = strServiceCode[SERVICEMANCODE::NO_THRANSACTION];
         LogPrintf("CDockerServerman::CheckCreateService %s\n", err);

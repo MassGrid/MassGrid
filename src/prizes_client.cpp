@@ -133,7 +133,7 @@ bool PrizesClient::GetServiceFromPubkey(std::string strPubkey,int64_t start,int6
     return true;
 }
 
-bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256 statementid, std::string& err){
+bool PrizesClient::GetServiceDelete(std::string ServiceID,uint256& statementid, std::string& err){
     LOCK(cs);
     LogPrint("docker", "PrizesClient::GetServiceDelete\n");
     std::string url = "/servicerefund/"+ServiceID;
