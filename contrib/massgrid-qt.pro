@@ -34,9 +34,3 @@ FORMS += \
 RESOURCES += \
 ../src/qt/massgrid.qrc
 
-HEADERS += \
-    simplesendcoindlg.h
-
-SOURCES += \
-    simplesendcoindlg.cpp
-

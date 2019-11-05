@@ -107,6 +107,7 @@ private:
     MDateEdit *dateFrom; //MDateEdit
     MDateEdit *dateTo;
     QAction *abandonAction;
+    QList<std::string> m_needAskTransTxids;
 
     QWidget *createDateRangeWidget();
     bool getOrderBtnText(CWalletTx& wtx,QString& btnText)const;
