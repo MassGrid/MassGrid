@@ -136,7 +136,7 @@ private:
     void doLoadServiceTask();
     void startAskServiceDataWork(const char* slotMethod,bool needAsk);
     void updateService();
-    bool reconnectDockerNetwork();
+    bool reconnectDockerNetwork(std::string mnip = "");
     bool checkRerentInfo(); 
     void stopTimeAndShowMsgBox(QString title,QString msg);
     void deleteTimer();

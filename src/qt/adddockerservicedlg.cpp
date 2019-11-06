@@ -506,7 +506,6 @@ bool AddDockerServiceDlg::createDockerService()
 
 void AddDockerServiceDlg::updateDNDataAfterCreate(bool isFinished)
 {
-    LogPrintf("======>AddDockerServiceDlg::updateDNDataAfterCreate isFinished:%d\n",isFinished);
     disconnect(m_askDNDataWorker,SIGNAL(askDNDataFinished(bool)),this,SLOT(updateDNDataAfterCreate(bool)));
     hideLoadingWin();
     if(!isFinished){

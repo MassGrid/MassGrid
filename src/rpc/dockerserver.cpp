@@ -291,7 +291,7 @@ UniValue docker(const UniValue& params, bool fHelp)
             return "delService Error Failed";
         for(int i=0;i<20;++i){
             MilliSleep(100);
-             if(dockerServerman.getDNDataStatus() == CDockerServerman::DNDATASTATUS::Received){
+             if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD){
                 if (!dockercluster.vecServiceInfo.err.empty()){
                     return dockercluster.vecServiceInfo.err;
                 }

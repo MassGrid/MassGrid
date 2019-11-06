@@ -3215,6 +3215,30 @@ Address: %4
         <source>Masternode status is&apos;t ENABLED,Please check the Internet or contact customer service!</source>
         <translation>等待服务创建超时，请确认您的网络状态或者联系客服！</translation>
     </message>
+    <message>
+        <source>Refund error</source>
+        <translation>退款失败</translation>
+    </message>
+    <message>
+        <source>delete service error:</source>
+        <translation type="vanished">删除服务错误:</translation>
+    </message>
+    <message>
+        <source>Refund service timeout,Please contact the customer to check!</source>
+        <translation>退款等待超时，请联系管理员进行检查！</translation>
+    </message>
+    <message>
+        <source>Refund service......</source>
+        <translation>服务退款中......</translation>
+    </message>
+    <message>
+        <source>Delete service error:</source>
+        <translation>删除服务错误:</translation>
+    </message>
+    <message>
+        <source>Refund service</source>
+        <translation>服务退款</translation>
+    </message>
 </context>
 <context>
     <name>ModalOverlay</name>

@@ -931,9 +931,9 @@ void DockerOrderView::updateTransData(QString txid,bool isAskAll)
 
 void DockerOrderView::updateTransactionHistoryData(const QString& txid,bool sucess)
 {
-    LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s,sucess:%d \n",txid.toStdString(),sucess);
+    LogPrintf("DockerOrderView::updateTransactionHistoryData txid:%s,sucess:%d \n",txid.toStdString(),sucess);
     if(!sucess){
-        LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
+        LogPrintf("DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
         LOCK2(cs_main, pwalletMain->cs_wallet);
         CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid.toStdString())];  //watch only not chec
         wtx.Setstate("Unknown");
