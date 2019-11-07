@@ -65,6 +65,7 @@ private Q_SLOTS:
     /* query the networks, for which the default proxy is used */
     void updateDefaultProxyNets();
     void updateDockerServiceTimeOut(int);
+    void updateLanguage(const QString& lang);
 
 Q_SIGNALS:
     void proxyIpChecks(QValidatedLineEdit *pUiProxyIp, int nProxyPort);

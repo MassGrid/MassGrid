@@ -216,12 +216,19 @@ void OptionsDialog::setModel(OptionsModel *model)
     // connect(ui->theme, SIGNAL(valueChanged()), this, SLOT(showRestartWarning()));
     connect(ui->lang, SIGNAL(valueChanged()), this, SLOT(showRestartWarning()));
     connect(ui->thirdPartyTxUrls, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));
-    connect(ui->MainAddress, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));    
+    connect(ui->MainAddress, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));   
+    connect(ui->lang, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(updateLanguage(const QString&)));
 }
 
 void OptionsDialog::updateDockerServiceTimeOut(int value)
 {
     model->setDockerServiceTimeout(value);
+}
+
+void OptionsDialog::updateLanguage(const QString& lang)
+{
+    QString language = ui->lang->currentData().toString();
+    model->setlang(language);
 }
 
 void OptionsDialog::setMapper()

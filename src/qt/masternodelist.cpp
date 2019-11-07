@@ -1254,7 +1254,7 @@ void MasternodeList::checkDeleteServiceRet()
         LoadingWin::hideLoadingWin();
 
         if (!dockercluster.vecServiceInfo.msg.empty()){
-            CMessageBox::information(this, tr("Refund service"), tr("Delete service error:") + QString::fromStdString(dockercluster.vecServiceInfo.msg));
+            CMessageBox::information(this, tr("Refund service"), tr("Delete service msg:") + QString::fromStdString(dockercluster.vecServiceInfo.msg));
             LogPrintf("checkDeleteServiceRet delete service msg:%s",dockercluster.vecServiceInfo.msg);
         }
     }

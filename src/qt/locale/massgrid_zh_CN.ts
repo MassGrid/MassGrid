@@ -3239,6 +3239,10 @@ Address: %4
         <source>Refund service</source>
         <translation>服务退款</translation>
     </message>
+    <message>
+        <source>Delete service msg:</source>
+        <translation>删除服务消息:</translation>
+    </message>
 </context>
 <context>
     <name>ModalOverlay</name>
