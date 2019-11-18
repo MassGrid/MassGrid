@@ -23,6 +23,8 @@
 #include "dockercluster.h"
 #include "validation.h"
 #include "dockerserverman.h"
+#include "loadingwin.h"
+
 #include <QComboBox>
 #include <QDateTimeEdit>
 #include <QDesktopServices>
@@ -366,16 +368,18 @@ void DockerOrderView::updateOrder(const std::string &txidStr)
     bool isNeedUpdateTD = updateOrderStatus(txidStr);
 
     if(isNeedUpdateTD){
+        m_needAskTransTxids.append(txidStr);
         addTransTask(txidStr);
     }
 }
 
 bool DockerOrderView::updateOrderStatus(const std::string &txidStr)const
 {
-    QPushButton *btn = m_mapViewBtns[txidStr];
-    LOCK2(cs_main, pwalletMain->cs_wallet);
+    //will make gui delay
+    // LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not check
     QString btnText;
+        QPushButton *btn = m_mapViewBtns[txidStr];
     bool isNeedUpdateTD = getOrderBtnText(wtx,btnText);
     btn->setText(btnText);
 
@@ -927,14 +931,16 @@ void DockerOrderView::updateTransData(QString txid,bool isAskAll)
 
 void DockerOrderView::updateTransactionHistoryData(const QString& txid,bool sucess)
 {
-    LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s,sucess:%d \n",txid.toStdString(),sucess);
+    LogPrintf("DockerOrderView::updateTransactionHistoryData txid:%s,sucess:%d \n",txid.toStdString(),sucess);
     if(!sucess){
-        LogPrintf("====>DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
+        LogPrintf("DockerOrderView::updateTransactionHistoryData txid:%s\n",txid.toStdString());
         LOCK2(cs_main, pwalletMain->cs_wallet);
         CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txid.toStdString())];  //watch only not chec
         wtx.Setstate("Unknown");
     }
-    updateAllOperationBtn();
+
+    bool isNeedUpdateTD = updateOrderStatus(txid.toStdString());
+    // updateAllOperationBtn();
 }
 
 void DockerOrderView::stopAndDeleteSyncThread()
@@ -1007,7 +1013,7 @@ bool SyncTransactionHistoryThread::doTask(const QString& txid,bool isAskAll)
 {
 
     std::string txidStr = txid.toStdString();
-    LOCK2(cs_main, pwalletMain->cs_wallet);
+    // LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[uint256S(txidStr)];  //watch only not chec
     std::string ip_port = wtx.Getmasternodeip();
     std::string mnAddress = wtx.Getmasternodeaddress();

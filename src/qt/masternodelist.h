@@ -96,6 +96,7 @@ private:
 
     std::string m_curAddr_Port;
     std::string m_curserviceID;
+    std::string m_delServiceTxid;
 
     DockerUpdateMode m_updateMode;
     int timeOutSec;
@@ -135,7 +136,7 @@ private:
     void doLoadServiceTask();
     void startAskServiceDataWork(const char* slotMethod,bool needAsk);
     void updateService();
-    bool reconnectDockerNetwork();
+    bool reconnectDockerNetwork(std::string mnip = "");
     bool checkRerentInfo(); 
     void stopTimeAndShowMsgBox(QString title,QString msg);
     void deleteTimer();
@@ -172,7 +173,8 @@ private Q_SLOTS:
     void loadOrderData();
     void dockerOrderViewdoubleClicked(QModelIndex index);
     void dockerOrderViewitemClicked(const QModelIndex index);
-    void deleteService(COutPoint& outpoint,std::string ip_port);
+    bool deleteService(COutPoint& outpoint,std::string ip_port);
+    void checkDeleteServiceRet();
     void jumpToCheckService(std::string ip);
     void jumpToCreateService(std::string ip,std::string txid);
     void timeoutToScanStatus();

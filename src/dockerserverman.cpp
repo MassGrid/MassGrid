@@ -180,6 +180,7 @@ void CDockerServerman::ProcessMessage(CNode* pfrom, std::string& strCommand, CDa
         vRecv >> dockerServiceInfo;
         if (dockerServiceInfo.version < DOCKERREQUEST_API_MINSUPPORT_VERSION || dockerServiceInfo.version > DOCKERREQUEST_API_MAXSUPPORT_VERSION) {
             LogPrintf("CDockerServerman::ProcessMessage --current version %d not support [%d - %d]\n", dockerServiceInfo.version, DOCKERREQUEST_API_MINSUPPORT_VERSION, DOCKERREQUEST_API_MAXSUPPORT_VERSION);
+            
             setSERVICEDataStatus(CDockerServerman::SERVICESTATUS::ReceivedSD);
             return;
         }

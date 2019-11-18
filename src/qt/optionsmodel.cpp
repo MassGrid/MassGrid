@@ -542,3 +542,10 @@ void OptionsModel::setDockerServiceTimeout(int value)
     QSettings settings;
     settings.setValue("fDockerServiceTimeOut", fDockerServiceTimeOut);
 }
+
+void OptionsModel::setlang(QString value)
+{
+    language = value;
+    QSettings settings;
+    settings.setValue("language", language);
+}

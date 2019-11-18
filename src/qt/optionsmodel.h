@@ -71,6 +71,7 @@ public:
     bool getMinimizeOnClose() { return fMinimizeOnClose; }
     int getDockerServiceTimeout() { return fDockerServiceTimeOut; }
     void setDockerServiceTimeout(int);
+    void setlang(QString value);
     int getDisplayUnit() { return nDisplayUnit; }
     QString getThirdPartyTxUrls() { return strThirdPartyTxUrls; }
     QString getMainAddress() { return strMainAddress; }

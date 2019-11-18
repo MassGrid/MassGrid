@@ -615,6 +615,13 @@ void MasternodeList::slot_curTabPageChanged(int curPage)
         setCurUpdateMode(DockerUpdateMode::WhenNormal);
     }
     else if(curPage == 3){
+
+        // if(m_scanTimer->isActive()){
+
+        //     m_scanTimer->stop();
+        // }
+        // stopAskServiceDataTimer();
+
         if (!masternodeSync.IsSynced()){
             CMessageBox::information(this, tr("Docker option"),tr("Can't open docker order page without synced!"));
             ui->tabWidget->setCurrentIndex(0);
@@ -828,8 +835,11 @@ void MasternodeList::openServiceDetail(QModelIndex index)
     dlg.exec();
 }
 
-bool MasternodeList::reconnectDockerNetwork()
+bool MasternodeList::reconnectDockerNetwork(std::string mnip)
 {
+    if(mnip == "")
+        mnip = m_curAddr_Port;
+
     QRegExp rx("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
     if(QString::fromStdString(m_curAddr_Port).contains(":") && !rx.exactMatch(QString::fromStdString(m_curAddr_Port).split(":").at(0)))
     {
@@ -872,28 +882,33 @@ void MasternodeList::slot_deleteServiceBtn()
     std::string serviceid = ui->serviceTableWidget->item(curindex,1)->text().toStdString();
     COutPoint& outpoint= dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.OutPoint;
 
-    deleteService(outpoint,m_curAddr_Port);
+    bool sucess = deleteService(outpoint,m_curAddr_Port);
+
+    LogPrintf("MasternodeList slot_deleteServiceBtn return:%d\n",sucess);
+
     QTimer::singleShot(2000,this,SLOT(slot_updateServiceBtn()));
 }
 
-void MasternodeList::deleteService(COutPoint& outpoint,std::string ip_port)
+bool MasternodeList::deleteService(COutPoint& outpoint,std::string ip_port)
 {
     CMessageBox::StandardButton retval = CMessageBox::question(this, tr("Delete Service"),
         tr("Are you sure you want to delete this service?"),
         CMessageBox::Ok_Cancel,
         CMessageBox::Cancel);
     
-    if(retval != CMessageBox::Ok) return;
+    if(retval != CMessageBox::Ok) 
+    return false;
 
     if(pwalletMain->IsLocked()){
         CMessageBox::information(this, tr("Wallet option"), tr("This option need to unlock your wallet"));
-        return;
+        return false;
     }
 
     // if(!dockercluster.SetConnectDockerAddress(ip_port) || !dockercluster.ProcessDockernodeConnections()){
-    if(!reconnectDockerNetwork()){
+    if(!reconnectDockerNetwork(ip_port)){
         CMessageBox::information(this, tr("Docker option"),tr("Connect docker network failed!"));
         LogPrintf("MasternodeList deleteService failed\n");
+        return false;
     }
 
     DockerDeleteService delService{};
@@ -905,9 +920,10 @@ void MasternodeList::deleteService(COutPoint& outpoint,std::string ip_port)
 
     if(!dockercluster.DeleteAndSendServiceSpec(delService)){
         CMessageBox::information(this, tr("Docker option"),tr("Delete docker service failed!"));
+        return false;
     }
     LogPrintf("MasternodeList deleteService sucess dockercluster.vecServiceInfo.msg:%s\n",dockercluster.vecServiceInfo.msg);
-
+    return true;
 }
 
 void MasternodeList::askServiceData()
@@ -940,6 +956,10 @@ void MasternodeList::gotoCreateServicePage(const std::string& ip_port,const std:
 {
     if(!ip_port.size()){
         CMessageBox::information(this, tr("Docker Error"),tr("The ip_port is failed,please check your trasactions!") + "<br>" + "ip_port:"+ QString::fromStdString(ip_port));
+        return;
+    }
+
+    if(!reconnectDockerNetwork()){
         return;
     }
     gotoDockerSerivcePage(ip_port);
@@ -1186,17 +1206,68 @@ void MasternodeList::slot_btn_refund()
     mnaddress = wtx.Getmasternodeaddress();
 
     COutPoint outpoint = GUIUtil::getOutPoint(txid,mnaddress);
-    // = String2OutPoint(wtx.Getmasternodeoutpoint());
 
-    deleteService(outpoint,mnip);
-    //update order status
-    dockerorderView->updateAllOperationBtn();
+    bool ret = deleteService(outpoint,mnip);
 
-    if(wtx.Getstate() == "" ){
-        wtx.Setstate("completed");
-        CWalletDB walletdb(pwalletMain->strWalletFile);
-        wtx.WriteToDisk(&walletdb);
-        // dockerorderView->refreshModel();
+    if(ret){
+        LoadingWin::showLoading2(tr("Refund service......"));
+        stopAskServiceDataTimer();
+        m_delServiceTxid = txid;
+        QTimer::singleShot(100,this,SLOT(checkDeleteServiceRet()));
+    }
+    else{
+        CMessageBox::information(this, tr("Refund error"), tr("Delete service error:") + QString::fromStdString(dockercluster.vecServiceInfo.err));
+        LoadingWin::hideLoadingWin();
+    }
+    // if(wtx.Getstate() == "" && ret ){
+    //     wtx.Setstate("completed");
+    //     CWalletDB walletdb(pwalletMain->strWalletFile);
+    //     wtx.WriteToDisk(&walletdb);
+    //     // dockerorderView->refreshModel();
+    // }
+}
+
+void MasternodeList::checkDeleteServiceRet()
+{
+    if(dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::ReceivedSD || 
+        dockerServerman.getSERVICEStatus() == CDockerServerman::SERVICESTATUS::FreeSD){
+        if (!dockercluster.vecServiceInfo.err.empty()){
+            LoadingWin::hideLoadingWin();
+            CMessageBox::information(this, tr("Refund error"), tr("Delete service error:") + QString::fromStdString(dockercluster.vecServiceInfo.err));
+            LogPrintf("checkDeleteServiceRet delete service error:%s",dockercluster.vecServiceInfo.err);
+            return;
+        }
+
+        LOCK2(cs_main, pwalletMain->cs_wallet);
+        CWalletTx& wtx = pwalletMain->mapWallet[uint256S(m_delServiceTxid)];  //watch only not check
+
+        if(wtx.Getstate() == ""){
+            wtx.Setstate("completed");
+            CWalletDB walletdb(pwalletMain->strWalletFile);
+            wtx.WriteToDisk(&walletdb);
+        }
+        m_delServiceTxid = "";    
+
+        //update order status
+        // dockerorderView->updateAllOperationBtn();
+        updateDockerOrder();
+        LoadingWin::hideLoadingWin();
+
+        if (!dockercluster.vecServiceInfo.msg.empty()){
+            CMessageBox::information(this, tr("Refund service"), tr("Delete service msg:") + QString::fromStdString(dockercluster.vecServiceInfo.msg));
+            LogPrintf("checkDeleteServiceRet delete service msg:%s",dockercluster.vecServiceInfo.msg);
+        }
+    }
+    else{
+        static int loopCount = 0;
+        if(loopCount++ >= 5){
+            LoadingWin::hideLoadingWin();
+            CMessageBox::information(this, tr("Refund error"), tr("Refund service timeout,Please contact the customer to check!"));
+            loopCount = 0;
+            return ;
+        }
+
+        QTimer::singleShot(1000,this,SLOT(checkDeleteServiceRet()));
     }
 }
 
@@ -1216,7 +1287,7 @@ void MasternodeList::onPBtn_rerentClicked()
     CAmount machinePrice = dockercluster.vecServiceInfo.servicesInfo[serviceid].CreateSpec.ServicePrice;
     COutPoint createOutpoint = String2OutPoint(ui->serviceTableWidget->item(curindex,0)->text().toStdString());
 
-    // LOCK2(cs_main, pwalletMain->cs_wallet);
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     CWalletTx& wtx = pwalletMain->mapWallet[createOutpoint.hash];
     std::string mnaddress;
 
@@ -1355,7 +1426,7 @@ void MasternodeList::startAskServiceDataTimer(int msec)
 
 void MasternodeList::stopAskServiceDataTimer()
 {
-    if(m_askServiceDataTimer->isActive()){
+    if((m_askServiceDataTimer != NULL) && m_askServiceDataTimer->isActive()){
         m_askServiceDataTimer->stop();
     }
 }
