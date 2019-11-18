@@ -388,7 +388,7 @@ UniValue docker(const UniValue& params, bool fHelp)
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid MassGrid address");
 
         // Amount
-        CAmount nAmount = AmountFromValue(boost::lexical_cast<int>(params[3]));
+        CAmount nAmount = AmountFromValue(params[3]);
         if (nAmount <= 0)
             throw JSONRPCError(RPC_TYPE_ERROR, "Invalid amount for send");
 
